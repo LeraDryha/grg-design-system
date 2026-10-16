@@ -1,0 +1,109 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CompactSelectStories from './CompactSelect.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={CompactSelectStories} />
+
+# Compact Select
+
+<ComponentHeader
+  status="ready"
+  figma="404-56948"
+  builtOn="PrimeReact Dropdown"
+  related={[
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+    { label: 'Inline Select', href: '?path=/docs/components-inline-select--docs', relation: 'See also' },
+  ]}
+/>
+
+A select without a label or hint, for tight spots next to other controls: a currency next to an amount, a country, a coin.
+It opens the same list as Select. Figma has the component only, without a guidelines page.
+
+<Canvas of={CompactSelectStories.Playground} />
+<Controls of={CompactSelectStories.Playground} include={['type', 'size', 'aria-label', 'searchable', 'invalid', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'A short choice next to another control, where its meaning is clear from the context: currency, country, coin',
+    'Toolbars and filters with little room',
+    'A flag or a logo that people recognise without text',
+  ]}
+  donts={[
+    'A choice in a form that needs a label or a hint: use Select',
+    'A choice inside a field, such as the country code of a phone number: use Inline Select',
+    'Long option names: the select shows only a short text or a picture',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={CompactSelectStories.Anatomy} />
+
+1. **Container:** the frame, filled with `surface-floating`. Its border and fill show the state.
+2. **Value:** a short text (Type Default) or a picture: a Base icon, a flag or a coin, 20px.
+3. **Chevron:** points down, up while the list is open.
+
+## Types
+
+<Canvas of={CompactSelectStories.Types} />
+
+From the left: **Default** (short text, such as *USD*), **Icon**, **Country** and **Coin**. Pictures show without text, so the select needs `aria-label`.
+
+## Sizes
+
+<Canvas of={CompactSelectStories.Sizes} />
+
+From the left: **lg-44** (12px paddings), **md-40** (10px) and **sm-32** (6px top and bottom, 8px on the sides, 8px corners). Match the controls next to it.
+
+## States
+
+### Default
+At rest.
+
+<Canvas of={CompactSelectStories.Default} />
+
+### Hovered
+Pointer over the select: a light fill and a darker border.
+
+<Canvas of={CompactSelectStories.Hovered} />
+
+### Active
+Open: the darkest border, and the chevron points up.
+
+<Canvas of={CompactSelectStories.Active} />
+
+### Error
+A red border. There is no hint under it, so explain the problem next to the select.
+
+<Canvas of={CompactSelectStories.ErrorState} />
+
+### Disabled
+Not available right now: grey fill and chevron, no interaction.
+
+<Canvas of={CompactSelectStories.Disabled} />
+
+## Accessibility
+
+- It is a combobox with a name from `aria-label`, an expanded state and the highlighted option announced while moving with the arrow keys.
+- Enter, Space or ↓ open the list; Escape closes it.
+- Keyboard focus shows the system blue ring (Figma has no focus state for it).
+- An error sets `aria-invalid`; write the reason next to the select.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Default, Icon, Country, Coin → default, icon, country, coin' },
+    { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
+    { figma: 'State', prop: '(behaviour) · previewState · invalid · disabled', values: 'Hovered and Active follow the pointer and the list; Error → invalid; Disabled → disabled' },
+    { figma: '—', prop: 'options · value · onChange', values: 'the list and the chosen option' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={CompactSelectStories} />

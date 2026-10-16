@@ -1,32 +1,15 @@
-import { useEffect, useId, useRef, type RefObject } from 'react';
+import { useId, useRef } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
-import { CoinIcon, type CoinName } from '../CoinIcon/CoinIcon';
-import { CountryIcon, type CountryCode } from '../CountryIcon/CountryIcon';
+import { OptionPicture, type SelectOption } from '../Select/options';
+import { DropdownItem, dropdownPanelPt, searchIcons } from '../Select/dropdown';
+import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import './InlineSelect.css';
 
-export type InlineSelectOption = {
-  value: string;
-  /** Text shown in the field, such as "+359" or "USD" */
-  label: string;
-  /** Text in the open list, such as "Bulgaria +359"; falls back to `label` */
-  listLabel?: string;
-  /** Flag from Country icons, such as `ua` (Type Country) */
-  country?: CountryCode;
-  /** Logo from Coin icons, such as `bitcoin-btc` (Type Coin) */
-  coin?: CoinName;
-  /** Any other picture (URL), for Type Icon */
-  image?: string;
-};
+/** Options of Inline select: the same as Select (flag, coin or icon, label, list label). */
+export type InlineSelectOption = SelectOption;
 
-/** The option's picture, 20px: a flag, a coin or another image. */
-function Picture({ option }: { option: InlineSelectOption }) {
-  if (option.country) return <CountryIcon className="grg-inline-select__image" code={option.country} size={20} />;
-  if (option.coin) return <CoinIcon className="grg-inline-select__image" name={option.coin} size={20} />;
-  if (option.image) return <img className="grg-inline-select__image" src={option.image} alt="" />;
-  return null;
-}
-
+/** Figma "Inline select" (424:72942): State × Type. */
 export type InlineSelectProps = {
   options: InlineSelectOption[];
   value?: string;
@@ -35,59 +18,24 @@ export type InlineSelectProps = {
   'aria-label': string;
   /** Figma Type: Country (flag), Coin, Icon; only changes how the picture is drawn */
   type?: 'country' | 'coin' | 'icon';
+  /** A search row at the top of the list, for long lists such as all country codes */
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  noResults?: string;
   disabled?: boolean;
   className?: string;
+  /** Shows a state as static, for documentation only */
+  previewState?: 'default' | 'hover' | 'focus';
 };
 
 /**
- * PrimeReact 10 Dropdown focuses a hidden read-only input but gives it no name, combobox role, expanded state
- * or active option. This keeps those attributes in sync, so screen readers hear a named combobox and the
- * option highlighted with the arrow keys. (Same fix as in the marketing Storybook.)
- */
-function useDropdownCombobox(rootRef: RefObject<HTMLDivElement | null>, inputRef: RefObject<HTMLInputElement | null>, listId: string, label: string) {
-  useEffect(() => {
-    const root = rootRef.current;
-    const input = inputRef.current;
-    if (!root || !input) return;
-    input.setAttribute('role', 'combobox');
-    input.setAttribute('aria-label', label);
-    const sync = () => {
-      const list = root.querySelector<HTMLElement>('[role="listbox"]');
-      input.setAttribute('aria-expanded', String(!!list));
-      if (list) {
-        list.id = listId;
-        input.setAttribute('aria-controls', listId);
-      } else {
-        input.removeAttribute('aria-controls');
-      }
-      const active = list?.querySelector<HTMLElement>('[role="option"][data-p-focused="true"]');
-      if (active?.id) input.setAttribute('aria-activedescendant', active.id);
-      else input.removeAttribute('aria-activedescendant');
-    };
-    sync();
-    const observer = new MutationObserver(sync);
-    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-p-focused'] });
-    return () => observer.disconnect();
-  }, [rootRef, inputRef, listId, label]);
-}
-
-function Option({ option }: { option?: InlineSelectOption }) {
-  if (!option) return null;
-  return (
-    <span className="grg-inline-select__value">
-      <Picture option={option} />
-      <span>{option.label}</span>
-    </span>
-  );
-}
-
-/**
  * Figma "Inline select": a compact select inside a field, such as the country code of a phone number
- * or the coin of an amount. PrimeReact Dropdown (unstyled).
- * The open list has no design of its own yet: it uses the surface, shadow and text tokens until the
- * Dropdown menu component is built.
+ * or the coin of an amount. PrimeReact Dropdown (unstyled), with the same open list as Select.
  */
-export function InlineSelect({ options, value, onChange, type = 'country', disabled, className = '', 'aria-label': label }: InlineSelectProps) {
+export function InlineSelect({
+  options, value, onChange, type = 'country', searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
+  disabled, className = '', 'aria-label': label, previewState = 'default',
+}: InlineSelectProps) {
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,7 +43,12 @@ export function InlineSelect({ options, value, onChange, type = 'country', disab
   const selected = options.find(o => o.value === value) ?? options[0];
 
   return (
-    <div className={`grg-inline-select ${className}`} data-type={type} ref={rootRef}>
+    <div
+      className={`grg-inline-select ${className}`}
+      data-type={type}
+      data-preview-state={previewState === 'default' ? undefined : previewState}
+      ref={rootRef}
+    >
       <Dropdown
         inputId={id}
         focusInputRef={inputRef}
@@ -103,29 +56,35 @@ export function InlineSelect({ options, value, onChange, type = 'country', disab
         options={options}
         optionValue="value"
         optionLabel="label"
+        optionDisabled="disabled"
         value={selected?.value}
         disabled={disabled}
+        filter={searchable}
+        filterBy="label,listLabel"
+        filterPlaceholder={searchPlaceholder}
+        showFilterClear={searchable}
+        emptyFilterMessage={noResults}
+        emptyMessage={noResults}
+        {...searchIcons}
         onChange={e => onChange?.(e.value)}
-        valueTemplate={() => <Option option={selected} />}
-        itemTemplate={(o: InlineSelectOption) => (
-          <span className="grg-inline-select__value">
-            <Picture option={o} />
-            <span>{o.listLabel ?? o.label}</span>
-          </span>
-        )}
+        valueTemplate={() =>
+          selected ? (
+            <span className="grg-inline-select__value">
+              <OptionPicture option={selected} className="grg-inline-select__image" />
+              <span>{selected.label}</span>
+            </span>
+          ) : null
+        }
+        itemTemplate={(o: InlineSelectOption) => <DropdownItem option={o} selected={o.value === selected?.value} />}
         dropdownIcon={<Icon name="direction-down" size={20} />}
-        collapseIcon={<Icon name="direction-down" size={20} />}
+        collapseIcon={<Icon name="direction-up" size={20} />}
         pt={{
           root: { className: 'grg-inline-select__root', 'aria-activedescendant': undefined, 'aria-disabled': disabled || undefined },
           input: { className: 'grg-inline-select__label' },
-          // the native <select> PrimeReact keeps for form submit is not for assistive technology
           select: { 'aria-hidden': true },
           hiddenSelectedMessage: { className: 'grg-sr-only' },
           trigger: { className: 'grg-inline-select__trigger', 'aria-hidden': true },
-          panel: { className: 'grg-inline-select__panel' },
-          wrapper: { className: 'grg-inline-select__list-wrap' },
-          list: { className: 'grg-inline-select__list', 'aria-label': label },
-          item: { className: 'grg-inline-select__option' },
+          ...dropdownPanelPt(label),
         }}
       />
     </div>

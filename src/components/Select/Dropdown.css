@@ -1,0 +1,104 @@
+/* Open list of Select, Compact select and Inline select. Figma: Dropdown (surface-floating, Elevation sm,
+   12px corners, 8px padding, 2px between rows), Dropdown menu item, Dropdown misc items. */
+
+.grg-dropdown {
+  position: absolute;
+  z-index: 20;
+  box-sizing: border-box;
+  min-width: 100%;
+  padding: var(--space-200);
+  border-radius: var(--radius-lg-12);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+}
+
+/* Search row (Dropdown misc items: Search), then the divider line */
+.grg-dropdown__header {
+  margin-bottom: var(--space-050);
+  padding-bottom: var(--space-050);
+  border-bottom: 1px solid var(--stroke-soft-200);
+}
+.grg-dropdown__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  margin-bottom: var(--space-050);
+  padding: var(--space-250) var(--space-200);
+  border-radius: var(--radius-xs-6);
+}
+.grg-dropdown__search:hover { background: var(--bg-weak-100); }
+.grg-dropdown__search:has(:focus-visible) { box-shadow: var(--focus-ring); }
+.grg-dropdown__search-icon { display: inline-grid; order: -1; color: var(--icon-base-500); }
+.grg-dropdown__search-input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+.grg-dropdown__search-input::placeholder { color: var(--text-soft-500); opacity: 1; }
+.grg-dropdown__search-clear { display: inline-grid; color: var(--icon-base-500); cursor: pointer; }
+
+/* The list scrolls after about six rows */
+.grg-dropdown__scroll { max-height: calc(var(--space-4000) + var(--space-2000) + var(--space-1200)); overflow-y: auto; }
+.grg-dropdown__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-050);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Dropdown menu item: 40px, 8px padding and gap, 8px corners */
+.grg-dropdown__option {
+  display: flex;
+  border-radius: var(--radius-sm-8);
+  cursor: pointer;
+}
+.grg-dropdown__option:hover,
+.grg-dropdown__option[data-p-focused='true'] { background: var(--bg-weak-100); }
+.grg-dropdown__option[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; background: transparent; }
+.grg-dropdown__item-wrap { display: flex; flex: 1; min-width: 0; }
+.grg-dropdown__item {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-200);
+  min-width: 0;
+  padding: var(--space-200);
+}
+.grg-dropdown__item .grg-option-picture--icon { color: var(--icon-base-500); }
+.grg-dropdown__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grg-dropdown__item > .grg-icon:last-child { color: var(--icon-strong-1000); }
+.grg-dropdown__option[data-p-disabled='true'] .grg-option-picture { opacity: 0.5; }
+
+.grg-dropdown__empty { padding: var(--space-200); color: var(--text-soft-500); }
+
+/* Pictures of the options (shared with the fields) */
+.grg-option-picture { flex: none; }
+.grg-option-picture--icon { display: inline-grid; }
+.grg-option-picture--avatar {
+  width: var(--space-500);
+  height: var(--space-500);
+  border-radius: var(--radius-fully-rounded);
+  object-fit: cover;
+}
+
+/* PrimeReact keeps a focusable input and a native <select> for assistive technology and forms: visually hidden */
+:is(.grg-select, .grg-compact-select, .grg-inline-select) [data-p-hidden-accessible='true'],
+.grg-dropdown [data-p-hidden-accessible='true'] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

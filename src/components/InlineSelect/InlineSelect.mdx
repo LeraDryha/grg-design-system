@@ -1,0 +1,100 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as InlineSelectStories from './InlineSelect.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={InlineSelectStories} />
+
+# Inline Select
+
+<ComponentHeader
+  status="ready"
+  figma="424-72942"
+  builtOn="PrimeReact Dropdown"
+  related={[
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+  ]}
+/>
+
+A small select that lives inside another field: the country code of a phone number, the coin of an amount.
+It has no frame of its own and opens the same list as Select. Figma has the component only, without a guidelines page.
+
+<Canvas of={InlineSelectStories.Playground} />
+<Controls of={InlineSelectStories.Playground} include={['type', 'aria-label', 'searchable', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'A choice that belongs to a value in a field: the country code of a phone number, the currency of an amount',
+    'A search row in the list when it is long, such as all country codes',
+  ]}
+  donts={[
+    'A choice on its own, with a label: use Select',
+    'A choice next to a field, not inside it: use Compact Select',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={InlineSelectStories.Anatomy} />
+
+1. **Picture:** a flag, a coin or a Base icon, 20px.
+2. **Value:** a short text, Body-md/Regular: *+359*, *USD*.
+3. **Chevron:** an Action button (sm, grey); darker on hover, darkest while open.
+
+## Types
+
+<Canvas of={InlineSelectStories.Types} />
+
+From the left: **Country** (flag), **Coin** and **Icon**. The type only changes the picture.
+
+## In fields
+
+<Canvas of={InlineSelectStories.InFields} />
+
+Input uses it in two types: **Phone** (the country code before the number) and **Amount** (the coin after the number).
+
+## States
+
+### Default
+At rest.
+
+<Canvas of={InlineSelectStories.Default} />
+
+### Hovered
+Pointer over it: the chevron gets darker.
+
+<Canvas of={InlineSelectStories.Hovered} />
+
+### Active
+Focused or open: the darkest chevron.
+
+<Canvas of={InlineSelectStories.Active} />
+
+### Disabled
+Not available right now, with its field: grey text, a faded picture and a grey chevron.
+
+<Canvas of={InlineSelectStories.Disabled} />
+
+## Accessibility
+
+- It is a combobox with a name from `aria-label` (*Country code*, *Currency*), an expanded state and the highlighted option announced while moving with the arrow keys.
+- The picture is decorative; the value and the option names in the list say what is chosen.
+- Keyboard focus shows the system blue ring.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Country, Coin, Icon → country, coin, icon' },
+    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered and Active follow the pointer and the list; Disabled → disabled' },
+    { figma: '—', prop: 'options · value · onChange', values: 'the list and the chosen option; in Input: countries · coins' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={InlineSelectStories} />

@@ -1,0 +1,174 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SelectStories from './Select.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SelectStories} />
+
+# Select
+
+<ComponentHeader
+  status="ready"
+  figma="404-42432"
+  guidelines="459-37807"
+  builtOn="PrimeReact Dropdown"
+  related={[
+    { label: 'Form Field', href: '?path=/docs/components-form-field--docs', relation: 'Uses' },
+    { label: 'Compact Select', href: '?path=/docs/components-compact-select--docs', relation: 'See also' },
+    { label: 'Inline Select', href: '?path=/docs/components-inline-select--docs', relation: 'See also' },
+  ]}
+/>
+
+A field that opens a list to choose one option: a payment type, a country, a user, a payment method, a coin.
+It shares the label, hint and states with Input; the type sets the picture before the value.
+
+<Canvas of={SelectStories.Playground} />
+<Controls of={SelectStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'searchable', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Choosing one option from a known list: payment type, country, user, payment method, currency',
+    'A search row for long lists: countries, users, coins',
+    'The picture that helps recognise the option: a flag, a logo, a photo',
+  ]}
+  donts={[
+    'Two or three options that people should see at once: use Radio or Segment control',
+    'Free text: use Input',
+    'A short choice next to another control, without a label: use Compact Select',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={SelectStories.Anatomy} />
+
+1. **Container:** the field frame. Its border and fill show the state: hovered, active, error, disabled.
+2. **Label:** what the field asks for. Inside the empty field it works as the placeholder, then floats above.
+3. **Required asterisk:** a choice is needed before the form can be sent.
+4. **Additional text (optional):** a short note after the label, such as *(Optional)*.
+5. **Info button (optional):** more context about the field.
+6. **Placeholder:** the chosen option, or the label or a placeholder until there is one.
+7. **Icon:** marks the hint; turns red together with an error.
+8. **Hint text (optional):** help about the choice. An error message replaces it.
+9. **Picture (optional, Figma Icon):** 20 × 20, set by the type: a Base icon, a flag, a photo, a payment card (28 × 20) or a coin. An empty field shows a placeholder icon: coin, globe, user or card.
+10. **Chevron:** points down, up while the list is open.
+
+Parts 2–8 are the shared field parts, the same as in Input: see [Form Field](?path=/docs/components-form-field--docs).
+
+## Types
+
+<Canvas of={SelectStories.Types} />
+
+From the top:
+
+- **Common:** any list, with a Base icon per option or one icon for the field. Payment type, category.
+- **Country:** a flag from [Country icons](?path=/docs/foundations-icons-country-icons--docs).
+- **User:** a photo or a company logo. A simple round picture stands in until Avatar is built.
+- **Payment method:** a card from [Payment method icons](?path=/docs/foundations-icons-payment-method-icons--docs), 28 × 20.
+- **Coin:** a logo from [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
+
+## Sizes
+
+<Canvas of={SelectStories.Sizes} />
+
+From the top:
+
+- **lg-44:** 12px paddings, 10px corners. Forms with few fields.
+- **md-40:** 10px paddings, 10px corners. The default for product forms.
+- **sm-32:** 6px top and bottom, 8px on the sides, 8px corners. Dense screens: filters, tables.
+
+The label (Body-md Semibold 14/20), the value (Body-md 14/20) and the 20px picture stay the same in every size.
+The label row is 2px above the field, the hint row 2px under it.
+
+## Open list
+
+<Canvas of={SelectStories.OpenList} />
+
+The list opens 8px under the field, on the floating surface with a small shadow, 12px corners and 8px padding (Figma Dropdown).
+
+- **Rows** (Dropdown menu item): 40px, the option's picture and name; a light fill on hover and while moving with the arrow keys; a check on the chosen option.
+- **Search** (`searchable`): a row at the top that filters the list as people type, with a clear button. Use it for long lists, as in the Figma examples for countries, users and coins.
+- After about six rows the list scrolls.
+
+The list is the start of the Dropdown menu component, which Figma also uses for menus; descriptions, badges and checkboxes come with it.
+
+## States
+
+### Default
+Empty: the label sits inside the field as the placeholder.
+
+<Canvas of={SelectStories.Default} />
+
+### Filled
+With a value, the label stays above the field.
+
+<Canvas of={SelectStories.Filled} />
+
+### Hovered
+Pointer over the field: a light fill and a darker border.
+
+<Canvas of={SelectStories.Hovered} />
+
+### Active
+Focused or open: the darkest border, and the label turns dark.
+
+<Canvas of={SelectStories.Active} />
+
+### Error
+A red border and an error message, which replaces the hint. Screen readers read the message with the field.
+
+<Canvas of={SelectStories.ErrorState} />
+
+### Disabled
+Not available right now: grey fill, text and icons, no interaction.
+
+<Canvas of={SelectStories.Disabled} />
+
+## Floating label
+
+<Canvas of={SelectStories.FloatingLabel} />
+
+From the left:
+
+1. **Empty.** The label is the placeholder: it sits inside the field, in the placeholder colour.
+2. **Focused or open.** The label moves above the field and turns dark.
+3. **Filled.** The label stays above while the field has a value.
+
+The floating label **takes no vertical space**: leave 22px above every field in a form layout.
+
+## Multi-select
+
+The Figma examples also show a multi-select: options with checkboxes, the chosen ones listed in the field with commas
+(*Payman, Stripe, Mastercard Gateway, Crypto Processing and 2 others*) and a clear button. It needs Checkbox and the
+Dropdown menu with checkbox rows, so it comes after them.
+
+## Accessibility
+
+- The field is a combobox named by its label, with an expanded state and the highlighted option announced while moving with the arrow keys.
+- Enter, Space or ↓ open the list; ↑ ↓ move, Enter chooses, Escape closes. With search, typing filters the list.
+- The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`.
+- Pictures are decorative: the option names say what is chosen.
+- Focus is visible: the border turns dark in the Active state.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Common, Country, User, Payment method, Coin → common, country, user, payment, coin' },
+    { figma: 'Size', prop: 'size', values: 'lg-44px, md-40px, sm-32px → lg, md, sm' },
+    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered and Active follow the pointer, focus and the list; Error → error; Disabled → disabled' },
+    { figma: 'Filled', prop: 'value / defaultValue', values: 'on when an option is chosen' },
+    { figma: 'Top · Floating label', prop: 'label · floatingLabel', values: 'text; floats by default' },
+    { figma: 'Star · Text · Icon (label)', prop: 'required · optional · info', values: 'boolean · true or text · text behind the info button' },
+    { figma: 'Icon', prop: 'icon · emptyIcon', values: 'shows the picture · the icon of an empty Common select' },
+    { figma: 'Hint text', prop: 'hint · error', values: 'text; an error replaces the hint' },
+    { figma: 'Dropdown (examples)', prop: 'options · searchable', values: 'the list; a search row at the top' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SelectStories} />

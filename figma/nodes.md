@@ -56,3 +56,14 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | Character counter (State: Default, Error, Disabled) | `203:20411` |
 | Resize icon `16/resize`, in `src/icons/extra/` | `203:20404` |
 | Usage guidelines (anatomy, sizes, states, floating label, spacing) | `989:55196` |
+
+## Select
+
+| What | Node |
+|---|---|
+| Component set `Select` (Type × State × Filled × Size, 150 variants) | `404:42432` |
+| Component set `Compact select` (Type × Size × State, 60 variants) | `404:56948` |
+| Component set `Inline select` (State × Type, 12 variants) | `424:72942` |
+| Usage guidelines (anatomy, sizes, types, states, floating label, spacing) | `459:37807` |
+| Examples (open lists, search, multi-select) | `461:23553` |
+| Dropdown menu item, Dropdown misc items (search, divider), on the Dropdown menu page | `274:9333`, `451:29358` |

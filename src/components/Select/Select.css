@@ -1,0 +1,76 @@
+/* Select. Every value is a token; Figma layer names in the comments. Same frame, sizes and states as Input. */
+
+.grg-select { width: 100%; }
+.grg-select__frame { position: relative; }
+
+/* field */
+.grg-select__box {
+  /* Size: md-40 by default */
+  --se-pad-y: var(--space-250);
+  --se-pad-x: var(--space-250);
+  --se-radius: var(--radius-md-10);
+  --se-border: var(--stroke-base-300);
+  --se-bg: transparent;
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  /* Figma strokes sit inside: the 1px border is part of the padding */
+  padding: calc(var(--se-pad-y) - 1px) calc(var(--se-pad-x) - 1px);
+  border: 1px solid var(--se-border);
+  border-radius: var(--se-radius);
+  background: var(--se-bg);
+  font: var(--typo-body-md-regular);
+  color: var(--text-strong-1000);
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.grg-select__frame[data-size='lg'] .grg-select__box { --se-pad-y: var(--space-300); --se-pad-x: var(--space-300); }
+.grg-select__frame[data-size='sm'] .grg-select__box { --se-pad-y: var(--space-150); --se-pad-x: var(--space-200); --se-radius: var(--radius-sm-8); }
+
+/* States (Figma State) */
+.grg-select__frame:not([data-disabled]) .grg-select__box:hover,
+.grg-select__frame[data-preview-state='hover'] .grg-select__box { --se-bg: var(--bg-weak-100); --se-border: var(--stroke-strong-500); }
+.grg-select__frame[data-focused] .grg-select__box { --se-bg: transparent; --se-border: var(--stroke-stronger-900); }
+.grg-select__frame[data-invalid] .grg-select__box { --se-border: var(--error-base-600); }
+.grg-select__frame[data-disabled] .grg-select__box {
+  --se-bg: var(--bg-weak-100);
+  --se-border: var(--stroke-disabled);
+  color: var(--text-disabled-400);
+  cursor: default;
+}
+
+/* Value: picture, then the text (Placeholder) */
+.grg-select__input { display: flex; flex: 1; align-items: center; min-width: 0; }
+.grg-select__value { display: flex; align-items: center; gap: var(--space-200); min-width: 0; }
+.grg-select__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grg-select__text[data-placeholder] { color: var(--text-soft-500); }
+/* Open and empty: the label has floated above, so its copy inside goes away */
+.grg-select__frame[data-focused] .grg-select__text[data-placeholder] { color: transparent; }
+.grg-select__icon { display: inline-grid; flex: none; color: var(--icon-base-500); }
+.grg-select__frame[data-disabled] :is(.grg-select__text, .grg-select__icon) { color: var(--text-disabled-400); }
+.grg-select__frame[data-disabled] .grg-option-picture:not(.grg-select__icon) { opacity: 0.5; }
+
+/* Chevron: down, up while the list is open */
+.grg-select__trigger { display: inline-grid; flex: none; color: var(--icon-base-500); }
+.grg-select__frame[data-focused] .grg-select__trigger { color: var(--icon-strong-1000); }
+.grg-select__frame[data-disabled] .grg-select__trigger { color: var(--icon-disabled-400); }
+
+
+/* The list opens 8px under the field (Figma examples) */
+.grg-select__frame .grg-dropdown { top: calc(100% + var(--space-200)); left: 0; }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-select__box { transition: none; }
+}

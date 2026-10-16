@@ -2,16 +2,6 @@
 
 .grg-inline-select { position: relative; display: flex; flex: none; }
 
-/* PrimeReact keeps a focusable input and a native <select> for assistive technology and forms: visually hidden */
-.grg-inline-select [data-p-hidden-accessible='true'] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 .grg-inline-select__root {
   display: inline-flex;
   align-items: center;
@@ -22,8 +12,11 @@
   cursor: pointer;
   border-radius: var(--radius-xxs-4);
 }
-.grg-inline-select__root:has(:focus-visible) { box-shadow: var(--focus-ring); }
+.grg-inline-select__root:not(:has([aria-expanded='true'])):has(:focus-visible) { box-shadow: var(--focus-ring); }
 .grg-inline-select__root[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+
+/* PrimeReact wraps the value in a block; as a block the inline value got extra line space and sat 2–3px high */
+.grg-inline-select__label { display: flex; align-items: center; }
 
 .grg-inline-select__value {
   display: inline-flex;
@@ -31,11 +24,7 @@
   gap: var(--space-200);
   white-space: nowrap;
 }
-.grg-inline-select__image {
-  width: var(--space-500);
-  height: var(--space-500);
-  border-radius: var(--radius-fully-rounded);
-}
+.grg-inline-select__image { flex: none; }
 .grg-inline-select__root[data-p-disabled='true'] .grg-inline-select__image { opacity: 0.5; }
 
 /* The chevron behaves like Action button: grey, darker on hover, darkest while open */
@@ -44,37 +33,19 @@
   place-items: center;
   color: var(--icon-base-500);
 }
-.grg-inline-select__root:hover .grg-inline-select__trigger { color: var(--icon-subtle-700); }
+.grg-inline-select__root:hover .grg-inline-select__trigger,
+.grg-inline-select[data-preview-state='hover'] .grg-inline-select__trigger { color: var(--icon-subtle-700); }
 .grg-inline-select__root[data-p-focus='true'] .grg-inline-select__trigger,
+.grg-inline-select[data-preview-state='focus'] .grg-inline-select__trigger,
 .grg-inline-select__root:has([aria-expanded='true']) .grg-inline-select__trigger { color: var(--icon-strong-1000); }
 .grg-inline-select__root[data-p-disabled='true'] .grg-inline-select__trigger { color: var(--icon-disabled-400); }
 
-/* Open list: interim look from the tokens, until the Dropdown menu component is built */
-.grg-inline-select__panel {
-  position: absolute;
-  z-index: 10;
+/* The list (shared with Select) opens under the field, lined up with its left edge */
+.grg-inline-select .grg-dropdown {
   top: calc(100% + var(--space-300));
   left: calc(-1 * var(--space-250));
   min-width: var(--space-5000);
-  padding: var(--space-100);
-  border-radius: var(--radius-md-10);
-  background: var(--surface-floating);
-  box-shadow: var(--shadow-md);
 }
-.grg-inline-select__list-wrap { max-height: calc(var(--space-4000) + var(--space-2000)); overflow-y: auto; }
-.grg-inline-select__list { margin: 0; padding: 0; list-style: none; }
-.grg-inline-select__option {
-  display: flex;
-  align-items: center;
-  padding: var(--space-200) var(--space-300);
-  border-radius: var(--radius-sm-8);
-  font: var(--typo-body-md-regular);
-  color: var(--text-strong-1000);
-  cursor: pointer;
-}
-.grg-inline-select__option:hover,
-.grg-inline-select__option[data-p-focused='true'] { background: var(--bg-weak-100); }
-.grg-inline-select__option[data-p-highlight='true'] { font: var(--typo-body-md-semibold); }
 
 .grg-sr-only {
   position: absolute !important;

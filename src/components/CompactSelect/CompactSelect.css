@@ -1,0 +1,64 @@
+/* Compact select. Figma: surface-floating fill, 1px stroke inside, 8px gap, the paddings and corners of Select. */
+
+.grg-compact-select { position: relative; display: inline-flex; }
+
+.grg-compact-select__box {
+  --cs-pad-y: var(--space-250);
+  --cs-pad-x: var(--space-250);
+  --cs-radius: var(--radius-md-10);
+  --cs-border: var(--stroke-base-300);
+  --cs-bg: var(--surface-floating);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-200);
+  padding: calc(var(--cs-pad-y) - 1px) calc(var(--cs-pad-x) - 1px);
+  border: 1px solid var(--cs-border);
+  border-radius: var(--cs-radius);
+  background: var(--cs-bg);
+  font: var(--typo-body-md-regular);
+  color: var(--text-strong-1000);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.grg-compact-select[data-size='lg'] .grg-compact-select__box { --cs-pad-y: var(--space-300); --cs-pad-x: var(--space-300); }
+.grg-compact-select[data-size='sm'] .grg-compact-select__box { --cs-pad-y: var(--space-150); --cs-pad-x: var(--space-200); --cs-radius: var(--radius-sm-8); }
+
+/* States (Figma State) */
+.grg-compact-select:not([data-disabled]) .grg-compact-select__box:hover,
+.grg-compact-select[data-preview-state='hover'] .grg-compact-select__box { --cs-bg: var(--bg-weak-100); --cs-border: var(--stroke-strong-500); }
+.grg-compact-select[data-open] .grg-compact-select__box { --cs-bg: var(--surface-floating); --cs-border: var(--stroke-stronger-900); }
+.grg-compact-select[data-invalid] .grg-compact-select__box { --cs-border: var(--error-base-600); }
+.grg-compact-select[data-disabled] .grg-compact-select__box {
+  --cs-bg: var(--bg-weak-100);
+  --cs-border: var(--stroke-disabled);
+  color: var(--text-disabled-400);
+  cursor: default;
+}
+/* Keyboard focus: the system ring (Figma has no focus state for it); while open, the Active border is enough */
+.grg-compact-select:not([data-open]) .grg-compact-select__box:has(:focus-visible) { box-shadow: var(--focus-ring); }
+
+.grg-compact-select__value { display: flex; align-items: center; }
+.grg-compact-select__value > .grg-icon { color: var(--icon-base-500); }
+.grg-compact-select__trigger { display: inline-grid; color: var(--icon-base-500); }
+.grg-compact-select[data-open] .grg-compact-select__trigger { color: var(--icon-strong-1000); }
+.grg-compact-select[data-disabled] :is(.grg-compact-select__trigger, .grg-compact-select__value > .grg-icon) { color: var(--icon-disabled-400); }
+.grg-compact-select[data-disabled] .grg-option-picture { opacity: 0.5; }
+
+/* The list opens 8px under the select */
+.grg-compact-select .grg-dropdown { top: calc(100% + var(--space-200)); left: 0; min-width: var(--space-5000); }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-compact-select__box { transition: none; }
+}
