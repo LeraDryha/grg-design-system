@@ -1,6 +1,8 @@
 import { useEffect, useId, useRef, type RefObject } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
+import { CoinIcon, type CoinName } from '../CoinIcon/CoinIcon';
+import { CountryIcon, type CountryCode } from '../CountryIcon/CountryIcon';
 import './InlineSelect.css';
 
 export type InlineSelectOption = {
@@ -9,9 +11,21 @@ export type InlineSelectOption = {
   label: string;
   /** Text in the open list, such as "Bulgaria +359"; falls back to `label` */
   listLabel?: string;
-  /** Flag, coin or other picture (URL) */
+  /** Flag from Country icons, such as `ua` (Type Country) */
+  country?: CountryCode;
+  /** Logo from Coin icons, such as `bitcoin-btc` (Type Coin) */
+  coin?: CoinName;
+  /** Any other picture (URL), for Type Icon */
   image?: string;
 };
+
+/** The option's picture, 20px: a flag, a coin or another image. */
+function Picture({ option }: { option: InlineSelectOption }) {
+  if (option.country) return <CountryIcon className="grg-inline-select__image" code={option.country} size={20} />;
+  if (option.coin) return <CoinIcon className="grg-inline-select__image" name={option.coin} size={20} />;
+  if (option.image) return <img className="grg-inline-select__image" src={option.image} alt="" />;
+  return null;
+}
 
 export type InlineSelectProps = {
   options: InlineSelectOption[];
@@ -61,7 +75,7 @@ function Option({ option }: { option?: InlineSelectOption }) {
   if (!option) return null;
   return (
     <span className="grg-inline-select__value">
-      {option.image && <img className="grg-inline-select__image" src={option.image} alt="" />}
+      <Picture option={option} />
       <span>{option.label}</span>
     </span>
   );
@@ -95,7 +109,7 @@ export function InlineSelect({ options, value, onChange, type = 'country', disab
         valueTemplate={() => <Option option={selected} />}
         itemTemplate={(o: InlineSelectOption) => (
           <span className="grg-inline-select__value">
-            {o.image && <img className="grg-inline-select__image" src={o.image} alt="" />}
+            <Picture option={o} />
             <span>{o.listLabel ?? o.label}</span>
           </span>
         )}

@@ -4,6 +4,7 @@ import { Icon, type IconName } from '../Icon/Icon';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { FormField } from '../FormField/FormField';
 import { InlineSelect, type InlineSelectOption } from '../InlineSelect/InlineSelect';
+import { PaymentIcon, paymentMethods, type PaymentMethod } from '../PaymentIcon/PaymentIcon';
 import './Input.css';
 
 /** Figma "input" component set (73:3711): Type × State × Size × Filled, with Top/Bottom rows and icon booleans. */
@@ -61,8 +62,9 @@ export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 
   coin?: string;
   onCoinChange?: (value: string) => void;
   coinLabel?: string;
-  /** Card type: payment method picture (URL), such as Mastercard */
-  paymentIcon?: string;
+  /** Card type: the card's payment method from Payment method icons, such as `mastercard` */
+  paymentMethod?: PaymentMethod;
+  /** Name of the payment method for screen readers; the Figma name by default, such as "Mastercard" */
   paymentLabel?: string;
   value?: string;
   defaultValue?: string;
@@ -93,7 +95,7 @@ export function Input({
   action, copyLabel = 'Copy', copiedMessage = 'Copied', showPasswordLabel = 'Show password', hidePasswordLabel = 'Hide password',
   countries = [], country, onCountryChange, countryLabel = 'Country code',
   coins = [], coin, onCoinChange, coinLabel = 'Currency',
-  paymentIcon, paymentLabel = 'Card type',
+  paymentMethod, paymentLabel,
   value: controlled, defaultValue = '', onValueChange, previewState = 'default',
   id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, 'aria-describedby': describedBy, ref, ...props
 }: InputProps) {
@@ -224,7 +226,14 @@ export function Input({
         {type === 'common' && unit && <span className="grg-input__affix">{unit}</span>}
         {(type === 'common' || type === 'website') && icon(rightIcon, true)}
         {type === 'date' && icon(rightIcon === undefined ? 'calendar-01' : rightIcon, true)}
-        {type === 'card' && paymentIcon && <img className="grg-input__payment" src={paymentIcon} alt={paymentLabel} />}
+        {type === 'card' && paymentMethod && (
+          <PaymentIcon
+            className="grg-input__payment"
+            method={paymentMethod}
+            size={24}
+            label={paymentLabel ?? paymentMethods.find(([key]) => key === paymentMethod)?.[1]}
+          />
+        )}
         {type === 'amount' && (
           <>
             {separator}

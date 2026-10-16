@@ -3,7 +3,7 @@ import type { CSSProperties } from 'react';
 import { Input, type InputProps } from './Input';
 import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
-import { paymentIcons, sampleCoins, sampleCountries } from './options';
+import { sampleCoins, sampleCountries } from './options';
 
 const iconOptions = [null, ...baseIconNames];
 
@@ -95,7 +95,7 @@ const TYPES: { type: NonNullable<InputProps['type']>; label: string; value: stri
   { type: 'common', label: 'Email', value: 'user@mail.com', props: { leftIcon: 'mail' } },
   { type: 'phone', label: 'Phone number', value: '6787645', props: { countries: sampleCountries } },
   { type: 'website', label: 'Website', value: 'golden.ratio.com' },
-  { type: 'card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentIcon: paymentIcons.mastercard, paymentLabel: 'Mastercard' } },
+  { type: 'card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentMethod: 'mastercard' } },
   { type: 'amount', label: 'Amount', value: '100.00', props: { coins: sampleCoins } },
   { type: 'date', label: 'Date', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
   { type: 'button', label: 'Referral link', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
@@ -106,6 +106,24 @@ export const Types: Story = {
   render: (args: InputProps) => (
     <div style={column}>
       {TYPES.map(t => <Input key={t.type} {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value} />)}
+    </div>
+  ),
+};
+
+/** Card numbers with the payment method of each card, from Payment method icons. */
+export const CardPaymentMethods: Story = {
+  render: (args: InputProps) => (
+    <div style={column}>
+      {([
+        ['visa', '4242 4242 4242 4242'],
+        ['mastercard', '5555 5555 5555 4444'],
+        ['amex', '3782 822463 10005'],
+        ['discover', '6011 1111 1111 1117'],
+        ['unionpay', '6200 0000 0000 0005'],
+        ['jcb', '3530 1113 3330 0000'],
+      ] as const).map(([method, number]) => (
+        <Input key={method} {...args} type="card" leftIcon={null} label="Card number" paymentMethod={method} defaultValue={number} />
+      ))}
     </div>
   ),
 };

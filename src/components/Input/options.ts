@@ -1,32 +1,19 @@
 import type { InlineSelectOption } from '../InlineSelect/InlineSelect';
-import flagBg from '../../assets/flag-bg.svg';
-import flagDe from '../../assets/flag-de.svg';
-import flagGb from '../../assets/flag-gb.svg';
-import flagPl from '../../assets/flag-pl.svg';
-import flagUa from '../../assets/flag-ua.svg';
-import flagUs from '../../assets/flag-us.svg';
-import coinBtc from '../../assets/coin-btc.svg';
-import coinEth from '../../assets/coin-eth.svg';
-import coinUsdc from '../../assets/coin-usdc.svg';
-import coinUsdt from '../../assets/coin-usdt.svg';
-import mastercard from '../../assets/mastercard.svg';
 
-/* Sample data for stories. Flags, coins and payment icons come from the Figma icons page. */
+/* Sample data for stories. Flags and coins come from Foundations/Icons (Country icons, Coin icons). */
 
 export const sampleCountries: InlineSelectOption[] = [
-  { value: 'BG', label: '+359', listLabel: 'Bulgaria +359', image: flagBg },
-  { value: 'UA', label: '+380', listLabel: 'Ukraine +380', image: flagUa },
-  { value: 'PL', label: '+48', listLabel: 'Poland +48', image: flagPl },
-  { value: 'DE', label: '+49', listLabel: 'Germany +49', image: flagDe },
-  { value: 'GB', label: '+44', listLabel: 'United Kingdom +44', image: flagGb },
-  { value: 'US', label: '+1', listLabel: 'United States +1', image: flagUs },
+  { value: 'BG', label: '+359', listLabel: 'Bulgaria +359', country: 'bg' },
+  { value: 'UA', label: '+380', listLabel: 'Ukraine +380', country: 'ua' },
+  { value: 'PL', label: '+48', listLabel: 'Poland +48', country: 'pl' },
+  { value: 'DE', label: '+49', listLabel: 'Germany +49', country: 'de' },
+  { value: 'GB', label: '+44', listLabel: 'United Kingdom +44', country: 'gb' },
+  { value: 'US', label: '+1', listLabel: 'United States +1', country: 'us' },
 ];
 
 export const sampleCoins: InlineSelectOption[] = [
-  { value: 'USDC', label: 'USD', listLabel: 'USD Coin (USDC)', image: coinUsdc },
-  { value: 'USDT', label: 'USDT', listLabel: 'Tether (USDT)', image: coinUsdt },
-  { value: 'BTC', label: 'BTC', listLabel: 'Bitcoin (BTC)', image: coinBtc },
-  { value: 'ETH', label: 'ETH', listLabel: 'Ethereum (ETH)', image: coinEth },
+  { value: 'USDC', label: 'USD', listLabel: 'USD Coin (USDC)', coin: 'usd-coin-usdc' },
+  { value: 'USDT', label: 'USDT', listLabel: 'Tether (USDT)', coin: 'tether-usdt' },
+  { value: 'BTC', label: 'BTC', listLabel: 'Bitcoin (BTC)', coin: 'bitcoin-btc' },
+  { value: 'ETH', label: 'ETH', listLabel: 'Ethereum (ETH)', coin: 'ethereum-eth' },
 ];
-
-export const paymentIcons = { mastercard };

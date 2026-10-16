@@ -68,6 +68,15 @@ All types share the same frame, sizes and states; they differ in what sits aroun
 - **Date:** a date in DD / MM / YYYY. Due date, birth date, start and end dates.
 - **Button:** a value with an action button. Copy a referral link, reveal a password.
 
+Flags and coins come from [Country icons](?path=/docs/foundations-icons-country-icons--docs) and [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
+
+### Card: payment methods
+
+<Canvas of={InputStories.CardPaymentMethods} />
+
+The Card field shows the card's payment method on the right, from [Payment method icons](?path=/docs/foundations-icons-payment-method-icons--docs):
+Visa, Mastercard, American Express, Discover, UnionPay and JCB here. Screen readers hear its name.
+
 ## Sizes
 
 <Canvas of={InputStories.Sizes} />
@@ -149,7 +158,8 @@ The floating label **takes no vertical space**: leave 22px above every field in 
     { figma: 'Value (bottom)', prop: 'bottomValue', values: 'text' },
     { figma: 'Left icon · Right icon', prop: 'leftIcon · rightIcon', values: 'icon name or null' },
     { figma: 'Currency icon', prop: 'unit', values: 'short text: USD, sec, px' },
-    { figma: 'Inline select', prop: 'countries · coins', values: 'list of options; see Inline Select' },
+    { figma: 'Inline select', prop: 'countries · coins', values: 'list of options with a flag (country) or a coin (coin)' },
+    { figma: 'Payment method icon', prop: 'paymentMethod', values: 'key from Payment method icons: visa, mastercard …' },
     { figma: 'Action button', prop: 'action', values: 'copy, password' },
   ]}
 />
