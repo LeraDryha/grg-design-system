@@ -37,6 +37,8 @@
   transition: background-color 120ms ease, box-shadow 120ms ease;
 }
 
+.grg-button[data-justified] { display: flex; width: 100%; }
+
 .grg-button__content {
   display: inline-flex;
   align-items: center;

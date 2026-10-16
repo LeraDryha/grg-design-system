@@ -1,33 +1,25 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { ReactNode } from 'react';
+import type { CSSProperties } from 'react';
 import { Button, type ButtonProps } from './Button';
 import { icons } from '../Icon/Icon';
+import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const iconOptions = [undefined, ...Object.keys(icons).filter(n => n !== 'loading')];
 
 const meta = {
   title: 'Components/Button',
   component: Button,
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'Buttons start actions: submit a form, open a dialog, confirm a step. ' +
-          'Four types from strongest to quietest (Primary, Secondary, Outline, Text), five sizes, ' +
-          'and two tones for destructive and positive actions. Use one Primary button per area.',
-      },
-    },
-  },
+  // The docs page is Button.mdx
   args: {
     children: 'Button',
-    variant: 'primary',
+    variant: 'secondary',
     size: 'md',
     tone: 'neutral',
     leftIcon: 'plus',
     rightIcon: undefined,
     iconOnly: false,
     loading: false,
+    justified: false,
     disabled: false,
     previewState: 'default',
   },
@@ -36,11 +28,8 @@ const meta = {
     variant: { control: 'inline-radio', options: ['primary', 'secondary', 'outline', 'text'] },
     size: { control: 'inline-radio', options: ['xlg', 'lg', 'md', 'sm', 'xs'] },
     tone: { control: 'inline-radio', options: ['neutral', 'destructive', 'green'] },
-    leftIcon: { control: 'select', options: iconOptions },
-    rightIcon: { control: 'select', options: iconOptions },
-    iconOnly: { control: 'boolean' },
-    loading: { control: 'boolean' },
-    disabled: { control: 'boolean' },
+    leftIcon: { control: 'select', options: iconOptions, labels: { undefined: 'none' } },
+    rightIcon: { control: 'select', options: iconOptions, labels: { undefined: 'none' } },
     previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     'aria-label': { control: 'text', description: 'Required with iconOnly: the name screen readers announce' },
     type: { control: 'inline-radio', options: ['button', 'submit', 'reset'] },
@@ -52,83 +41,94 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const row: CSSProperties = { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-400)' };
+const rows: CSSProperties = { display: 'grid', gap: 'var(--space-400)', justifyItems: 'start' };
+
 /** Edit everything in Controls. */
 export const Playground: Story = {};
 
-const VARIANTS = ['primary', 'secondary', 'outline', 'text'] as const;
-const SIZES = ['xlg', 'lg', 'md', 'sm', 'xs'] as const;
-const TONES = ['neutral', 'destructive', 'green'] as const;
-
-function Row({ children, label }: { children: ReactNode; label: string }) {
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-400)' }}>
-      <span style={{ width: 96, font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{label}</span>
-      {children}
-    </div>
-  );
-}
-
-const grid = { display: 'grid', gap: 'var(--space-400)' } as const;
-
-/** Every type in every tone. */
-export const TypesAndTones: Story = {
+/** Container, icon and label, numbered as in the Figma guidelines. */
+export const Anatomy: Story = {
+  args: { variant: 'primary', size: 'xlg' },
   render: (args: ButtonProps) => (
-    <div style={grid}>
-      {TONES.map(tone => (
-        <Row key={tone} label={tone}>
-          {VARIANTS.map(variant => <Button key={variant} {...args} variant={variant} tone={tone} />)}
-        </Row>
+    <AnatomyBlock
+      width="auto"
+      markers={[
+        { n: 1, target: '.grg-button', side: 'bottom' },
+        { n: 2, target: '.grg-button .grg-icon', side: 'top' },
+        { n: 3, target: '.grg-button__label', side: 'top' },
+      ]}
+    >
+      <Button {...args} />
+    </AnatomyBlock>
+  ),
+};
+
+/** Primary, Secondary, Outline and Text, from the strongest to the quietest. */
+export const Types: Story = {
+  render: (args: ButtonProps) => (
+    <div style={row}>
+      {(['primary', 'secondary', 'outline', 'text'] as const).map(variant => <Button key={variant} {...args} variant={variant} />)}
+    </div>
+  ),
+};
+
+/** Text only, text with an icon, icon only. */
+export const Content: Story = {
+  render: (args: ButtonProps) => (
+    <div style={row}>
+      <Button {...args} leftIcon={undefined} />
+      <Button {...args} />
+      <Button {...args} iconOnly aria-label="Add" />
+    </div>
+  ),
+};
+
+/** Neutral, destructive and green, each in the four types. */
+export const Colors: Story = {
+  render: (args: ButtonProps) => (
+    <div style={rows}>
+      {(['neutral', 'destructive', 'green'] as const).map(tone => (
+        <div key={tone} style={row}>
+          {(['primary', 'secondary', 'outline', 'text'] as const).map(variant => <Button key={variant} {...args} variant={variant} tone={tone} />)}
+        </div>
       ))}
     </div>
   ),
 };
 
-/** Five sizes; the number in the Figma name is the height. */
+/** xlg-56, lg-44, md-40, sm-32 and xs-24, from the left. */
 export const Sizes: Story = {
   render: (args: ButtonProps) => (
-    <div style={grid}>
-      {SIZES.map(size => (
-        <Row key={size} label={size}>
-          <Button {...args} size={size} />
-          <Button {...args} size={size} iconOnly aria-label={String(args.children)} />
-        </Row>
-      ))}
+    <div style={rows}>
+      <div style={row}>{(['xlg', 'lg', 'md', 'sm', 'xs'] as const).map(size => <Button key={size} {...args} size={size} />)}</div>
+      <div style={row}>{(['xlg', 'lg', 'md', 'sm', 'xs'] as const).map(size => <Button key={size} {...args} size={size} iconOnly aria-label="Add" />)}</div>
     </div>
   ),
 };
 
-/** Default, hovered, active, focused, loading and disabled, for each type. */
-export const States: Story = {
-  render: (args: ButtonProps) => (
-    <div style={grid}>
-      {VARIANTS.map(variant => (
-        <Row key={variant} label={variant}>
-          <Button {...args} variant={variant} />
-          <Button {...args} variant={variant} previewState="hover" />
-          <Button {...args} variant={variant} previewState="active" />
-          <Button {...args} variant={variant} previewState="focus" />
-          <Button {...args} variant={variant} loading />
-          <Button {...args} variant={variant} disabled />
-        </Row>
-      ))}
-    </div>
-  ),
+/** The button takes the full width of its container. */
+export const Justified: Story = {
+  args: { variant: 'primary', size: 'lg', justified: true },
+  decorators: [Story => <div style={{ width: 376 }}><Story /></div>],
 };
 
-/** A square button with one icon. It has no visible label, so `aria-label` is required. */
-export const IconOnly: Story = {
-  args: { iconOnly: true, 'aria-label': 'Add' },
-};
+/* ---- States: one story each ---- */
 
-/** The spinner replaces the label; the button keeps its width and stays focusable, announced as busy. */
-export const Loading: Story = {
-  args: { loading: true },
-};
+/** At rest. */
+export const Default: Story = { args: { variant: 'primary' } };
 
-export const Disabled: Story = {
-  args: { disabled: true },
-};
+/** Pointer over the button. */
+export const Hovered: Story = { args: { variant: 'primary', previewState: 'hover' } };
 
-export const Destructive: Story = {
-  args: { tone: 'destructive', children: 'Delete', leftIcon: undefined },
-};
+/** While the button is pressed (Figma State: Active). */
+export const Pressed: Story = { args: { variant: 'primary', previewState: 'active' } };
+
+/** Reached with the keyboard: the system focus ring. */
+export const Focused: Story = { args: { variant: 'primary', previewState: 'focus' } };
+
+/** The action is running: a spinner replaces the label, the width stays. */
+export const Loading: Story = { args: { variant: 'primary', loading: true } };
+
+/** Not available right now. */
+export const Disabled: Story = { args: { variant: 'primary', disabled: true } };

@@ -5,7 +5,7 @@ import './Button.css';
 
 /** Figma "Button" component set: Type × Size × State × Destructive × Green × Icon only, plus Left/Right icon and Text. */
 export type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
-  /** Figma Type: Primary (filled), Secondary, Outline, Text */
+  /** Figma Type: Primary (filled), Secondary, Outline, Text. Secondary is the default, as in the guidelines. */
   variant?: 'primary' | 'secondary' | 'outline' | 'text';
   /** Figma Size: xlg-56, lg-44, md-40, sm-32, xs-24 (the number is the height in px) */
   size?: 'xlg' | 'lg' | 'md' | 'sm' | 'xs';
@@ -19,6 +19,8 @@ export type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
   iconOnly?: boolean;
   /** Figma State = Loader: the label is replaced by a spinner, the width stays */
   loading?: boolean;
+  /** Takes the full width of its container (guidelines: Justified) */
+  justified?: boolean;
   /** HTML button type */
   type?: 'button' | 'submit' | 'reset';
   /** Shows a state as static, for documentation only */
@@ -29,13 +31,14 @@ const ICON_SIZE = { xlg: 24, lg: 24, md: 20, sm: 20, xs: 16 } as const;
 
 /** PrimeReact Button (unstyled); the look comes from Button.css and the tokens. */
 export function Button({
-  variant = 'primary',
+  variant = 'secondary',
   size = 'md',
   tone = 'neutral',
   leftIcon,
   rightIcon,
   iconOnly = false,
   loading = false,
+  justified = false,
   previewState = 'default',
   type = 'button',
   className = '',
@@ -68,6 +71,7 @@ export function Button({
       data-tone={tone}
       data-icon-only={iconOnly || undefined}
       data-loading={loading || undefined}
+      data-justified={justified || undefined}
       data-preview-state={previewState === 'default' ? undefined : previewState}
       aria-busy={loading || undefined}
       aria-disabled={loading || undefined}

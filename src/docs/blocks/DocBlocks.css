@@ -103,7 +103,6 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 /* ---- Anatomy ---- */
 .doc-anatomy__stage {
   position: relative;
-  width: 320px;
   padding: var(--space-1600);
 }
 .doc-anatomy__leaders {

@@ -151,7 +151,7 @@ function spread(values: number[]) {
  * Badges line up in one row above, one below and one column on each side, evenly spaced;
  * positions are measured from the rendered component, so they follow the real layout.
  */
-export function Anatomy({ markers, children }: { markers: AnatomyMarker[]; children: ReactNode }) {
+export function Anatomy({ markers, width = 320, children }: { markers: AnatomyMarker[]; width?: number | 'auto'; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const [spots, setSpots] = useState<Spot[]>([]);
 
@@ -204,7 +204,7 @@ export function Anatomy({ markers, children }: { markers: AnatomyMarker[]; child
   };
 
   return (
-    <div className="doc-anatomy__stage" ref={stage}>
+    <div className="doc-anatomy__stage" ref={stage} style={{ width: width === 'auto' ? 'max-content' : width }}>
       {children}
       <svg className="doc-anatomy__leaders" aria-hidden="true">
         {spots.map(s => <polyline key={s.n} points={leader(s)} />)}

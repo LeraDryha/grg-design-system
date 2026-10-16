@@ -24,7 +24,7 @@ export function SignUpExample() {
         <Input type="button" size="lg" label="Password" leftIcon={null} action="password" autoComplete="new-password" />
         <Input type="button" size="lg" label="Referral link" floatingLabel={false} action="copy" copyLabel="Copy referral link" defaultValue="golden.ratio.com" readOnly />
         <div className="ex-signup__actions">
-          <Button type="submit" size="lg" className="ex-signup__wide">Sign up</Button>
+          <Button type="submit" variant="primary" size="lg" justified>Sign up</Button>
           <span className="ex-signup__or">or</span>
           <div className="ex-signup__social">
             <SocialButton social="facebook" />

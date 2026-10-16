@@ -1,0 +1,154 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ButtonStories from './Button.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ButtonStories} />
+
+# Button
+
+<ComponentHeader
+  status="ready"
+  figma="22-9981"
+  guidelines="417-22553"
+  builtOn="PrimeReact Button"
+  related={[{ label: 'Action Button', href: '?path=/docs/components-action-button--docs' }]}
+/>
+
+A button starts an action: submit a form, open a dialog, confirm a step.
+Four types from the strongest to the quietest, five sizes, and colours for destructive and positive actions.
+
+<Canvas of={ButtonStories.Playground} />
+<Controls of={ButtonStories.Playground} include={['children', 'variant', 'size', 'tone', 'leftIcon', 'iconOnly', 'loading', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Actions: save, send, confirm, create, delete',
+    'One Primary button per screen or dialog for the main action; Secondary, Outline or Text for the rest',
+    'Destructive colour for actions that remove or cancel something; green for positive confirmations',
+  ]}
+  donts={[
+    'Going to another page: use a link',
+    'A small action inside another component (copy, reveal, edit): use Action Button',
+    'Choosing between options: use Segment control, Radio or Checkbox',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={ButtonStories.Anatomy} />
+
+1. **Container:** the button's frame. Its fill and border carry the type, the colour and the state.
+2. **Icon (optional):** before or after the label, or alone. Use the standard Base icons; their size follows the button size (16, 20 or 24px). Social, country or coin icons need to be agreed first.
+3. **Button label:** a short verb that says what happens: *Save*, *Send invoice*, *Delete*.
+
+## Types
+
+<Canvas of={ButtonStories.Types} />
+
+From the left:
+
+- **Primary:** the main action on a screen or in a dialog. One per area.
+- **Secondary (default):** most actions. The type to use when nothing needs extra weight.
+- **Outline:** alternative or less important actions next to a Primary one.
+- **Text:** the quietest: inline actions, *Cancel*, actions in dense places such as tables and toolbars.
+
+### Content
+
+<Canvas of={ButtonStories.Content} />
+
+From the left: **text only**, **text with an icon** (before or after the label) and **icon only**. An icon-only button has no visible text, so it needs a name for screen readers.
+
+### Colours
+
+<Canvas of={ButtonStories.Colors} />
+
+From the top:
+
+- **Primary colour:** every regular action.
+- **Destructive (error) colour:** actions that delete, remove or cancel something for good.
+- **Green (success) colour:** positive confirmations, such as approving a payment.
+
+## Sizes
+
+<Canvas of={ButtonStories.Sizes} />
+
+From the left:
+
+- **xlg-56:** Body-lg/Semibold label (16/24), 24px icon. Hero actions on marketing pages.
+- **lg-44:** Body-lg/Semibold label (16/24), 24px icon. Main actions in forms and dialogs.
+- **md-40:** Body-md/Semibold label (14/20), 20px icon. The default in the product.
+- **sm-32:** Body-md/Semibold label (14/20), 20px icon. Dense screens: toolbars, filters, cards.
+- **xs-24:** Body-sm/Semibold label (12/16), 16px icon. Inside tables and small components.
+
+The second row shows the icon-only button in each size: always square.
+
+### Justified
+
+<Canvas of={ButtonStories.Justified} />
+
+By default a button is as wide as its label and icon. A justified button takes the full width of its container, for example the main action at the bottom of a form or on a phone.
+
+## States
+
+### Default
+At rest.
+
+<Canvas of={ButtonStories.Default} />
+
+### Hovered
+Pointer over the button: the fill gets one step darker (lighter in the dark theme).
+
+<Canvas of={ButtonStories.Hovered} />
+
+### Pressed
+While the button is pressed: one more step. In Figma this state is called Active.
+
+<Canvas of={ButtonStories.Pressed} />
+
+### Focused
+Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
+
+<Canvas of={ButtonStories.Focused} />
+
+### Loading
+The action is running: a spinner replaces the label, and the button keeps its width so the layout does not jump.
+
+<Canvas of={ButtonStories.Loading} />
+
+### Disabled
+Not available right now: grey fill and text, no interaction.
+
+<Canvas of={ButtonStories.Disabled} />
+
+## Accessibility
+
+- The label is the button's name. An icon-only button needs `aria-label`, for example *Add*.
+- A loading button stays focusable and keeps its name; it is announced as busy (`aria-busy`) and does not react to clicks.
+- A disabled button is a native disabled button: it is skipped by Tab and announced as unavailable.
+- Focus uses the system blue ring. Figma draws a light grey ring (`primary-soft-200`), about 1.2:1 against the page, which keyboard users can barely see.
+- Colours follow Figma. Known low contrast: the pressed Secondary button in destructive (2.6:1) and green (about 3:1) colours; green text on the page is at the 4.5:1 limit.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'variant', values: 'Primary (filled), Secondary, Outline, Text → primary, secondary, outline, text' },
+    { figma: 'Size', prop: 'size', values: 'xlg-56, lg-44, md-40, sm-32, xs-24 → xlg, lg, md, sm, xs' },
+    { figma: 'Destructive · Green', prop: 'tone', values: 'off · off → neutral; Destructive on → destructive; Green on → green' },
+    { figma: 'State', prop: '(behaviour) · previewState · loading · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Loader → loading; Disabled → disabled' },
+    { figma: 'Icon only', prop: 'iconOnly', values: 'On → true (add aria-label)' },
+    { figma: 'Left icon · Right icon', prop: 'leftIcon · rightIcon', values: 'icon name' },
+    { figma: 'Text', prop: 'children', values: 'the label' },
+    { figma: 'Justified (guidelines)', prop: 'justified', values: 'true: full width' },
+  ]}
+/>
+
+Corner radii follow the component set: xlg 12, lg and md 10, sm 8, xs 6. The guidelines text lists smaller ones (sm 8, xs 6, xs 6, xs 6, xxs 4); see Contributing/Tokens.
+
+## Props
+
+<ArgTypes of={ButtonStories} />
