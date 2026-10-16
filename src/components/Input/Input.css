@@ -1,0 +1,97 @@
+/* Input. Every value is a token; Figma layer names in the comments. */
+
+.grg-input { width: 100%; }
+
+/* field */
+.grg-input__box {
+  /* Size: md-40 by default */
+  --in-pad-y: var(--space-250);
+  --in-pad-x: var(--space-250);
+  --in-gap: var(--space-200);
+  --in-radius: var(--radius-md-10);
+  --in-border: var(--stroke-base-300);
+  --in-bg: transparent;
+  --in-trailing: var(--icon-base-500);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--in-gap);
+  width: 100%;
+  /* Figma strokes sit inside: the 1px border is part of the padding */
+  padding: calc(var(--in-pad-y) - 1px) calc(var(--in-pad-x) - 1px);
+  border: 1px solid var(--in-border);
+  border-radius: var(--in-radius);
+  background: var(--in-bg);
+  font: var(--typo-body-md-regular);
+  color: var(--text-strong-1000);
+  cursor: text;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.grg-input__box[data-size='lg'] { --in-pad-y: var(--space-300); --in-pad-x: var(--space-300); }
+.grg-input__box[data-size='sm'] { --in-pad-y: var(--space-150); --in-pad-x: var(--space-200); --in-gap: var(--space-150); --in-radius: var(--radius-sm-8); }
+/* Card: the payment icon is 24px tall, so the field loses 2px of padding top and bottom */
+.grg-input__box[data-type='card'] { padding-block: calc(var(--in-pad-y) - var(--space-050) - 1px); }
+
+/* States (Figma State) */
+.grg-input__box:hover:not([data-disabled]),
+.grg-input__box[data-preview-state='hover'] { --in-bg: var(--bg-weak-100); --in-border: var(--stroke-strong-500); }
+.grg-input__box[data-focused] { --in-bg: transparent; --in-border: var(--stroke-stronger-900); }
+.grg-input__box[data-invalid] { --in-border: var(--error-base-600); --in-trailing: var(--error-base-600); }
+.grg-input__box[data-disabled] {
+  --in-bg: var(--bg-weak-100);
+  --in-border: var(--stroke-disabled);
+  --in-trailing: var(--icon-disabled-400);
+  color: var(--text-disabled-400);
+  cursor: default;
+}
+
+/* Placeholder → the text the person types */
+.grg-input__control {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+}
+.grg-input__control::placeholder { color: var(--text-soft-500); opacity: 1; }
+/* On focus the label floats above, so the placeholder copy of it goes away */
+.grg-input__box[data-focused] .grg-input__control::placeholder { color: transparent; }
+.grg-input__box[data-disabled] .grg-input__control::placeholder { color: var(--text-disabled-400); }
+
+/* Left icon stays grey; the trailing icon turns red with an error */
+.grg-input__icon { display: inline-grid; flex: none; color: var(--icon-base-500); }
+.grg-input__icon[data-trailing] { color: var(--in-trailing); }
+.grg-input__box[data-disabled] .grg-input__icon { color: var(--icon-disabled-400); }
+
+/* Currency icon (unit) and Website prefix */
+.grg-input__affix {
+  flex: none;
+  color: var(--icon-base-500);
+  white-space: nowrap;
+}
+.grg-input__box[data-disabled] .grg-input__affix { color: var(--text-disabled-400); }
+
+.grg-input__separator {
+  flex: none;
+  align-self: stretch;
+  width: 1px;
+  margin-block: 0;
+  background: var(--stroke-soft-200);
+}
+
+/* Payment method icon: 34 × 24 with its own frame */
+.grg-input__payment {
+  flex: none;
+  height: var(--space-600);
+}
+.grg-input__box[data-disabled] .grg-input__payment { opacity: 0.5; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-input__box { transition: none; }
+}

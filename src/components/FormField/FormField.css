@@ -1,0 +1,103 @@
+/* Field parts. Figma: Floating label, Hint text, Key: value. */
+
+/* ---- Floating label ---- */
+.grg-field-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-050);
+  min-width: 0;
+}
+.grg-field-label__text {
+  display: inline-flex;
+  gap: var(--space-050);
+  font: var(--typo-body-md-semibold);
+  color: var(--text-soft-500);
+  white-space: nowrap;
+}
+.grg-field-label[data-state='active'] .grg-field-label__text { color: var(--text-strong-1000); }
+.grg-field-label__star {
+  font: var(--typo-body-md-medium);
+  color: var(--error-base-600);
+}
+.grg-field-label__extra {
+  font: var(--typo-body-md-regular);
+  color: var(--text-soft-500);
+}
+.grg-field-label[data-state='disabled'] :is(.grg-field-label__text, .grg-field-label__star, .grg-field-label__extra) {
+  color: var(--text-disabled-400);
+}
+
+/* ---- Hint text ---- */
+.grg-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-150);
+  margin: 0;
+  padding: var(--space-050) 0;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+}
+.grg-hint .grg-icon { color: var(--icon-base-500); }
+.grg-hint[data-state='error'],
+.grg-hint[data-state='error'] .grg-icon { color: var(--error-base-600); }
+.grg-hint[data-state='disabled'] { color: var(--text-disabled-400); }
+.grg-hint[data-state='disabled'] .grg-icon { color: var(--icon-disabled-400); }
+
+/* ---- Key: value ---- */
+.grg-key-value {
+  display: inline-flex;
+  gap: var(--space-100);
+  font: var(--typo-body-md-regular);
+  color: var(--text-soft-500);
+  white-space: nowrap;
+}
+.grg-key-value[data-type='key-value'] .grg-key-value__value {
+  font: var(--typo-body-md-medium);
+  color: var(--text-strong-1000);
+}
+.grg-key-value[data-disabled] .grg-key-value__value,
+.grg-key-value[data-disabled] { color: var(--text-disabled-400); }
+
+/* ---- Frame ---- */
+.grg-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-050);
+  min-width: 0;
+}
+.grg-field__control { position: relative; }
+
+/* The label row sits 2px above the control and takes no vertical space (Figma: absolute, y = -22).
+   Leave 22px above the field in layouts. */
+.grg-field__top {
+  position: absolute;
+  inset: auto 0 calc(100% + var(--space-050)) 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-200);
+  min-height: var(--space-500);
+}
+
+/* While the control is empty and not focused, the label is its placeholder: hidden here but still
+   naming the control for screen readers (opacity keeps it in the accessibility tree). */
+.grg-field__label {
+  opacity: 0;
+  translate: 0 var(--space-100);
+  transition: opacity 150ms ease, translate 150ms ease;
+}
+.grg-field__label[data-visible] {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.grg-field__bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-400);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-field__label { transition: none; translate: none; }
+}

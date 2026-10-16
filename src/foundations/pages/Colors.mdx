@@ -1,0 +1,46 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { SemanticColors, Palettes } from '../Foundations';
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+Colors come in two layers. **Primitives** are the raw palette (`--color-gold-500`). **Semantic tokens** say what a color is for
+(`--text-strong-1000`, `--surface-base`) and point at a primitive. Components use only semantic tokens, so switching
+to the dark theme swaps the primitives behind them and every component follows.
+
+## Semantic tokens
+
+### Primary
+<SemanticColors group="Primary" />
+
+### Surface
+<SemanticColors group="Surface" />
+
+### Background
+<SemanticColors group="BG" />
+
+### Stroke
+<SemanticColors group="Stroke" />
+
+### Text
+<SemanticColors group="Text" />
+
+### Icon
+<SemanticColors group="Icon" />
+
+### Status
+<SemanticColors group="Error" />
+<SemanticColors group="Warning" />
+<SemanticColors group="Success" />
+<SemanticColors group="Info" />
+
+### Additional
+For charts, tags and avatars.
+<SemanticColors group="additional" />
+
+## Primitive palettes
+
+Never used in components directly.
+
+<Palettes />

@@ -1,0 +1,123 @@
+/* Button. Every value is a token from src/styles/tokens.css; Figma layer names in the comments. */
+
+.grg-button {
+  /* Size: md-40 by default */
+  --btn-pad-y: var(--space-250);
+  --btn-pad-x: var(--space-400);
+  --btn-radius: var(--radius-md-10);
+  --btn-typo: var(--typo-body-md-semibold);
+
+  /* Tone: neutral by default (Destructive off, Green off) */
+  --tone-solid: var(--primary-base-1000);
+  --tone-solid-hover: var(--primary-darker-800);
+  --tone-solid-active: var(--primary-dark-700);
+  --tone-on-solid: var(--text-inverce);
+  --tone-soft: var(--primary-weak-100);
+  --tone-soft-hover: var(--primary-soft-200);
+  --tone-soft-active: var(--primary-subtle-300);
+  --tone-ghost-hover: var(--primary-weak-100);
+  --tone-ghost-active: var(--primary-soft-200);
+  --tone-fg: var(--primary-base-1000);
+
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  /* Figma strokes sit inside the frame: a 1px border on every variant keeps all sizes exact */
+  border: 1px solid var(--btn-border, transparent);
+  padding: calc(var(--btn-pad-y) - 1px) calc(var(--btn-pad-x) - 1px);
+  border-radius: var(--btn-radius);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font: var(--btn-typo);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.grg-button__content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-150);
+}
+
+/* ---- Sizes ---- */
+.grg-button[data-size='xlg'] { --btn-pad-y: var(--space-400); --btn-pad-x: var(--space-600); --btn-radius: var(--radius-lg-12); --btn-typo: var(--typo-body-lg-semibold); }
+.grg-button[data-size='lg'] { --btn-typo: var(--typo-body-lg-semibold); }
+.grg-button[data-size='sm'] { --btn-pad-y: var(--space-150); --btn-pad-x: var(--space-300); --btn-radius: var(--radius-sm-8); }
+.grg-button[data-size='xs'] { --btn-pad-y: var(--space-100); --btn-pad-x: var(--space-200); --btn-radius: var(--radius-xs-6); --btn-typo: var(--typo-body-sm-semibold); }
+.grg-button[data-icon-only] { --btn-pad-x: var(--btn-pad-y); }
+
+/* ---- Tones ---- */
+.grg-button[data-tone='destructive'] {
+  --tone-solid: var(--error-base-600);
+  --tone-solid-hover: var(--error-strong-700);
+  --tone-solid-active: var(--error-stronger-800);
+  --tone-soft: var(--error-muted-50);
+  --tone-soft-hover: var(--error-lighter-100);
+  --tone-soft-active: var(--error-light-200);
+  --tone-ghost-hover: var(--error-muted-50);
+  --tone-ghost-active: var(--error-lighter-100);
+  --tone-fg: var(--error-base-600);
+}
+.grg-button[data-tone='green'] {
+  --tone-solid: var(--success-base-600);
+  --tone-solid-hover: var(--success-strong-700);
+  --tone-solid-active: var(--success-stronger-800);
+  --tone-soft: var(--success-muted-50);
+  --tone-soft-hover: var(--success-lighter-100);
+  --tone-soft-active: var(--success-light-200);
+  --tone-ghost-hover: var(--success-muted-50);
+  --tone-ghost-active: var(--success-lighter-100);
+  --tone-fg: var(--success-base-600);
+}
+
+/* ---- Variants (Figma Type) ---- */
+.grg-button[data-variant='primary'] { --btn-bg: var(--tone-solid); --btn-bg-hover: var(--tone-solid-hover); --btn-bg-active: var(--tone-solid-active); --btn-fg: var(--tone-on-solid); }
+.grg-button[data-variant='secondary'] { --btn-bg: var(--tone-soft); --btn-bg-hover: var(--tone-soft-hover); --btn-bg-active: var(--tone-soft-active); --btn-fg: var(--tone-fg); }
+.grg-button[data-variant='outline'] { --btn-bg: transparent; --btn-bg-hover: var(--tone-ghost-hover); --btn-bg-active: var(--tone-ghost-active); --btn-fg: var(--tone-fg); --btn-border: var(--tone-fg); }
+.grg-button[data-variant='text'] { --btn-bg: transparent; --btn-bg-hover: var(--tone-ghost-hover); --btn-bg-active: var(--tone-ghost-active); --btn-fg: var(--tone-fg); }
+
+/* ---- States (Figma State) ---- */
+.grg-button:hover:not(:disabled, [data-loading]),
+.grg-button[data-preview-state='hover'] { background: var(--btn-bg-hover); }
+
+.grg-button:active:not(:disabled, [data-loading]),
+.grg-button[data-preview-state='active'] { background: var(--btn-bg-active); }
+
+/* Focused: the system focus ring (src/styles/system.css) */
+.grg-button:focus-visible,
+.grg-button[data-preview-state='focus'] {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.grg-button:disabled {
+  --btn-fg: var(--text-disabled-400);
+  cursor: default;
+}
+.grg-button:is([data-variant='primary'], [data-variant='secondary']):disabled { --btn-bg: var(--bg-weak-100); }
+.grg-button[data-variant='outline']:disabled { --btn-border: var(--stroke-disabled); }
+
+/* Loader: the spinner takes the label's place, the button keeps its width */
+.grg-button[data-loading] { cursor: progress; }
+/* opacity, not visibility: the label stays the button's accessible name while it loads */
+.grg-button[data-loading] .grg-button__content { opacity: 0; }
+.grg-button__loader {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.grg-button__loader .grg-icon { animation: grg-button-spin 1s linear infinite; }
+
+@keyframes grg-button-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-button { transition: none; }
+  .grg-button__loader .grg-icon { animation-duration: 3s; }
+}

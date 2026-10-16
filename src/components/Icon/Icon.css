@@ -1,0 +1,8 @@
+.grg-icon {
+  display: inline-block;
+  flex: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  background: currentColor;
+  mask: var(--icon-src) center / contain no-repeat;
+}

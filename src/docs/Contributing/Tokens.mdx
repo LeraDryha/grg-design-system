@@ -1,0 +1,44 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Contributing/Tokens" />
+
+# Tokens
+
+Tokens are generated, never written by hand. Figma is the source of truth.
+
+1. Export the variables and styles from the Figma file into `figma/variables.json` and `figma/styles.json`.
+2. Run `npm run tokens`. It writes `src/styles/tokens.css` and the data for the Foundations pages.
+3. Check the Foundations pages and the components in both themes.
+
+## Naming
+
+Every CSS variable maps back to exactly one Figma variable or style.
+
+| Figma | CSS |
+|---|---|
+| `gold/500` (primitive) | `--color-gold-500` |
+| `Text/text-strong-1000` (semantic) | `--text-strong-1000` |
+| `Spasing/100` | `--space-100` |
+| `Corner/md-10` | `--radius-md-10` |
+| `font/size/14` | `--font-size-14` |
+| Text style `Body-md/Semibold` | `--typo-body-md-semibold` and `--typo-body-md-semibold-tracking` |
+| Effect style `Elevation/Light/md` and `Elevation/Dark/md` | `--shadow-md`, its value set by the theme |
+
+Only the gold (light) and dark themes are part of this system. White-label palettes and the Display text styles (Bounded, used for marketing headlines) are skipped.
+
+## Decided in the Storybook
+
+| What | Figma | Storybook |
+|---|---|---|
+| Keyboard focus ring | 4px light grey ring (`primary-soft-200`), about 1.2:1 against the canvas | The same ring in the system blue (`--focus-ring`, Info blue), so keyboard users can see it |
+
+## Known differences between Figma and code
+
+Found while generating the tokens. They are kept as they are in Figma until the file is updated.
+
+| Where | What | In code |
+|---|---|---|
+| `font/family/display` | The variable says Nunito Sans, but the Display text styles use Bounded | Display styles are not part of the Storybook |
+| Text styles | Line height 22 (Title-sm) has no variable | The style token holds the raw value |
+| `Spasing` | The collection name has a typo and holds a Boolean variable | Read as spacing; the Boolean is skipped |
+| `text-inverce`, `icon-inverce` | Typo in the token names | Kept, so names still match Figma |

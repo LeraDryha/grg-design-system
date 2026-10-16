@@ -1,0 +1,1005 @@
+{
+ "text": [
+  {
+   "name": "Display/XX large",
+   "family": "Bounded",
+   "style": "Bold",
+   "size": 64,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 72
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.5
+   },
+   "vars": {}
+  },
+  {
+   "name": "Display/Extra large",
+   "family": "Bounded",
+   "style": "Bold",
+   "size": 56,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 64
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.5
+   },
+   "vars": {}
+  },
+  {
+   "name": "Heading/H1",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 48,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 56
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Heading/H2",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 40,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 44
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Heading/H3",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 36,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 40
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Heading/H4",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 32,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 36
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Heading/H5",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 28,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 32
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-lg/Bold",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 24,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 28
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-lg/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 24,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 28
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-md/Bold",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 20,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.4000000059604645
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-md/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 20,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.4000000059604645
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-sm/Bold",
+   "family": "Nunito Sans",
+   "style": "Bold",
+   "size": 18,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 22
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.4000000059604645
+   },
+   "vars": {}
+  },
+  {
+   "name": "Title-sm/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 18,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 22
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0.4000000059604645
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-xl/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 20,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 26
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-xl/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 20,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 26
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-lg/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 16,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-lg/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 16,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-lg/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 16,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-md/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 14,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 20
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-md/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 14,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 20
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-md/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 14,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 20
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-sm/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 12,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 16
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-sm/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 12,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 16
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Body-sm/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 12,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 16
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Display/Large",
+   "family": "Bounded",
+   "style": "Bold",
+   "size": 48,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 56
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Display/Medium",
+   "family": "Bounded",
+   "style": "Bold",
+   "size": 36,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 40
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Display/Small",
+   "family": "Bounded",
+   "style": "Bold",
+   "size": 28,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 32
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-sm/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 11,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-sm/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 11,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-sm/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 11,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-xs/Semibold",
+   "family": "Nunito Sans",
+   "style": "SemiBold",
+   "size": 10,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-xs/Medium",
+   "family": "Nunito Sans",
+   "style": "Medium",
+   "size": 10,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Caption-xs/Regular",
+   "family": "Nunito Sans",
+   "style": "Regular",
+   "size": 10,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 12
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-lg/Medium",
+   "family": "Fira Code",
+   "style": "Medium",
+   "size": 16,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-lg/Regular",
+   "family": "Fira Code",
+   "style": "Regular",
+   "size": 16,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 24
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-md/Medium",
+   "family": "Fira Code",
+   "style": "Medium",
+   "size": 14,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 20
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-md/Regular",
+   "family": "Fira Code",
+   "style": "Regular",
+   "size": 14,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 20
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-sm/Medium",
+   "family": "Fira Code",
+   "style": "Medium",
+   "size": 12,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 16
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  },
+  {
+   "name": "Code/Code-sm/Regular",
+   "family": "Fira Code",
+   "style": "Regular",
+   "size": 12,
+   "lh": {
+    "unit": "PIXELS",
+    "value": 16
+   },
+   "ls": {
+    "unit": "PERCENT",
+    "value": 0
+   },
+   "vars": {}
+  }
+ ],
+ "effects": [
+  {
+   "name": "Elevation/Light/xs",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 8,
+     "spread": -2,
+     "color": "#1018280a"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 2,
+     "blur": 12,
+     "spread": -2,
+     "color": "#1018280f"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Light/sm",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 4,
+     "blur": 8,
+     "spread": -2,
+     "color": "#10182808"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 12,
+     "blur": 40,
+     "spread": -4,
+     "color": "#10182814"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Light/md",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 8,
+     "blur": 16,
+     "spread": -4,
+     "color": "#10182808"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 20,
+     "blur": 48,
+     "spread": -4,
+     "color": "#10182814"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Light/lg",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 24,
+     "blur": 64,
+     "spread": -12,
+     "color": "#1018282e"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Light/xl",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 32,
+     "blur": 80,
+     "spread": -12,
+     "color": "#10182833"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Dark/xs",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 1,
+     "blur": 3,
+     "spread": 0,
+     "color": "#00000066"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#ffffff4d"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff1a"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#00000080"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Dark/sm",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 1,
+     "blur": 3,
+     "spread": 0,
+     "color": "#00000080"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#ffffff4d"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 3,
+     "blur": 8,
+     "spread": 0,
+     "color": "#00000059"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Dark/md",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 1,
+     "blur": 3,
+     "spread": 0,
+     "color": "#00000080"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#ffffff4d"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 5,
+     "blur": 12,
+     "spread": 0,
+     "color": "#00000059"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Dark/lg",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 2,
+     "blur": 5,
+     "spread": 0,
+     "color": "#00000059"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#ffffff59"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 10,
+     "blur": 16,
+     "spread": 0,
+     "color": "#00000059"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  },
+  {
+   "name": "Elevation/Dark/xl",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 3,
+     "blur": 5,
+     "spread": 0,
+     "color": "#00000059"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0,
+     "blur": 0.5,
+     "spread": 0,
+     "color": "#ffffff59"
+    },
+    {
+     "type": "DROP_SHADOW",
+     "x": 0,
+     "y": 10,
+     "blur": 24,
+     "spread": 0,
+     "color": "#00000073"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  },
+  {
+   "name": "Blur/Light/sm",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 8
+    }
+   ]
+  },
+  {
+   "name": "Blur/Light/md",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 16
+    }
+   ]
+  },
+  {
+   "name": "Blur/Light/lg",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 24
+    }
+   ]
+  },
+  {
+   "name": "Blur/Light/xl",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 40
+    }
+   ]
+  },
+  {
+   "name": "Blur/Dark/sm",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 8
+    }
+   ]
+  },
+  {
+   "name": "Blur/Dark/md",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 16
+    }
+   ]
+  },
+  {
+   "name": "Blur/Dark/lg",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 24
+    }
+   ]
+  },
+  {
+   "name": "Blur/Dark/xl",
+   "effects": [
+    {
+     "type": "BACKGROUND_BLUR",
+     "blur": 40
+    }
+   ]
+  },
+  {
+   "name": "Table Shadow/Right/Light",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": -2,
+     "y": 2,
+     "blur": 8,
+     "spread": 0,
+     "color": "#10182814"
+    }
+   ]
+  },
+  {
+   "name": "Table Shadow/Right/Dark",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": -2,
+     "y": 2,
+     "blur": 8,
+     "spread": 0,
+     "color": "#00000080"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  },
+  {
+   "name": "Table Shadow/Left/Light",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 2,
+     "y": 2,
+     "blur": 8,
+     "spread": 0,
+     "color": "#10182814"
+    }
+   ]
+  },
+  {
+   "name": "Table Shadow/Left/Dark",
+   "effects": [
+    {
+     "type": "DROP_SHADOW",
+     "x": 2,
+     "y": 2,
+     "blur": 8,
+     "spread": 0,
+     "color": "#00000080"
+    },
+    {
+     "type": "INNER_SHADOW",
+     "x": 0,
+     "y": 0.5,
+     "blur": 0,
+     "spread": 0,
+     "color": "#ffffff14"
+    }
+   ]
+  }
+ ]
+}

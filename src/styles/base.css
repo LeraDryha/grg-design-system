@@ -1,0 +1,16 @@
+/* The canvas of a single story follows the theme. */
+.sb-show-main {
+  background: var(--surface-canvas);
+}
+
+/* Every example carries the theme, so it also works inside docs pages. */
+.grg-theme {
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+}
+
+.docs-story .grg-theme {
+  background: var(--surface-canvas);
+  padding: var(--space-600);
+  border-radius: var(--radius-md-10);
+}

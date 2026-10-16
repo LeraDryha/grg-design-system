@@ -1,0 +1,15 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { ShadowScale, Themed } from '../Foundations';
+
+<Meta title="Foundations/Elevation" />
+
+# Elevation
+
+Five shadow levels. The dark theme has its own recipe: deeper shadows and a thin light inner edge,
+so surfaces still separate on a dark canvas. Components use the same token in both themes.
+
+## Light
+<Themed theme="light"><ShadowScale /></Themed>
+
+## Dark
+<Themed theme="dark"><ShadowScale /></Themed>

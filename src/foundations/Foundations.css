@@ -1,0 +1,113 @@
+/* Foundations pages. Docs chrome, so it uses the tokens of the current theme like everything else. */
+
+.fdn-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: var(--typo-body-md-regular);
+}
+.fdn-table th {
+  text-align: left;
+  font: var(--typo-body-sm-semibold);
+  color: var(--text-subtle-700);
+  padding: var(--space-200) var(--space-300);
+  border-bottom: 1px solid var(--stroke-base-300);
+}
+.fdn-table td {
+  padding: var(--space-300);
+  border-bottom: 1px solid var(--stroke-soft-200);
+  vertical-align: middle;
+}
+/* Storybook's docs styles are switched off (sb-unstyled), so these blocks set their own type */
+:is(.fdn-table, .fdn-tiles, .fdn-palettes) code {
+  display: block;
+  font: var(--typo-code-sm-medium);
+  color: var(--text-strong-1000);
+}
+:is(.fdn-tiles, .fdn-palettes) { color: var(--text-strong-1000); font: var(--typo-body-md-regular); }
+
+.fdn-muted {
+  display: block;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+}
+.fdn-nowrap { white-space: nowrap; }
+
+.fdn-swatch {
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+}
+.fdn-swatch__chip {
+  flex: none;
+  width: var(--space-1000);
+  height: var(--space-1000);
+  border-radius: var(--radius-sm-8);
+  box-shadow: inset 0 0 0 1px var(--stroke-soft-200);
+}
+
+.fdn-palettes { display: grid; gap: var(--space-600); }
+.fdn-palette__name {
+  margin: 0 0 var(--space-200);
+  font: var(--typo-body-md-semibold);
+  text-transform: capitalize;
+}
+.fdn-palette {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+  gap: var(--space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font: var(--typo-body-sm-medium);
+}
+.fdn-palette__chip {
+  display: block;
+  height: var(--space-1200);
+  margin-bottom: var(--space-100);
+  border-radius: var(--radius-sm-8);
+  box-shadow: inset 0 0 0 1px var(--stroke-soft-200);
+}
+
+.fdn-bar {
+  display: block;
+  height: var(--space-300);
+  border-radius: var(--radius-xxs-4);
+  background: var(--primary-gold-base);
+}
+
+.fdn-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-600);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fdn-tile {
+  display: block;
+  height: 96px;
+  margin-bottom: var(--space-300);
+  background: var(--bg-weak-100);
+  border: 1px solid var(--stroke-base-300);
+}
+.fdn-tile--raised {
+  border: 0;
+  border-radius: var(--radius-lg-12);
+  background: var(--surface-floating);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.fdn-themed {
+  margin: var(--space-400) 0;
+  padding: var(--space-600);
+  border-radius: var(--radius-lg-12);
+  background: var(--surface-canvas);
+}

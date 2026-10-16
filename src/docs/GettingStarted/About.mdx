@@ -1,0 +1,29 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting Started/About" />
+
+# GRG Design System
+
+The building blocks of Golden Ratio Group’s products: payments, a crypto exchange, internal admin panels and the website.
+Foundations, components and the rules for using them, in a light (gold) and a dark theme.
+
+Switch the theme for any example with **Theme** in the toolbar.
+
+## What's inside
+
+| Section | What you find there |
+|---|---|
+| **Getting Started** | What this is and how it is built |
+| **Foundations** | Colors, typography, spacing, corner radius and elevation: the tokens everything is built from |
+| **Components** | Every component with all variants and states; edit them live in **Controls** |
+| **Contributing** | How tokens come from Figma and how to add a component |
+
+## How it is built
+
+- **React 19 + PrimeReact 10.9.9.** PrimeReact provides behavior, keyboard support and ARIA. It runs *unstyled*,
+  so every visual comes from our CSS and tokens — no PrimeReact theme is loaded.
+- **Tokens first.** Colors, typography, spacing, corner radius and shadows come only from CSS variables (see Foundations).
+  No raw hex values, pixel sizes or font names in components.
+- **Accessible by default.** Target: WCAG 2.2 AA. Every story is checked in the **Accessibility** panel.
+- **Figma is the source of truth.** Tokens are generated from the Figma variables and styles, and every CSS variable maps back to one of them.
+  Where PrimeReact can't match the design, the component fills the gap and explains it.

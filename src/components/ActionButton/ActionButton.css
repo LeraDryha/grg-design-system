@@ -1,0 +1,54 @@
+/* Action button: only the icon colour changes between states (Figma Action button). */
+
+.grg-action-button {
+  --ab-color: var(--icon-base-500);
+  --ab-hover: var(--icon-subtle-700);
+  --ab-active: var(--icon-strong-1000);
+
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-fully-rounded);
+  background: transparent;
+  color: var(--ab-color);
+  cursor: pointer;
+  transition: color 120ms ease;
+}
+
+.grg-action-button[data-color='blue'] { --ab-color: var(--info-base-600); --ab-hover: var(--info-subtle-500); --ab-active: var(--info-subtle-500); }
+.grg-action-button[data-color='red'] { --ab-color: var(--error-base-600); --ab-hover: var(--error-strong-700); --ab-active: var(--error-stronger-800); }
+
+.grg-action-button:hover:not(:disabled),
+.grg-action-button[data-preview-state='hover'] { color: var(--ab-hover); }
+
+.grg-action-button:active:not(:disabled),
+.grg-action-button[data-preview-state='active'] { color: var(--ab-active); }
+
+.grg-action-button:focus-visible,
+.grg-action-button[data-preview-state='focus'] {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.grg-action-button:disabled {
+  color: var(--icon-disabled-400);
+  cursor: default;
+}
+
+/* A 24px target around the small icons (WCAG 2.2 target size), without changing the layout */
+.grg-action-button:is([data-size='sm'], [data-size='xs'])::after {
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: var(--space-600);
+  height: var(--space-600);
+  translate: -50% -50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-action-button { transition: none; }
+}

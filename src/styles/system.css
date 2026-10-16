@@ -1,0 +1,9 @@
+/* Decisions made in the Storybook that are not (yet) in Figma. Each one is listed in Contributing/Tokens.
+   Declared on every theme root too, so the referenced tokens resolve in that theme. */
+
+:root,
+[data-theme] {
+  /* Keyboard focus: a 2px gap in the surface colour, then a 4px ring in the system blue.
+     Figma draws the ring in primary-soft-200, which keyboard users can barely see (about 1.2:1). */
+  --focus-ring: 0 0 0 var(--space-050) var(--surface-base), 0 0 0 var(--space-150) var(--info-base-600);
+}
