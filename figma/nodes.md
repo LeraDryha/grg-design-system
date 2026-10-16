@@ -41,3 +41,9 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 |---|---|
 | Page | `68:18222` |
 | Usage guidelines | `417:22553` |
+
+## Social button
+
+| What | Node |
+|---|---|
+| Component set `Social button` (State × Icon button × Social, 24 variants; no guidelines page) | `68:17758` |

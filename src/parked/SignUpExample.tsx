@@ -1,7 +1,7 @@
 import { Input } from '../components/Input/Input';
 import { Button } from '../components/Button/Button';
 import { ActionButton } from '../components/ActionButton/ActionButton';
-import { SocialButton } from './SocialButton/SocialButton';
+import { SocialButton } from '../components/SocialButton/SocialButton';
 import { sampleCountries } from '../components/Input/options';
 import './SignUpExample.css';
 

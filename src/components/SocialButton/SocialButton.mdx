@@ -1,0 +1,113 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SocialButtonStories from './SocialButton.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SocialButtonStories} />
+
+# Social Button
+
+<ComponentHeader
+  status="ready"
+  figma="68-17758"
+  builtOn="PrimeReact Button"
+  related={[
+    { label: 'Social icons', href: '?path=/docs/foundations-icons-social-icons--docs', relation: 'Uses' },
+    { label: 'Button', href: '?path=/docs/components-button--docs', relation: 'See also' },
+  ]}
+/>
+
+A social button signs people in or up with a Google, Facebook or Apple account. Figma has the component only, without a guidelines page.
+
+<Canvas of={SocialButtonStories.Playground} />
+<Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Sign-in and sign-up forms, under the main action, for the accounts the product supports',
+    'All supported accounts together, in the same content and width',
+    'Logo only where space is tight, such as a narrow screen or a compact popup',
+  ]}
+  donts={[
+    'Other actions: use Button',
+    'Links to the company’s social pages: use a Link with a Social icon',
+    'Mixing buttons with and without labels in one group',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={SocialButtonStories.Anatomy} />
+
+1. **Container:** a 44px tall frame with a 1px border; the border carries the state.
+2. **Logo:** the Brand social icon, 24px. Google and Facebook keep their colours; the black Apple logo turns white on the dark theme.
+3. **Button label:** *Sign in with Google* by default, as in Figma. Change it where the action differs: *Sign up with Google*, *Continue with Apple*.
+
+## Accounts
+
+<Canvas of={SocialButtonStories.Accounts} />
+
+From the left: **Google**, **Facebook** and **Apple**.
+
+## Content
+
+<Canvas of={SocialButtonStories.Content} />
+
+From the left:
+
+- **With a label:** the default. People read which account they use.
+- **Logo only (Figma Icon button):** a 44 × 44 square. Screen readers still hear the label.
+
+## Full width
+
+<Canvas of={SocialButtonStories.FullWidth} />
+
+In forms the buttons take the width of the form and stack, as in the Figma sign-up examples: put them in a column, and each button fills it.
+
+## States
+
+### Default
+At rest.
+
+<Canvas of={SocialButtonStories.Default} />
+
+### Hovered
+Pointer over the button: the border turns `stroke-strong-500`.
+
+<Canvas of={SocialButtonStories.Hovered} />
+
+### Pressed
+While the button is pressed: the border turns `stroke-stronger-900`. In Figma this state is called Active.
+
+<Canvas of={SocialButtonStories.Pressed} />
+
+### Focused
+Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
+
+<Canvas of={SocialButtonStories.Focused} />
+
+## Accessibility
+
+- It is a real button: screen readers call it a button, Enter and Space press it.
+- The label names the account and the action. A logo-only button gets the same label as its accessible name.
+- The logo is decorative: screen readers skip it, the label says which account it is.
+- Focus uses the system blue ring.
+- Figma has no disabled state: sign-in with an account is either offered or not shown.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Social', prop: 'social', values: 'Google, Facebook, Apple → google, facebook, apple' },
+    { figma: 'Icon button', prop: 'iconOnly', values: 'on, off → true, false' },
+    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered, Active, Focused follow the pointer and keyboard' },
+    { figma: 'Text', prop: 'children', values: 'the label; Sign in with … by default' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SocialButtonStories} />
