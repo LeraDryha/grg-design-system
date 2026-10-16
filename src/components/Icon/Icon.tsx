@@ -12,8 +12,11 @@ import informationCircle from '../../icons/information-circle.svg';
 import link from '../../icons/link.svg';
 import loading from '../../icons/loading.svg';
 import mail from '../../icons/mail.svg';
+import menuVertical from '../../icons/menu-vertical.svg';
+import pencil from '../../icons/pencil.svg';
 import plus from '../../icons/plus.svg';
 import remove from '../../icons/remove.svg';
+import trash from '../../icons/trash.svg';
 import warningError from '../../icons/warning-error.svg';
 import './Icon.css';
 
@@ -32,8 +35,11 @@ export const icons = {
   link,
   loading,
   mail,
+  'menu-vertical': menuVertical,
+  pencil,
   plus,
   remove,
+  trash,
   'warning-error': warningError,
 } as const;
 export type IconName = keyof typeof icons;

@@ -19,7 +19,7 @@ export type ActionButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children'
 const ICON_SIZE = { md: 24, sm: 20, xs: 16 } as const;
 
 /** PrimeReact Button (unstyled); the look comes from ActionButton.css and the tokens. */
-export function ActionButton({ icon, size = 'sm', color = 'grey', previewState = 'default', type = 'button', className = '', ref, ...props }: ActionButtonProps) {
+export function ActionButton({ icon, size = 'md', color = 'grey', previewState = 'default', type = 'button', className = '', ref, ...props }: ActionButtonProps) {
   return (
     <PrimeButton
       // PrimeReact 10 types Button as a class, but at runtime the ref receives the <button> element

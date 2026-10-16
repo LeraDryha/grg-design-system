@@ -1,0 +1,123 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ActionButtonStories from './ActionButton.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ActionButtonStories} />
+
+# Action Button
+
+<ComponentHeader
+  status="ready"
+  figma="31-6651"
+  guidelines="72-2431"
+  builtOn="PrimeReact Button"
+  related={[{ label: 'Button', href: '?path=/docs/components-button--docs' }]}
+/>
+
+A compact icon-only control for quick, local actions: copy, edit, open a small menu. It keeps the interface quiet where a full button would be too loud.
+
+<Canvas of={ActionButtonStories.Playground} />
+<Controls of={ActionButtonStories.Playground} include={['icon', 'aria-label', 'size', 'color', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Single-step utility actions: copy, edit, duplicate, open a small menu',
+    'Next to a value the action applies to: copy an ID, copy an email',
+    'In tables, for row-level actions',
+  ]}
+  donts={[
+    'The main action of a screen or dialog: use Button',
+    'Actions that need a word to be understood: use Button with a label',
+    'Going to another page: use a link',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={ActionButtonStories.Anatomy} />
+
+1. **Container:** the button area, no fill or border. Only the icon colour changes between states.
+2. **Icon:** use the standard Base icons; their size follows the button size. Social, country or coin icons need to be agreed first.
+
+## Sizes
+
+<Canvas of={ActionButtonStories.Sizes} />
+
+From the left:
+
+- **md-24:** 24 × 24 icon.
+- **sm-20:** 20 × 20 icon. Inside fields, such as Input's copy and reveal buttons.
+- **xs-16:** 16 × 16 icon. Next to small text, such as the info button of a field label.
+
+The small sizes keep a 24 × 24 touch area around the icon.
+
+## Colours
+
+<Canvas of={ActionButtonStories.Colors} />
+
+From the left:
+
+- **Black:** utility actions like copy, edit, duplicate, more, and other non-primary interactions. In Figma and code this colour is called Grey.
+- **Blue:** informational or context-specific actions where the colour reinforces the meaning: info, help, view details.
+- **Red:** destructive actions: delete, remove.
+
+## Usage
+
+<Canvas of={ActionButtonStories.Usage} />
+
+From the left: edit, copy, more actions, details, delete.
+
+## States
+
+### Default
+At rest.
+
+<Canvas of={ActionButtonStories.Default} />
+
+### Hovered
+Pointer over the button: the icon gets one step darker (lighter in the dark theme).
+
+<Canvas of={ActionButtonStories.Hovered} />
+
+### Pressed
+While the button is pressed: the strongest icon colour. In Figma this state is called Active.
+
+<Canvas of={ActionButtonStories.Pressed} />
+
+### Focused
+Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
+
+<Canvas of={ActionButtonStories.Focused} />
+
+### Disabled
+Not available right now: a light grey icon, no interaction.
+
+<Canvas of={ActionButtonStories.Disabled} />
+
+## Accessibility
+
+- The button has no visible text, so `aria-label` is required: say what happens, such as *Copy referral link* or *Delete row*, not the icon's name.
+- The icon is decorative; the name comes from `aria-label`.
+- Small sizes (sm-20, xs-16) keep a 24 × 24 touch area, the WCAG 2.2 minimum target size.
+- Focus uses the system blue ring. Figma draws a light rounded frame around the icon, which keyboard users can barely see.
+- A disabled action button is a native disabled button: skipped by Tab and announced as unavailable.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: 'md-24px, sm-20px, xs-16px → md, sm, xs' },
+    { figma: 'Color', prop: 'color', values: 'Grey (Black in the guidelines), Blue, Red → grey, blue, red' },
+    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
+    { figma: 'Icon (instance swap)', prop: 'icon', values: 'icon name from Base icons' },
+    { figma: '—', prop: 'aria-label', values: 'required: the action in words' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={ActionButtonStories} />

@@ -1,23 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { CSSProperties } from 'react';
 import { ActionButton, type ActionButtonProps } from './ActionButton';
 import { icons } from '../Icon/Icon';
+import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Action Button',
   component: ActionButton,
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component:
-          'A small icon-only button for actions inside other components: copy a link, reveal a password, open a list. ' +
-          'Only the icon colour changes between states. It has no visible text, so `aria-label` is required.',
-      },
-    },
-  },
-  args: { icon: 'copy', 'aria-label': 'Copy', size: 'sm', color: 'grey', disabled: false, previewState: 'default' },
+  // The docs page is ActionButton.mdx
+  args: { icon: 'pencil', 'aria-label': 'Edit', size: 'md', color: 'grey', disabled: false, previewState: 'default' },
   argTypes: {
     icon: { control: 'select', options: Object.keys(icons) },
+    'aria-label': { control: 'text', description: 'The name screen readers announce, such as "Copy link"' },
     size: { control: 'inline-radio', options: ['md', 'sm', 'xs'] },
     color: { control: 'inline-radio', options: ['grey', 'blue', 'red'] },
     previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
@@ -30,30 +24,74 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const row: CSSProperties = { display: 'flex', alignItems: 'center', gap: 'var(--space-800)' };
+
+/** Edit everything in Controls. */
 export const Playground: Story = {};
 
-/** Three colours through every state. */
-export const States: Story = {
+/** Container and icon, numbered as in the Figma guidelines. */
+export const Anatomy: Story = {
   render: (args: ActionButtonProps) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, auto)', gap: 'var(--space-600)', alignItems: 'center' }}>
-      {(['grey', 'blue', 'red'] as const).flatMap(color => [
-        <ActionButton key={`${color}-d`} {...args} color={color} />,
-        <ActionButton key={`${color}-h`} {...args} color={color} previewState="hover" />,
-        <ActionButton key={`${color}-a`} {...args} color={color} previewState="active" />,
-        <ActionButton key={`${color}-f`} {...args} color={color} previewState="focus" />,
-        <ActionButton key={`${color}-x`} {...args} color={color} disabled />,
-      ])}
-    </div>
+    <AnatomyBlock
+      width="auto"
+      markers={[
+        { n: 1, target: '.grg-action-button', side: 'left' },
+        { n: 2, target: '.grg-action-button .grg-icon', side: 'top' },
+      ]}
+    >
+      <ActionButton {...args} />
+    </AnatomyBlock>
   ),
 };
 
-/** md is 24px, sm 20px, xs 16px. Small sizes keep a 24px touch target around the icon. */
+/** md-24, sm-20 and xs-16, from the left. */
 export const Sizes: Story = {
   render: (args: ActionButtonProps) => (
-    <div style={{ display: 'flex', gap: 'var(--space-600)', alignItems: 'center' }}>
+    <div style={row}>
       <ActionButton {...args} size="md" />
       <ActionButton {...args} size="sm" />
       <ActionButton {...args} size="xs" />
     </div>
   ),
 };
+
+/** Black (grey), blue and red, from the left. */
+export const Colors: Story = {
+  render: (args: ActionButtonProps) => (
+    <div style={row}>
+      <ActionButton {...args} color="grey" />
+      <ActionButton {...args} color="blue" />
+      <ActionButton {...args} color="red" />
+    </div>
+  ),
+};
+
+/** Typical actions, from the Figma usage row: edit, copy, more, info, delete. */
+export const Usage: Story = {
+  render: (args: ActionButtonProps) => (
+    <div style={row}>
+      <ActionButton {...args} icon="pencil" aria-label="Edit" />
+      <ActionButton {...args} icon="copy" aria-label="Copy" />
+      <ActionButton {...args} icon="menu-vertical" aria-label="More actions" />
+      <ActionButton {...args} icon="information-circle" color="blue" aria-label="Details" />
+      <ActionButton {...args} icon="trash" color="red" aria-label="Delete" />
+    </div>
+  ),
+};
+
+/* ---- States: one story each ---- */
+
+/** At rest. */
+export const Default: Story = {};
+
+/** Pointer over the button: the icon gets darker. */
+export const Hovered: Story = { args: { previewState: 'hover' } };
+
+/** While the button is pressed (Figma State: Active). */
+export const Pressed: Story = { args: { previewState: 'active' } };
+
+/** Reached with the keyboard: the system focus ring. */
+export const Focused: Story = { args: { previewState: 'focus' } };
+
+/** Not available right now. */
+export const Disabled: Story = { args: { disabled: true } };
