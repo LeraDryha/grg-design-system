@@ -1,6 +1,6 @@
-/* The canvas of a single story follows the theme. */
+/* Components are shown on the surface colour: white in the light theme, near-black in the dark one. */
 .sb-show-main {
-  background: var(--surface-canvas);
+  background: var(--surface-base);
 }
 
 /* Every example carries the theme, so it also works inside docs pages. */
@@ -9,8 +9,11 @@
   font: var(--typo-body-md-regular);
 }
 
-.docs-story .grg-theme {
-  background: var(--surface-canvas);
-  padding: var(--space-600);
-  border-radius: var(--radius-md-10);
+/* On docs pages the whole example card takes the theme's surface. The card sits outside the theme
+   wrapper, so it reads the dark surface from the primitive that --surface-base points at in dark. */
+.docs-story {
+  background: var(--surface-base);
+}
+.docs-story:has(.grg-theme[data-theme='dark']) {
+  background: var(--color-neutral-900);
 }

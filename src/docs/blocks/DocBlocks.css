@@ -101,12 +101,6 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .doc-matrix__cell { padding: var(--space-600) 0 var(--space-500); min-width: 0; }
 
 /* ---- Anatomy ---- */
-.doc-anatomy {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-1200);
-}
 .doc-anatomy__stage {
   position: relative;
   width: 320px;
@@ -139,13 +133,3 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .doc-anatomy__marker[data-side='left']::before { top: 0; right: 0; width: var(--space-600); border-top-width: 1px; }
 .doc-anatomy__marker[data-side='right'] .doc-anatomy__dot { top: calc(var(--space-500) / -2); left: var(--space-600); }
 .doc-anatomy__marker[data-side='right']::before { top: 0; left: 0; width: var(--space-600); border-top-width: 1px; }
-
-.doc-anatomy__legend {
-  margin: 0;
-  padding-left: var(--space-600);
-  columns: 2;
-  column-gap: var(--space-1000);
-  font: var(--typo-body-md-regular);
-  color: var(--text-strong-1000);
-}
-.doc-anatomy__legend li { margin-bottom: var(--space-100); }

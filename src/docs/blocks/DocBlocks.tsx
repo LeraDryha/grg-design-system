@@ -129,9 +129,10 @@ export type AnatomyMarker = {
 
 /**
  * A live example with numbered markers on its parts, like the anatomy in the Figma guidelines.
+ * Only the numbers sit on the canvas; the page lists what each number is.
  * Positions are measured from the rendered component, so they follow the real layout.
  */
-export function Anatomy({ markers, legend, children }: { markers: AnatomyMarker[]; legend: string[]; children: ReactNode }) {
+export function Anatomy({ markers, children }: { markers: AnatomyMarker[]; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
   const [spots, setSpots] = useState<{ n: number; x: number; y: number; side: string }[]>([]);
 
@@ -158,18 +159,13 @@ export function Anatomy({ markers, legend, children }: { markers: AnatomyMarker[
   }, [markers]);
 
   return (
-    <div className="doc-anatomy">
-      <div className="doc-anatomy__stage" ref={stage}>
-        {children}
-        {spots.map(s => (
-          <span key={s.n} className="doc-anatomy__marker" data-side={s.side} style={{ left: s.x, top: s.y }} aria-hidden="true">
-            <span className="doc-anatomy__dot">{s.n}</span>
-          </span>
-        ))}
-      </div>
-      <ol className="doc-anatomy__legend">
-        {legend.map(item => <li key={item}>{item}</li>)}
-      </ol>
+    <div className="doc-anatomy__stage" ref={stage}>
+      {children}
+      {spots.map(s => (
+        <span key={s.n} className="doc-anatomy__marker" data-side={s.side} style={{ left: s.x, top: s.y }} aria-hidden="true">
+          <span className="doc-anatomy__dot">{s.n}</span>
+        </span>
+      ))}
     </div>
   );
 }

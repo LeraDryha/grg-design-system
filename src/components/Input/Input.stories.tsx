@@ -83,50 +83,40 @@ export const Anatomy: Story = {
         { n: 9, target: '.grg-field__top .grg-key-value', side: 'top' },
         { n: 10, target: '.grg-field__bottom .grg-key-value', side: 'bottom' },
       ]}
-      legend={['Container', 'Label', 'Required asterisk', 'Additional text', 'Info button', 'Placeholder', 'Icon', 'Hint text', 'Top Key: Value', 'Bottom Value']}
     >
       <Input {...args} />
     </AnatomyBlock>
   ),
 };
 
-const TYPES: { type: NonNullable<InputProps['type']>; label: string; note: string; value: string; props?: Partial<InputProps> }[] = [
-  { type: 'common', label: 'Email', note: 'Plain text or numbers: name, city, comment', value: 'user@mail.com', props: { leftIcon: 'mail' } },
-  { type: 'phone', label: 'Phone number', note: 'Country code and number', value: '6787645', props: { countries: sampleCountries } },
-  { type: 'website', label: 'Website', note: 'A URL with a protocol prefix', value: 'golden.ratio.com' },
-  { type: 'card', label: 'Card number', note: 'Groups of four, with the payment method', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentIcon: paymentIcons.mastercard, paymentLabel: 'Mastercard' } },
-  { type: 'amount', label: 'Amount', note: 'A number with a currency', value: '100.00', props: { coins: sampleCoins } },
-  { type: 'date', label: 'Date', note: 'DD / MM / YYYY', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
-  { type: 'button', label: 'Referral link', note: 'Text with an action: copy, reveal', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
+/** Fields one under another, with room for each floating label */
+const column: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' };
+
+const TYPES: { type: NonNullable<InputProps['type']>; label: string; value: string; props?: Partial<InputProps> }[] = [
+  { type: 'common', label: 'Email', value: 'user@mail.com', props: { leftIcon: 'mail' } },
+  { type: 'phone', label: 'Phone number', value: '6787645', props: { countries: sampleCountries } },
+  { type: 'website', label: 'Website', value: 'golden.ratio.com' },
+  { type: 'card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentIcon: paymentIcons.mastercard, paymentLabel: 'Mastercard' } },
+  { type: 'amount', label: 'Amount', value: '100.00', props: { coins: sampleCoins } },
+  { type: 'date', label: 'Date', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
+  { type: 'button', label: 'Referral link', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
 ];
 
-/** The seven types from Figma, empty and filled. */
+/** The seven types from Figma, filled. What each one is for is listed on the docs page. */
 export const Types: Story = {
   render: (args: InputProps) => (
-    <StateMatrix
-      columns={['Empty', 'Filled']}
-      rows={TYPES.map(t => {
-        const props: InputProps = { ...args, leftIcon: null, ...t.props, type: t.type, label: t.label };
-        return {
-          label: t.type[0].toUpperCase() + t.type.slice(1),
-          note: t.note,
-          cells: [<Input {...props} />, <Input {...props} defaultValue={t.value} />],
-        };
-      })}
-    />
+    <div style={column}>
+      {TYPES.map(t => <Input key={t.type} {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value} />)}
+    </div>
   ),
 };
 
-/** lg-44, md-40 and sm-32. Text and icons keep their size; only paddings and corners change. */
+/** lg-44, md-40 and sm-32, from the top. Text and icons keep their size; only paddings and corners change. */
 export const Sizes: Story = {
   render: (args: InputProps) => (
-    <StateMatrix
-      columns={['Empty', 'Filled']}
-      rows={([['lg', 'lg-44'], ['md', 'md-40'], ['sm', 'sm-32']] as const).map(([size, name]) => ({
-        label: name,
-        cells: [<Input {...args} size={size} />, <Input {...args} size={size} defaultValue="user@mail.com" />],
-      }))}
-    />
+    <div style={column}>
+      {(['lg', 'md', 'sm'] as const).map(size => <Input key={size} {...args} size={size} defaultValue="user@mail.com" />)}
+    </div>
   ),
 };
 

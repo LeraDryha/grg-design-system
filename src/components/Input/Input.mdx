@@ -41,6 +41,17 @@ All props are listed at the end of the page.
 
 <Canvas of={InputStories.Anatomy} />
 
+1. **Container:** the field frame. Its border and fill show the state: hovered, active, error, disabled.
+2. **Label:** what the field asks for. Inside the empty field it works as the placeholder, then floats above.
+3. **Required asterisk:** the field must be filled before the form can be sent.
+4. **Additional text (optional):** a short note after the label, such as *(Optional)*.
+5. **Info button (optional):** more context about the field, without taking space in the form.
+6. **Placeholder:** where the person types; shows the label or an example until there is a value.
+7. **Icon:** marks the hint; turns red together with an error.
+8. **Hint text (optional):** help or the expected format, such as *Passwords must contain at least 8 characters*. An error message replaces it.
+9. **Top Key: Value (optional):** extra information about the field, such as a balance or a limit.
+10. **Bottom Value (optional):** a value under the field, such as a character count or a fee.
+
 Label, hint and Key: value are shared with Select and Text Area: see [Form Field](?path=/docs/components-form-field--docs).
 
 ## Types
@@ -49,12 +60,25 @@ All types share the same frame, sizes and states; they differ in what sits aroun
 
 <Canvas of={InputStories.Types} />
 
+- **Common:** standard text or numbers without extra logic. Name, title, city, address, comment, username.
+- **Phone:** a country code select, then the number. Contact phone, SMS verification number.
+- **Website:** a URL or domain after a protocol prefix (http / https). Website, company site.
+- **Card:** a card number in groups of four, with the payment method. Card number, payment details.
+- **Amount:** a number with a currency select. Invoice amount, transfer amount, fee, limit.
+- **Date:** a date in DD / MM / YYYY. Due date, birth date, start and end dates.
+- **Button:** a value with an action button. Copy a referral link, reveal a password.
+
 ## Sizes
 
 <Canvas of={InputStories.Sizes} />
 
-Text (Body-md 14/20) and icons (20px) stay the same in every size; paddings and corners change:
-lg-44 has 12px paddings, md-40 has 10px, sm-32 has 6px top and bottom, 8px on the sides and smaller corners.
+From the top:
+
+- **lg-44:** 12px paddings, 10px corners. Forms with few fields, sign-up and payment screens.
+- **md-40:** 10px paddings, 10px corners. The default for product forms.
+- **sm-32:** 6px top and bottom, 8px on the sides, 8px corners. Dense screens: filters, tables, toolbars.
+
+Text (Body-md 14/20) and icons (20px) stay the same in every size.
 
 ## States
 
@@ -83,7 +107,7 @@ The sign-up form from the Figma examples. Switch the **viewport** in the toolbar
 - The country and coin selects are comboboxes with a name, an expanded state and the highlighted option announced while moving with the arrow keys.
 - Focus is visible: the border turns dark in the Active state; buttons inside the field show the system blue focus ring.
 - Phone, card, amount and date fields open the number keyboard on phones.
-- Colours follow Figma. In the dark theme the prefix and unit text (`icon-base-500`) reach 4.17:1, below the 4.5:1 for text.
+- Colours follow Figma. In the dark theme the prefix and unit text (`icon-base-500`) reach about 3.8:1 on the surface, below the 4.5:1 for text.
 
 ## Figma and code
 
