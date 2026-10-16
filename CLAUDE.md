@@ -8,7 +8,7 @@
 - Лише золота (світла) і темна теми. White-label палітри не переносимо. Логотипів GRX Pay / GRX Exchange / Golden Ratio Exchange не показуємо.
 - Display-стилі (шрифт Bounded) у Storybook не переносимо. Контраст кольорів лишаємо як у Figma; фокус клавіатури — системним синім (`--focus-ring` у `src/styles/system.css`).
 - У Figma-файлі нічого не змінюємо. Карта вузлів Figma: `figma/nodes.md`.
-- Репозиторій публічний: LeraDryha/grg-design-system.
+- Репозиторій публічний: LeraDryha/grg-design-system. Хостинг — Vercel (проєкт `grg-design-system`), автодеплой з гілки `main`: кожен пуш публікує Storybook.
 - Мета на потім: система, з якою може працювати AI-агент (описи компонентів у Figma, code syntax змінних, звірка Figma ↔ код).
 - Комітимо й пушимо лише з дозволу Lera.
 
