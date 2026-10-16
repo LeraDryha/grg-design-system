@@ -1,0 +1,44 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { IconGallery, IconSizes } from '../Foundations';
+import { ComponentHeader } from '../../docs/blocks/DocBlocks';
+
+<Meta title="Foundations/Icons" />
+
+# Icons
+
+<ComponentHeader status="ready" figma="23-11109" />
+
+Icons play a vital role in visual communication: simple symbols convey ideas quickly and across languages.
+The system has one base set of 362 line icons on a 24 × 24 grid, exported from Figma under their Figma names.
+
+## Sizes
+
+<IconSizes />
+
+Icons are used in four sizes: 12 × 12, 16 × 16, 20 × 20 and 24 × 24. Use the size that matches the component and its text,
+so the interface stays consistent. The Figma page calls these three sizes and then lists four; all four are available here.
+
+| Size | Where it is used now |
+|---|---|
+| 24 | Button xlg and lg, Action Button md, Link md |
+| 20 | Button md and sm, Input (all sizes), Action Button sm, Link sm |
+| 16 | Button xs, Action Button xs, Link xs, hint text, the info button of a field label |
+| 12 | Reserved for small components, not used yet |
+
+## Using icons
+
+- Use the standard Base icons. Social, country or coin icons need to be agreed first (Button and Action Button guidelines).
+- Set the size with the component's size, or `size` on `Icon`. Icons are square and scale without distortion,
+  like an icon with a locked aspect ratio in Figma.
+- Don't colour icons by hand. An icon takes the colour of its parent (`currentColor`), so it follows the component's state and the theme.
+- Icons are decorative: screen readers skip them, and the component's label or `aria-label` says what the action does.
+
+```tsx
+<Icon name="trash" size={20} />
+```
+
+## All icons
+
+Click an icon to copy its name.
+
+<IconGallery />

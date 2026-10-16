@@ -69,7 +69,7 @@ const preview: Preview = {
         method: 'alphabetical',
         order: [
           'Getting Started', ['About'],
-          'Foundations', ['Colors', 'Typography', 'Spacing', 'Corner Radius', 'Elevation'],
+          'Foundations', ['Colors', 'Typography', 'Spacing', 'Corner Radius', 'Elevation', 'Icons'],
           'Components',
           'Contributing', ['Tokens'],
         ],

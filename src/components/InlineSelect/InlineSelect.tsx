@@ -99,8 +99,8 @@ export function InlineSelect({ options, value, onChange, type = 'country', disab
             <span>{o.listLabel ?? o.label}</span>
           </span>
         )}
-        dropdownIcon={<Icon name="chevron-down" size={20} />}
-        collapseIcon={<Icon name="chevron-down" size={20} />}
+        dropdownIcon={<Icon name="direction-down" size={20} />}
+        collapseIcon={<Icon name="direction-down" size={20} />}
         pt={{
           root: { className: 'grg-inline-select__root', 'aria-activedescendant': undefined, 'aria-disabled': disabled || undefined },
           input: { className: 'grg-inline-select__label' },

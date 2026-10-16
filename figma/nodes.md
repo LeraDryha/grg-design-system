@@ -2,6 +2,13 @@
 
 Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjBk`). Node ids go into URLs as `node-id=73-3711`.
 
+## Icons
+
+| What | Node |
+|---|---|
+| Base icons (362, 24 × 24), exported to `figma/icons.json` | `23:11109` |
+| Usage text (sizes, customising) | on the same page, next to the set |
+
 ## Field parts (shared by Input, Select and Text Area)
 
 | Part | Node | Variants |

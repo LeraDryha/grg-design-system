@@ -20,7 +20,7 @@ React 19, TypeScript, Storybook 10 (CSF 3) and **PrimeReact 10.9.9** (MIT; v11 n
 ## Figma
 - Figma file: GRG Design System (key `r3E5XdifyoiiNeuj7mOjBk`), one page per component.
 - Read the component set before writing code: properties, every variant, the bound variables of fills, strokes, paddings and radii, text styles and effects. Map Figma properties to props and name the mapping in the prop's comment.
-- Icons come from the Figma "Base icons" page as SVG into `src/icons/`, drawn by `Icon` as a CSS mask.
+- Icons come from the Figma "Base icons" frame (`23:11109`): export to `figma/icons.json`, run `npm run icons`; it writes `src/icons/base/` and the names list. `Icon` draws them as a CSS mask. Components use Base icons only, by their Figma name (spaces become hyphens: "calendar 01" → `calendar-01`). Icons from other sets (social, country, coin) need to be agreed first and go to `src/icons/extra/`.
 
 ## Files
 `src/components/[Name]/` holds `[Name].tsx`, `[Name].css` and `[Name].stories.tsx`. Foundations live in `src/foundations/`, docs pages in `src/docs/[Category]/`.

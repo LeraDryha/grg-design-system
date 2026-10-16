@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "tokens": "node scripts/build-tokens.mjs",
+    "icons": "node scripts/build-icons.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "typecheck": "tsc --noEmit"

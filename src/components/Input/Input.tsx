@@ -223,7 +223,7 @@ export function Input({
         {clear}
         {type === 'common' && unit && <span className="grg-input__affix">{unit}</span>}
         {(type === 'common' || type === 'website') && icon(rightIcon, true)}
-        {type === 'date' && icon(rightIcon === undefined ? 'calendar' : rightIcon, true)}
+        {type === 'date' && icon(rightIcon === undefined ? 'calendar-01' : rightIcon, true)}
         {type === 'card' && paymentIcon && <img className="grg-input__payment" src={paymentIcon} alt={paymentLabel} />}
         {type === 'amount' && (
           <>

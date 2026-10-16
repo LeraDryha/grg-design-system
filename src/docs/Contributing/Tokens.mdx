@@ -10,6 +10,10 @@ Tokens are generated, never written by hand. Figma is the source of truth.
 2. Run `npm run tokens`. It writes `src/styles/tokens.css` and the data for the Foundations pages.
 3. Check the Foundations pages and the components in both themes.
 
+## Icons
+
+Icons are generated the same way. Export the Figma "Base icons" frame into `figma/icons.json` and run `npm run icons`: it writes one SVG per icon to `src/icons/base/` and the list of names. An icon keeps its Figma name, with spaces turned into hyphens (`calendar 01` → `calendar-01`). See Foundations/Icons.
+
 ## Naming
 
 Every CSS variable maps back to exactly one Figma variable or style.

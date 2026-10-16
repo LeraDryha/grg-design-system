@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
 import { ActionButton, type ActionButtonProps } from './ActionButton';
-import { icons } from '../Icon/Icon';
+import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
@@ -10,7 +10,7 @@ const meta = {
   // The docs page is ActionButton.mdx
   args: { icon: 'pencil', 'aria-label': 'Edit', size: 'md', color: 'grey', disabled: false, previewState: 'default' },
   argTypes: {
-    icon: { control: 'select', options: Object.keys(icons) },
+    icon: { control: 'select', options: baseIconNames },
     'aria-label': { control: 'text', description: 'The name screen readers announce, such as "Copy link"' },
     size: { control: 'inline-radio', options: ['md', 'sm', 'xs'] },
     color: { control: 'inline-radio', options: ['grey', 'blue', 'red'] },
@@ -72,7 +72,7 @@ export const Usage: Story = {
     <div style={row}>
       <ActionButton {...args} icon="pencil" aria-label="Edit" />
       <ActionButton {...args} icon="copy" aria-label="Copy" />
-      <ActionButton {...args} icon="menu-vertical" aria-label="More actions" />
+      <ActionButton {...args} icon="menu-circle-vertical-01" aria-label="More actions" />
       <ActionButton {...args} icon="information-circle" color="blue" aria-label="Details" />
       <ActionButton {...args} icon="trash" color="red" aria-label="Delete" />
     </div>

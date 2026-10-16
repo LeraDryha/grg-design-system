@@ -1,11 +1,11 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
 import { Input, type InputProps } from './Input';
-import { icons } from '../Icon/Icon';
+import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 import { paymentIcons, sampleCoins, sampleCountries } from './options';
 
-const iconOptions = [null, ...Object.keys(icons)];
+const iconOptions = [null, ...baseIconNames];
 
 /** A single field is 320px wide, as in Figma, with room for the floating label above. */
 const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>;

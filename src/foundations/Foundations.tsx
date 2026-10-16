@@ -1,4 +1,7 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
+import { Icon, type IconName } from '../components/Icon/Icon';
+import { Input } from '../components/Input/Input';
+import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import './Foundations.css';
 
@@ -159,5 +162,54 @@ export function Themed({ theme, children }: { theme: 'light' | 'dark'; children:
     <div className="sb-unstyled grg-theme fdn-themed" data-theme={theme}>
       {children}
     </div>
+  );
+}
+
+/** The whole icon set with a search; click an icon to copy its name. */
+export function IconGallery() {
+  const [query, setQuery] = useState('');
+  const [copied, setCopied] = useState('');
+  const shown = baseIconNames.filter(n => n.includes(query.trim().toLowerCase().replace(/\s+/g, '-')));
+  async function copy(name: string) {
+    try {
+      await navigator.clipboard.writeText(name);
+      setCopied(name);
+    } catch {
+      setCopied('');
+    }
+  }
+  return (
+    <div className="sb-unstyled fdn-icons">
+      <div className="fdn-icons__search">
+        <Input label="Search icons" leftIcon="search" value={query} onValueChange={setQuery} />
+        <span className="fdn-muted">{shown.length} of {baseIconNames.length}</span>
+      </div>
+      <ul className="fdn-icons__grid">
+        {shown.map(name => (
+          <li key={name}>
+            <button type="button" className="fdn-icons__cell" onClick={() => copy(name)} aria-label={`Copy icon name ${name}`}>
+              <Icon name={name} size={24} />
+              <span>{name}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="grg-sr-only" role="status">{copied && `Copied ${copied}`}</p>
+      {copied && <p className="fdn-icons__copied" aria-hidden="true">Copied <code>{copied}</code></p>}
+    </div>
+  );
+}
+
+/** The four icon sizes side by side. */
+export function IconSizes({ name = 'trash' }: { name?: IconName }) {
+  return (
+    <ul className="sb-unstyled fdn-icon-sizes">
+      {([24, 20, 16, 12] as const).map(size => (
+        <li key={size}>
+          <span className="fdn-icon-sizes__box"><Icon name={name} size={size} /></span>
+          <span>{size} × {size}</span>
+        </li>
+      ))}
+    </ul>
   );
 }

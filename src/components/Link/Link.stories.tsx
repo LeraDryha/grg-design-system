@@ -1,10 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
 import { Link, type LinkProps } from './Link';
-import { icons } from '../Icon/Icon';
+import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
-const iconOptions = [undefined, ...Object.keys(icons).filter(n => n !== 'loading')];
+const iconOptions = [undefined, ...baseIconNames.filter(n => n !== 'loading')];
 
 const meta = {
   title: 'Components/Link',

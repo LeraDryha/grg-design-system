@@ -111,3 +111,76 @@
   border-radius: var(--radius-lg-12);
   background: var(--surface-canvas);
 }
+
+/* ---- Icons ---- */
+.fdn-icons { color: var(--text-strong-1000); font: var(--typo-body-md-regular); }
+.fdn-icons__search {
+  display: flex;
+  align-items: end;
+  gap: var(--space-400);
+  max-width: 480px;
+  padding-top: var(--space-600);
+  margin-bottom: var(--space-600);
+}
+.fdn-icons__search > :first-child { flex: 1; }
+.fdn-icons__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: var(--space-200);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.fdn-icons__cell {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  padding: var(--space-400) var(--space-200) var(--space-300);
+  border: 0;
+  border-radius: var(--radius-md-10);
+  background: transparent;
+  color: var(--icon-strong-1000);
+  cursor: pointer;
+}
+.fdn-icons__cell span:last-child {
+  font: var(--typo-caption-sm-regular);
+  color: var(--text-soft-500);
+  text-align: center;
+  word-break: break-word;
+}
+.fdn-icons__cell:hover { background: var(--bg-weak-100); }
+.fdn-icons__cell:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.fdn-icons__copied {
+  position: sticky;
+  bottom: var(--space-400);
+  width: max-content;
+  margin: var(--space-400) auto 0;
+  padding: var(--space-200) var(--space-400);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-base-1000);
+  color: var(--text-inverce);
+  font: var(--typo-body-sm-semibold);
+}
+.fdn-icons__copied code { font: var(--typo-code-sm-medium); color: inherit; }
+
+.fdn-icon-sizes {
+  display: flex;
+  align-items: end;
+  gap: var(--space-1000);
+  margin: var(--space-400) 0;
+  padding: 0;
+  list-style: none;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+}
+.fdn-icon-sizes li { display: grid; justify-items: center; gap: var(--space-200); }
+.fdn-icon-sizes__box {
+  display: grid;
+  place-items: center;
+  color: var(--icon-strong-1000);
+  box-shadow: 0 0 0 1px var(--error-light-200);
+  background: var(--error-muted-50);
+}
+/* the counter sits on the input's centre line */
+.fdn-icons__search > .fdn-muted { display: flex; align-items: center; height: var(--space-1000); }
