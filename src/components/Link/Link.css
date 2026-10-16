@@ -1,0 +1,70 @@
+/* Link. Figma "Link button": no padding, label and icons 6px apart, Black has a 1px line under the whole link. */
+
+.grg-link {
+  --link-color: var(--text-strong-1000);
+  --link-line: var(--stroke-base-300);
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-150);
+  border-radius: var(--radius-xxs-4);
+  font: var(--typo-body-lg-semibold);
+  color: var(--link-color);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.grg-link[data-size='sm'] { font: var(--typo-body-md-semibold); }
+.grg-link[data-size='xs'] { font: var(--typo-body-sm-semibold); }
+
+/* Black: the underline sits just below the link and takes no space (Figma: Line, y = height) */
+.grg-link[data-color='black']::after {
+  content: '';
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 1px;
+  background: var(--link-line);
+  transition: background-color 120ms ease;
+}
+.grg-link[data-color='blue'] { --link-color: var(--info-base-600); }
+
+/* States: Black darkens its underline; Blue keeps its look, as in Figma */
+.grg-link:hover:not([aria-disabled]),
+.grg-link[data-preview-state='hover'] { --link-line: var(--stroke-strong-500); }
+.grg-link:active:not([aria-disabled]),
+.grg-link[data-preview-state='active'] { --link-line: var(--stroke-stronger-900); }
+
+.grg-link:focus-visible,
+.grg-link[data-preview-state='focus'] {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.grg-link[aria-disabled] {
+  --link-color: var(--text-disabled-400);
+  --link-line: var(--stroke-disabled);
+  cursor: default;
+}
+
+/* A 24px tall touch area for the smaller sizes (WCAG 2.2 target size), without changing the layout */
+.grg-link:is([data-size='sm'], [data-size='xs'])::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  height: var(--space-600);
+  translate: 0 -50%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-link::after { transition: none; }
+}
+
+.grg-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

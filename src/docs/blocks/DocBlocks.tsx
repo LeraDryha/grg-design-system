@@ -20,8 +20,8 @@ export type ComponentHeaderProps = {
   guidelines?: string;
   /** The PrimeReact component it is built on */
   builtOn?: string;
-  /** Other docs pages it shares parts with */
-  related?: { label: string; href: string }[];
+  /** Other docs pages: parts it uses, or related components to see */
+  related?: { label: string; href: string; relation?: 'Uses' | 'See also' }[];
 };
 
 /** The line under a component's title: status, Figma links, what it is built on. */
@@ -40,7 +40,7 @@ export function ComponentHeader({ status, figma, guidelines, builtOn, related = 
       {builtOn && <span className="doc-chip doc-chip--quiet">Built on {builtOn}</span>}
       {related.map(r => (
         <a key={r.href} className="doc-chip" href={r.href} target="_top">
-          Uses {r.label}
+          {r.relation ?? 'Uses'} {r.label}
         </a>
       ))}
     </div>

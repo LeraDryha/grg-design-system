@@ -12,6 +12,7 @@ import informationCircle from '../../icons/information-circle.svg';
 import link from '../../icons/link.svg';
 import loading from '../../icons/loading.svg';
 import mail from '../../icons/mail.svg';
+import maximize from '../../icons/maximize.svg';
 import menuVertical from '../../icons/menu-vertical.svg';
 import pencil from '../../icons/pencil.svg';
 import plus from '../../icons/plus.svg';
@@ -35,6 +36,7 @@ export const icons = {
   link,
   loading,
   mail,
+  maximize,
   'menu-vertical': menuVertical,
   pencil,
   plus,

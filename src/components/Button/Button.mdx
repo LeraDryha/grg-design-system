@@ -11,7 +11,10 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   figma="22-9981"
   guidelines="417-22553"
   builtOn="PrimeReact Button"
-  related={[{ label: 'Action Button', href: '?path=/docs/components-action-button--docs' }]}
+  related={[
+    { label: 'Action Button', href: '?path=/docs/components-action-button--docs', relation: 'See also' },
+    { label: 'Link', href: '?path=/docs/components-link--docs', relation: 'See also' },
+  ]}
 />
 
 A button starts an action: submit a form, open a dialog, confirm a step.
@@ -31,7 +34,7 @@ All props are listed at the end of the page.
     'Destructive colour for actions that remove or cancel something; green for positive confirmations',
   ]}
   donts={[
-    'Going to another page: use a link',
+    'Going to another page: use Link',
     'A small action inside another component (copy, reveal, edit): use Action Button',
     'Choosing between options: use Segment control, Radio or Checkbox',
   ]}
