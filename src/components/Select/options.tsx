@@ -2,6 +2,7 @@ import { Icon, type IconName } from '../Icon/Icon';
 import { CountryIcon, type CountryCode } from '../CountryIcon/CountryIcon';
 import { CoinIcon, type CoinName } from '../CoinIcon/CoinIcon';
 import { PaymentIcon, type PaymentMethod } from '../PaymentIcon/PaymentIcon';
+import { Avatar, type AvatarProps } from '../Avatar/Avatar';
 
 /** One option of Select, Compact select or Inline select. The picture follows the Figma Type. */
 export type SelectOption = {
@@ -18,8 +19,8 @@ export type SelectOption = {
   coin?: CoinName;
   /** Logo from Payment method icons, such as `mastercard` (Type Payment method) */
   paymentMethod?: PaymentMethod;
-  /** Photo or company logo, URL (Type User). A simple round picture until Avatar is built. */
-  avatar?: string;
+  /** Avatar of a person or a company (Type User): a photo, initials of the label, or a shape, in a colour */
+  avatar?: Pick<AvatarProps, 'src' | 'initials' | 'shape' | 'color'>;
   /** The option can't be chosen right now */
   disabled?: boolean;
 };
@@ -42,7 +43,7 @@ export function OptionPicture({ option, className = '' }: { option: SelectOption
   if (option.country) return <CountryIcon className={cls} code={option.country} size={20} />;
   if (option.coin) return <CoinIcon className={cls} name={option.coin} size={20} />;
   if (option.paymentMethod) return <PaymentIcon className={cls} method={option.paymentMethod} size={20} />;
-  if (option.avatar) return <img className={`${cls} grg-option-picture--avatar`} src={option.avatar} alt="" />;
+  if (option.avatar) return <Avatar className={cls} size={20} name={option.label} {...option.avatar} decorative />;
   if (option.icon) return <span className={`${cls} grg-option-picture--icon`}><Icon name={option.icon} size={20} /></span>;
   return null;
 }

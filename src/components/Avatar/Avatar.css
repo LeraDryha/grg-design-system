@@ -1,0 +1,69 @@
+/* Avatar. Figma: a circle; a photo, initials or a shape; the Status badge at the bottom right. */
+
+.grg-avatar {
+  /* Grey by default: Figma bg-subtle-300 with the shape in bg-muted-50, initials in text-strong-1000 */
+  --av-size: var(--space-1000);
+  --av-shape-bg: var(--bg-subtle-300);
+  --av-shape: var(--bg-muted-50);
+  --av-initials-bg: var(--bg-subtle-300);
+  --av-initials: var(--text-strong-1000);
+  --av-font: var(--typo-body-sm-semibold);
+
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--av-size);
+  height: var(--av-size);
+}
+
+.grg-avatar[data-size='120'] { --av-size: calc(var(--space-2400) + var(--space-600)); --av-font: var(--typo-heading-h5); }
+.grg-avatar[data-size='96'] { --av-size: var(--space-2400); --av-font: var(--typo-title-lg-bold); }
+.grg-avatar[data-size='80'] { --av-size: var(--space-2000); --av-font: var(--typo-title-md-bold); }
+.grg-avatar[data-size='64'] { --av-size: var(--space-1600); --av-font: var(--typo-title-sm-bold); }
+.grg-avatar[data-size='56'] { --av-size: var(--space-1400); --av-font: var(--typo-body-md-semibold); }
+.grg-avatar[data-size='48'] { --av-size: var(--space-1200); --av-font: var(--typo-body-md-semibold); }
+.grg-avatar[data-size='32'] { --av-size: var(--space-800); --av-font: var(--typo-caption-sm-semibold); }
+.grg-avatar[data-size='24'] { --av-size: var(--space-600); --av-font: var(--typo-caption-xs-semibold); }
+.grg-avatar[data-size='20'] { --av-size: var(--space-500); --av-font: var(--typo-caption-xs-semibold); }
+.grg-avatar[data-size='16'] { --av-size: var(--space-400); --av-font: var(--typo-caption-xs-semibold); }
+
+/* Coloured: shapes take the 400 shade with the shape in 50, initials the 300 shade with letters in 900 (Figma guidelines) */
+.grg-avatar[data-color='red'] { --av-shape-bg: var(--add-red-400); --av-shape: var(--add-red-50); --av-initials-bg: var(--add-red-300); --av-initials: var(--add-red-900); }
+.grg-avatar[data-color='pink'] { --av-shape-bg: var(--add-pink-400); --av-shape: var(--add-pink-50); --av-initials-bg: var(--add-pink-300); --av-initials: var(--add-pink-900); }
+.grg-avatar[data-color='orange'] { --av-shape-bg: var(--add-orange-400); --av-shape: var(--add-orange-50); --av-initials-bg: var(--add-orange-300); --av-initials: var(--add-orange-900); }
+.grg-avatar[data-color='amber'] { --av-shape-bg: var(--add-amber-400); --av-shape: var(--add-amber-50); --av-initials-bg: var(--add-amber-300); --av-initials: var(--add-amber-900); }
+.grg-avatar[data-color='yellow'] { --av-shape-bg: var(--add-yellow-400); --av-shape: var(--add-yellow-50); --av-initials-bg: var(--add-yellow-300); --av-initials: var(--add-yellow-900); }
+.grg-avatar[data-color='pea'] { --av-shape-bg: var(--add-pea-400); --av-shape: var(--add-pea-50); --av-initials-bg: var(--add-pea-300); --av-initials: var(--add-pea-900); }
+.grg-avatar[data-color='green'] { --av-shape-bg: var(--add-green-400); --av-shape: var(--add-green-50); --av-initials-bg: var(--add-green-300); --av-initials: var(--add-green-900); }
+.grg-avatar[data-color='emerald'] { --av-shape-bg: var(--add-emerald-400); --av-shape: var(--add-emerald-50); --av-initials-bg: var(--add-emerald-300); --av-initials: var(--add-emerald-900); }
+.grg-avatar[data-color='cyan'] { --av-shape-bg: var(--add-cyan-400); --av-shape: var(--add-cyan-50); --av-initials-bg: var(--add-cyan-300); --av-initials: var(--add-cyan-900); }
+.grg-avatar[data-color='sky'] { --av-shape-bg: var(--add-sky-400); --av-shape: var(--add-sky-50); --av-initials-bg: var(--add-sky-300); --av-initials: var(--add-sky-900); }
+.grg-avatar[data-color='blue'] { --av-shape-bg: var(--add-blue-400); --av-shape: var(--add-blue-50); --av-initials-bg: var(--add-blue-300); --av-initials: var(--add-blue-900); }
+.grg-avatar[data-color='indigo'] { --av-shape-bg: var(--add-indigo-400); --av-shape: var(--add-indigo-50); --av-initials-bg: var(--add-indigo-300); --av-initials: var(--add-indigo-900); }
+.grg-avatar[data-color='purple'] { --av-shape-bg: var(--add-purple-400); --av-shape: var(--add-purple-50); --av-initials-bg: var(--add-purple-300); --av-initials: var(--add-purple-900); }
+.grg-avatar[data-color='fuchsia'] { --av-shape-bg: var(--add-fuchsia-400); --av-shape: var(--add-fuchsia-50); --av-initials-bg: var(--add-fuchsia-300); --av-initials: var(--add-fuchsia-900); }
+
+.grg-avatar__picture {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-fully-rounded);
+  background: var(--av-shape-bg);
+}
+.grg-avatar[data-kind='initials'] .grg-avatar__picture { background: var(--av-initials-bg); }
+
+.grg-avatar__image { width: 100%; height: 100%; object-fit: cover; }
+.grg-avatar__shape { width: 100%; height: 100%; fill: var(--av-shape); }
+
+/* Initials are bold at every size (Figma: Bold 10–14 at the small sizes, Title and Heading styles above) */
+.grg-avatar__initials {
+  font: var(--av-font);
+  font-weight: var(--font-weight-bold);
+  color: var(--av-initials);
+  line-height: 1;
+  user-select: none;
+}
+
+.grg-avatar__status { position: absolute; right: 0; bottom: 0; }

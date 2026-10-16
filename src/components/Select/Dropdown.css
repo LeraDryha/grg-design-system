@@ -85,12 +85,6 @@
 /* Pictures of the options (shared with the fields) */
 .grg-option-picture { flex: none; }
 .grg-option-picture--icon { display: inline-grid; }
-.grg-option-picture--avatar {
-  width: var(--space-500);
-  height: var(--space-500);
-  border-radius: var(--radius-fully-rounded);
-  object-fit: cover;
-}
 
 /* PrimeReact keeps a focusable input and a native <select> for assistive technology and forms: visually hidden */
 :is(.grg-select, .grg-compact-select, .grg-inline-select) [data-p-hidden-accessible='true'],

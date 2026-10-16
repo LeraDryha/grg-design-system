@@ -1,0 +1,118 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AvatarStories from './Avatar.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={AvatarStories} />
+
+# Avatar
+
+<ComponentHeader
+  status="ready"
+  figma="152-1467"
+  guidelines="420-13612"
+  related={[{ label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' }]}
+/>
+
+A picture of a person or a company: a photo, initials or a placeholder shape, with an optional status.
+Used in profiles, lists, comments and the User type of Select.
+
+<Canvas of={AvatarStories.Playground} />
+<Controls of={AvatarStories.Playground} include={['size', 'src', 'name', 'initials', 'shape', 'color', 'status']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Showing who did something or who something belongs to: an author, an assignee, an account',
+    'A photo or logo when there is one; initials or a shape when there is not',
+    'One colour group per person or company, kept the same everywhere they appear',
+  ]}
+  donts={[
+    'Decoration without a person or company behind it: use an icon or an illustration',
+    'Mixing shades from different colour groups in one avatar',
+    'A status badge at 16 or 20px: there is no room for it',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={AvatarStories.Anatomy} />
+
+1. **Image:** a photo or logo, initials, or a person or company shape, in a circle.
+2. **Status (optional):** the Status badge at the bottom right, with a 2px ring in the surface colour.
+
+## Sizes
+
+<Canvas of={AvatarStories.Sizes} />
+
+Eleven sizes from 120 to 16px. The status badge follows the size:
+
+- **120 / 96 / 80:** Status badge md-24.
+- **64 / 56:** sm-20.
+- **48:** xs-16.
+- **40 / 32:** xxs-12.
+- **24:** mini-8, a dot without an icon.
+- **20 / 16:** no badge.
+
+Initials are bold and scale with the size: Heading H5 at 120, Title at 96–64, 14px at 56 and 48, 12px at 40, 11px at 32 and 10px below, with one letter at 20 and 16.
+
+## Kinds
+
+<Canvas of={AvatarStories.Kinds} />
+
+From the left:
+
+- **Photo** (`src`): a photo or a company logo, cropped to the circle. If it fails to load, the shape shows instead.
+- **Person** (`shape="user"`, the default): a placeholder before there is a photo.
+- **Company** (`shape="company"`): the same for an organisation.
+- **Initials** (`initials` with a `name`): the first letters of the first and last name.
+
+## Colours
+
+<Canvas of={AvatarStories.Colours} />
+
+Grey by default; or one of the fourteen Additional colour groups (`color`). Both shades always come from the same group:
+
+- **Shapes:** the 400 shade in the background, the shape in 50 (Sky 400 + Sky 50).
+- **Initials:** the 300 shade in the background, the letters in 900 (Sky 300 + Sky 900).
+
+Never mix groups, such as Yellow 50 with Purple 400. In the dark theme the shades swap places, so the avatar keeps its contrast.
+
+## Status
+
+<Canvas of={AvatarStories.Statuses} />
+
+From the left: **none**, **Check** (green), **Pending** (amber), **Remove** (red, a cross), **Error** (red, a minus) and **Icon** (a grey pencil, for an avatar that can be changed).
+
+### Status badge
+
+<Canvas of={AvatarStories.StatusBadges} />
+
+Its own small component in Figma: five types in five sizes (24, 20, 16, 12 and 8). At 8px it is a dot without an icon.
+Avatar picks the size; use it on its own only where Avatar can't be used.
+
+## Accessibility
+
+- With a `name`, the avatar is an image with that name, and the status is added to it: *Warren Fritsch, verified*. Change the status words with `statusLabel`.
+- Without a name, or with `decorative` when the name is written next to it (lists, selects), screen readers skip it.
+- The status is not shown by colour alone: each type has its own icon from 12px up.
+- The edit badge is a picture, not a button: put the action on a button next to the avatar or on the avatar's container.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: '120, 96, 80, 64, 56, 48, 40, 32, 24, 20, 16' },
+    { figma: 'Image', prop: 'src', values: 'on: a photo URL' },
+    { figma: 'Initials', prop: 'initials · name', values: 'on: letters from the name' },
+    { figma: 'Company', prop: 'shape', values: 'company or user (the person shape)' },
+    { figma: 'Coloured', prop: 'color', values: 'On: an Additional colour group; Off: grey' },
+    { figma: 'Status · Status badge Type', prop: 'status', values: 'Check, Pending, Remove, Error, Icon → check, pending, remove, error, edit' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={AvatarStories} />

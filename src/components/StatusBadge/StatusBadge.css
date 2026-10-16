@@ -1,0 +1,37 @@
+/* Status badge. Figma: a circle with a 2px surface-base stroke outside, the icon 2px in (1px at 12px). */
+
+.grg-status-badge {
+  --sb-size: var(--space-600);
+  --sb-inset: var(--space-050);
+  --sb-bg: var(--bg-weak-100);
+  --sb-fg: var(--icon-inverce);
+
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: var(--sb-size);
+  height: var(--sb-size);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--sb-bg);
+  box-shadow: 0 0 0 var(--space-050) var(--surface-base);
+}
+.grg-status-badge[data-size='20'] { --sb-size: var(--space-500); }
+.grg-status-badge[data-size='16'] { --sb-size: var(--space-400); }
+.grg-status-badge[data-size='12'] { --sb-size: var(--space-300); --sb-inset: 1px; }
+.grg-status-badge[data-size='8'] { --sb-size: var(--space-200); }
+
+.grg-status-badge[data-type='check'] { --sb-bg: var(--success-subtle-500); }
+.grg-status-badge[data-type='pending'] { --sb-bg: var(--warning-soft-400); --sb-fg: var(--surface-base); }
+.grg-status-badge[data-type='remove'],
+.grg-status-badge[data-type='error'] { --sb-bg: var(--error-subtle-500); }
+.grg-status-badge[data-type='edit'] { --sb-bg: var(--bg-weak-100); --sb-fg: var(--icon-base-500); }
+
+/* The icon fills the badge minus the inset, drawn as a mask in its colour */
+.grg-status-badge__icon {
+  position: absolute;
+  inset: var(--sb-inset);
+  background: var(--sb-fg);
+  mask: var(--sb-icon) center / contain no-repeat;
+}
+/* Pending: the clock hands are drawn on the badge's own 24px grid */
+.grg-status-badge[data-type='pending'] .grg-status-badge__icon { inset: 0; }

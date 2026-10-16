@@ -26,16 +26,17 @@ export const sampleCountries: SelectOption[] = [
   { value: 'UA', label: 'Ukraine', country: 'ua' },
 ];
 
-/** A round picture with initials, standing in for a photo until Avatar is built. */
-const initials = (name: string, hue: number) => {
-  const text = name.replace(/^(Ms|Mr|Miss)\.? /, '').split(' ').map(w => w[0]).join('').slice(0, 2);
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="hsl(${hue} 45% 55%)"/><text x="20" y="25" font-family="sans-serif" font-size="15" font-weight="600" fill="#fff" text-anchor="middle">${text}</text></svg>`;
-  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
-};
+import avatarPhoto from '../../assets/avatar-sample.jpg';
 
 export const sampleUsers: SelectOption[] = [
-  'Sergio Schroeder', 'Warren Fritsch', 'Clifton Armstrong', 'Ms. Dwight Konopelski', 'Miss Gwen Mosciski', 'Brad Zemlak',
-].map((name, i) => ({ value: name.toLowerCase().replace(/\W+/g, '-'), label: name, avatar: initials(name, 30 + i * 55) }));
+  { value: 'sergio-schroeder', label: 'Sergio Schroeder', avatar: { initials: true, color: 'sky' } },
+  { value: 'warren-fritsch', label: 'Warren Fritsch', avatar: { src: avatarPhoto } },
+  { value: 'clifton-armstrong', label: 'Clifton Armstrong', avatar: { initials: true, color: 'green' } },
+  { value: 'dwight-konopelski', label: 'Ms. Dwight Konopelski', avatar: { initials: true } },
+  { value: 'gwen-mosciski', label: 'Miss Gwen Mosciski', avatar: { initials: true, color: 'purple' } },
+  { value: 'brad-zemlak', label: 'Brad Zemlak', avatar: { src: avatarPhoto } },
+  { value: 'golden-ratio', label: 'Golden Ratio Group', avatar: { shape: 'company', color: 'amber' } },
+];
 
 export const samplePaymentMethods: SelectOption[] = [
   { value: 'amex', label: 'Amex', paymentMethod: 'amex' },
