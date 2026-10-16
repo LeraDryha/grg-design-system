@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Icon, type IconName } from '../components/Icon/Icon';
 import { Input } from '../components/Input/Input';
+import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms } from '../components/SocialIcon/SocialIcon';
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import './Foundations.css';
@@ -211,5 +212,35 @@ export function IconSizes({ name = 'trash' }: { name?: IconName }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Social icons in one style; click an icon to copy its platform name. */
+export function SocialIconGallery({ variant }: { variant: 'brand' | 'gray' }) {
+  const [copied, setCopied] = useState('');
+  const shown = variant === 'gray' ? grayPlatforms : socialPlatforms;
+  async function copy(name: string) {
+    try {
+      await navigator.clipboard.writeText(name);
+      setCopied(name);
+    } catch {
+      setCopied('');
+    }
+  }
+  return (
+    <div className="sb-unstyled fdn-icons">
+      <ul className="fdn-icons__grid">
+        {shown.map(name => (
+          <li key={name}>
+            <button type="button" className="fdn-icons__cell" onClick={() => copy(name)} aria-label={`Copy platform name ${name}`}>
+              <SocialIcon platform={name} variant={variant} size={24} />
+              <span>{platformLabels[name]}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="grg-sr-only" role="status">{copied && `Copied ${copied}`}</p>
+      {copied && <p className="fdn-icons__copied" aria-hidden="true">Copied <code>{copied}</code></p>}
+    </div>
   );
 }

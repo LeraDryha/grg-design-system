@@ -1,0 +1,21 @@
+.grg-social-icon {
+  display: inline-block;
+  flex: none;
+  width: var(--social-size);
+  height: var(--social-size);
+}
+
+.grg-social-icon--brand {
+  background: var(--social-src) center / contain no-repeat;
+}
+
+/* Near-black brand marks turn white on the dark theme (the -dark file); the others keep their colours */
+[data-theme='dark'] .grg-social-icon--brand {
+  background-image: var(--social-src-dark, var(--social-src));
+}
+
+/* Figma binds the Gray style to Icon/icon-base-500 */
+.grg-social-icon--gray {
+  background: var(--icon-base-500);
+  mask: var(--social-src) center / contain no-repeat;
+}

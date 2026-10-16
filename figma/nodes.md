@@ -8,6 +8,8 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 |---|---|
 | Base icons (362, 24 × 24), exported to `figma/icons.json` | `23:11109` |
 | Usage text (sizes, customising) | on the same page, next to the set |
+| Social icon set (Platform × Style: 25 Brand, 21 Gray), exported to `figma/social-icons.json` | `68:17086` |
+| Social icon page (usage, sizes, dark example) | `68:17669` |
 
 ## Field parts (shared by Input, Select and Text Area)
 
