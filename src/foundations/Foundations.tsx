@@ -1,7 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { Icon, type IconName } from '../components/Icon/Icon';
 import { Input } from '../components/Input/Input';
-import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms } from '../components/SocialIcon/SocialIcon';
+import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type SocialPlatform } from '../components/SocialIcon/SocialIcon';
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import './Foundations.css';
@@ -242,5 +242,19 @@ export function SocialIconGallery({ variant }: { variant: 'brand' | 'gray' }) {
       <p className="grg-sr-only" role="status">{copied && `Copied ${copied}`}</p>
       {copied && <p className="fdn-icons__copied" aria-hidden="true">Copied <code>{copied}</code></p>}
     </div>
+  );
+}
+
+/** The two social icon sizes side by side. */
+export function SocialIconSizes({ platform = 'facebook' }: { platform?: SocialPlatform }) {
+  return (
+    <ul className="sb-unstyled fdn-icon-sizes">
+      {([24, 20] as const).map(size => (
+        <li key={size}>
+          <span className="fdn-icon-sizes__box"><SocialIcon platform={platform} size={size} /></span>
+          <span>{size} × {size}</span>
+        </li>
+      ))}
+    </ul>
   );
 }

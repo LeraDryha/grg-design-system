@@ -1,0 +1,52 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { SocialIconGallery, SocialIconSizes } from '../Foundations';
+import { ComponentHeader } from '../../docs/blocks/DocBlocks';
+
+<Meta title="Foundations/Icons/Social icons" />
+
+# Social icons
+
+<ComponentHeader status="ready" figma="68-17086" guidelines="68-17669" />
+
+Social icons represent social media platforms and external social links: sign in with Google or Apple, share, follow us.
+The set has 25 platforms on a 24 × 24 grid, exported from Figma under their Figma names, in two styles.
+
+## Styles
+
+- **Brand:** the platform's own colours. Use it where people need to recognise the platform at a glance, such as *Sign in with Google*.
+- **Gray:** one colour, the `icon-base-500` token. Use it where several platforms sit together and should stay quiet, such as a footer.
+  Slack, Zapier, Notion and Dropbox have no Gray version in Figma and stay Brand.
+
+Brand colours are the same in both themes. Seven marks are black in Figma (X, Apple, GitHub, TikTok, Tumblr, AngelList, Layers)
+and would disappear on dark, so in the dark theme they turn white. Figma has no dark Brand set; this is the code's addition.
+
+## Sizes
+
+<SocialIconSizes />
+
+Social icons are used in two sizes: 24 × 24 and 20 × 20. Use the size that matches the component and its text,
+so the interface stays consistent. The Figma page calls these three sizes and then lists two; the two listed are available here.
+
+## Using social icons
+
+- Use social icons only for social platforms. For everything else, use the [Base icons](?path=/docs/foundations-icons-base-icons--docs).
+- Set the size with `size`. Icons are square and scale without distortion, like an icon with a locked aspect ratio in Figma.
+- Don't recolour Brand icons: the colours are part of the logo. For one colour, use Gray. Don't mix the two styles in one group.
+- Icons are decorative: screen readers skip them. When an icon is the only content of a link or button, give the link or button
+  a name (*LinkedIn*, *Sign in with Apple*). Use `label` only for a standalone icon that means something by itself.
+
+```tsx
+<SocialIcon platform="linkedin" variant="gray" size={20} />
+```
+
+The platform is the Figma name in lower case: *Facebook* → `facebook`, *X (Twitter)* → `x`. The Figma Style is `variant`: `brand` or `gray`.
+
+## All social icons
+
+Click an icon to copy its platform name.
+
+### Brand
+<SocialIconGallery variant="brand" />
+
+### Gray
+<SocialIconGallery variant="gray" />
