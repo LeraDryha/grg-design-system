@@ -12,7 +12,6 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
   ],
   framework: '@storybook/react-vite',
-  staticDirs: ['../public'],
   core: { disableTelemetry: true },
   viteFinal: config => {
     const onwarn = config.build?.rollupOptions?.onwarn;
