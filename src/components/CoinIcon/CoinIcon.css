@@ -1,0 +1,14 @@
+.grg-coin-icon {
+  display: inline-block;
+  flex: none;
+}
+
+/* Coins on a black disc: the swapped version on the dark theme */
+.grg-coin-icon--on-dark,
+[data-theme='dark'] .grg-coin-icon--on-light {
+  display: none;
+}
+
+[data-theme='dark'] .grg-coin-icon--on-dark {
+  display: inline-block;
+}

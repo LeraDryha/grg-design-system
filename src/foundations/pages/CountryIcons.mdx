@@ -1,0 +1,40 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { PictureGallery, PictureSizes } from '../Foundations';
+import { ComponentHeader } from '../../docs/blocks/DocBlocks';
+
+<Meta title="Foundations/Icons/Country icons" />
+
+# Country icons
+
+<ComponentHeader status="ready" figma="68-14967" guidelines="68-14967" />
+
+Country icons represent countries, regions and locale selection, drawn as round flags.
+The set has 231 flags on a 24 × 24 grid, exported from Figma under their country codes. Figma has two more, Russia and Belarus; they are left out.
+
+## Sizes
+
+<PictureSizes set="country" icon="ua" sizes={[{ size: 24, label: '24 × 24' }, { size: 20, label: '20 × 20' }]} />
+
+Country icons are used in two sizes: 24 × 24 and 20 × 20. Use the size that matches the component and its text,
+so the interface stays consistent. The Figma page calls these three sizes and then lists two; the two listed are available here.
+
+## Using country icons
+
+- Always write the country or language name next to the flag: many flags look alike at this size, and a flag is not a language.
+- Don't recolour flags. They stay the same in both themes.
+- Icons are square and scale without distortion, like an icon with a locked aspect ratio in Figma.
+- Icons are decorative when the name is written next to them: screen readers skip them. Use `label` for a flag that stands alone,
+  such as the country code button of a phone number field.
+
+```tsx
+<CountryIcon code="ua" size={20} />
+```
+
+The key is the country code in lower case: *UA* → `ua`. Where Figma has two or more flags under one code, the others are
+`-2`, `-3`: three flags under *BQ* (Bonaire, Sint Eustatius and Saba share the code) and two under *CD*.
+
+## All country icons
+
+Click a flag to copy its key.
+
+<PictureGallery set="country" />

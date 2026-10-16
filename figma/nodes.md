@@ -10,6 +10,11 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | Usage text (sizes, customising) | on the same page, next to the set |
 | Social icon set (Platform × Style: 25 Brand, 21 Gray), exported to `figma/social-icons.json` | `68:17086` |
 | Social icon page (usage, sizes, dark example) | `68:17669` |
+| Coin set (682, Name), exported to `figma/coin-icons.json` | `80:4965` |
+| Coin icon page (usage, sizes) | `80:14858` |
+| Payment method icon set (40, 34 × 24), exported to `figma/payment-icons.json` | `80:15178` |
+| Payment method icon page (usage, sizes) | `80:14896` |
+| Country icons: 233 separate components on the page frame, exported to `figma/country-icons.json`; RU and BY are left out of the build | `68:14967` |
 
 ## Field parts (shared by Input, Select and Text Area)
 

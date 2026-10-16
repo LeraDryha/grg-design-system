@@ -1,0 +1,41 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { PictureGallery, PictureSizes } from '../Foundations';
+import { ComponentHeader } from '../../docs/blocks/DocBlocks';
+
+<Meta title="Foundations/Icons/Coin icons" />
+
+# Coin icons
+
+<ComponentHeader status="ready" figma="80-4965" guidelines="80-14858" />
+
+Coin icons represent cryptocurrencies, tokens and digital assets, plus four fiat currencies (USD, EUR, CNY, UAH).
+The set has 682 icons on a 24 × 24 grid, in each coin's own colours, exported from Figma under their Figma names.
+
+## Sizes
+
+<PictureSizes set="coin" icon="bitcoin-btc" sizes={[{ size: 24, label: '24 × 24' }, { size: 20, label: '20 × 20' }]} />
+
+Coin icons are used in two sizes: 24 × 24 and 20 × 20. Use the size that matches the component and its text,
+so the interface stays consistent. The Figma page calls these three sizes and then lists two; the two listed are available here.
+
+## Using coin icons
+
+- Show the coin's name or ticker next to the icon: many logos look alike, and people check the ticker before they trade.
+- Don't recolour coin icons: the colours are part of the logo. They stay the same in both themes, except for coins on a black disc
+  (XRP, EOS, Algorand and 43 more): on the dark theme their black and white swap, so they don't disappear. Figma has no dark set; this is the code's addition.
+- Icons are square and scale without distortion, like an icon with a locked aspect ratio in Figma.
+- Icons are decorative when the name is written next to them: screen readers skip them. Use `label` only for an icon
+  that stands alone, such as a coin in a compact table cell.
+
+```tsx
+<CoinIcon name="bitcoin-btc" size={20} />
+```
+
+The key is the Figma name in lower case, with anything other than letters and digits turned into hyphens:
+*Bitcoin (BTC)* → `bitcoin-btc`, *USD Coin (USDC)* → `usd-coin-usdc`. Search the list below by name or ticker.
+
+## All coin icons
+
+Click an icon to copy its key.
+
+<PictureGallery set="coin" />

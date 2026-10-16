@@ -1,6 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { Icon, type IconName } from '../components/Icon/Icon';
 import { Input } from '../components/Input/Input';
+import { CoinIcon, coinNames, type CoinName } from '../components/CoinIcon/CoinIcon';
+import { CountryIcon, countryCodes, type CountryCode } from '../components/CountryIcon/CountryIcon';
+import { PaymentIcon, paymentMethods, type PaymentMethod } from '../components/PaymentIcon/PaymentIcon';
 import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type SocialPlatform } from '../components/SocialIcon/SocialIcon';
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
@@ -253,6 +256,69 @@ export function SocialIconSizes({ platform = 'facebook' }: { platform?: SocialPl
         <li key={size}>
           <span className="fdn-icon-sizes__box"><SocialIcon platform={platform} size={size} /></span>
           <span>{size} × {size}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/* ---- Coin, Payment method and Country icons ---- */
+
+const pictureSets = {
+  coin: { entries: coinNames, noun: 'coins', draw: (key: string, size: number) => <CoinIcon name={key as CoinName} size={size as 20 | 24} /> },
+  payment: { entries: paymentMethods, noun: 'payment methods', draw: (key: string, size: number) => <PaymentIcon method={key as PaymentMethod} size={size as 20 | 24 | 32} /> },
+  country: { entries: countryCodes, noun: 'countries', draw: (key: string, size: number) => <CountryIcon code={key as CountryCode} size={size as 20 | 24} /> },
+};
+
+type PictureSet = keyof typeof pictureSets;
+
+/** A whole picture set with a search by name or key; click an icon to copy its key. */
+export function PictureGallery({ set }: { set: PictureSet }) {
+  const { entries, noun, draw } = pictureSets[set];
+  const [query, setQuery] = useState('');
+  const [copied, setCopied] = useState('');
+  const q = query.trim().toLowerCase();
+  const shown = entries.filter(([key, label]) => key.includes(q.replace(/\s+/g, '-')) || label.toLowerCase().includes(q));
+  async function copy(key: string) {
+    try {
+      await navigator.clipboard.writeText(key);
+      setCopied(key);
+    } catch {
+      setCopied('');
+    }
+  }
+  return (
+    <div className="sb-unstyled fdn-icons">
+      {entries.length > 60 && (
+        <div className="fdn-icons__search">
+          <Input label={`Search ${noun}`} leftIcon="search" value={query} onValueChange={setQuery} />
+          <span className="fdn-muted">{shown.length} of {entries.length}</span>
+        </div>
+      )}
+      <ul className="fdn-icons__grid">
+        {shown.map(([key, label]) => (
+          <li key={key}>
+            <button type="button" className="fdn-icons__cell" onClick={() => copy(key)} aria-label={`Copy key ${key}`}>
+              {draw(key, 24)}
+              <span>{label}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+      <p className="grg-sr-only" role="status">{copied && `Copied ${copied}`}</p>
+      {copied && <p className="fdn-icons__copied" aria-hidden="true">Copied <code>{copied}</code></p>}
+    </div>
+  );
+}
+
+/** The sizes of a picture set side by side, with their measurements. */
+export function PictureSizes({ set, icon, sizes }: { set: PictureSet; icon: string; sizes: { size: number; label: string }[] }) {
+  return (
+    <ul className="sb-unstyled fdn-icon-sizes">
+      {sizes.map(({ size, label }) => (
+        <li key={size}>
+          <span className="fdn-icon-sizes__box">{pictureSets[set].draw(icon, size)}</span>
+          <span>{label}</span>
         </li>
       ))}
     </ul>

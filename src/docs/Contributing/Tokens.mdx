@@ -12,7 +12,7 @@ Tokens are generated, never written by hand. Figma is the source of truth.
 
 ## Icons
 
-Icons are generated the same way. Export the Figma "Base icons" frame into `figma/icons.json` and run `npm run icons`: it writes one SVG per icon to `src/icons/base/` and the list of names. An icon keeps its Figma name, with spaces turned into hyphens (`calendar 01` → `calendar-01`). The same command builds the social icons from `figma/social-icons.json` (Figma "Social icon" set) into `src/icons/social/`. See Foundations/Icons.
+Icons are generated the same way. Export the Figma "Base icons" frame into `figma/icons.json` and run `npm run icons`: it writes one SVG per icon to `src/icons/base/` and the list of names. An icon keeps its Figma name, with spaces turned into hyphens (`calendar 01` → `calendar-01`). The same command builds the social icons from `figma/social-icons.json` (Figma "Social icon" set) into `src/icons/social/`. Coin, Payment method and Country icons are too many to export one by one: export the whole set as SVG and split it with `scripts/split-figma-export.py` into `figma/coin-icons.json`, `payment-icons.json` and `country-icons.json`, then run `npm run icons`. See Foundations/Icons.
 
 ## Naming
 
