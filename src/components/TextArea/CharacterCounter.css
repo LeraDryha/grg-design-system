@@ -1,0 +1,23 @@
+/* Character counter. Figma: 12/16 regular (Body-sm/Regular), 4px gap, a 16px resize icon. */
+.grg-counter {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-100);
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  white-space: nowrap;
+}
+.grg-counter .grg-icon { color: var(--icon-base-500); }
+.grg-counter[data-state='error'],
+.grg-counter[data-state='error'] .grg-icon { color: var(--error-base-600); }
+.grg-counter[data-state='disabled'] { color: var(--text-disabled-400); }
+.grg-counter[data-state='disabled'] .grg-icon { color: var(--icon-disabled-400); }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

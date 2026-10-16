@@ -1,0 +1,166 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TextAreaStories from './TextArea.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TextAreaStories} />
+
+# Text Area
+
+<ComponentHeader
+  status="ready"
+  figma="77-484318"
+  guidelines="989-55196"
+  builtOn="PrimeReact InputTextarea"
+  related={[
+    { label: 'Form Field', href: '?path=/docs/components-form-field--docs', relation: 'Uses' },
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+  ]}
+/>
+
+A multi-line text field for feedback, messages and comments, with a label, a character counter, a hint and extra information on the right.
+It shares the label, hint, Key: value and states with Input.
+
+<Canvas of={TextAreaStories.Playground} />
+<Controls of={TextAreaStories.Playground} include={['size', 'label', 'hint', 'error', 'required', 'counter', 'maxLength', 'disabled', 'previewState']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Text longer than one line: a message, feedback, a comment, a description',
+    'A limit on the length, shown with the character counter',
+    'A standalone field, such as a feedback section, in the lg size',
+  ]}
+  donts={[
+    'One line of text: name, email, address: use Input',
+    'Structured values (phone, amount, date): use Input with its type',
+    'Rich text with formatting: Text Area is plain text only',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={TextAreaStories.Anatomy} />
+
+1. **Container:** the field frame. Its border and fill show the state: hovered, active, error, disabled.
+2. **Label:** what the field asks for. Inside the empty field it works as the placeholder, then floats above.
+3. **Required asterisk:** the field must be filled before the form can be sent.
+4. **Additional text (optional):** a short note after the label, such as *(Optional)*.
+5. **Info button (optional):** more context about the field, without taking space in the form.
+6. **Placeholder:** where the person types; shows the label or an example until there is a value.
+7. **Icon:** marks the hint; turns red together with an error.
+8. **Hint text (optional):** help or what to write. An error message replaces it.
+9. **Top Key: Value (optional):** extra information about the field.
+10. **Bottom Value (optional):** a value under the field.
+11. **Character counter (optional):** the count and the limit, *153/200*, with the resize handle. Its own component in Figma.
+
+Parts 2–10 are the shared field parts, the same as in Input: see [Form Field](?path=/docs/components-form-field--docs).
+
+## Sizes
+
+<Canvas of={TextAreaStories.Sizes} />
+
+From the top:
+
+- **lg (44px base input):** 12px paddings. The default, and the size for a standalone field such as a feedback section.
+- **md (40px base input):** 10px paddings.
+- **sm (32px base input):** 6px top and bottom, 8px on the sides.
+
+Match the size to the Inputs next to it in a form. The text (Body-md 14/20), the label (Body-md Semibold 14/20), the 10px corners and the 122px starting height stay the same.
+The counter sits 8px under the text; the label row is 2px above the field, the hint row 2px under it.
+
+## Character counter
+
+<Canvas of={TextAreaStories.Counter} />
+
+From the left:
+
+- **Default:** the count and the limit, in the soft text colour.
+- **Error:** over the limit, or when the field has an error. The field shows *Character limit exceeded.* until the text is short enough.
+- **Disabled:** grey, with the field.
+
+The limit is soft: people can type or paste past it and then shorten the text, instead of losing what they pasted.
+Without `maxLength` the counter shows only the count.
+
+The resize handle after the count marks the corner people drag to make the field taller. Turn it off with `resizable={false}`.
+
+## States
+
+### Default
+Empty: the label sits inside the field as the placeholder.
+
+<Canvas of={TextAreaStories.Default} />
+
+### Filled
+With a value, the label stays above the field and the counter shows the length.
+
+<Canvas of={TextAreaStories.Filled} />
+
+### Hovered
+Pointer over the field: a light fill and a darker border.
+
+<Canvas of={TextAreaStories.Hovered} />
+
+### Active
+Focused: the darkest border, and the label turns dark.
+
+<Canvas of={TextAreaStories.Active} />
+
+### Error
+A red border, a red counter and an error message, which replaces the hint. Screen readers read the message with the field.
+
+<Canvas of={TextAreaStories.ErrorState} />
+
+Over the limit the same happens with *Character limit exceeded.*:
+
+<Canvas of={TextAreaStories.OverLimit} />
+
+### Disabled
+Not available right now: grey fill, text and counter, no interaction.
+
+<Canvas of={TextAreaStories.Disabled} />
+
+## Floating label
+
+<Canvas of={TextAreaStories.FloatingLabel} />
+
+From the left:
+
+1. **Empty.** The label is the placeholder: it sits inside the field, in the placeholder colour.
+2. **Focused.** The label moves above the field and turns dark; the field is ready for typing.
+3. **Filled.** The label stays above while the field has a value. Clearing the field brings it back inside.
+
+The floating label **takes no vertical space**: leave 22px above every field in a form layout.
+
+## Accessibility
+
+- The label is a real `<label>` connected to the field, so it stays the field's name even while it is shown as the placeholder.
+- The hint, the error and the counter are connected with `aria-describedby`. Screen readers hear *153 of 200 characters* with the field, not on every keystroke.
+- An error, including going over the limit, sets `aria-invalid`.
+- Focus is visible: the border turns dark in the Active state.
+- The field can be made taller by dragging its corner; keyboard users get the same text in a scrolling field.
+- Colours follow Figma. On the hovered field the counter (`text-soft-500` on `bg-weak-100`) reaches 4.3:1, just under the 4.5:1 for text.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: 'lg, md, sm (44, 40, 32px base input) → lg, md, sm' },
+    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered and Active follow the pointer and focus; Error → error or over the limit; Disabled → disabled' },
+    { figma: 'Filled', prop: 'value / defaultValue', values: 'on when the field has a value' },
+    { figma: 'Top · Label', prop: 'label · floatingLabel', values: 'text; floats by default' },
+    { figma: 'Key: Value', prop: 'topKey · topValue', values: 'text' },
+    { figma: 'Text', prop: 'placeholder', values: 'used when there is no floating label' },
+    { figma: 'Character counter', prop: 'counter · maxLength', values: 'boolean · the limit' },
+    { figma: 'Bottom · Help text', prop: 'hint · error', values: 'text; an error replaces the hint' },
+    { figma: 'Value (bottom)', prop: 'bottomValue', values: 'text' },
+    { figma: 'Character counter: State', prop: '(follows the field)', values: 'Default, Error, Disabled' },
+    { figma: '16/resize', prop: 'resizable', values: 'the handle in the counter; the field grows when dragged' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TextAreaStories} />

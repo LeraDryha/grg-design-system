@@ -1,0 +1,73 @@
+/* Text Area. Every value is a token; Figma layer names in the comments. Shares the label, hint and states with Input. */
+
+.grg-textarea { width: 100%; }
+
+/* field: 122px tall by default (Figma), text on top, the counter at the bottom right */
+.grg-textarea__box {
+  /* Size: lg by default, as the guidelines ask for a standalone field */
+  --ta-pad-y: var(--space-300);
+  --ta-pad-x: var(--space-300);
+  --ta-border: var(--stroke-base-300);
+  --ta-bg: transparent;
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  width: 100%;
+  min-height: calc(var(--space-2400) + var(--space-600) + var(--space-050));
+  /* Figma strokes sit inside: the 1px border is part of the padding */
+  padding: calc(var(--ta-pad-y) - 1px) calc(var(--ta-pad-x) - 1px);
+  border: 1px solid var(--ta-border);
+  border-radius: var(--radius-md-10);
+  background: var(--ta-bg);
+  font: var(--typo-body-md-regular);
+  color: var(--text-strong-1000);
+  cursor: text;
+  overflow: hidden;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.grg-textarea__box[data-size='md'] { --ta-pad-y: var(--space-250); --ta-pad-x: var(--space-250); }
+.grg-textarea__box[data-size='sm'] { --ta-pad-y: var(--space-150); --ta-pad-x: var(--space-200); }
+
+/* Drag the bottom right corner to make the field taller. The browser's own grip is hidden where it can be;
+   the resize icon of the counter marks the spot. */
+.grg-textarea__box[data-resizable] { resize: vertical; }
+.grg-textarea__box::-webkit-resizer { background: transparent; }
+
+/* States (Figma State) */
+.grg-textarea__box:hover:not([data-disabled]),
+.grg-textarea__box[data-preview-state='hover'] { --ta-bg: var(--bg-weak-100); --ta-border: var(--stroke-strong-500); }
+.grg-textarea__box[data-focused] { --ta-bg: transparent; --ta-border: var(--stroke-stronger-900); }
+.grg-textarea__box[data-invalid] { --ta-border: var(--error-base-600); }
+.grg-textarea__box[data-disabled] {
+  --ta-bg: var(--bg-weak-100);
+  --ta-border: var(--stroke-disabled);
+  color: var(--text-disabled-400);
+  cursor: default;
+}
+
+/* Placeholder → the text the person types */
+.grg-textarea__control {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  resize: none;
+}
+.grg-textarea__control::placeholder { color: var(--text-soft-500); opacity: 1; }
+/* On focus the label floats above, so the placeholder copy of it goes away */
+.grg-textarea__box[data-focused] .grg-textarea__control::placeholder { color: transparent; }
+.grg-textarea__box[data-disabled] .grg-textarea__control::placeholder { color: var(--text-disabled-400); }
+
+.grg-textarea__counter { display: flex; justify-content: flex-end; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-textarea__box { transition: none; }
+}

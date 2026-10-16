@@ -47,3 +47,12 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | What | Node |
 |---|---|
 | Component set `Social button` (State × Icon button × Social, 24 variants; no guidelines page) | `68:17758` |
+
+## Text Area
+
+| What | Node |
+|---|---|
+| Component set `Text Area` (State × Filled × Size, 30 variants; uses Floating label, Hint text, Key: value) | `77:484318` |
+| Character counter (State: Default, Error, Disabled) | `203:20411` |
+| Resize icon `16/resize`, in `src/icons/extra/` | `203:20404` |
+| Usage guidelines (anatomy, sizes, states, floating label, spacing) | `989:55196` |
