@@ -54,7 +54,8 @@ All props are listed at the end of the page.
 8. **Hint text (optional):** help or what to write. An error message replaces it.
 9. **Top Key: Value (optional):** extra information about the field.
 10. **Bottom Value (optional):** a value under the field.
-11. **Character counter (optional):** the count and the limit, *153/200*, with the resize handle. Its own component in Figma.
+11. **Character counter (optional):** the count and the limit, *153/200*. Its own component in Figma.
+12. **Resize handle:** drag it to make the field taller or shorter. In Figma it is the *16/resize* icon inside the counter.
 
 Parts 2–10 are the shared field parts, the same as in Input: see [Form Field](?path=/docs/components-form-field--docs).
 
@@ -84,7 +85,16 @@ From the left:
 The limit is soft: people can type or paste past it and then shorten the text, instead of losing what they pasted.
 Without `maxLength` the counter shows only the count.
 
-The resize handle after the count marks the corner people drag to make the field taller. Turn it off with `resizable={false}`.
+## Resizing
+
+<Canvas of={TextAreaStories.Resizing} />
+
+The icon at the bottom right is the **resize handle**: it shows that the field can grow down and shrink back.
+
+- **Drag it** down to make the field taller, up to make it shorter. The cursor turns into a vertical resize arrow over it.
+- **With the keyboard:** reach it with Tab, then ↓ and ↑ change the height by one line (20px), Home and End jump to the smallest and largest size.
+- **Limits:** from the starting height (122px) to **400px**, about 14 lines of text. Past that the text scrolls inside the field, so a long message never pushes the rest of the form off the screen. A common practice is to stop at roughly half a laptop screen; Figma sets no maximum.
+- The handle follows the field: red with an error, grey and inactive when the field is disabled. Turn it off with `resizable={false}`.
 
 ## States
 
@@ -140,7 +150,7 @@ The floating label **takes no vertical space**: leave 22px above every field in 
 - The hint, the error and the counter are connected with `aria-describedby`. Screen readers hear *153 of 200 characters* with the field, not on every keystroke.
 - An error, including going over the limit, sets `aria-invalid`.
 - Focus is visible: the border turns dark in the Active state.
-- The field can be made taller by dragging its corner; keyboard users get the same text in a scrolling field.
+- The resize handle is a focusable separator named *Resize text area*, with a tooltip. The arrow keys resize the field, so it works without a mouse.
 - Colours follow Figma. On the hovered field the counter (`text-soft-500` on `bg-weak-100`) reaches 4.3:1, just under the 4.5:1 for text.
 
 ## Figma and code
@@ -157,7 +167,7 @@ The floating label **takes no vertical space**: leave 22px above every field in 
     { figma: 'Bottom · Help text', prop: 'hint · error', values: 'text; an error replaces the hint' },
     { figma: 'Value (bottom)', prop: 'bottomValue', values: 'text' },
     { figma: 'Character counter: State', prop: '(follows the field)', values: 'Default, Error, Disabled' },
-    { figma: '16/resize', prop: 'resizable', values: 'the handle in the counter; the field grows when dragged' },
+    { figma: '16/resize', prop: 'resizable · resizeLabel', values: 'the resize handle: drag or arrow keys, 122–400px · its name' },
   ]}
 />
 

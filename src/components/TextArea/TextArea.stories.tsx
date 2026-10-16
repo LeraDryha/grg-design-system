@@ -70,7 +70,8 @@ export const Anatomy: Story = {
         { n: 8, target: '.grg-hint > span:last-child', side: 'bottom' },
         { n: 9, target: '.grg-field__top .grg-key-value', side: 'top' },
         { n: 10, target: '.grg-field__bottom .grg-key-value', side: 'bottom' },
-        { n: 11, target: '.grg-counter', side: 'right' },
+        { n: 11, target: '.grg-counter', side: 'bottom' },
+        { n: 12, target: '.grg-textarea__resize', side: 'right' },
       ]}
     >
       <TextArea {...args} />
@@ -89,6 +90,9 @@ export const Sizes: Story = {
     </div>
   ),
 };
+
+/** Drag the handle at the bottom right down to make the field taller, and back up; or focus it with Tab and use the arrow keys. */
+export const Resizing: Story = { decorators: [field], args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 190) } };
 
 /** The counter on its own: Default, Error and Disabled, from the left. */
 export const Counter: Story = {

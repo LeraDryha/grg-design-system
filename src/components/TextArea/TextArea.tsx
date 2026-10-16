@@ -1,4 +1,5 @@
-import { useId, useRef, useState, type ChangeEvent, type ComponentPropsWithRef } from 'react';
+import { useId, useLayoutEffect, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type KeyboardEvent, type PointerEvent } from 'react';
+import { Icon } from '../Icon/Icon';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { FormField } from '../FormField/FormField';
 import { CharacterCounter } from './CharacterCounter';
@@ -33,8 +34,10 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<'textarea'>, 'value' | 'd
   maxLength?: number;
   /** Error shown over the limit, unless `error` is set */
   limitError?: string;
-  /** People can drag the bottom edge to make the field taller (the resize icon in the counter) */
+  /** The resize handle at the bottom right (Figma "16/resize"): drag it, or use the arrow keys, to change the height */
   resizable?: boolean;
+  /** Name of the resize handle for screen readers and its tooltip */
+  resizeLabel?: string;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -46,7 +49,7 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<'textarea'>, 'value' | 'd
 export function TextArea({
   size = 'lg', label, floatingLabel = true, required, optional, info,
   hint, error, hintIcon = true, topKey, topValue, bottomValue,
-  counter = true, maxLength, limitError = 'Character limit exceeded.', resizable = true,
+  counter = true, maxLength, limitError = 'Character limit exceeded.', resizable = true, resizeLabel = 'Resize text area',
   value: controlled, defaultValue = '', onValueChange, previewState = 'default',
   id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, rows = 3, 'aria-describedby': describedBy, ref, ...props
 }: TextAreaProps) {
@@ -55,6 +58,17 @@ export function TextArea({
   const hintId = `${id}-hint`;
   const counterId = `${id}-counter`;
   const areaRef = useRef<HTMLTextAreaElement | null>(null);
+  const boxRef = useRef<HTMLDivElement | null>(null);
+  const drag = useRef<{ y: number; height: number } | null>(null);
+  const [height, setHeight] = useState<number | null>(null);
+  // The handle reports the height to screen readers (a focusable separator needs a value)
+  const [bounds, setBounds] = useState({ now: 0, min: 0, max: 0 });
+  useLayoutEffect(() => {
+    const box = boxRef.current;
+    if (!box) return;
+    const { min, max } = limits();
+    setBounds({ now: Math.round(box.getBoundingClientRect().height), min, max: Number.isFinite(max) ? max : min });
+  }, [height]);
   const [local, setLocal] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const value = controlled ?? local;
@@ -63,6 +77,38 @@ export function TextArea({
   const overLimit = maxLength !== undefined && value.length > maxLength;
   const shownError = error || (overLimit ? limitError : undefined);
   const labelVisible = !floatingLabel || isFocused || filled;
+
+  /* Resizing: the field grows down and back from its starting height (122px, Figma) to 400px, about
+     14 lines; past that the text scrolls. The limits come from CSS (min-height, max-height), so they stay tokens. */
+  function limits() {
+    const style = boxRef.current ? getComputedStyle(boxRef.current) : null;
+    return { min: parseFloat(style?.minHeight ?? '0') || 0, max: parseFloat(style?.maxHeight ?? '') || Infinity };
+  }
+  function resizeTo(next: number) {
+    const { min, max } = limits();
+    setHeight(Math.round(Math.min(max, Math.max(min, next))));
+  }
+  function startDrag(event: PointerEvent<HTMLSpanElement>) {
+    if (!boxRef.current) return;
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    drag.current = { y: event.clientY, height: boxRef.current.getBoundingClientRect().height };
+  }
+  function moveDrag(event: PointerEvent<HTMLSpanElement>) {
+    if (drag.current) resizeTo(drag.current.height + event.clientY - drag.current.y);
+  }
+  function endDrag() {
+    drag.current = null;
+  }
+  // Arrow keys change the height by one line (20px), Home and End jump to the limits
+  function resizeWithKeys(event: KeyboardEvent<HTMLSpanElement>) {
+    const current = boxRef.current?.getBoundingClientRect().height ?? 0;
+    const { min, max } = limits();
+    const next = { ArrowDown: current + 20, ArrowUp: current - 20, Home: min, End: max }[event.key];
+    if (next === undefined) return;
+    event.preventDefault();
+    resizeTo(next);
+  }
 
   function setValue(next: string) {
     if (controlled === undefined) setLocal(next);
@@ -89,12 +135,13 @@ export function TextArea({
       disabled={disabled}
     >
       <div
+        ref={boxRef}
+        style={height === null ? undefined : { height }}
         className="grg-textarea__box"
         data-size={size}
         data-invalid={shownError ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
-        data-resizable={resizable && !disabled ? true : undefined}
         data-preview-state={previewState === 'hover' ? 'hover' : undefined}
         // A click on the empty part of the field (around the counter) puts the cursor in the text.
         // On click, not mouse down: mouse down on the corner starts resizing the field.
@@ -128,15 +175,41 @@ export function TextArea({
           }}
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setValue(e.target.value)}
         />
-        {counter && (
-          <span className="grg-textarea__counter">
-            <CharacterCounter
-              id={counterId}
-              count={value.length}
-              max={maxLength}
-              state={disabled ? 'disabled' : shownError ? 'error' : 'default'}
-              resizeIcon={resizable}
-            />
+        {(counter || resizable) && (
+          <span className="grg-textarea__counter" data-state={disabled ? 'disabled' : shownError ? 'error' : 'default'}>
+            {counter && (
+              <CharacterCounter
+                id={counterId}
+                count={value.length}
+                max={maxLength}
+                state={disabled ? 'disabled' : shownError ? 'error' : 'default'}
+                resizeIcon={false}
+              />
+            )}
+            {resizable && (
+              // The Figma resize icon, made a real handle: drag it down or back up, or focus it and use the arrow keys.
+              // A separator is the ARIA role for a handle that resizes the area before it.
+              <span
+                className="grg-textarea__resize"
+                role={disabled ? undefined : 'separator'}
+                aria-orientation="horizontal"
+                aria-label={disabled ? undefined : resizeLabel}
+                aria-hidden={disabled || undefined}
+                title={disabled ? undefined : `${resizeLabel}: drag or use the arrow keys`}
+                tabIndex={disabled ? undefined : 0}
+                aria-valuenow={disabled ? undefined : bounds.now}
+                aria-valuemin={disabled ? undefined : bounds.min}
+                aria-valuemax={disabled ? undefined : bounds.max}
+                aria-valuetext={disabled ? undefined : `${bounds.now} pixels tall`}
+                onPointerDown={disabled ? undefined : startDrag}
+                onPointerMove={disabled ? undefined : moveDrag}
+                onPointerUp={endDrag}
+                onPointerCancel={endDrag}
+                onKeyDown={disabled ? undefined : resizeWithKeys}
+              >
+                <Icon name="resize" size={16} />
+              </span>
+            )}
           </span>
         )}
       </div>

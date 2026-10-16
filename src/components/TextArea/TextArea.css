@@ -16,6 +16,8 @@
   gap: var(--space-200);
   width: 100%;
   min-height: calc(var(--space-2400) + var(--space-600) + var(--space-050));
+  /* The resize handle stops at 400px (about 14 lines of text); longer text scrolls inside */
+  max-height: calc(var(--space-5000) * 2);
   /* Figma strokes sit inside: the 1px border is part of the padding */
   padding: calc(var(--ta-pad-y) - 1px) calc(var(--ta-pad-x) - 1px);
   border: 1px solid var(--ta-border);
@@ -30,11 +32,6 @@
 
 .grg-textarea__box[data-size='md'] { --ta-pad-y: var(--space-250); --ta-pad-x: var(--space-250); }
 .grg-textarea__box[data-size='sm'] { --ta-pad-y: var(--space-150); --ta-pad-x: var(--space-200); }
-
-/* Drag the bottom right corner to make the field taller. The browser's own grip is hidden where it can be;
-   the resize icon of the counter marks the spot. */
-.grg-textarea__box[data-resizable] { resize: vertical; }
-.grg-textarea__box::-webkit-resizer { background: transparent; }
 
 /* States (Figma State) */
 .grg-textarea__box:hover:not([data-disabled]),
@@ -66,7 +63,31 @@
 .grg-textarea__box[data-focused] .grg-textarea__control::placeholder { color: transparent; }
 .grg-textarea__box[data-disabled] .grg-textarea__control::placeholder { color: var(--text-disabled-400); }
 
-.grg-textarea__counter { display: flex; justify-content: flex-end; }
+/* Bottom row: the counter, then the resize handle (Figma: Character counter, 4px gap, 16/resize) */
+.grg-textarea__counter {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-100);
+  cursor: default;
+}
+
+/* Resize handle: 16px icon in a 24px area to grab. The area overlaps the paddings above, right and below;
+   on the left it keeps 6px from the count (Figma: 4px to the icon), so the focus ring doesn't cover it. */
+.grg-textarea__resize {
+  display: inline-grid;
+  place-items: center;
+  margin: calc(-1 * var(--space-100)) calc(-1 * var(--space-100)) calc(-1 * var(--space-100)) var(--space-050);
+  padding: var(--space-100);
+  border-radius: var(--radius-xxs-4);
+  color: var(--icon-base-500);
+  cursor: ns-resize;
+  touch-action: none;
+}
+.grg-textarea__resize:hover { color: var(--icon-subtle-700); }
+.grg-textarea__resize:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-textarea__counter[data-state='error'] .grg-textarea__resize { color: var(--error-base-600); }
+.grg-textarea__counter[data-state='disabled'] .grg-textarea__resize { color: var(--icon-disabled-400); cursor: default; }
 
 @media (prefers-reduced-motion: reduce) {
   .grg-textarea__box { transition: none; }
