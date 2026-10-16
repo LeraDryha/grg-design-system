@@ -1,34 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties, ReactNode } from 'react';
+import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import type { CSSProperties } from 'react';
 import { Input, type InputProps } from './Input';
 import { Button } from '../Button/Button';
 import { icons } from '../Icon/Icon';
+import { Anatomy as AnatomyBlock, StateMatrix } from '../../docs/blocks/DocBlocks';
 import { paymentIcons, sampleCoins, sampleCountries } from './options';
 
 const iconOptions = [null, ...Object.keys(icons)];
 
+/** A single field is 320px wide, as in Figma, with room for the floating label above. */
+const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>;
+
 const meta = {
   title: 'Components/Input',
   component: Input,
-  tags: ['autodocs'],
-  parameters: {
-    docs: {
-      description: {
-        component: [
-          'A text field with a label, an optional hint and extra information on the right (Key: Value).',
-          '',
-          '**The label is also the placeholder.** While the field is empty and not focused, the label sits inside it. ',
-          'On focus it floats above and stays there while the field has a value; clearing the field brings it back inside. ',
-          'The floating label takes no vertical space, so leave 22px above the field in layouts.',
-          '',
-          '**Types.** *Common*: plain text or numbers (name, city, comment). *Phone*: country code and number. ',
-          '*Website*: a URL with a protocol prefix. *Card*: card number in groups of four, with the payment method. ',
-          '*Amount*: a number with a currency. *Date*: DD / MM / YYYY. *Button*: text with an action, such as copying a referral link or revealing a password.',
-        ].join('\n'),
-      },
-    },
-  },
-  decorators: [Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>],
+  // The docs page is Input.mdx
+  parameters: { layout: 'centered' },
   args: {
     type: 'common',
     size: 'md',
@@ -66,73 +53,113 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 /** Edit everything in Controls. Click the field to see the label float. */
-export const Playground: Story = {};
+export const Playground: Story = { decorators: [field] };
 
-const stack = (gap = 'var(--space-1200)'): CSSProperties => ({ display: 'grid', gap, paddingTop: 'var(--space-200)' });
+/** Every part of the field, numbered as in the Figma guidelines. */
+export const Anatomy: Story = {
+  args: {
+    floatingLabel: false,
+    required: true,
+    optional: true,
+    info: 'We send the receipt to this address.',
+    placeholder: 'Placeholder',
+    leftIcon: null,
+    topKey: 'Key',
+    topValue: 'Value',
+    hint: 'This is a hint text to help user.',
+    bottomValue: 'Value',
+  },
+  render: (args: InputProps) => (
+    <AnatomyBlock
+      markers={[
+        { n: 1, target: '.grg-input__box', side: 'right' },
+        { n: 2, target: '.grg-field-label__name', side: 'top' },
+        { n: 3, target: '.grg-field-label__star', side: 'top' },
+        { n: 4, target: '.grg-field-label__extra', side: 'top' },
+        { n: 5, target: '.grg-field-label__info', side: 'top' },
+        { n: 6, target: '.grg-input__control', side: 'left' },
+        { n: 7, target: '.grg-hint .grg-icon', side: 'bottom' },
+        { n: 8, target: '.grg-hint > span:last-child', side: 'bottom' },
+        { n: 9, target: '.grg-field__top .grg-key-value', side: 'top' },
+        { n: 10, target: '.grg-field__bottom .grg-key-value', side: 'bottom' },
+      ]}
+      legend={['Container', 'Label', 'Required asterisk', 'Additional text', 'Info button', 'Placeholder', 'Icon', 'Hint text', 'Top Key: Value', 'Bottom Value']}
+    >
+      <Input {...args} />
+    </AnatomyBlock>
+  ),
+};
 
-/** The seven types from Figma, filled as in the usage guidelines. */
+const TYPES: { type: NonNullable<InputProps['type']>; label: string; note: string; value: string; props?: Partial<InputProps> }[] = [
+  { type: 'common', label: 'Email', note: 'Plain text or numbers: name, city, comment', value: 'user@mail.com', props: { leftIcon: 'mail' } },
+  { type: 'phone', label: 'Phone number', note: 'Country code and number', value: '6787645', props: { countries: sampleCountries } },
+  { type: 'website', label: 'Website', note: 'A URL with a protocol prefix', value: 'golden.ratio.com' },
+  { type: 'card', label: 'Card number', note: 'Groups of four, with the payment method', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentIcon: paymentIcons.mastercard, paymentLabel: 'Mastercard' } },
+  { type: 'amount', label: 'Amount', note: 'A number with a currency', value: '100.00', props: { coins: sampleCoins } },
+  { type: 'date', label: 'Date', note: 'DD / MM / YYYY', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
+  { type: 'button', label: 'Referral link', note: 'Text with an action: copy, reveal', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
+];
+
+/** The seven types from Figma, empty and filled. */
 export const Types: Story = {
   render: (args: InputProps) => (
-    <div style={stack()}>
-      <Input {...args} type="common" label="Email" leftIcon="mail" defaultValue="user@mail.com" />
-      <Input {...args} type="phone" label="Phone number" leftIcon={null} countries={sampleCountries} defaultValue="6787645" />
-      <Input {...args} type="website" label="Website" leftIcon={null} defaultValue="golden.ratio.com" />
-      <Input {...args} type="card" label="Card number" leftIcon={undefined} paymentIcon={paymentIcons.mastercard} paymentLabel="Mastercard" defaultValue="4242 4242 4242 4242" />
-      <Input {...args} type="amount" label="Amount" required leftIcon={null} coins={sampleCoins} defaultValue="100.00" />
-      <Input {...args} type="date" label="Date" leftIcon={null} rightIcon={undefined} defaultValue="12 / 12 / 2025" />
-      <Input {...args} type="button" label="Referral link" leftIcon={undefined} action="copy" copyLabel="Copy referral link" defaultValue="golden.ratio.com" />
-    </div>
+    <StateMatrix
+      columns={['Empty', 'Filled']}
+      rows={TYPES.map(t => {
+        const props: InputProps = { ...args, leftIcon: null, ...t.props, type: t.type, label: t.label };
+        return {
+          label: t.type[0].toUpperCase() + t.type.slice(1),
+          note: t.note,
+          cells: [<Input {...props} />, <Input {...props} defaultValue={t.value} />],
+        };
+      })}
+    />
   ),
 };
 
 /** lg-44, md-40 and sm-32. Text and icons keep their size; only paddings and corners change. */
 export const Sizes: Story = {
   render: (args: InputProps) => (
-    <div style={stack()}>
-      {(['lg', 'md', 'sm'] as const).map(size => <Input key={size} {...args} size={size} defaultValue="user@mail.com" />)}
-    </div>
+    <StateMatrix
+      columns={['Empty', 'Filled']}
+      rows={([['lg', 'lg-44'], ['md', 'md-40'], ['sm', 'sm-32']] as const).map(([size, name]) => ({
+        label: name,
+        cells: [<Input {...args} size={size} />, <Input {...args} size={size} defaultValue="user@mail.com" />],
+      }))}
+    />
   ),
 };
-
-function Labeled({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <div style={{ display: 'grid', gap: 'var(--space-800)' }}>
-      <span style={{ font: 'var(--typo-body-sm-semibold)', color: 'var(--text-soft-500)' }}>{title}</span>
-      <div style={stack('var(--space-800)')}>{children}</div>
-    </div>
-  );
-}
 
 /** Default, hovered, active (focused), error and disabled, each empty and filled. */
 export const States: Story = {
   render: (args: InputProps) => (
-    <div style={stack('var(--space-800)')}>
-      <Labeled title="Default">
-        <Input {...args} />
-        <Input {...args} defaultValue="user@mail.com" />
-      </Labeled>
-      <Labeled title="Hovered">
-        <Input {...args} previewState="hover" />
-        <Input {...args} previewState="hover" defaultValue="user@mail.com" />
-      </Labeled>
-      <Labeled title="Active">
-        <Input {...args} previewState="focus" />
-        <Input {...args} previewState="focus" defaultValue="user@mail.com" />
-      </Labeled>
-      <Labeled title="Error">
-        <Input {...args} error="This field is required" />
-        <Input {...args} error="Email address is invalid." defaultValue="user2mail.com" />
-      </Labeled>
-      <Labeled title="Disabled">
-        <Input {...args} disabled />
-        <Input {...args} disabled defaultValue="user@mail.com" />
-      </Labeled>
-    </div>
+    <StateMatrix
+      columns={['Empty', 'Filled']}
+      rows={[
+        { label: 'Default', cells: [<Input {...args} />, <Input {...args} defaultValue="user@mail.com" />] },
+        { label: 'Hovered', cells: [<Input {...args} previewState="hover" />, <Input {...args} previewState="hover" defaultValue="user@mail.com" />] },
+        { label: 'Active', note: 'Focused', cells: [<Input {...args} previewState="focus" />, <Input {...args} previewState="focus" defaultValue="user@mail.com" />] },
+        { label: 'Error', cells: [<Input {...args} error="This field is required" />, <Input {...args} error="Email address is invalid." defaultValue="user2mail.com" />] },
+        { label: 'Disabled', cells: [<Input {...args} disabled />, <Input {...args} disabled defaultValue="user@mail.com" />] },
+      ]}
+    />
   ),
 };
 
-/** Every part on: label with asterisk, additional text and info, Key: Value on top, hint and value below. */
+/** The label is the placeholder while the field is empty, floats on focus and stays while there is a value. */
+export const FloatingLabel: Story = {
+  render: (args: InputProps) => (
+    <StateMatrix
+      columns={['1. Empty', '2. Focused', '3. Filled']}
+      cellWidth={220}
+      rows={[{ label: 'Label', note: 'Takes no vertical space', cells: [<Input {...args} />, <Input {...args} previewState="focus" />, <Input {...args} defaultValue="user@mail.com" />] }]}
+    />
+  ),
+};
+
+/** Every part on, with the label always above. */
 export const AllParts: Story = {
+  decorators: [field],
   args: {
     floatingLabel: false,
     required: true,
@@ -149,14 +176,16 @@ export const AllParts: Story = {
 
 /** The password field from the sign-up example: Button type with a reveal action. */
 export const Password: Story = {
+  decorators: [field],
   args: { type: 'button', label: 'Password', leftIcon: null, action: 'password', defaultValue: 'golden-ratio' },
 };
 
-/** The sign-up form from the Figma examples. */
+const formStack: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 'min(360px, 100%)', paddingTop: 'var(--space-600)' };
+
+/** The sign-up form from the Figma examples. Try it with the mobile viewport in the toolbar. */
 export const SignUpExample: Story = {
-  decorators: [Story => <div style={{ width: 360 }}><Story /></div>],
   render: (args: InputProps) => (
-    <form style={stack('var(--space-1000)')} onSubmit={e => e.preventDefault()}>
+    <form style={formStack} onSubmit={e => e.preventDefault()}>
       <Input {...args} type="common" label="Email" inputType="email" leftIcon="mail" autoComplete="email" />
       <Input {...args} type="phone" label="Phone number" leftIcon={null} countries={sampleCountries} autoComplete="tel-national" />
       <Input {...args} type="button" label="Password" leftIcon={null} action="password" autoComplete="new-password" />

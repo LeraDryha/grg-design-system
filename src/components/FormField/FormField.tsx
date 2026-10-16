@@ -34,7 +34,7 @@ export function FieldLabel({ children, htmlFor, required, optional, info, state 
   return (
     <span className="grg-field-label" data-state={state}>
       <label className="grg-field-label__text" htmlFor={htmlFor}>
-        {children}
+        <span className="grg-field-label__name">{children}</span>
         {required && <span className="grg-field-label__star" aria-hidden="true">*</span>}
         {extra && <span className="grg-field-label__extra">{extra}</span>}
       </label>

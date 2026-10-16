@@ -53,6 +53,15 @@ const preview: Preview = {
   initialGlobals: { theme: 'light' },
   parameters: {
     layout: 'centered',
+    // Viewport switch in the toolbar: the widths the products are designed for
+    viewport: {
+      options: {
+        desktop: { name: 'Desktop 1440', styles: { width: '1440px', height: '900px' }, type: 'desktop' },
+        laptop: { name: 'Laptop 1280', styles: { width: '1280px', height: '800px' }, type: 'desktop' },
+        tablet: { name: 'Tablet 768', styles: { width: '768px', height: '1024px' }, type: 'tablet' },
+        mobile: { name: 'Mobile 375', styles: { width: '375px', height: '812px' }, type: 'mobile' },
+      },
+    },
     // The canvas and docs follow the theme through tokens (base.css), not Storybook backgrounds
     backgrounds: { disable: true },
     options: {

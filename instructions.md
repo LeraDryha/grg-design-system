@@ -31,6 +31,21 @@ React 19, TypeScript, Storybook 10 (CSF 3) and **PrimeReact 10.9.9** (MIT; v11 n
 - Never hardcode content a prop can carry; overview stories pass `args` through.
 - Category order: Getting Started, Foundations, Components (flat, alphabetical), Contributing. No Atomic Design levels.
 
+## Component page
+Every component gets a docs page `src/components/[Name]/[Name].mdx` (`<Meta of={Stories} />`, no `autodocs` tag), in this order. Input is the reference.
+
+1. Title, then `ComponentHeader`: status (ready, in-progress, draft), Figma links to the component set and its guidelines, the PrimeReact base, related pages.
+2. One line on what it is, the Playground canvas and a short `Controls` list (the main props only).
+3. **When to use**: `DoDont`, including which component to use instead.
+4. **Anatomy**: the `Anatomy` block with numbered markers, as in the Figma guidelines.
+5. **Types**, **Sizes**, **States**: `StateMatrix` stories, labelled like the Figma component set.
+6. Behaviour that needs explaining (for Input, the floating label), then **In context**: an example from the Figma Examples frame.
+7. **Accessibility**: names, descriptions, keyboard, focus, known contrast notes.
+8. **Figma and code**: `PropsMapping`, every Figma property next to its prop.
+9. **Props**: `ArgTypes`.
+
+The blocks live in `src/docs/blocks/DocBlocks.tsx`.
+
 ## Checks before a change is done
 - `npm run typecheck` and `npm run build-storybook` pass.
 - The Accessibility panel shows no violations in both themes.

@@ -1,0 +1,110 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as InputStories from './Input.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={InputStories} />
+
+# Input
+
+<ComponentHeader
+  status="ready"
+  figma="73-3711"
+  guidelines="422-71016"
+  builtOn="PrimeReact InputText"
+  related={[{ label: 'Form Field', href: '?path=/docs/components-form-field--docs' }]}
+/>
+
+A one-line text field with a label, an optional hint and extra information on the right.
+Seven types cover the data the products ask for: plain text, phone numbers, websites, card numbers, amounts, dates and values with an action.
+
+<Canvas of={InputStories.Playground} />
+<Controls of={InputStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'disabled', 'leftIcon', 'previewState']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'One line of text or numbers the person types: name, email, address',
+    'Structured values with their own type: phone, card number, amount, date, website',
+    'A value with one action next to it: copy a referral link, reveal a password',
+  ]}
+  donts={[
+    'Several lines of text: use Text Area',
+    'Choosing from a fixed list: use Select',
+    'Yes / no choices: use Checkbox or Switch',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={InputStories.Anatomy} />
+
+Label, hint and Key: value are shared with Select and Text Area: see [Form Field](?path=/docs/components-form-field--docs).
+
+## Types
+
+All types share the same frame, sizes and states; they differ in what sits around the text.
+
+<Canvas of={InputStories.Types} />
+
+## Sizes
+
+<Canvas of={InputStories.Sizes} />
+
+Text (Body-md 14/20) and icons (20px) stay the same in every size; paddings and corners change:
+lg-44 has 12px paddings, md-40 has 10px, sm-32 has 6px top and bottom, 8px on the sides and smaller corners.
+
+## States
+
+<Canvas of={InputStories.States} />
+
+## Floating label
+
+The label is also the placeholder. While the field is empty and not focused, it sits inside the field.
+When the person focuses the field, it moves above and stays there while the field has a value; clearing the field brings it back inside.
+
+The floating label **takes no vertical space**: leave 22px above every field in a form layout.
+
+<Canvas of={InputStories.FloatingLabel} />
+
+## In context
+
+The sign-up form from the Figma examples. Switch the **viewport** in the toolbar to see it on a phone.
+
+<Canvas of={InputStories.SignUpExample} />
+
+## Accessibility
+
+- The label is a real `<label>` connected to the field, so it stays the field's name even while it is shown as the placeholder.
+- The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`, so screen readers read it with the field.
+- Every button in the field has a name: *Clear*, *Copy referral link*, *Show password* (with `aria-pressed`). Copying is announced as *Copied*.
+- The country and coin selects are comboboxes with a name, an expanded state and the highlighted option announced while moving with the arrow keys.
+- Focus is visible: the border turns dark in the Active state; buttons inside the field show the system blue focus ring.
+- Phone, card, amount and date fields open the number keyboard on phones.
+- Colours follow Figma. In the dark theme the prefix and unit text (`icon-base-500`) reach 4.17:1, below the 4.5:1 for text.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Common, Phone, Website, Card, Amount, Date, Button → common … button' },
+    { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
+    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered and Active follow the pointer and focus; Error → error; Disabled → disabled' },
+    { figma: 'Filled', prop: 'value / defaultValue', values: 'on when the field has a value' },
+    { figma: 'Top · Label', prop: 'label · floatingLabel', values: 'text; floats by default' },
+    { figma: 'Star · Text · Icon (label)', prop: 'required · optional · info', values: 'boolean · true or text · text behind the info button' },
+    { figma: 'Key: Value', prop: 'topKey · topValue', values: 'text' },
+    { figma: 'Bottom · Help text', prop: 'hint · error', values: 'text; an error replaces the hint' },
+    { figma: 'Value (bottom)', prop: 'bottomValue', values: 'text' },
+    { figma: 'Left icon · Right icon', prop: 'leftIcon · rightIcon', values: 'icon name or null' },
+    { figma: 'Currency icon', prop: 'unit', values: 'short text: USD, sec, px' },
+    { figma: 'Inline select', prop: 'countries · coins', values: 'list of options; see Inline Select' },
+    { figma: 'Action button', prop: 'action', values: 'copy, password' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={InputStories} />
