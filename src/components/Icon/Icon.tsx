@@ -1,4 +1,6 @@
 import type { CSSProperties } from 'react';
+import apple from '../../icons/apple.svg';
+import arrowLeft from '../../icons/arrow-left.svg';
 import calendar from '../../icons/calendar.svg';
 import card from '../../icons/card.svg';
 import chevronDown from '../../icons/chevron-down.svg';
@@ -17,6 +19,8 @@ import './Icon.css';
 
 /** Icons exported from the Figma "Base icons" page, under their Figma names. Add a file to src/icons and a line here. */
 export const icons = {
+  apple,
+  'arrow-left': arrowLeft,
   calendar,
   card,
   'chevron-down': chevronDown,

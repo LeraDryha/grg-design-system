@@ -1,9 +1,8 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
 import { Input, type InputProps } from './Input';
-import { Button } from '../Button/Button';
 import { icons } from '../Icon/Icon';
-import { Anatomy as AnatomyBlock, StateMatrix } from '../../docs/blocks/DocBlocks';
+import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 import { paymentIcons, sampleCoins, sampleCountries } from './options';
 
 const iconOptions = [null, ...Object.keys(icons)];
@@ -120,30 +119,34 @@ export const Sizes: Story = {
   ),
 };
 
-/** Default, hovered, active (focused), error and disabled, each empty and filled. */
-export const States: Story = {
-  render: (args: InputProps) => (
-    <StateMatrix
-      columns={['Empty', 'Filled']}
-      rows={[
-        { label: 'Default', cells: [<Input {...args} />, <Input {...args} defaultValue="user@mail.com" />] },
-        { label: 'Hovered', cells: [<Input {...args} previewState="hover" />, <Input {...args} previewState="hover" defaultValue="user@mail.com" />] },
-        { label: 'Active', note: 'Focused', cells: [<Input {...args} previewState="focus" />, <Input {...args} previewState="focus" defaultValue="user@mail.com" />] },
-        { label: 'Error', cells: [<Input {...args} error="This field is required" />, <Input {...args} error="Email address is invalid." defaultValue="user2mail.com" />] },
-        { label: 'Disabled', cells: [<Input {...args} disabled />, <Input {...args} disabled defaultValue="user@mail.com" />] },
-      ]}
-    />
-  ),
-};
+/* ---- States: one story each, as is usual in Storybook ---- */
 
-/** The label is the placeholder while the field is empty, floats on focus and stays while there is a value. */
+/** Empty: the label sits inside as the placeholder. */
+export const Default: Story = { decorators: [field] };
+
+/** With a value: the label stays above. */
+export const Filled: Story = { decorators: [field], args: { defaultValue: 'user@mail.com' } };
+
+/** Pointer over the field: a light fill and a darker border. */
+export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: 'user@mail.com' } };
+
+/** Focused: the darkest border, the label floats and turns dark, a clear button appears when there is a value. */
+export const Active: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'user@mail.com' } };
+
+/** Red border and message; the message replaces the hint. */
+export const ErrorState: Story = { name: 'Error', decorators: [field], args: { error: 'Email address is invalid.', defaultValue: 'user2mail.com' } };
+
+/** Not available: grey fill and text, no interaction. */
+export const Disabled: Story = { decorators: [field], args: { disabled: true, defaultValue: 'user@mail.com' } };
+
+/** Empty, focused, filled. What happens at each step is described on the docs page. */
 export const FloatingLabel: Story = {
   render: (args: InputProps) => (
-    <StateMatrix
-      columns={['1. Empty', '2. Focused', '3. Filled']}
-      cellWidth={220}
-      rows={[{ label: 'Label', note: 'Takes no vertical space', cells: [<Input {...args} />, <Input {...args} previewState="focus" />, <Input {...args} defaultValue="user@mail.com" />] }]}
-    />
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
+      <Input {...args} />
+      <Input {...args} previewState="focus" />
+      <Input {...args} defaultValue="user@mail.com" />
+    </div>
   ),
 };
 
@@ -168,19 +171,4 @@ export const AllParts: Story = {
 export const Password: Story = {
   decorators: [field],
   args: { type: 'button', label: 'Password', leftIcon: null, action: 'password', defaultValue: 'golden-ratio' },
-};
-
-const formStack: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 'min(360px, 100%)', paddingTop: 'var(--space-600)' };
-
-/** The sign-up form from the Figma examples. Try it with the mobile viewport in the toolbar. */
-export const SignUpExample: Story = {
-  render: (args: InputProps) => (
-    <form style={formStack} onSubmit={e => e.preventDefault()}>
-      <Input {...args} type="common" label="Email" inputType="email" leftIcon="mail" autoComplete="email" />
-      <Input {...args} type="phone" label="Phone number" leftIcon={null} countries={sampleCountries} autoComplete="tel-national" />
-      <Input {...args} type="button" label="Password" leftIcon={null} action="password" autoComplete="new-password" />
-      <Input {...args} type="button" label="Referral link" floatingLabel={false} leftIcon={undefined} action="copy" copyLabel="Copy referral link" defaultValue="golden.ratio.com" readOnly />
-      <Button type="submit" size="lg" leftIcon={undefined} style={{ width: '100%' }}>Sign up</Button>
-    </form>
-  ),
 };

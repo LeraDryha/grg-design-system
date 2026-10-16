@@ -37,9 +37,9 @@ Every component gets a docs page `src/components/[Name]/[Name].mdx` (`<Meta of={
 1. Title, then `ComponentHeader`: status (ready, in-progress, draft), Figma links to the component set and its guidelines, the PrimeReact base, related pages.
 2. One line on what it is, the Playground canvas and a short `Controls` list (the main props only).
 3. **When to use**: `DoDont`, including which component to use instead.
-4. **Anatomy**: the `Anatomy` block with numbered markers, as in the Figma guidelines.
-5. **Types**, **Sizes**, **States**: `StateMatrix` stories, labelled like the Figma component set.
-6. Behaviour that needs explaining (for Input, the floating label), then **In context**: an example from the Figma Examples frame.
+4. **Anatomy**: the `Anatomy` block with numbered markers only; the parts are described in a numbered list under the card.
+5. **Types**, **Sizes**: the components alone on the card, what each one is for in a list under it. **States**: one story per state, each with a heading and a line of description.
+6. Behaviour that needs explaining (for Input, the floating label). Examples from the Figma Examples frames are added later, once every component they use is built.
 7. **Accessibility**: names, descriptions, keyboard, focus, known contrast notes.
 8. **Figma and code**: `PropsMapping`, every Figma property next to its prop.
 9. **Props**: `ArgTypes`.

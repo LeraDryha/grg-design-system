@@ -233,7 +233,8 @@ export function Input({
         )}
         {type === 'button' && action && (
           <>
-            {separator}
+            {/* The copy action is set apart by a separator; the password eye sits in the field (Figma examples) */}
+            {action === 'copy' && separator}
             {action === 'copy' ? (
               <ActionButton icon="copy" size="sm" aria-label={copyLabel} disabled={disabled} onClick={copy} />
             ) : (

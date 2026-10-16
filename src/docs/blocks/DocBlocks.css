@@ -104,32 +104,33 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .doc-anatomy__stage {
   position: relative;
   width: 320px;
-  padding: var(--space-1200) var(--space-1000) var(--space-1000);
+  padding: var(--space-1600);
 }
-.doc-anatomy__marker { position: absolute; width: 0; height: 0; pointer-events: none; }
+.doc-anatomy__leaders {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.doc-anatomy__leaders polyline {
+  fill: none;
+  stroke: var(--primary-gold-base);
+  stroke-width: 1;
+  stroke-dasharray: 3 2;
+}
 .doc-anatomy__dot {
   position: absolute;
   display: grid;
   place-items: center;
-  width: var(--space-500);
-  height: var(--space-500);
+  width: var(--space-600);
+  height: var(--space-600);
+  translate: -50% -50%;
   border-radius: var(--radius-fully-rounded);
   /* the Figma annotation colour, the same in both themes (a docs mark, not a component colour) */
   background: var(--color-gold-300);
   color: var(--color-neutral-1000);
   font: var(--typo-caption-sm-semibold);
+  pointer-events: none;
 }
-/* a dashed leader from the number to the part */
-.doc-anatomy__marker::before {
-  content: '';
-  position: absolute;
-  border: 0 dashed var(--primary-gold-base);
-}
-.doc-anatomy__marker[data-side='top'] .doc-anatomy__dot { left: calc(var(--space-500) / -2); top: calc(-1 * (var(--space-500) + var(--space-500))); }
-.doc-anatomy__marker[data-side='top']::before { left: 0; bottom: 0; height: var(--space-500); border-left-width: 1px; }
-.doc-anatomy__marker[data-side='bottom'] .doc-anatomy__dot { left: calc(var(--space-500) / -2); top: var(--space-500); }
-.doc-anatomy__marker[data-side='bottom']::before { left: 0; top: 0; height: var(--space-500); border-left-width: 1px; }
-.doc-anatomy__marker[data-side='left'] .doc-anatomy__dot { top: calc(var(--space-500) / -2); left: calc(-1 * (var(--space-500) + var(--space-600))); }
-.doc-anatomy__marker[data-side='left']::before { top: 0; right: 0; width: var(--space-600); border-top-width: 1px; }
-.doc-anatomy__marker[data-side='right'] .doc-anatomy__dot { top: calc(var(--space-500) / -2); left: var(--space-600); }
-.doc-anatomy__marker[data-side='right']::before { top: 0; left: 0; width: var(--space-600); border-top-width: 1px; }

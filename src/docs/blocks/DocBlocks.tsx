@@ -127,29 +127,64 @@ export type AnatomyMarker = {
   side?: 'top' | 'bottom' | 'left' | 'right';
 };
 
+const DOT = 24; // badge size
+const REACH = 28; // from the part to the row of badges
+const SPACING = 32; // minimum distance between badges in a row
+const KNEE = 8; // the leader turns this far from the badge
+
+type Spot = { n: number; side: NonNullable<AnatomyMarker['side']>; ax: number; ay: number; bx: number; by: number };
+
+/** Keeps badges in a row at least SPACING apart, in the order of their parts, centred on them. */
+function spread(values: number[]) {
+  const order = values.map((v, i) => [v, i] as const).sort((a, b) => a[0] - b[0]);
+  const placed: number[] = [];
+  order.forEach(([v], k) => placed.push(k === 0 ? v : Math.max(v, placed[k - 1] + SPACING)));
+  const shift = values.reduce((a, b) => a + b, 0) / values.length - placed.reduce((a, b) => a + b, 0) / placed.length;
+  const out = new Array<number>(values.length);
+  order.forEach(([, i], k) => { out[i] = placed[k] + shift; });
+  return out;
+}
+
 /**
  * A live example with numbered markers on its parts, like the anatomy in the Figma guidelines.
  * Only the numbers sit on the canvas; the page lists what each number is.
- * Positions are measured from the rendered component, so they follow the real layout.
+ * Badges line up in one row above, one below and one column on each side, evenly spaced;
+ * positions are measured from the rendered component, so they follow the real layout.
  */
 export function Anatomy({ markers, children }: { markers: AnatomyMarker[]; children: ReactNode }) {
   const stage = useRef<HTMLDivElement>(null);
-  const [spots, setSpots] = useState<{ n: number; x: number; y: number; side: string }[]>([]);
+  const [spots, setSpots] = useState<Spot[]>([]);
 
   useLayoutEffect(() => {
     const root = stage.current;
     if (!root) return;
     const measure = () => {
       const base = root.getBoundingClientRect();
-      setSpots(markers.flatMap(m => {
+      const anchors = markers.flatMap(m => {
         const el = root.querySelector(m.target);
         if (!el) return [];
         const r = el.getBoundingClientRect();
         const side = m.side ?? 'top';
-        const x = side === 'left' ? r.left - base.left : side === 'right' ? r.right - base.left : r.left - base.left + r.width / 2;
-        const y = side === 'top' ? r.top - base.top : side === 'bottom' ? r.bottom - base.top : r.top - base.top + r.height / 2;
-        return [{ n: m.n, x, y, side }];
-      }));
+        const cx = r.left - base.left + r.width / 2;
+        const cy = r.top - base.top + r.height / 2;
+        const ax = side === 'left' ? r.left - base.left : side === 'right' ? r.right - base.left : cx;
+        const ay = side === 'top' ? r.top - base.top : side === 'bottom' ? r.bottom - base.top : cy;
+        return [{ n: m.n, side, ax, ay }];
+      });
+      const result: Spot[] = [];
+      for (const side of ['top', 'bottom', 'left', 'right'] as const) {
+        const group = anchors.filter(a => a.side === side);
+        if (!group.length) continue;
+        const horizontal = side === 'top' || side === 'bottom';
+        const along = spread(group.map(a => (horizontal ? a.ax : a.ay)));
+        const edge =
+          side === 'top' ? Math.min(...group.map(a => a.ay)) - REACH - DOT / 2
+          : side === 'bottom' ? Math.max(...group.map(a => a.ay)) + REACH + DOT / 2
+          : side === 'left' ? Math.min(...group.map(a => a.ax)) - REACH - DOT / 2
+          : Math.max(...group.map(a => a.ax)) + REACH + DOT / 2;
+        group.forEach((a, i) => result.push({ ...a, bx: horizontal ? along[i] : edge, by: horizontal ? edge : along[i] }));
+      }
+      setSpots(result);
     };
     measure();
     const observer = new ResizeObserver(measure);
@@ -158,13 +193,24 @@ export function Anatomy({ markers, children }: { markers: AnatomyMarker[]; child
     return () => observer.disconnect();
   }, [markers]);
 
+  // Orthogonal leaders: from the part straight out, then across to the badge
+  const leader = (s: Spot) => {
+    if (s.side === 'top' || s.side === 'bottom') {
+      const knee = s.side === 'top' ? s.by + DOT / 2 + KNEE : s.by - DOT / 2 - KNEE;
+      return `${s.ax},${s.ay} ${s.ax},${knee} ${s.bx},${knee} ${s.bx},${s.by}`;
+    }
+    const knee = s.side === 'left' ? s.bx + DOT / 2 + KNEE : s.bx - DOT / 2 - KNEE;
+    return `${s.ax},${s.ay} ${knee},${s.ay} ${knee},${s.by} ${s.bx},${s.by}`;
+  };
+
   return (
     <div className="doc-anatomy__stage" ref={stage}>
       {children}
+      <svg className="doc-anatomy__leaders" aria-hidden="true">
+        {spots.map(s => <polyline key={s.n} points={leader(s)} />)}
+      </svg>
       {spots.map(s => (
-        <span key={s.n} className="doc-anatomy__marker" data-side={s.side} style={{ left: s.x, top: s.y }} aria-hidden="true">
-          <span className="doc-anatomy__dot">{s.n}</span>
-        </span>
+        <span key={s.n} className="doc-anatomy__dot" style={{ left: s.bx, top: s.by }} aria-hidden="true">{s.n}</span>
       ))}
     </div>
   );

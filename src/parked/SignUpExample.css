@@ -1,0 +1,66 @@
+/* The sign-up popup from the Figma examples. Modal frame: 440px, 16px corners, floating surface, md shadow. */
+
+.ex-signup {
+  box-sizing: border-box;
+  width: min(440px, 100%);
+  border-radius: var(--radius-xl-16);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-md);
+}
+
+/* Modal header: centred title and text, back and close buttons in the corners */
+.ex-signup__header {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-200);
+  padding: var(--space-800) var(--space-800) var(--space-600);
+  text-align: center;
+}
+.ex-signup__back,
+.ex-signup__close { position: absolute; top: var(--space-400); }
+.ex-signup__back { left: var(--space-400); }
+.ex-signup__close { right: var(--space-400); }
+.ex-signup__title {
+  margin: 0;
+  font: var(--typo-title-md-semibold);
+  letter-spacing: var(--typo-title-md-semibold-tracking);
+  color: var(--text-strong-1000);
+}
+.ex-signup__text {
+  margin: 0;
+  font: var(--typo-body-md-regular);
+  color: var(--text-subtle-700);
+}
+
+/* Fields 40px apart: the gap holds each floating label */
+.ex-signup__body {
+  display: grid;
+  gap: var(--space-1000);
+  padding: var(--space-500) var(--space-800) var(--space-800);
+}
+
+.ex-signup__actions {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-400);
+}
+.ex-signup__wide { width: 100%; }
+.ex-signup__or {
+  font: var(--typo-body-md-regular);
+  color: var(--text-soft-500);
+}
+.ex-signup__social {
+  display: grid;
+  gap: var(--space-200);
+  width: 100%;
+}
+.ex-signup__terms,
+.ex-signup__login {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  color: var(--text-soft-500);
+}
+.ex-signup__terms { font: var(--typo-body-sm-regular); }
+.ex-signup__login { font: var(--typo-body-md-regular); }

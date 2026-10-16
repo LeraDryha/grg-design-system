@@ -1,0 +1,41 @@
+/* Social button. Figma: 44px tall, 1px stroke inside, Body-lg/Semibold. */
+
+.grg-social-button {
+  --sb-border: var(--stroke-base-300);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-150);
+  margin: 0;
+  padding: calc(var(--space-250) - 1px) calc(var(--space-500) - 1px) calc(var(--space-250) - 1px) calc(var(--space-400) - 1px);
+  border: 1px solid var(--sb-border);
+  border-radius: var(--radius-md-10);
+  background: transparent;
+  color: var(--text-strong-1000);
+  font: var(--typo-body-lg-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.grg-social-button[data-icon-only] { padding: calc(var(--space-250) - 1px); }
+
+.grg-social-button__logo {
+  width: var(--space-600);
+  height: var(--space-600);
+}
+
+.grg-social-button:hover,
+.grg-social-button[data-preview-state='hover'] { --sb-border: var(--stroke-strong-500); }
+.grg-social-button:active,
+.grg-social-button[data-preview-state='active'] { --sb-border: var(--stroke-stronger-900); }
+.grg-social-button:focus-visible,
+.grg-social-button[data-preview-state='focus'] {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-social-button { transition: none; }
+}

@@ -82,22 +82,47 @@ Text (Body-md 14/20) and icons (20px) stay the same in every size.
 
 ## States
 
-<Canvas of={InputStories.States} />
+### Default
+Empty: the label sits inside the field as the placeholder.
+
+<Canvas of={InputStories.Default} />
+
+### Filled
+With a value, the label stays above the field.
+
+<Canvas of={InputStories.Filled} />
+
+### Hovered
+Pointer over the field: a light fill and a darker border.
+
+<Canvas of={InputStories.Hovered} />
+
+### Active
+Focused: the darkest border, and the label turns dark. With a value, a clear button appears.
+
+<Canvas of={InputStories.Active} />
+
+### Error
+A red border and an error message, which replaces the hint. Screen readers read the message with the field.
+
+<Canvas of={InputStories.ErrorState} />
+
+### Disabled
+Not available right now: grey fill and text, no interaction.
+
+<Canvas of={InputStories.Disabled} />
 
 ## Floating label
 
-The label is also the placeholder. While the field is empty and not focused, it sits inside the field.
-When the person focuses the field, it moves above and stays there while the field has a value; clearing the field brings it back inside.
-
-The floating label **takes no vertical space**: leave 22px above every field in a form layout.
-
 <Canvas of={InputStories.FloatingLabel} />
 
-## In context
+From the left:
 
-The sign-up form from the Figma examples. Switch the **viewport** in the toolbar to see it on a phone.
+1. **Empty.** The label is the placeholder: it sits inside the field, in the placeholder colour.
+2. **Focused.** The label moves above the field and turns dark; the field is ready for typing.
+3. **Filled.** The label stays above while the field has a value. Clearing the field brings it back inside.
 
-<Canvas of={InputStories.SignUpExample} />
+The floating label **takes no vertical space**: leave 22px above every field in a form layout.
 
 ## Accessibility
 
