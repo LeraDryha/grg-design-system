@@ -1,0 +1,32 @@
+/* Figma Key-value: 20px rows, 12px apart. Rows can grow when their content wraps. */
+.grg-accordion-key-value {
+  display: grid;
+  gap: var(--space-300);
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  font: var(--typo-body-md-regular);
+  letter-spacing: var(--typo-body-md-regular-tracking);
+}
+.grg-accordion-key-value__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: start;
+}
+.grg-accordion-key-value dt,
+.grg-accordion-key-value dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.grg-accordion-key-value dt {
+  padding-inline-end: var(--space-200);
+  color: var(--text-soft-500);
+}
+.grg-accordion-key-value dd {
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-medium);
+  letter-spacing: var(--typo-body-md-medium-tracking);
+  text-align: end;
+}
+.grg-accordion-key-value[data-disabled] :is(dt, dd) { color: var(--text-disabled-400); }

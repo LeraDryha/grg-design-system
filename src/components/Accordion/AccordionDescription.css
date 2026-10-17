@@ -1,0 +1,10 @@
+.grg-accordion-description {
+  width: 100%;
+  min-width: 0;
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-regular);
+  letter-spacing: var(--typo-body-md-regular-tracking);
+  overflow-wrap: anywhere;
+}
+.grg-accordion-description p { margin: 0; white-space: pre-line; }
+.grg-accordion-description[data-disabled] { color: var(--text-disabled-400); }

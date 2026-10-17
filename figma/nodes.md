@@ -83,3 +83,13 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | Page | `150:19734` |
 | Component set (Size × Filled × Status × Description, 30 variants; Button, Close and Status icon options) | `149:19579` |
 | Usage guidelines (anatomy, sizes, description, elevation, status colours) | `403:29662` |
+
+## Accordion
+
+| What | Node |
+|---|---|
+| Page | `151:13556` |
+| Component set `Accordion` (State × Expanded × Flip icon, 16 variants; Edit title and Icon options) | `151:13214` |
+| Description component set (Text, key-value) | `151:13084` |
+| Key-value component set (Rows 01–05; 12px row gap) | `151:13111` |
+| Usage guidelines (anatomy, chevron, leading icon, descriptions, states) | `420:7068` |

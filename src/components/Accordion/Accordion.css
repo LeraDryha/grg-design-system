@@ -1,0 +1,73 @@
+.grg-accordion {
+  width: calc(var(--space-2000) * 4 + var(--space-1000));
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* In Figma the 1px stroke is inside the frame. Keep it out of layout so the collapsed item is 44px. */
+.grg-accordion__item {
+  --accordion-stroke: var(--stroke-base-300);
+  position: relative;
+  min-width: 0;
+  border-radius: var(--radius-md-10);
+  background: transparent;
+  color: var(--text-strong-1000);
+}
+.grg-accordion__item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--accordion-stroke);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.grg-accordion__item[data-expanded] {
+  border-radius: var(--radius-lg-12);
+  background: var(--bg-muted-50);
+}
+.grg-accordion__header { margin: 0; border-radius: inherit; }
+.grg-accordion__toggle {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-300);
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: var(--typo-body-md-medium);
+  letter-spacing: var(--typo-body-md-medium-tracking);
+  text-decoration: none;
+  cursor: pointer;
+}
+.grg-accordion__title { order: 1; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.grg-accordion__chevron,
+.grg-accordion__leading-icon { color: var(--icon-base-500); }
+.grg-accordion[data-chevron-position='after'] .grg-accordion__chevron { order: 2; }
+
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:hover),
+.grg-accordion[data-preview-state='hover'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-strong-500); }
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:is(:active, :focus)),
+.grg-accordion[data-preview-state='active'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-stronger-900); }
+
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:focus-visible),
+.grg-accordion[data-preview-state='focus'] .grg-accordion__item:not([data-disabled]) {
+  --accordion-stroke: var(--stroke-stronger-900);
+  box-shadow: var(--focus-ring);
+}
+
+.grg-accordion__item[data-disabled] {
+  --accordion-stroke: var(--stroke-disabled);
+  background: var(--bg-muted-50);
+  color: var(--text-disabled-400);
+}
+.grg-accordion__item[data-disabled] :is(.grg-accordion__chevron, .grg-accordion__leading-icon) { color: var(--icon-disabled-400); }
+.grg-accordion__toggle[aria-disabled='true'] { cursor: default; }
+
+.grg-accordion__panel { padding: 0 var(--space-300) var(--space-300); }
+.grg-accordion__panel[hidden] { display: none; }
+.grg-accordion__content { border-top: 1px solid var(--stroke-soft-200); padding-top: var(--space-300); }

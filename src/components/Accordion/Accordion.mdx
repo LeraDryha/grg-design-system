@@ -1,0 +1,159 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as AccordionStories from './Accordion.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={AccordionStories} />
+
+# Accordion
+
+<ComponentHeader status="ready" figma="151-13214" guidelines="420-7068" builtOn="PrimeReact Accordion + AccordionTab" />
+
+An expandable section that keeps its title visible and reveals a text description or key–value details when opened.
+
+<Canvas of={AccordionStories.Playground} />
+<Controls of={AccordionStories.Playground} include={['title', 'expanded', 'chevronPosition', 'icon', 'descriptionType', 'description', 'rows', 'disabled']} />
+
+All props are listed at the end of the page. Clicking the header updates **Expanded** in Controls.
+
+## When to use
+
+<DoDont dos={[
+  'Secondary details that people can choose to read: explanations, account details, payment information',
+  'A short, descriptive title that makes the hidden content easy to find',
+  'Text for an explanation; Key–Value for facts such as a reference, currency or amount',
+]} donts={[
+  'Essential information everyone needs to see immediately: show it in the page',
+  'Going to a different page: use Link',
+  'Starting an action: use Button; keep the Accordion header for opening and closing its content',
+]} />
+
+## Anatomy
+
+<Canvas of={AccordionStories.Anatomy} />
+
+1. **Container:** an outlined frame; its border shows the interaction state. The expanded frame has a muted fill.
+2. **Leading icon (optional):** a 20px Base icon, *help* by default. It appears only when the chevron is after the title.
+3. **Title:** Body-md/Medium, 14/20. The entire header opens and closes the section.
+4. **Chevron:** 20px, down when closed and up when open. Before or after the title.
+5. **Description:** text or a Key–Value list. A soft 1px divider separates it from the header.
+
+## Types
+
+### Chevron
+
+<Canvas of={AccordionStories.ChevronPosition} />
+
+From the top: **before** and **after** the title. In Figma, Flip icon On means before. It replaces the leading icon; the after variant can show both icons.
+
+### Leading icon
+
+<Canvas of={AccordionStories.LeadingIcon} />
+
+From the top: with and without the optional leading icon. Use a Base icon that helps explain the section. Its size stays 20px.
+
+## Size
+
+There is one size in Figma: 14/20 title and body text, 20px icons, 12px padding and an 8px gap in the header.
+The 360px-wide examples are **44px high when closed**. Opened, a 12px gap sits on each side of the divider; the height follows the description.
+The closed frame has 10px corners and the open frame has 12px corners. An Accordion fits a narrower parent and wraps its content.
+
+## States
+
+### Default
+
+At rest, with a base border. Collapsed content is hidden.
+
+<Canvas of={AccordionStories.Default} />
+
+### Hovered
+
+The pointer is over the header: the border darkens to `stroke-strong-500`.
+
+<Canvas of={AccordionStories.Hovered} />
+
+### Active
+
+The header is pressed or focused: the border uses `stroke-stronger-900`. This state is independent of whether the section is expanded.
+
+<Canvas of={AccordionStories.Active} />
+
+### Focused
+
+Keyboard focus adds the system blue ring around the container. Figma has no separate Focused variant.
+
+<Canvas of={AccordionStories.Focused} />
+
+### Disabled
+
+The header cannot toggle and is skipped by Tab. The fill, border, text and icons follow the disabled tokens. A disabled Accordion can stay closed or open, as in Figma.
+
+<Canvas of={AccordionStories.Disabled} />
+
+## Expanded behaviour
+
+<Canvas of={AccordionStories.Expanded} />
+
+Click the header, or reach it with Tab and press Enter or Space. The chevron changes direction, the muted fill appears and the description is revealed. Focus stays on the header when it opens or closes.
+
+Use `expanded` and `onExpandedChange` to manage the state from a parent, as the Playground does. With `expanded` unset, the Accordion manages its own state and `defaultExpanded` sets its starting state.
+
+<Canvas of={AccordionStories.Uncontrolled} />
+
+## Description & Key–Value
+
+<Canvas of={AccordionStories.DescriptionTypes} />
+
+From the top:
+
+- **Text:** an explanation in Body-md/Regular and `text-subtle-700`.
+- **Key–Value:** left-aligned keys in Body-md/Regular and `text-soft-500`; right-aligned values in Body-md/Medium and `text-strong-1000`.
+
+These are the two internal components supplied with the Accordion in Figma:
+
+- [Description](https://www.figma.com/design/r3E5XdifyoiiNeuj7mOjBk/?node-id=151-13084) switches between Text and Key–Value (`AccordionDescription`).
+- [Key-value](https://www.figma.com/design/r3E5XdifyoiiNeuj7mOjBk/?node-id=151-13111) lays out the rows (`AccordionKeyValue`).
+
+<Canvas of={AccordionStories.DescriptionParts} />
+
+### Row count
+
+<Canvas of={AccordionStories.KeyValueRows} />
+
+Figma provides Rows 01–05. In code, the `rows` array supplies the count and content; it can hold the number of rows needed, as the guidelines specify. Rows are 12px apart and grow when their text wraps.
+
+## Long content
+
+<Canvas of={AccordionStories.LongContent} />
+
+Titles and descriptions wrap without clipping. Keep the title short enough to scan; the header grows to fit it.
+
+<Canvas of={AccordionStories.LongKeyValues} />
+
+Long keys and values wrap in their own columns. The value remains aligned to the right.
+
+## Accessibility
+
+- The header is a button in the accessibility tree, inside a heading. Set `headingLevel` to match the surrounding page.
+- `aria-expanded` announces whether it is open. `aria-controls` points to a region named by the header; collapsed content is hidden from screen readers and keyboard navigation.
+- Tab reaches the header. Enter and Space open or close it. Focus stays on the header, and keyboard focus uses the system blue ring.
+- Icons are decorative; the title is the control's accessible name.
+- Disabled headers have `aria-disabled` and leave the tab order. Their text stays readable when already expanded.
+- Key–Value uses a semantic description list (`dl`, `dt`, `dd`) so keys and values keep their relationship for screen readers.
+- Colours follow Figma. Disabled text uses the system's disabled tokens and is exempt from normal text contrast requirements.
+
+## Figma and code
+
+<PropsMapping rows={[
+  { figma: 'Edit title', prop: 'title', values: 'the visible header and accessible name' },
+  { figma: 'Expanded', prop: 'expanded · defaultExpanded · onExpandedChange', values: 'On, Off → true, false; controlled or uncontrolled state' },
+  { figma: 'Flip icon', prop: 'chevronPosition', values: 'On → before; Off → after' },
+  { figma: 'Icon', prop: 'icon', values: 'On → Base icon name (help by default); Off → null; omitted when Chevron is before' },
+  { figma: 'State', prop: '(behaviour) · disabled · previewState', values: 'Default, Hovered, Active follow interaction; Disabled → disabled; previewState is for documentation' },
+  { figma: 'Description / Type', prop: 'descriptionType · description', values: 'Text, key-value → text, key-value; description holds the text' },
+  { figma: 'Key-value / Rows', prop: 'rows', values: '01–05 → array length, configurable beyond five; each entry has key and value' },
+  { figma: '—', prop: 'headingLevel', values: 'heading level within the product page; 3 by default' },
+]} />
+
+## Props
+
+<ArgTypes of={AccordionStories} />
