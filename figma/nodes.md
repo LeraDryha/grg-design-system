@@ -114,3 +114,15 @@ Badge is separate from the `Status badge` part of Avatar (`154:1337`). Text uses
 | Examples | `473:49738` |
 
 Banner uses the Base status icons, Link (Black, sm-20) and Action Button (Grey, sm-20). The Info icon binds `info-subtle-500`; the Success icon is flattened to its 16⅔px drawing bounds.
+
+## Breadcrumbs
+
+| What | Node |
+|---|---|
+| Page Breadcrumbs | `574:947` |
+| Component set `Breadcrumbs group` (Quantity 02–05) | `574:1037` |
+| Component set `Breadcrumb item` (Default, Hovered, Focused, Current; Icon, Text, Breadcrumb title options) | `574:951` |
+| Usage guidelines (anatomy, item states/types, overflow dropdown, 200px maximum, tooltip) | `638:1495` |
+| Examples (depend on the unbuilt Header) | `643:1053` |
+
+The group set shows all five items; production code follows the guidelines and collapses intermediate levels when five or more are present. Focus uses the shared system blue ring. The dropdown and tooltip retain their source tokens.

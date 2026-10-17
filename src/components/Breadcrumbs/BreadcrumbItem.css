@@ -1,0 +1,87 @@
+.grg-breadcrumb-item {
+  display: inline-flex;
+  min-width: 0;
+  max-width: var(--space-5000);
+  vertical-align: middle;
+}
+.grg-breadcrumb-item__control {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-150);
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs-6);
+  background: transparent;
+  color: var(--text-soft-500);
+  font: var(--typo-body-md-regular);
+  letter-spacing: var(--typo-body-md-regular-tracking);
+  text-align: start;
+  text-decoration: none;
+}
+.grg-breadcrumb-item__icon { color: var(--icon-base-500); }
+.grg-breadcrumb-item__label { min-width: 0; overflow-wrap: anywhere; }
+.grg-breadcrumb-item__control:is(a, button) { cursor: pointer; }
+.grg-breadcrumb-item__control:is(a, button):hover,
+.grg-breadcrumb-item__control:focus-visible,
+.grg-breadcrumb-item[data-preview-state] .grg-breadcrumb-item__control,
+.grg-breadcrumb-item[data-current] .grg-breadcrumb-item__control { color: var(--text-strong-1000); }
+.grg-breadcrumb-item__control:is(a, button):hover .grg-breadcrumb-item__icon,
+.grg-breadcrumb-item__control:focus-visible .grg-breadcrumb-item__icon,
+.grg-breadcrumb-item:is([data-preview-state], [data-current]) .grg-breadcrumb-item__icon { color: var(--icon-strong-1000); }
+.grg-breadcrumb-item[data-current] .grg-breadcrumb-item__control {
+  font: var(--typo-body-md-medium);
+  letter-spacing: var(--typo-body-md-medium-tracking);
+}
+.grg-breadcrumb-item[data-current] .grg-breadcrumb-item__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grg-breadcrumb-item__control:focus-visible,
+.grg-breadcrumb-item[data-preview-state='focus'] .grg-breadcrumb-item__control { outline: none; box-shadow: var(--focus-ring); }
+
+/* A 24px target without adding padding to Figma's 20px row. */
+.grg-breadcrumb-item__control:is(a, button, [tabindex='0'])::before {
+  content: '';
+  position: absolute;
+  inset: 50% 0 auto;
+  min-width: var(--space-600);
+  height: var(--space-600);
+  translate: 0 -50%;
+}
+
+/* The Tooltip instance in the Breadcrumb guidelines: 12/16 text, 8×12 padding, 6px corners. */
+.grg-breadcrumb-tooltip {
+  position: absolute;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(calc(var(--space-5000) * 3), calc(100vw - var(--space-600)));
+  padding: 0;
+  color: var(--text-inverce);
+  font: var(--typo-body-sm-regular);
+  letter-spacing: var(--typo-body-sm-regular-tracking);
+  overflow-wrap: anywhere;
+}
+/* PrimeReact clears outer padding while checking collisions. Keep the bubble's full size in its text. */
+.grg-breadcrumb-tooltip__text {
+  padding: var(--space-200) var(--space-300);
+  border-radius: var(--radius-xs-6);
+  background: var(--bg-base-1000);
+  box-shadow: var(--shadow-sm);
+}
+.grg-breadcrumb-tooltip__arrow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--space-200);
+  height: var(--space-200);
+  background: var(--bg-base-1000);
+  rotate: 45deg;
+  translate: -50% 50%;
+}
+.grg-breadcrumb-tooltip[data-placement='bottom'] .grg-breadcrumb-tooltip__arrow {
+  top: 0;
+  bottom: auto;
+  translate: -50% -50%;
+}

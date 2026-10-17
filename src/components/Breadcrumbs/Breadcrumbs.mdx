@@ -1,0 +1,160 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as Stories from './Breadcrumbs.stories';
+import * as ItemStories from './BreadcrumbItem.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={Stories} />
+
+# Breadcrumbs
+
+<ComponentHeader status="ready" figma="574-1037" guidelines="638-1495" builtOn="PrimeReact BreadCrumb + Menu + Tooltip" related={[
+  { label: 'Breadcrumb item', href: '/?path=/docs/components-breadcrumbitem--docs' },
+  { label: 'Link', href: '/?path=/docs/components-link--docs', relation: 'See also' },
+]} />
+
+A navigable path from the root to the current page, with hidden ancestor levels in an overflow menu.
+
+<Canvas of={Stories.Playground} />
+<Controls of={Stories.Playground} include={['items', 'maxVisibleItems', 'collapse', 'aria-label', 'overflowLabel']} />
+
+Edit each entry's `label`, `href`, `icon` and `showLabel` in **Items**. Array length sets the quantity; the final entry is always the current page.
+
+## When to use
+
+<DoDont dos={[
+  'Showing the current page’s place within a hierarchy and offering shortcuts to its ancestors',
+  'A short, recognisable title for each level, in root-to-current order',
+  'An icon-only Home item with an accessible label when the root is familiar',
+]} donts={[
+  'A list of recently visited pages: Breadcrumbs represents hierarchy, not browsing history',
+  'Sequential tasks or progress through a form: use a step indicator',
+  'The main site navigation, or a standalone destination: use navigation links or Link',
+]} />
+
+## Anatomy
+
+<Canvas of={Stories.Anatomy} />
+
+1. **Root / truncated menu position:** the first item remains visible. The ellipsis menu appears after it when intermediate levels collapse.
+2. **Breadcrumb item:** an ancestor link, with an optional 20px Base icon and visible text.
+3. **Separator:** the decorative, 20px *direction-right* Base icon in `icon-disabled-400`.
+4. **Current page title:** Medium text in `text-strong-1000`, with `aria-current="page"`.
+5. **Breadcrumbs list:** an ordered list inside a named navigation region, with 6px gaps between items and separators.
+
+On narrow screens, the anatomy card can be scrolled horizontally.
+
+## Types
+
+<Canvas of={ItemStories.Types} />
+
+From the left: **Icon**, **Icon + Text**, and **Text**. The hidden-level control is an interactive **…** button. Its menu lists the collapsed ancestors in hierarchical order.
+
+## Size and quantity
+
+<Canvas of={Stories.Quantities} />
+
+The four Figma group variants contain **5, 4, 3 and 2 items**, from the top. This comparison turns automatic collapsing off to show the component set in full.
+
+There is one size: **14/20** text, **20px** icons and separators, and **6px** gaps. Default items use Regular text; Current uses Medium. Items have a maximum width of **200px**.
+
+Production defaults follow the guidelines: up to **four visible entries**, with overflow when five or more levels are present. The array can contain more than five levels.
+
+## States
+
+### Default
+
+Ancestor text uses `text-soft-500`; icons use `icon-base-500`.
+
+<Canvas of={ItemStories.Default} />
+
+### Hovered
+
+Text and icon change to the strong tokens. There is no fill or underline.
+
+<Canvas of={ItemStories.Hovered} />
+
+### Focused
+
+Strong text and icon, with the system blue focus ring. The source Figma focus ring is grey; the shared keyboard-focus decision applies here.
+
+<Canvas of={ItemStories.Focused} />
+
+### Current
+
+Medium text and a strong icon identify the current page. It does not navigate.
+
+<Canvas of={ItemStories.Current} />
+
+## Overflow
+
+<Canvas of={Stories.Overflow} />
+
+With the default limit of four, a five-level path shows **root → … → parent → current**. Earlier intermediate levels move into the menu, in their original order. The root and current page remain visible.
+
+Click or tap **…**, or reach it with Tab and press Enter, Space or Arrow Down. Arrow keys, Home and End move through the menu; Enter chooses a destination. Escape closes it and returns focus to **…**. Clicking outside also closes it.
+
+<Canvas of={Stories.ManyLevels} />
+
+All collapsed levels remain available. A longer menu scrolls. The menu follows the guidelines' Dropdown: 200px width, 8px padding, 12px corners, Elevation sm and 40px single-line rows with 2px gaps.
+
+### Long ancestors
+
+<Canvas of={Stories.LongAncestor} />
+
+Ancestors are never shortened with an ellipsis inside their label. If an intermediate label exceeds 200px, intermediate levels move into the overflow menu. Long menu labels wrap so their full names remain readable.
+
+The root always remains visible. An unusually long root wraps within 200px instead of losing its name.
+
+### Narrow layouts
+
+<Canvas of={Stories.Narrow} />
+
+The component measures the available width and collapses more intermediate levels when needed. The root and current page remain visible; the current title can shrink below 200px and show a tooltip.
+
+### Configurable quantity
+
+<Canvas of={Stories.ConfigurableLimit} />
+
+`maxVisibleItems` defaults to four and can be adjusted, with a minimum of three to retain root, overflow and current. `collapse={false}` is available for inspecting the uncollapsed Figma variants.
+
+## Current title and tooltip
+
+<Canvas of={Stories.LongCurrent} />
+
+Only the current page's title is visually shortened. When it is clipped, **hover, keyboard focus or one tap** reveals the full title. The tooltip stays open while hovered; Escape, blur or an outside tap dismisses it.
+
+The full title stays in the document and accessible name. An untruncated current page is static and skipped by Tab; a truncated current page can receive focus to reveal its tooltip.
+
+## Navigation
+
+Supply `href` for native links, including browser open-in-new-tab and copy-link actions. An optional `onNavigate` callback can record or handle selection. For client-side navigation without an `href`, the callback uses a PrimeReact button. The examples' hash links stand in for product routes.
+
+<Canvas of={Stories.ClientNavigation} />
+
+This example reports the selected ancestor. Current is always a non-navigating item. An empty array produces no list items; a single entry is Current, with no separator.
+
+## Accessibility
+
+- A named `nav` contains an ordered list. Localise `aria-label` and `overflowLabel` as needed; the last item has `aria-current="page"`.
+- Ancestor links, local navigation buttons and the overflow button are reached with Tab. Separators and icons are decorative. Icon-only items keep their label as an accessible name.
+- The overflow button exposes `aria-haspopup`, `aria-expanded` and its open menu relationship. Menu navigation uses Arrow Up/Down, Home, End, Enter/Space and Escape.
+- Keyboard focus uses `var(--focus-ring)`. Small 20px items have a 24px target area without changing the Figma layout.
+- Truncated current titles expose the complete text and a tooltip on hover, focus or tap. The tooltip is associated with its trigger and can be dismissed with Escape.
+- Colours follow Figma in both themes. Default grey text sits close to the 4.5:1 AA threshold on the base surface; check contrast again when placing Breadcrumbs on another background.
+
+## Figma and code
+
+<PropsMapping rows={[
+  { figma: 'Group / Quantity', prop: 'items', values: '02–05 → array length; supports other lengths; final entry is Current' },
+  { figma: 'Item / Breadcrumb title', prop: 'items[].label', values: 'the complete visible and accessible label' },
+  { figma: 'Item / Icon', prop: 'items[].icon', values: 'On → Base icon name (home by default); Off → null' },
+  { figma: 'Item / Text', prop: 'items[].showLabel', values: 'On, Off → true, false; label remains accessible when hidden' },
+  { figma: 'Item / State', prop: '(interaction) · current · previewState', values: 'Default, Hovered, Focused follow interaction; the group sets the last item to Current; previewState is for the standalone item stories' },
+  { figma: 'Guidelines / Overflow', prop: 'collapse · maxVisibleItems', values: 'automatic collapse by quantity, ancestor length and available width; four visible entries by default' },
+  { figma: 'Guidelines / Tooltip', prop: '(automatic)', values: 'shown only when the current title is clipped; hover, focus or tap' },
+  { figma: '—', prop: 'items[].href · onNavigate', values: 'native destination or client-side navigation callback' },
+]} />
+
+## Props
+
+<ArgTypes of={Stories} />

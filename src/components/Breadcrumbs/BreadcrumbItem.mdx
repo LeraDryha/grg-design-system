@@ -1,0 +1,90 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as Stories from './BreadcrumbItem.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={Stories} />
+
+# Breadcrumb item
+
+<ComponentHeader status="ready" figma="574-951" guidelines="638-1495" builtOn="PrimeReact Button + Tooltip; native links" related={[
+  { label: 'Breadcrumbs', href: '/?path=/docs/components-breadcrumbs--docs', relation: 'See also' },
+]} />
+
+One level in Breadcrumbs: an ancestor link, an icon-only root or the current page.
+
+<Canvas of={Stories.Playground} />
+<Controls of={Stories.Playground} include={['label', 'icon', 'showLabel', 'current', 'href', 'previewState']} />
+
+## When to use
+
+<DoDont dos={['An internal part of Breadcrumbs', 'An icon-only root with a meaningful label', 'A current-page label whose full name stays available when clipped']} donts={['A standalone page destination: use Link', 'Manually assembling separators and overflow: use Breadcrumbs', 'An empty icon-only control: provide a label and an icon']} />
+
+## Anatomy
+
+<Canvas of={Stories.Anatomy} />
+
+1. **Control:** a native ancestor link, a local navigation button, or a static current-page label.
+2. **Icon:** an optional 20px Base icon, *home* by default.
+3. **Label:** the complete page title, with 6px between it and the icon.
+
+The group supplies separators and the overflow menu; see [Breadcrumbs](/?path=/docs/components-breadcrumbs--docs).
+
+## Types
+
+<Canvas of={Stories.Types} />
+
+Icon, Icon + Text and Text, from the left. Turning Text off preserves the complete accessible name. If both Icon and Text are off, code keeps the text to avoid an unnamed control.
+
+## Size
+
+One size: 14/20 text, a 20px icon, a 6px gap and a 200px maximum item width. The group handles ancestor overflow.
+
+## States
+
+### Default
+
+Regular grey text and icon.
+
+<Canvas of={Stories.Default} />
+
+### Hovered
+
+Strong text and icon.
+
+<Canvas of={Stories.Hovered} />
+
+### Focused
+
+Strong text and icon, with the system blue keyboard ring.
+
+<Canvas of={Stories.Focused} />
+
+### Current
+
+Medium text; `aria-current="page"`. The current item does not navigate.
+
+<Canvas of={Stories.Current} />
+
+## Truncated current title
+
+<Canvas of={Stories.LongCurrent} />
+
+The complete title is shown in a tooltip on hover, focus or one tap. Escape dismisses it. Non-current labels wrap in this standalone part; Breadcrumbs moves long intermediate ancestors into its menu.
+
+## Accessibility
+
+Native links use Enter. Local actions use PrimeReact Button with Enter and Space. Icons are decorative, and icon-only controls keep their label as an accessible name. The current page is static unless its clipped title needs focus to reveal the tooltip. All focus uses the system blue ring. Default grey text is close to the AA threshold on the base surface; preserve a suitable background.
+
+## Figma and code
+
+<PropsMapping rows={[
+  { figma: 'Breadcrumb title', prop: 'label', values: 'the complete title and icon-only accessible name' },
+  { figma: 'Icon', prop: 'icon', values: 'On → Base icon name (home by default); Off → null' },
+  { figma: 'Text', prop: 'showLabel', values: 'On, Off → true, false' },
+  { figma: 'State', prop: 'current · previewState', values: 'Current → current; Default, Hovered, Focused → live interaction or documentation previewState' },
+  { figma: '—', prop: 'href · onNavigate', values: 'ancestor destination or client-side navigation callback; ignored for Current' },
+]} />
+
+## Props
+
+<ArgTypes of={Stories} />
