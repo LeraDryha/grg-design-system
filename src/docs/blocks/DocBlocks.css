@@ -101,6 +101,14 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .doc-matrix__cell { padding: var(--space-600) 0 var(--space-500); min-width: 0; }
 
 /* ---- Anatomy ---- */
+.doc-anatomy-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.doc-anatomy-scroll:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
 .doc-anatomy__stage {
   position: relative;
   padding: var(--space-1600);

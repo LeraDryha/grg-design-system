@@ -1,0 +1,86 @@
+/* Figma Banner: 12px vertical and 48px horizontal padding; no stroke, corners or elevation.
+   The close control is independent of the centred content, 12px from the trailing edge. */
+.grg-banner {
+  --banner-fill: var(--warning-muted-50);
+  --banner-icon: var(--warning-base-600);
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-200);
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-300) var(--space-1200);
+  border: 0;
+  border-radius: 0;
+  background: var(--bg-base-0);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-medium);
+  letter-spacing: var(--typo-body-md-medium-tracking);
+}
+
+.grg-banner[data-status='error'] { --banner-fill: var(--error-muted-50); --banner-icon: var(--error-base-600); }
+.grg-banner[data-status='success'] { --banner-fill: var(--success-muted-50); --banner-icon: var(--success-base-600); }
+.grg-banner[data-status='info'] { --banner-fill: var(--info-muted-50); --banner-icon: var(--info-subtle-500); }
+.grg-banner[data-status='neutral'] { --banner-fill: var(--bg-weak-100); --banner-icon: var(--icon-base-500); }
+.grg-banner[data-filled] { background: var(--banner-fill); }
+.grg-banner[data-align='left'] { justify-content: flex-start; }
+
+.grg-banner__content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-200);
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+}
+.grg-banner[data-align='left'] .grg-banner__content { justify-content: flex-start; text-align: start; }
+
+.grg-banner__lead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  min-width: 0;
+  max-width: 100%;
+}
+.grg-banner__status-icon { color: var(--banner-icon); }
+/* The Success icon is a flattened 16⅔px vector in Figma. Reuse the same Base icon and crop
+   its empty 24px canvas, keeping its drawing and occupied width identical to the source. */
+.grg-banner[data-status='success'] .grg-banner__status-icon {
+  width: calc(var(--space-500) * 5 / 6);
+  height: calc(var(--space-500) * 5 / 6);
+  mask-size: 120%;
+}
+.grg-banner__title { min-width: 0; overflow-wrap: anywhere; }
+.grg-banner__description {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-regular);
+  letter-spacing: var(--typo-body-md-regular-tracking);
+}
+
+/* Link's typography, underline, interaction states and focus also style the local action button. */
+.grg-banner__action {
+  flex: none;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: inherit;
+}
+.grg-banner__action > span { min-width: 0; }
+.grg-banner__close {
+  position: absolute;
+  inset-inline-end: var(--space-300);
+  top: 50%;
+  translate: 0 -50%;
+}

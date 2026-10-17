@@ -103,3 +103,14 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | Usage guidelines (anatomy, Text/Numeric/Dot, sizes, four styles and five colours) | `422:47775` |
 
 Badge is separate from the `Status badge` part of Avatar (`154:1337`). Text uses Base icons; Dot is a native ellipse.
+
+## Banner
+
+| What | Node |
+|---|---|
+| Page Banners | `160:13278` |
+| Component set `Banner` (Filled × Status, ten variants; Remove, Button, Description, Title and Description2 options) | `321:11577` |
+| Usage guidelines (anatomy, Ghost/Filled, five statuses, centre/left alignment) | `473:48274` |
+| Examples | `473:49738` |
+
+Banner uses the Base status icons, Link (Black, sm-20) and Action Button (Grey, sm-20). The Info icon binds `info-subtle-500`; the Success icon is flattened to its 16⅔px drawing bounds.

@@ -1,0 +1,176 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as BannerStories from './Banner.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={BannerStories} />
+
+# Banner
+
+<ComponentHeader status="ready" figma="321-11577" guidelines="473-48274" builtOn="PrimeReact Message" related={[
+  { label: 'Link', href: '/?path=/docs/components-link--docs' },
+  { label: 'Action Button', href: '/?path=/docs/components-action-button--docs' },
+  { label: 'Alert', href: '/?path=/docs/components-alert--docs', relation: 'See also' },
+]} />
+
+A full-width message for a page-wide or service-wide notice, with an optional description, action and dismissal.
+
+<Canvas of={BannerStories.Playground} />
+<Controls of={BannerStories.Playground} include={['title', 'description', 'status', 'filled', 'align', 'actionLabel', 'actionHref', 'closable']} />
+
+Clear **Description** or **Action label** to hide that part. Close hides the Playground banner; **Show banner** restores it. All props are listed at the end of the page.
+
+## When to use
+
+<DoDont dos={[
+  'A notice that applies across a page or service: maintenance, connection issues or account-wide information',
+  'A short title, with supporting detail only when it helps people decide what to do',
+  'One clearly named next step; optional dismissal when the information may be put aside',
+]} donts={[
+  'An error attached to one field: use the field’s error state and Hint text',
+  'A message inside a small section or card: use Alert',
+  'A floating Notification or Toast: use Alert with elevation',
+  'Several competing messages or multiple actions in the same strip',
+]} />
+
+## Anatomy
+
+<Canvas of={BannerStories.Anatomy} />
+
+1. **Container:** a full-width strip, with a base or muted background; no border, corner rounding or shadow.
+2. **Status icon:** a Base icon for the status: warning, error, success, information or neutral diamond.
+3. **Title:** Body-md/Medium, 14/20, in `text-strong-1000`.
+4. **Description (optional):** Body-md/Regular, 14/20, in `text-subtle-700`.
+5. **Action (optional):** the Black, sm-20 Link appearance, using 14/20 Semibold. A link navigates; a button performs a local action.
+6. **Close (optional):** the Grey, sm-20 Action Button with the *remove* icon, centred vertically and 12px from the trailing edge.
+
+On narrow screens, scroll the anatomy card horizontally to see all six parts.
+
+## Types
+
+<Canvas of={BannerStories.Types} />
+
+From the top:
+
+- **Filled:** a muted background corresponding to the status.
+- **Ghost:** `bg-base-0`, with the status conveyed by its icon and message. This is a solid base surface, rather than a transparent fill.
+
+## Size
+
+<Canvas of={BannerStories.Widths} />
+
+Banner has **one size**. The Figma component is 1440px wide and **44px high** with single-line content. In code it fills its parent, including smaller page widths.
+
+- Padding: **12px vertically**, **48px horizontally**.
+- Gaps between the icon, title, description and action: **8px**.
+- Status and Close icon frames: **20px**. Figma's Success icon is flattened to its 16⅔px drawing bounds; code preserves those bounds using the same Base icon.
+- Text wraps when space runs out; the height grows and the Close button keeps its separate space.
+
+## Statuses
+
+The five statuses are the message's semantic variants. Figma defines no hover, pressed or disabled state for the entire Banner; its action and Close use their own interaction states.
+
+### Warning
+
+A caution or a condition that needs attention, using the warning icon and amber tokens.
+
+<Canvas of={BannerStories.Warning} />
+
+### Error
+
+A problem that needs resolving, using the remove-circle icon and error tokens. Choose an assertive announcement only when the message is urgent.
+
+<Canvas of={BannerStories.ErrorState} />
+
+### Success
+
+Confirmation of a page-wide result, using the check-circle icon and success tokens.
+
+<Canvas of={BannerStories.Success} />
+
+### Info
+
+Useful information, using the information-circle icon in `info-subtle-500`.
+
+<Canvas of={BannerStories.Info} />
+
+### Neutral
+
+A general notice, using the diamond icon and neutral tokens.
+
+<Canvas of={BannerStories.Neutral} />
+
+### Complete Figma set
+
+<Canvas of={BannerStories.AllVariants} />
+
+The ten variants: Warning, Error, Success, Info and Neutral in **Ghost**, followed by the same order in **Filled**.
+
+## Alignment
+
+<Canvas of={BannerStories.Alignment} />
+
+From the top: **center** (the default) and **left**, as shown in the guidelines. Centre aligns the content group with the full container, independently of Close. Left aligns it with the 48px starting inset. Text and wrapped rows follow the chosen alignment.
+
+## Optional content
+
+<Canvas of={BannerStories.Description} />
+
+From the top: with and without a description. The title stays visible in both.
+
+<Canvas of={BannerStories.OptionalParts} />
+
+From the top: no action, no Close, and the minimum icon-and-title message. The horizontal padding stays the same when Close is hidden.
+
+## Actions and dismissal
+
+### Navigation
+
+<Canvas of={BannerStories.NavigationAction} />
+
+Supply `actionHref` for navigation. The action is a real Link with native browser and Enter-key behaviour.
+
+### Local action
+
+<Canvas of={BannerStories.LocalAction} />
+
+Without `actionHref`, the action is a PrimeReact button. Enter or Space calls `onAction`; this example counts retry requests. Actions do not dismiss the Banner automatically.
+
+### Dismissal
+
+Close is a button, reached with Tab and activated with Enter or Space. With `open` unset, Banner hides itself. With controlled `open`, `onClose` asks the parent to update visibility. Set `closable={false}` for a notice that must stay visible.
+
+Banner has no auto-dismiss timer and does not take focus when it appears. The surrounding page owns placement, stacking, sticky behaviour and focus after dismissal.
+
+## Long content
+
+<Canvas of={BannerStories.LongContent} />
+
+The icon stays with the title. Description and action can move to another row; long words wrap within the available width. The Close control remains at the trailing edge without overlapping the message.
+
+## Accessibility
+
+- Messages use `role="status"` and polite announcements by default; Error defaults to `role="alert"` and assertive announcements. Override `role` according to urgency, independently of colour.
+- The message is atomic, so updates are announced together. A hidden, localisable `statusLabel` supplies the status in words; icons are decorative.
+- This component does not use the ARIA `banner` landmark, which belongs to a site's header.
+- Tab reaches the action and then Close. Enter activates either; Space also activates a local action or Close. Both controls use the system blue focus ring.
+- Close has the accessible name “Close banner” by default; localise `closeLabel` when needed. Its 20px icon frame has the shared Action Button's 24px target area.
+- When removing a focused Banner, the host page should move focus to an appropriate nearby control. Essential information should remain available elsewhere after dismissal.
+- Colours follow Figma in both themes. Status is also available as text, so the message's meaning does not depend on icon colour alone.
+
+## Figma and code
+
+<PropsMapping rows={[
+  { figma: 'Title', prop: 'title', values: 'the visible title; required' },
+  { figma: 'Description · Description2', prop: 'description', values: 'On + editable Description2 text → a non-empty string; Off → absent or empty' },
+  { figma: 'Status', prop: 'status', values: 'Warning, Error, Success, Info, Neutral → warning, error, success, info, neutral' },
+  { figma: 'Filled', prop: 'filled', values: 'On → true (Filled); Off → false (Ghost)' },
+  { figma: 'Button', prop: 'actionLabel · actionHref · onAction', values: 'On → a label; Off → absent or empty. actionHref navigates; otherwise onAction performs a local action' },
+  { figma: 'Remove', prop: 'closable · closeLabel · onClose', values: 'On, Off → true, false; the label names Close and the callback handles dismissal' },
+  { figma: 'Guidelines / Banner Alignment', prop: 'align', values: 'Center → center (default); Left-Center auto layout → left' },
+  { figma: '—', prop: 'open', values: 'controlled visibility; leave unset for self-managed dismissal' },
+  { figma: '—', prop: 'role · statusLabel', values: 'announcement urgency and localisable status wording' },
+]} />
+
+## Props
+
+<ArgTypes of={BannerStories} />
