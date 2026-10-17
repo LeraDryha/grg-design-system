@@ -1,0 +1,93 @@
+/* Figma Alert, Notification & Toast: padding 12, gap 8; the stroke sits inside the frame.
+   A pseudo-element keeps that stroke out of layout: xs is 40px, sm is 44px before text wraps. */
+.grg-alert {
+  --alert-stroke: var(--warning-base-600);
+  --alert-icon: var(--warning-base-600);
+  --alert-fill: var(--warning-muted-50);
+
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  width: calc(var(--space-2000) * 4 + var(--space-1000));
+  max-width: 100%;
+  padding: var(--space-300);
+  border: 0;
+  border-radius: var(--radius-md-10);
+  background: var(--surface-floating);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-sm-regular);
+  letter-spacing: var(--typo-body-sm-regular-tracking);
+}
+
+.grg-alert::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--alert-stroke);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.grg-alert[data-status='error'] { --alert-stroke: var(--error-base-600); --alert-icon: var(--error-base-600); --alert-fill: var(--error-muted-50); }
+.grg-alert[data-status='success'] { --alert-stroke: var(--success-base-600); --alert-icon: var(--success-base-600); --alert-fill: var(--success-muted-50); }
+.grg-alert[data-status='info'] { --alert-stroke: var(--info-base-600); --alert-icon: var(--info-base-600); --alert-fill: var(--info-muted-50); }
+.grg-alert[data-status='neutral'] { --alert-stroke: var(--stroke-base-300); --alert-icon: var(--icon-base-500); --alert-fill: var(--bg-weak-100); }
+.grg-alert[data-filled] { background: var(--alert-fill); }
+.grg-alert[data-elevated] { box-shadow: var(--shadow-xs); }
+
+.grg-alert[data-size='sm'] {
+  font: var(--typo-body-md-regular);
+  letter-spacing: var(--typo-body-md-regular-tracking);
+}
+
+.grg-alert__status-icon { flex: none; color: var(--alert-icon); }
+.grg-alert__close { flex: none; }
+
+.grg-alert__content {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-200);
+  min-width: 0;
+}
+
+.grg-alert__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-050);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Reuse Link's type, underline, target area and focus; a local action is a PrimeReact button. */
+.grg-alert__action {
+  flex: none;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  text-align: start;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.grg-alert[data-description] {
+  align-items: flex-start;
+  border-radius: var(--radius-lg-12);
+}
+.grg-alert[data-description] .grg-alert__content {
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-300);
+}
+.grg-alert[data-description] .grg-alert__title {
+  font: var(--typo-body-md-medium);
+  letter-spacing: var(--typo-body-md-medium-tracking);
+}
+.grg-alert[data-description] .grg-alert__action { align-self: flex-start; }
+.grg-alert__description { color: var(--text-subtle-700); }
