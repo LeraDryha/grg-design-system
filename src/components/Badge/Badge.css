@@ -1,0 +1,86 @@
+/* Badge's 180 Figma variants share the same geometry and semantic colour bindings.
+   The inside stroke is drawn separately so it does not change the 24/20/16px sizes. */
+.grg-badge {
+  --badge-size: var(--space-600);
+  --badge-dot: var(--space-200);
+  --badge-solid: var(--bg-emphasis-700);
+  --badge-muted: var(--bg-weak-100);
+  --badge-foreground: var(--text-subtle-700);
+  --badge-stroke: var(--stroke-base-300);
+
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  gap: var(--space-100);
+  max-width: 100%;
+  min-height: var(--badge-size);
+  padding: var(--space-100) var(--space-200);
+  border: 0;
+  border-radius: var(--radius-xs-6);
+  background: transparent;
+  color: var(--badge-foreground);
+  font: var(--typo-body-sm-medium);
+  letter-spacing: var(--typo-body-sm-medium-tracking);
+  text-align: center;
+}
+
+.grg-badge[data-color='info'] { --badge-solid: var(--info-base-600); --badge-muted: var(--info-muted-50); --badge-foreground: var(--info-base-600); --badge-stroke: var(--info-base-600); }
+.grg-badge[data-color='success'] { --badge-solid: var(--success-base-600); --badge-muted: var(--success-muted-50); --badge-foreground: var(--success-base-600); --badge-stroke: var(--success-base-600); }
+.grg-badge[data-color='warning'] { --badge-solid: var(--warning-base-600); --badge-muted: var(--warning-muted-50); --badge-foreground: var(--warning-base-600); --badge-stroke: var(--warning-base-600); }
+.grg-badge[data-color='error'] { --badge-solid: var(--error-base-600); --badge-muted: var(--error-muted-50); --badge-foreground: var(--error-base-600); --badge-stroke: var(--error-base-600); }
+
+.grg-badge[data-variant='filled'] { background: var(--badge-solid); color: var(--text-inverce); }
+.grg-badge[data-variant='light'] { background: var(--badge-muted); }
+.grg-badge[data-variant='stroke']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--badge-stroke);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.grg-badge[data-size='sm'] {
+  --badge-size: var(--space-500);
+  --badge-dot: var(--space-150);
+  padding: var(--space-050) var(--space-150);
+}
+.grg-badge[data-size='xs'] {
+  --badge-size: var(--space-400);
+  --badge-dot: var(--space-100);
+  padding: var(--space-050) var(--space-100);
+  border-radius: var(--radius-xxs-4);
+  font: var(--typo-caption-xs-medium);
+  letter-spacing: var(--typo-caption-xs-medium-tracking);
+}
+
+.grg-badge__label { min-width: 0; overflow-wrap: anywhere; }
+.grg-badge__left-icon,
+.grg-badge__right-icon { flex: none; }
+
+.grg-badge[data-type='numeric'],
+.grg-badge[data-type='dot'] { border-radius: var(--radius-xxl-24); }
+
+.grg-badge[data-type='numeric'] { padding: var(--space-100); }
+.grg-badge[data-type='numeric'][data-size='sm'] { padding: var(--space-050); }
+.grg-badge[data-type='numeric'][data-size='xs'] { padding: var(--space-050) 0; }
+.grg-badge__value { min-width: var(--space-400); overflow-wrap: anywhere; }
+
+/* Dot frames are fixed squares in Figma. Centre the native ellipse instead of applying
+   the inconsistent 8px padding to its 20px frame (which would make it 22px tall). */
+.grg-badge[data-type='dot'] {
+  flex: none;
+  width: var(--badge-size);
+  height: var(--badge-size);
+  padding: 0;
+}
+.grg-badge__dot {
+  flex: none;
+  width: var(--badge-dot);
+  height: var(--badge-dot);
+  border-radius: var(--radius-fully-rounded);
+  background: currentColor;
+}

@@ -1,0 +1,148 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as BadgeStories from './Badge.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={BadgeStories} />
+
+# Badge
+
+<ComponentHeader status="ready" figma="160-11265" guidelines="422-47775" builtOn="PrimeReact Badge" related={[
+  { label: 'Icon', href: '/?path=/docs/foundations-icons-base-icons--docs' },
+  { label: 'Alert', href: '/?path=/docs/components-alert--docs', relation: 'See also' },
+  { label: 'Avatar', href: '/?path=/docs/components-avatar--docs', relation: 'See also' },
+]} />
+
+A compact, static label, count or dot that adds status or category information beside other content.
+
+<Canvas of={BadgeStories.Playground} />
+<Controls of={BadgeStories.Playground} include={['type', 'variant', 'size', 'color', 'label', 'value', 'leftIcon', 'rightIcon', 'aria-label']} />
+
+**Label** and the two icons apply to Text. **Value** applies to Numeric. Give a standalone Dot a meaningful label or `aria-label`. All props are listed at the end of this page.
+
+## When to use
+
+<DoDont dos={[
+  'Short status or category labels beside a title, list item or table value',
+  'A Numeric badge for a count, with context such as unread messages',
+  'A Dot beside a written status, or with an accessible name when it stands alone',
+]} donts={[
+  'Actions, navigation or selectable filters: use Button, Link or a selection control',
+  'A full message or an instruction that needs explanation: use Alert',
+  'Relying on colour alone to distinguish statuses; pair colour with meaningful text',
+  'The corner status mark on an Avatar: that uses the separate StatusBadge part',
+]} />
+
+## Anatomy
+
+<Canvas of={BadgeStories.Anatomy} />
+
+1. **Container:** fill, outline or transparent surface; its geometry follows the type and size.
+2. **Icon (optional):** a 12px Base icon before or after the label. Each side can be switched off independently; the default icon is *brightness*.
+3. **Badge label:** Body-sm/Medium, 12/16 for md and sm; Caption-xs/Medium, 10/12 for xs.
+4. **Numeric:** a centred value with a minimum 16px text area. One digit is circular; longer values expand the container.
+5. **Dot:** a native circle, 8, 6 or 4px across, centred in a 24, 20 or 16px frame.
+
+## Types
+
+<Canvas of={BadgeStories.Types} />
+
+From the left:
+
+- **Text:** a short, readable status or category, with optional icons.
+- **Numeric:** a count. Use the surrounding text or `aria-label` to explain what is counted.
+- **Dot:** a minimal status cue. Pair it with a written status whenever possible.
+
+## Sizes
+
+<Canvas of={BadgeStories.Sizes} />
+
+Rows are Text, Numeric and Dot. Each row shows **md (24px)**, **sm (20px)** and **xs (16px)**, from the left.
+
+| Size | Label | Text padding, vertical × horizontal | Text corners | Dot |
+|---|---|---|---|---|
+| md | 12/16 Medium | 4 × 8px | 6px | 8px |
+| sm | 12/16 Medium | 2 × 6px | 6px | 6px |
+| xs | 10/12 Medium | 2 × 4px | 4px | 4px |
+
+Text icons stay 12px with a 4px gap in every size. Numeric uses 4, 2 or 0px horizontal padding and 4, 2 or 2px vertical padding. Numeric and Dot use the 24px corner token.
+
+The component set defines these values. The guidelines list different Text corners and a different xs text style; the discrepancy is recorded in [Contributing/Tokens](/?path=/docs/contributing-tokens--docs).
+
+## Styles
+
+<Canvas of={BadgeStories.Styles} />
+
+From the left:
+
+- **Filled:** solid background and inverse text, for stronger emphasis.
+- **Light:** muted background with coloured text.
+- **Stroke:** a 1px inside outline and a transparent background.
+- **Text:** coloured content on a transparent background, with the same spacing.
+
+These styles apply to all three types. Badge is static: Figma defines no hover, pressed, selected or disabled states.
+
+## Colours
+
+<Canvas of={BadgeStories.Colors} />
+
+From the left: **Neutral**, **Info**, **Success**, **Warning** and **Error**. All colours use semantic tokens and follow the Theme toolbar.
+Use consistent meaning across the product and always provide a readable label or context.
+
+### Complete Figma set
+
+<Canvas of={BadgeStories.AllVariants} />
+
+All **180 combinations**: four styles × five colours × three sizes × three types. In each colour row, the groups are md, sm and xs; each group contains Text, Numeric and Dot.
+
+## Content behaviour
+
+### Optional icons
+
+<Canvas of={BadgeStories.Icons} />
+
+From the left: leading icon, trailing icon, both and neither. Icons inherit the label colour and are decorative. Numeric and Dot ignore the icon props.
+
+### Counts
+
+<Canvas of={BadgeStories.NumericValues} />
+
+Zero remains visible. Wider values grow into pills; the component does not truncate or automatically cap a count. Supply a formatted string such as `99+` when that matches the product's counting rules.
+
+### Dot labels
+
+<Canvas of={BadgeStories.DotLabels} />
+
+The first Dot has its own accessible name. In the second example, the adjacent text supplies the meaning and `decorative` hides the repeated dot from screen readers.
+
+### Long labels
+
+<Canvas of={BadgeStories.LongLabel} />
+
+The single-line heights are 24, 20 and 16px. A long label wraps within its parent and the badge grows vertically. Prefer a short status people can scan.
+
+## Accessibility
+
+- Badge is a static span, with no Tab stop or click behaviour. Its text or count is read in document order; icons are hidden from screen readers.
+- A standalone Dot uses `role="img"` and its `aria-label`, falling back to `label`. Use a meaningful status such as “Available”.
+- A contextual `aria-label` exposes a count as one named image, such as “2 unread messages”.
+- When nearby text already communicates the same information, use `decorative` to hide the repeated badge.
+- Updates are not announced automatically. If an update needs an announcement, provide a separate live status message in the surrounding product.
+- Colours match Figma. **Warning text in the light theme falls below WCAG AA's 4.5:1 requirement**: about 3.15:1 for Filled, Stroke and Text on the default surface, and 3.04:1 for Light. Use a passing colour for essential text until the Figma tokens are revised. All text combinations pass in the dark theme. Dot and icon meaning must also be available as text.
+
+## Figma and code
+
+<PropsMapping rows={[
+  { figma: 'Style', prop: 'variant', values: 'Filled, Light, Stroke, Text → filled, light, stroke, text' },
+  { figma: 'Size', prop: 'size', values: 'md-24, sm-20, xs-16 → md, sm, xs' },
+  { figma: 'Type', prop: 'type', values: 'Text, Numeric, Dot → text, numeric, dot' },
+  { figma: 'Color', prop: 'color', values: 'Neutral, Info, Success, Warning, Error → neutral, info, success, warning, error' },
+  { figma: 'Edit text', prop: 'label', values: 'visible Text content; default Badge; also the fallback name for Dot' },
+  { figma: 'Edit numeric', prop: 'value', values: 'Numeric content, a string or number; default 2' },
+  { figma: 'Left icon', prop: 'leftIcon', values: 'On → Base icon name (brightness by default); Off → null; Text only' },
+  { figma: 'Right icon', prop: 'rightIcon', values: 'On → Base icon name (brightness by default); Off → null; Text only' },
+  { figma: '—', prop: 'aria-label · decorative', values: 'a meaningful accessible name, or hide a cue already explained by adjacent text' },
+]} />
+
+## Props
+
+<ArgTypes of={BadgeStories} />

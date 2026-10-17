@@ -93,3 +93,13 @@ Where each component lives in the GRG Design System file (`r3E5XdifyoiiNeuj7mOjB
 | Description component set (Text, key-value) | `151:13084` |
 | Key-value component set (Rows 01–05; 12px row gap) | `151:13111` |
 | Usage guidelines (anatomy, chevron, leading icon, descriptions, states) | `420:7068` |
+
+## Badge
+
+| What | Node |
+|---|---|
+| Page Badge & Status dot | `160:9085` |
+| Component set `Badge` (Style × Size × Type × Color, 180 variants; Left icon, Right icon, Edit text and Edit numeric options) | `160:11265` |
+| Usage guidelines (anatomy, Text/Numeric/Dot, sizes, four styles and five colours) | `422:47775` |
+
+Badge is separate from the `Status badge` part of Avatar (`154:1337`). Text uses Base icons; Dot is a native ellipse.
