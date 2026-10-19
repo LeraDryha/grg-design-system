@@ -73,7 +73,7 @@ The pointer is over the header: the border darkens to `stroke-strong-500`.
 
 ### Active
 
-The header is pressed or focused: the border uses `stroke-stronger-900`. This state is independent of whether the section is expanded.
+While the pointer is pressed on the header, the border uses `stroke-stronger-900`. On release it returns to Hovered while the pointer remains over the header, or Default when the pointer leaves. This state is independent of whether the section is expanded.
 
 <Canvas of={AccordionStories.Active} />
 
@@ -94,6 +94,8 @@ The header cannot toggle and is skipped by Tab. The fill, border, text and icons
 <Canvas of={AccordionStories.Expanded} />
 
 Click the header, or reach it with Tab and press Enter or Space. The chevron changes direction, the muted fill appears and the description is revealed. Focus stays on the header when it opens or closes.
+
+PrimeReact's `activeIndex` identifies the expanded panel. It does not represent the temporary Active (pressed) visual state. Pointer focus alone does not keep the Active border; keyboard focus retains the system blue ring.
 
 Use `expanded` and `onExpandedChange` to manage the state from a parent, as the Playground does. With `expanded` unset, the Accordion manages its own state and `defaultExpanded` sets its starting state.
 

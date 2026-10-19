@@ -51,7 +51,8 @@
 
 .grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:hover),
 .grg-accordion[data-preview-state='hover'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-strong-500); }
-.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:is(:active, :focus)),
+/* Pointer focus remains after a click; it must not keep the pressed border active. */
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:active),
 .grg-accordion[data-preview-state='active'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-stronger-900); }
 
 .grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:focus-visible),
