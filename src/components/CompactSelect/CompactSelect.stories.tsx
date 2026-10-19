@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { CompactSelect, type CompactSelectProps } from './CompactSelect';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 import { sampleCoins, sampleCountries, sampleCurrencies, samplePayments } from '../Select/samples';
@@ -9,12 +9,12 @@ const meta = {
   component: CompactSelect,
   // The docs page is CompactSelect.mdx
   parameters: { layout: 'centered' },
-  args: { options: sampleCurrencies, type: 'default', size: 'md', 'aria-label': 'Currency', invalid: false, disabled: false, searchable: false, previewState: 'default' },
+  args: { options: sampleCurrencies, defaultValue: 'USD', type: 'default', size: 'md', 'aria-label': 'Currency', invalid: false, disabled: false, searchable: false, previewState: 'default' },
   argTypes: {
     options: { control: false },
     type: { control: 'inline-radio', options: ['default', 'icon', 'country', 'coin'] },
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'focus'] },
+    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     onChange: { action: 'changed', control: false },
   },
 } satisfies Meta<typeof CompactSelect>;
@@ -51,9 +51,9 @@ export const Types: Story = {
   render: (args: CompactSelectProps) => (
     <div style={{ ...row, minHeight: 0 }}>
       <CompactSelect {...args} type="default" options={sampleCurrencies} aria-label="Currency" />
-      <CompactSelect {...args} type="icon" options={samplePayments} aria-label="Payment type" />
+      <CompactSelect {...args} type="icon" options={samplePayments} defaultValue="rent" aria-label="Payment type" />
       <CompactSelect {...args} type="country" options={sampleCountries} defaultValue="BG" aria-label="Country" />
-      <CompactSelect {...args} type="coin" options={sampleCoins} aria-label="Coin" />
+      <CompactSelect {...args} type="coin" options={sampleCoins} defaultValue="BTC" aria-label="Coin" />
     </div>
   ),
 };
@@ -76,10 +76,24 @@ export const Default: Story = {};
 export const Hovered: Story = { args: { previewState: 'hover' } };
 
 /** Open: the darkest border, the chevron points up. */
-export const Active: Story = { args: { previewState: 'focus' } };
+export const Active: Story = { args: { previewState: 'active' } };
+
+/** Keyboard focus: system blue ring. */
+export const Focused: Story = { args: { previewState: 'focus' } };
 
 /** Red border: explain the problem next to the select. */
 export const ErrorState: Story = { name: 'Error', args: { invalid: true } };
 
 /** Not available: grey fill, no interaction. */
 export const Disabled: Story = { args: { disabled: true } };
+
+/** No value means no selection, even when the first option is available. */
+export const EmptySelection: Story = { args: { defaultValue: null, placeholder: 'Currency' } };
+
+/** An unavailable value never silently selects another option. */
+export const MissingValue: Story = {
+  render: function MissingValue(args: CompactSelectProps) {
+    const [value, setValue] = useState('removed');
+    return <CompactSelect {...args} value={value} onChange={setValue} />;
+  },
+};

@@ -37,8 +37,9 @@
   color: var(--text-disabled-400);
   cursor: default;
 }
-/* Keyboard focus: the system ring (Figma has no focus state for it); while open, the Active border is enough */
-.grg-compact-select:not([data-open]) .grg-compact-select__box:has(:focus-visible) { box-shadow: var(--focus-ring); }
+/* Keep the keyboard ring while focus is in the control or its search panel, including when open. */
+.grg-compact-select:not([data-disabled]):has(:focus-visible) .grg-compact-select__box,
+.grg-compact-select[data-preview-state='focus']:not([data-disabled]) .grg-compact-select__box { box-shadow: var(--focus-ring); }
 
 .grg-compact-select__value { display: flex; align-items: center; }
 .grg-compact-select__value > .grg-icon { color: var(--icon-base-500); }
@@ -62,3 +63,5 @@
 @media (prefers-reduced-motion: reduce) {
   .grg-compact-select__box { transition: none; }
 }
+
+.grg-compact-select:not([data-disabled]) .grg-compact-select__text[data-placeholder] { color: var(--text-soft-500); }

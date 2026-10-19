@@ -29,7 +29,8 @@ export function dropdownPanelPt(label: string): DropdownPassThroughOptions {
     filterInput: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` },
     wrapper: { className: 'grg-dropdown__scroll' },
     list: { className: 'grg-dropdown__list', 'aria-label': label },
-    item: { className: 'grg-dropdown__option' },
+    // The visible template may use listLabel. Let its text name the option instead of Prime's short label.
+    item: { className: 'grg-dropdown__option', 'aria-label': undefined },
     itemLabel: { className: 'grg-dropdown__item-wrap' },
     emptyMessage: { className: 'grg-dropdown__empty' },
   };

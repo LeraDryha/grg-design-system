@@ -111,6 +111,12 @@ Focused: the darkest border, and the label turns dark. With a value, a clear but
 
 <Canvas of={InputStories.Active} />
 
+### Keyboard focus
+
+Keyboard focus adds the system blue ring.
+
+<Canvas of={InputStories.Focused} />
+
 ### Error
 A red border and an error message, which replaces the hint. Screen readers read the message with the field.
 
@@ -133,13 +139,25 @@ From the left:
 
 The floating label **takes no vertical space**: leave 22px above every field in a form layout.
 
+## Form integration
+
+The Common input supports standard React `value` + `onChange`, as well as the simpler `onValueChange` callback. Typing and clearing both update the form.
+
+<Canvas of={InputStories.Controlled} />
+
+`readOnly` keeps the value available for focus, selection and copying, but prevents editing and hides the clear button. Use `disabled` when the whole control is unavailable.
+
+<Canvas of={InputStories.ReadOnly} />
+
+The label's info button shows help on hover, keyboard focus or tap. Escape dismisses the help without moving focus.
+
 ## Accessibility
 
 - The label is a real `<label>` connected to the field, so it stays the field's name even while it is shown as the placeholder.
 - The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`, so screen readers read it with the field.
 - Every button in the field has a name: *Clear*, *Copy referral link*, *Show password* (with `aria-pressed`). Copying is announced as *Copied*.
 - The country and coin selects are comboboxes with a name, an expanded state and the highlighted option announced while moving with the arrow keys.
-- Focus is visible: the border turns dark in the Active state; buttons inside the field show the system blue focus ring.
+- Keyboard focus adds the system blue ring around the field. Buttons inside the field have their own blue ring. The dark Active border continues to show the field's focus state.
 - Phone, card, amount and date fields open the number keyboard on phones.
 - Colours follow Figma. In the dark theme the prefix and unit text (`icon-base-500`) reach about 3.8:1 on the surface, below the 4.5:1 for text.
 

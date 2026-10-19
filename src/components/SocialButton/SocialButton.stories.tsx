@@ -7,10 +7,11 @@ const meta = {
   title: 'Components/Social Button',
   component: SocialButton,
   // The docs page is SocialButton.mdx
-  args: { social: 'google', iconOnly: false, children: undefined, previewState: 'default' },
+  args: { social: 'google', iconOnly: false, disabled: false, children: undefined, previewState: 'default' },
   argTypes: {
     social: { control: 'inline-radio', options: ['google', 'facebook', 'apple'] },
     iconOnly: { control: 'boolean' },
+    disabled: { control: 'boolean' },
     children: { control: 'text', description: 'Label; "Sign in with …" (the Figma text) by default' },
     previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     onClick: { action: 'clicked', control: false },
@@ -87,3 +88,6 @@ export const Pressed: Story = { args: { previewState: 'active' } };
 
 /** Reached with the keyboard: the system focus ring. */
 export const Focused: Story = { args: { previewState: 'focus' } };
+
+/** Disabled for all providers, with text and icon-only variants. */
+export const Disabled: Story = { args: { disabled: true }, render: args => <div style={row}>{(['google', 'facebook', 'apple'] as const).map(social => <div key={social} style={row}><SocialButton {...args} social={social} /><SocialButton {...args} social={social} iconOnly /></div>)}</div> };

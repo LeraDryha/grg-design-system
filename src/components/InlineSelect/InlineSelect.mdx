@@ -16,7 +16,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   ]}
 />
 
-A small select that lives inside another field: the country code of a phone number, the coin of an amount.
+A small select for a language switcher in a header, or a choice inside another field: the country code of a phone number, the coin of an amount.
 It has no frame of its own and opens the same list as Select. Figma has the component only, without a guidelines page.
 
 <Canvas of={InlineSelectStories.Playground} />
@@ -28,6 +28,7 @@ All props are listed at the end of the page.
 
 <DoDont
   dos={[
+    'A header language switcher tied to the current application language',
     'A choice that belongs to a value in a field: the country code of a phone number, the currency of an amount',
     'A search row in the list when it is long, such as all country codes',
   ]}
@@ -57,6 +58,12 @@ From the left: **Country** (flag), **Coin** and **Icon**. The type only changes 
 
 Input uses it in two types: **Phone** (the country code before the number) and **Amount** (the coin after the number).
 
+## Header language
+
+<Canvas of={InlineSelectStories.HeaderLanguage} />
+
+The application supplies its current language and handles the selection to update translated content, routing and persistence. This example updates the content on the canvas. Use language names; a country flag does not uniquely identify a language.
+
 ## States
 
 ### Default
@@ -70,14 +77,27 @@ Pointer over it: the chevron gets darker.
 <Canvas of={InlineSelectStories.Hovered} />
 
 ### Active
-Focused or open: the darkest chevron.
+Open: the darkest chevron. Closing the list restores the resting or hovered chevron, even if focus remains.
 
 <Canvas of={InlineSelectStories.Active} />
+
+### Keyboard focus
+
+A blue ring marks keyboard focus independently of whether the list is open.
+
+<Canvas of={InlineSelectStories.Focused} />
 
 ### Disabled
 Not available right now, with its field: grey text, a faded picture and a grey chevron.
 
 <Canvas of={InlineSelectStories.Disabled} />
+
+## Selection
+
+Set `value` to the application's current choice, or `defaultValue` for an initial choice managed by the component. Without a matching option, the control shows its empty state. It never substitutes the first option. An empty or removed value does not fire `onChange`; the application decides how to resolve it.
+
+<Canvas of={InlineSelectStories.EmptySelection} />
+<Canvas of={InlineSelectStories.MissingValue} />
 
 ## Accessibility
 

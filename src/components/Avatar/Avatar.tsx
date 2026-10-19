@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Avatar as PrimeAvatar } from 'primereact/avatar';
 import { StatusBadge, STATUS_LABEL, type StatusBadgeType } from '../StatusBadge/StatusBadge';
 import './Avatar.css';
 
@@ -15,7 +15,7 @@ export type AvatarSize = (typeof avatarSizes)[number];
 export type AvatarProps = {
   /** Figma Size, in px */
   size?: AvatarSize;
-  /** Photo or logo (Figma Image = on). If it fails to load, the shape shows instead. */
+  /** Photo or logo (Figma Image = on). If it fails to load, initials or the shape show instead. */
   src?: string;
   /** Who or what it is: the accessible name, and the source of the initials */
   name?: string;
@@ -38,7 +38,8 @@ export type AvatarProps = {
 const BADGE: Partial<Record<AvatarSize, 24 | 20 | 16 | 12 | 8>> = { 120: 24, 96: 24, 80: 24, 64: 20, 56: 20, 48: 16, 40: 12, 32: 12, 24: 8 };
 
 const initialsOf = (name: string, size: AvatarSize) => {
-  const words = name.replace(/^(mr|mrs|ms|miss|dr)\.?\s+/i, '').trim().split(/\s+/);
+  const words = name.replace(/^(mr|mrs|ms|miss|dr)\.?\s+/i, '').trim().split(/\s+/).filter(Boolean);
+  if (!words.length) return '';
   const letters = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0].slice(0, 2);
   return (size <= 20 ? letters[0] : letters).toUpperCase();
 };
@@ -64,31 +65,32 @@ const SHAPES = {
  * Named for screen readers when `name` is given ("Warren Fritsch, verified"), decorative otherwise.
  */
 export function Avatar({ size = 40, src, name, initials = false, shape = 'user', color, status, statusLabel, decorative = false, className = '' }: AvatarProps) {
-  const [failed, setFailed] = useState(false);
-  const kind = src && !failed ? 'image' : initials && name ? 'initials' : 'shape';
+  const initialsLabel = initials && name ? initialsOf(name, size) : undefined;
   const badge = status ? BADGE[size] : undefined;
   const label = name && !decorative ? [name, status && badge ? statusLabel ?? STATUS_LABEL[status] : null].filter(Boolean).join(', ') : undefined;
 
   return (
-    <span
+    <PrimeAvatar
+      // PrimeReact keeps image failure state. A new source must get a fresh loading attempt.
+      key={src ?? 'placeholder'}
+      unstyled
       className={`grg-avatar ${className}`}
       data-size={size}
-      data-kind={kind}
       data-color={color}
       role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
+      image={src}
+      imageAlt=""
+      label={initialsLabel}
+      icon={<svg className="grg-avatar__picture grg-avatar__shape" viewBox="0 0 40 40" aria-hidden="true">{SHAPES[shape]}</svg>}
+      pt={{
+        root: options => ({ 'data-kind': src && !options?.state.imageFailed ? 'image' : initialsLabel ? 'initials' : 'shape' }),
+        image: { className: 'grg-avatar__picture grg-avatar__image' },
+        label: { className: 'grg-avatar__picture grg-avatar__initials' },
+      }}
     >
-      <span className="grg-avatar__picture">
-        {kind === 'image' && <img className="grg-avatar__image" src={src} alt="" onError={() => setFailed(true)} />}
-        {kind === 'initials' && <span className="grg-avatar__initials">{initialsOf(name!, size)}</span>}
-        {kind === 'shape' && (
-          <svg className="grg-avatar__shape" viewBox="0 0 40 40" aria-hidden="true">
-            {SHAPES[shape]}
-          </svg>
-        )}
-      </span>
       {status && badge && <StatusBadge className="grg-avatar__status" type={status} size={badge} />}
-    </span>
+    </PrimeAvatar>
   );
 }

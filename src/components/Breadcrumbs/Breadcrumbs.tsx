@@ -5,7 +5,7 @@ import { Menu } from 'primereact/menu';
 import type { MenuItem } from 'primereact/menuitem';
 import { BreadcrumbItem, type BreadcrumbItemProps } from './BreadcrumbItem';
 import { Icon } from '../Icon/Icon';
-import { useOverlayTheme } from './useOverlayTheme';
+import { useOverlayTheme } from '../../hooks/useOverlayTheme';
 import './Breadcrumbs.css';
 
 export type BreadcrumbEntry = Pick<BreadcrumbItemProps, 'label' | 'href' | 'icon' | 'showLabel'> & { id: string };

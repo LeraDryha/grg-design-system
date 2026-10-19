@@ -34,6 +34,8 @@
 .grg-select__frame:not([data-disabled]) .grg-select__box:hover,
 .grg-select__frame[data-preview-state='hover'] .grg-select__box { --se-bg: var(--bg-weak-100); --se-border: var(--stroke-strong-500); }
 .grg-select__frame[data-focused] .grg-select__box { --se-bg: transparent; --se-border: var(--stroke-stronger-900); }
+.grg-select__frame:not([data-disabled]):has(:focus-visible) .grg-select__box,
+.grg-select__frame[data-preview-state='focus']:not([data-disabled]) .grg-select__box { box-shadow: var(--focus-ring); }
 .grg-select__frame[data-invalid] .grg-select__box { --se-border: var(--error-base-600); }
 .grg-select__frame[data-disabled] .grg-select__box {
   --se-bg: var(--bg-weak-100);

@@ -38,7 +38,7 @@ Only the gold (light) and dark themes are part of this system. White-label palet
 
 ## Known differences between Figma and code
 
-Found while generating the tokens. They are kept as they are in Figma until the file is updated.
+Token differences and agreed implementation decisions. The table records how code handles each difference from Figma.
 
 | Where | What | In code |
 |---|---|---|
@@ -49,3 +49,5 @@ Found while generating the tokens. They are kept as they are in Figma until the 
 | Button guidelines | The Sizes text lists corner radii sm 8, xs 6, xs 6, xs 6, xxs 4, while the component set uses lg-12, md-10, md-10, sm-8, xs-6 | Follows the component set |
 | Alert, Notification & Toast guidelines | The Sizes text lists 8px corners for both sizes; the component set uses md-10 without a description and lg-12 with one | Follows the component set; descriptions use sm-20 only |
 | Badge guidelines | The Sizes text lists 4px Text corners for md/sm and 11/16 text for xs; the component set uses 6px corners for md/sm and Caption-xs/Medium 10/12 for xs. The xs description is also labelled md-24 | Follows the component set: md/sm corners 6px, xs corners 4px, text 12/16 and 10/12 |
+| Button / Loading | Figma presents Loader and Disabled as separate visual states | Loading uses PrimeReact Button's native disabled behaviour: activation is blocked and Tab skips it. The loader keeps its accessible name and `aria-busy` |
+| Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |

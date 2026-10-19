@@ -82,8 +82,16 @@ From the left:
 - **Error:** over the limit, or when the field has an error. The field shows *Character limit exceeded.* until the text is short enough.
 - **Disabled:** grey, with the field.
 
-The limit is soft: people can type or paste past it and then shorten the text, instead of losing what they pasted.
+`maxLength` is passed to PrimeReact InputTextarea and enforced by the browser: typing and pasting cannot add text past the limit. An existing value supplied by the application can exceed it; the counter and error make that visible without silently deleting saved text. The application must also validate saved values.
 Without `maxLength` the counter shows only the count.
+
+The counter displays the limit supplied to TextArea; it does not set the limit itself. Storybook Controls preview the same prop that the application passes in production.
+
+### Form integration
+
+Use the standard `value` and `onChange` pair, as with PrimeReact InputTextarea. `onValueChange` is also available when only the text value is needed.
+
+<Canvas of={TextAreaStories.Controlled} />
 
 ## Resizing
 
@@ -118,12 +126,18 @@ Focused: the darkest border, and the label turns dark.
 
 <Canvas of={TextAreaStories.Active} />
 
+### Keyboard focus
+
+Keyboard focus adds the system blue ring.
+
+<Canvas of={TextAreaStories.Focused} />
+
 ### Error
 A red border, a red counter and an error message, which replaces the hint. Screen readers read the message with the field.
 
 <Canvas of={TextAreaStories.ErrorState} />
 
-Over the limit the same happens with *Character limit exceeded.*:
+If an existing value supplied by the application exceeds the limit, the field shows *Character limit exceeded.*. This example starts with 214 characters; normal typing and pasting are capped at 200:
 
 <Canvas of={TextAreaStories.OverLimit} />
 
@@ -149,7 +163,7 @@ The floating label **takes no vertical space**: leave 22px above every field in 
 - The label is a real `<label>` connected to the field, so it stays the field's name even while it is shown as the placeholder.
 - The hint, the error and the counter are connected with `aria-describedby`. Screen readers hear *153 of 200 characters* with the field, not on every keystroke.
 - An error, including going over the limit, sets `aria-invalid`.
-- Focus is visible: the border turns dark in the Active state.
+- Keyboard focus adds the system blue ring. The dark Active border continues to show the field's focus state.
 - The resize handle is a focusable separator named *Resize text area*, with a tooltip. The arrow keys resize the field, so it works without a mouse.
 - Colours follow Figma. On the hovered field the counter (`text-soft-500` on `bg-weak-100`) reaches 4.3:1, just under the 4.5:1 for text.
 

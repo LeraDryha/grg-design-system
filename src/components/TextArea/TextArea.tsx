@@ -30,7 +30,7 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<'textarea'>, 'value' | 'd
   bottomValue?: string;
   /** Figma Character counter. Shows "count/maxLength", or just the count without a limit. */
   counter?: boolean;
-  /** The character limit. Typing past it is allowed, so pasted text isn't cut off; the field shows an error instead. */
+  /** Native maximum length: further typing and pasted input are limited by the browser. */
   maxLength?: number;
   /** Error shown over the limit, unless `error` is set */
   limitError?: string;
@@ -42,7 +42,7 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<'textarea'>, 'value' | 'd
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'focus';
+  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /** PrimeReact InputTextarea (unstyled) inside the shared field frame, as Input. Figma is the source of every value in TextArea.css. */
@@ -51,7 +51,7 @@ export function TextArea({
   hint, error, hintIcon = true, topKey, topValue, bottomValue,
   counter = true, maxLength, limitError = 'Character limit exceeded.', resizable = true, resizeLabel = 'Resize text area',
   value: controlled, defaultValue = '', onValueChange, previewState = 'default',
-  id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, rows = 3, 'aria-describedby': describedBy, ref, ...props
+  id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, onChange, rows = 3, 'aria-describedby': describedBy, ref, ...props
 }: TextAreaProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
@@ -72,7 +72,7 @@ export function TextArea({
   const [local, setLocal] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const value = controlled ?? local;
-  const isFocused = focused || previewState === 'focus';
+  const isFocused = focused || previewState === 'active' || previewState === 'focus';
   const filled = value !== '';
   const overLimit = maxLength !== undefined && value.length > maxLength;
   const shownError = error || (overLimit ? limitError : undefined);
@@ -142,7 +142,7 @@ export function TextArea({
         data-invalid={shownError ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
-        data-preview-state={previewState === 'hover' ? 'hover' : undefined}
+        data-preview-state={previewState === 'default' ? undefined : previewState}
         // A click on the empty part of the field (around the counter) puts the cursor in the text.
         // On click, not mouse down: mouse down on the corner starts resizing the field.
         onClick={e => {
@@ -158,6 +158,7 @@ export function TextArea({
           }}
           id={id}
           rows={rows}
+          maxLength={maxLength}
           className="grg-textarea__control"
           value={value}
           disabled={disabled}
@@ -173,7 +174,10 @@ export function TextArea({
             setFocused(false);
             onBlur?.(e);
           }}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setValue(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => {
+            setValue(e.target.value);
+            onChange?.(e);
+          }}
         />
         {(counter || resizable) && (
           <span className="grg-textarea__counter" data-state={disabled ? 'disabled' : shownError ? 'error' : 'default'}>

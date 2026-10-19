@@ -101,3 +101,39 @@
 @media (prefers-reduced-motion: reduce) {
   .grg-field__label { transition: none; translate: none; }
 }
+
+.grg-field-info { display: inline-flex; }
+
+.grg-field-tooltip {
+  position: absolute;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(calc(var(--space-5000) * 3), calc(100vw - var(--space-600)));
+  padding: 0;
+  color: var(--text-inverce);
+  font: var(--typo-body-sm-regular);
+  letter-spacing: var(--typo-body-sm-regular-tracking);
+  overflow-wrap: anywhere;
+}
+/* PrimeReact clears outer padding while checking collisions. Keep the bubble's full size in its text. */
+.grg-field-tooltip__text {
+  padding: var(--space-200) var(--space-300);
+  border-radius: var(--radius-xs-6);
+  background: var(--bg-base-1000);
+  box-shadow: var(--shadow-sm);
+}
+.grg-field-tooltip__arrow {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: var(--space-200);
+  height: var(--space-200);
+  background: var(--bg-base-1000);
+  rotate: 45deg;
+  translate: -50% 50%;
+}
+.grg-field-tooltip[data-placement='bottom'] .grg-field-tooltip__arrow {
+  top: 0;
+  bottom: auto;
+  translate: -50% -50%;
+}

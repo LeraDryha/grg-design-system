@@ -24,6 +24,7 @@ export type SocialButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & 
 export function SocialButton({
   social,
   iconOnly = false,
+  disabled = false,
   previewState = 'default',
   type = 'button',
   className = '',
@@ -37,13 +38,14 @@ export function SocialButton({
       // PrimeReact 10 types Button as a class, but at runtime the ref receives the <button> element
       ref={ref as unknown as Ref<PrimeButton>}
       type={type}
+      disabled={disabled}
       className={`grg-social-button ${className}`}
       data-icon-only={iconOnly || undefined}
       data-preview-state={previewState === 'default' ? undefined : previewState}
       aria-label={iconOnly && typeof label === 'string' ? label : undefined}
       {...props}
     >
-      <SocialIcon platform={social} size={24} />
+      <SocialIcon platform={social} size={24} variant={disabled ? 'gray' : 'brand'} />
       {!iconOnly && <span className="grg-social-button__label">{label}</span>}
     </PrimeButton>
   );

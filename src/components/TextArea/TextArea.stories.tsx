@@ -1,5 +1,5 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { TextArea, type TextAreaProps } from './TextArea';
 import { CharacterCounter } from './CharacterCounter';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
@@ -31,9 +31,10 @@ const meta = {
   },
   argTypes: {
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'focus'] },
+    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     onValueChange: { action: 'value changed', control: false },
+    onChange: { action: 'native change', control: false },
     ref: { control: false, table: { disable: true } },
   },
 } satisfies Meta<typeof TextArea>;
@@ -41,8 +42,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Edit everything in Controls. Click the field to see the label float; type past 200 characters to see the limit. */
+/** Edit everything in Controls. Click the field to see the label float; type up to 200 characters to see the limit. */
 export const Playground: Story = { decorators: [field] };
+
+/** Standard form integration: the native onChange updates the application's value. */
+export const Controlled: Story = {
+  decorators: [field],
+  args: { maxLength: 20 },
+  render: function Controlled(args) {
+    const [value, setValue] = useState('');
+    return <><TextArea {...args} value={value} onChange={event => { setValue(event.target.value); args.onChange?.(event); }} /><output aria-live="polite">Form value: {value || 'Empty'}</output></>;
+  },
+};
 
 /** Every part of the field, numbered as in the Figma guidelines. */
 export const Anatomy: Story = {
@@ -117,12 +128,15 @@ export const Filled: Story = { decorators: [field], args: { defaultValue: MESSAG
 export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: MESSAGE } };
 
 /** Focused: the darkest border, the label floats and turns dark. */
-export const Active: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: MESSAGE } };
+export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: MESSAGE } };
+
+/** Keyboard focus: system blue ring. */
+export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: MESSAGE } };
 
 /** Red border, message and counter. Empty and required, as in Figma. */
 export const ErrorState: Story = { name: 'Error', decorators: [field], args: { required: true, error: 'This field is required' } };
 
-/** Over the limit: the counter and the border turn red, with "Character limit exceeded." */
+/** An existing application value over the limit: it is shown with an error, without silently truncating saved text. */
 export const OverLimit: Story = { decorators: [field], args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 214) } };
 
 /** Not available: grey fill and text, no interaction. */

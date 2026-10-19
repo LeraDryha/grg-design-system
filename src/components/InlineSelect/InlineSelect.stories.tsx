@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { InlineSelect, type InlineSelectProps } from './InlineSelect';
 import { Input } from '../Input/Input';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
@@ -11,9 +11,10 @@ const meta = {
   component: InlineSelect,
   // The docs page is InlineSelect.mdx
   parameters: { layout: 'centered' },
-  args: { options: phoneCodes, type: 'country', 'aria-label': 'Country code', searchable: false, disabled: false },
+  args: { options: phoneCodes, defaultValue: 'BG', type: 'country', 'aria-label': 'Country code', searchable: false, disabled: false },
   argTypes: {
     options: { control: false },
+    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     type: { control: 'inline-radio', options: ['country', 'coin', 'icon'] },
     onChange: { action: 'changed', control: false },
   },
@@ -51,20 +52,24 @@ export const Types: Story = {
   render: (args: InlineSelectProps) => (
     <div style={row}>
       <InlineSelect {...args} type="country" options={phoneCodes} aria-label="Country code" />
-      <InlineSelect {...args} type="coin" options={amountCoins} aria-label="Currency" />
-      <InlineSelect {...args} type="icon" options={SAMPLES.icon} aria-label="Payment type" />
+      <InlineSelect {...args} type="coin" options={amountCoins} defaultValue="USDC" aria-label="Currency" />
+      <InlineSelect {...args} type="icon" options={SAMPLES.icon} defaultValue="rent" aria-label="Payment type" />
     </div>
   ),
 };
 
 /** Where it lives: the country code of a phone number and the coin of an amount, in Input. */
 export const InFields: Story = {
-  render: () => (
+  render: function InFields() {
+    const [country, setCountry] = useState('BG');
+    const [coin, setCoin] = useState('USDC');
+    return (
     <div style={{ display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' }}>
-      <Input type="phone" label="Phone number" defaultValue="6787645" countries={phoneCodes} />
-      <Input type="amount" label="Amount" defaultValue="100.00" coins={amountCoins} />
+      <Input type="phone" label="Phone number" defaultValue="6787645" countries={phoneCodes} country={country} onCountryChange={setCountry} />
+      <Input type="amount" label="Amount" defaultValue="100.00" coins={amountCoins} coin={coin} onCoinChange={setCoin} />
     </div>
-  ),
+  );
+  },
 };
 
 /* ---- States ---- */
@@ -75,8 +80,31 @@ export const Default: Story = {};
 /** Pointer over it: the chevron gets darker. */
 export const Hovered: Story = { args: { previewState: 'hover' } };
 
-/** Focused or open: the darkest chevron. */
-export const Active: Story = { args: { previewState: 'focus' } };
+/** Open: the darkest chevron. */
+export const Active: Story = { args: { previewState: 'active' } };
+
+/** Keyboard focus is separate from the open state. */
+export const Focused: Story = { args: { previewState: 'focus' } };
 
 /** Not available: grey text, picture and chevron. */
 export const Disabled: Story = { args: { disabled: true } };
+
+/** A header uses the application's current language and updates its content on selection. */
+export const HeaderLanguage: Story = {
+  render: function HeaderLanguage() {
+    const [language, setLanguage] = useState('uk');
+    return <div style={{ display: 'grid', gap: 'var(--space-600)' }}>
+      <InlineSelect type="icon" aria-label="Language" value={language} onChange={setLanguage}
+        options={[{ value: 'uk', label: 'Українська', icon: 'globe' }, { value: 'en', label: 'English', icon: 'globe' }]} />
+      <p lang={language}>{language === 'uk' ? 'Вітаємо у вашому кабінеті' : 'Welcome to your account'}</p>
+    </div>;
+  },
+};
+
+export const EmptySelection: Story = { args: { defaultValue: null, placeholder: 'Country code' } };
+export const MissingValue: Story = {
+  render: function MissingValue(args: InlineSelectProps) {
+    const [value, setValue] = useState('removed');
+    return <InlineSelect {...args} value={value} onChange={setValue} />;
+  },
+};

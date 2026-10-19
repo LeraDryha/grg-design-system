@@ -1,5 +1,6 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { Button } from '../Button/Button';
 import { Select, type SelectProps } from './Select';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 import { sampleCoins, sampleCountries, samplePaymentMethods, samplePayments, sampleUsers } from './samples';
@@ -38,7 +39,7 @@ const meta = {
     options: { control: false },
     type: { control: 'select', options: ['common', 'country', 'user', 'payment', 'coin'] },
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'focus'] },
+    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     onChange: { action: 'changed', control: false },
   },
@@ -125,6 +126,19 @@ export const OpenList: Story = {
 /** Empty: the label sits inside as the placeholder. */
 export const Default: Story = { decorators: [field] };
 
+/** A parent can clear a controlled selection with null, matching PrimeReact Dropdown. */
+export const Controlled: Story = {
+  decorators: [withList],
+  render: function Controlled(args) {
+    const [value, setValue] = useState<string | null>(null);
+    return <div style={{ display: 'grid', gap: 'var(--space-400)' }}>
+      <Select {...args} value={value} onChange={next => { setValue(next); args.onChange?.(next); }} />
+      <Button onClick={() => setValue(null)}>Clear selection</Button>
+      <output aria-live="polite">Selected: {value ?? 'None'}</output>
+    </div>;
+  },
+};
+
 /** With a value: the label stays above. */
 export const Filled: Story = { decorators: [field], args: { defaultValue: 'utility' } };
 
@@ -132,7 +146,10 @@ export const Filled: Story = { decorators: [field], args: { defaultValue: 'utili
 export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: 'utility' } };
 
 /** Focused or open: the darkest border, the label floats and turns dark. */
-export const Active: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'utility' } };
+export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: 'utility' } };
+
+/** Keyboard focus: system blue ring. */
+export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'utility' } };
 
 /** Red border and message; the message replaces the hint. */
 export const ErrorState: Story = { name: 'Error', decorators: [field], args: { required: true, error: 'Choose a payment type' } };

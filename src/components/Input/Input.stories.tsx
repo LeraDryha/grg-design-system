@@ -1,5 +1,5 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Input, type InputProps } from './Input';
 import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
@@ -37,7 +37,7 @@ const meta = {
     leftIcon: { control: 'select', options: iconOptions, labels: { null: 'none' } },
     rightIcon: { control: 'select', options: iconOptions, labels: { null: 'none' } },
     action: { control: 'inline-radio', options: [undefined, 'copy', 'password'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'focus'] },
+    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     countries: { control: false },
     coins: { control: false },
@@ -103,11 +103,14 @@ const TYPES: { type: NonNullable<InputProps['type']>; label: string; value: stri
 
 /** The seven types from Figma, filled. What each one is for is listed on the docs page. */
 export const Types: Story = {
-  render: (args: InputProps) => (
-    <div style={column}>
-      {TYPES.map(t => <Input key={t.type} {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value} />)}
-    </div>
-  ),
+  render: function Types(args: InputProps) {
+    const [country, setCountry] = useState('BG');
+    const [coin, setCoin] = useState('USDC');
+    return <div style={column}>
+      {TYPES.map(t => <Input key={t.type} {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value}
+        country={country} onCountryChange={setCountry} coin={coin} onCoinChange={setCoin} />)}
+    </div>;
+  },
 };
 
 /** Card numbers with the payment method of each card, from Payment method icons. */
@@ -149,7 +152,10 @@ export const Filled: Story = { decorators: [field], args: { defaultValue: 'user@
 export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: 'user@mail.com' } };
 
 /** Focused: the darkest border, the label floats and turns dark, a clear button appears when there is a value. */
-export const Active: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'user@mail.com' } };
+export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: 'user@mail.com' } };
+
+/** Keyboard focus: system blue ring. */
+export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'user@mail.com' } };
 
 /** Red border and message; the message replaces the hint. */
 export const ErrorState: Story = { name: 'Error', decorators: [field], args: { error: 'Email address is invalid.', defaultValue: 'user2mail.com' } };
@@ -190,3 +196,17 @@ export const Password: Story = {
   decorators: [field],
   args: { type: 'button', label: 'Password', leftIcon: null, action: 'password', defaultValue: 'golden-ratio' },
 };
+
+/** The form receives ordinary React change events, including the clear action. */
+export const Controlled: Story = {
+  render: function Controlled(args: InputProps) {
+    const [value, setValue] = useState('');
+    return <div style={column}>
+      <Input {...args} value={value} onChange={event => setValue(event.target.value)} />
+      <output aria-label="Form value">{value || 'Empty'}</output>
+    </div>;
+  },
+};
+
+/** Readable and selectable, without editing or clearing. */
+export const ReadOnly: Story = { decorators: [field], args: { readOnly: true, defaultValue: 'user@mail.com' } };

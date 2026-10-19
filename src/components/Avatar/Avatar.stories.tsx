@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { Button } from '../Button/Button';
 import { Avatar, avatarColors, avatarSizes, type AvatarProps } from './Avatar';
 import { StatusBadge } from '../StatusBadge/StatusBadge';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
@@ -100,4 +101,15 @@ export const StatusBadges: Story = {
       ))}
     </div>
   ),
+};
+
+/** A failed photo falls back to initials; changing its source retries loading. */
+export const PhotoRecovery: Story = {
+  render: function PhotoRecovery(args: AvatarProps) {
+    const [valid, setValid] = useState(false);
+    return <div style={row}>
+      <Avatar {...args} initials src={valid ? photo : 'data:image/png;base64,invalid'} />
+      <Button onClick={() => setValid(!valid)}>{valid ? 'Use unavailable photo' : 'Use available photo'}</Button>
+    </div>;
+  },
 };

@@ -9,9 +9,11 @@ import './CompactSelect.css';
 /** Figma "Compact select" (404:56948): Type × Size × State. */
 export type CompactSelectProps = {
   options: SelectOption[];
-  value?: string;
-  defaultValue?: string;
+  value?: string | null;
+  defaultValue?: string | null;
   onChange?: (value: string) => void;
+  /** Shown when no available option matches the value. Never substitutes another option. */
+  placeholder?: string;
   /** Figma Type: Default (short text, such as USD), Icon, Country (flag), Coin. Pictures show without text. */
   type?: 'default' | 'icon' | 'country' | 'coin';
   /** Figma Size: lg-44, md-40, sm-32 */
@@ -29,7 +31,7 @@ export type CompactSelectProps = {
   name?: string;
   className?: string;
   /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'focus';
+  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -37,7 +39,7 @@ export type CompactSelectProps = {
  * a country, a coin. PrimeReact Dropdown (unstyled), with the same open list as Select.
  */
 export function CompactSelect({
-  options, value: controlled, defaultValue, onChange, type = 'default', size = 'md', 'aria-label': label,
+  options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'default', size = 'md', 'aria-label': label,
   searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
   invalid, disabled, id: suppliedId, name, className = '', previewState = 'default',
 }: CompactSelectProps) {
@@ -47,8 +49,8 @@ export function CompactSelect({
   const inputRef = useRef<HTMLInputElement>(null);
   const [local, setLocal] = useState(defaultValue);
   const [open, setOpen] = useState(false);
-  const value = controlled ?? local;
-  const selected = options.find(o => o.value === value) ?? options[0];
+  const value = controlled === undefined ? local : controlled;
+  const selected = options.find(o => o.value === value);
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, undefined, invalid);
 
   return (
@@ -59,8 +61,8 @@ export function CompactSelect({
       data-size={size}
       data-invalid={invalid || undefined}
       data-disabled={disabled || undefined}
-      data-open={open || previewState === 'focus' || undefined}
-      data-preview-state={previewState === 'hover' ? 'hover' : undefined}
+      data-open={open || previewState === 'active' || undefined}
+      data-preview-state={previewState === 'default' ? undefined : previewState}
     >
       <Dropdown
         inputId={id}
@@ -71,7 +73,7 @@ export function CompactSelect({
         optionValue="value"
         optionLabel="label"
         optionDisabled="disabled"
-        value={selected?.value}
+        value={selected?.value ?? null}
         disabled={disabled}
         filter={searchable}
         filterBy="label,listLabel"
@@ -88,7 +90,7 @@ export function CompactSelect({
         onHide={() => setOpen(false)}
         valueTemplate={() =>
           type === 'default' ? (
-            <span className="grg-compact-select__text">{selected?.label}</span>
+            <span className="grg-compact-select__text" data-placeholder={!selected || undefined}>{selected?.label ?? placeholder}</span>
           ) : selected ? (
             <OptionPicture option={selected} />
           ) : (

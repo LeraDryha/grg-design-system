@@ -1,6 +1,6 @@
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { Icon } from '../Icon/Icon';
-import { ActionButton } from '../ActionButton/ActionButton';
+import { FieldInfo } from './FieldInfo';
 import './FormField.css';
 
 /*
@@ -20,7 +20,7 @@ export type FieldLabelProps = {
   required?: boolean;
   /** Additional text after the label (Figma Text); `true` shows "(Optional)" */
   optional?: boolean | string;
-  /** Text behind the info button (Figma Icon). Shown as the button's description until Tooltip exists. */
+  /** Help shown on hover, keyboard focus or tap of the info button (Figma Icon). */
   info?: string;
   /** Figma State: Default, Active (the control has focus), Disabled */
   state?: Exclude<FieldPartState, 'error'>;
@@ -32,23 +32,18 @@ export type FieldLabelProps = {
 export function FieldLabel({ children, htmlFor, required, optional, info, state = 'default', interactive = true }: FieldLabelProps) {
   const extra = optional === true ? '(Optional)' : optional || null;
   return (
-    <span className="grg-field-label" data-state={state}>
+    <span className="grg-field-label" data-state={state} aria-disabled={state === 'disabled' || undefined}>
       <label className="grg-field-label__text" htmlFor={htmlFor}>
         <span className="grg-field-label__name">{children}</span>
         {required && <span className="grg-field-label__star" aria-hidden="true">*</span>}
         {extra && <span className="grg-field-label__extra">{extra}</span>}
       </label>
       {info && (
-        <ActionButton
-          className="grg-field-label__info"
-          icon="information-circle"
-          size="xs"
-          color="blue"
-          aria-label={`More about ${typeof children === 'string' ? children : 'this field'}`}
-          title={info}
+        <FieldInfo
+          text={info}
+          label={`More about ${typeof children === 'string' ? children : 'this field'}`}
           disabled={state === 'disabled'}
-          tabIndex={interactive ? undefined : -1}
-          aria-hidden={interactive ? undefined : true}
+          interactive={interactive}
         />
       )}
     </span>
@@ -122,16 +117,19 @@ export function FormField({
   controlId, hintId, label, required, optional, info, labelVisible = true, labelState = 'default',
   hint, error, hintIcon = true, topKey, topValue, bottomValue, disabled, className = '', children,
 }: FormFieldProps) {
+  const [focusWithin, setFocusWithin] = useState(false);
   const hasTop = !!label || !!topValue;
   const message = error || hint;
   return (
-    <div className={`grg-field ${className}`} data-disabled={disabled || undefined}>
+    <div className={`grg-field ${className}`} data-disabled={disabled || undefined}
+      onFocusCapture={() => setFocusWithin(true)}
+      onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setFocusWithin(false); }}>
       <div className="grg-field__control">
         {hasTop && (
           <div className="grg-field__top">
             {label && (
-              <span className="grg-field__label" data-visible={labelVisible || undefined}>
-                <FieldLabel htmlFor={controlId} required={required} optional={optional} info={info} state={disabled ? 'disabled' : labelState} interactive={labelVisible}>
+              <span className="grg-field__label" data-visible={labelVisible || focusWithin || undefined}>
+                <FieldLabel htmlFor={controlId} required={required} optional={optional} info={info} state={disabled ? 'disabled' : labelState} interactive={labelVisible || focusWithin}>
                   {label}
                 </FieldLabel>
               </span>

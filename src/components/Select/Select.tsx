@@ -12,9 +12,9 @@ export type { SelectOption };
 /** Figma "Select" component set (404:42432): Type × State × Filled × Size, with Icon, Top and Hint text booleans. */
 export type SelectProps = {
   options: SelectOption[];
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
+  value?: string | null;
+  defaultValue?: string | null;
+  onChange?: (value: string | null) => void;
   /** Figma Type: Common, Country, User, Payment method, Coin. Sets the picture in an empty field. */
   type?: Exclude<OptionKind, 'icon'>;
   /** Figma Size: lg-44px, md-40px, sm-32px */
@@ -52,7 +52,7 @@ export type SelectProps = {
   name?: string;
   className?: string;
   /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'focus';
+  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -73,9 +73,9 @@ export function Select({
   const [local, setLocal] = useState(defaultValue);
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
-  const value = controlled ?? local;
+  const value = controlled === undefined ? local : controlled;
   const selected = options.find(o => o.value === value);
-  const isFocused = focused || open || previewState === 'focus';
+  const isFocused = focused || open || previewState === 'active' || previewState === 'focus';
   const labelVisible = !floatingLabel || isFocused || !!selected;
   const message = error || hint;
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, message ? hintId : undefined, !!error);
@@ -113,7 +113,7 @@ export function Select({
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
         data-open={open || undefined}
-        data-preview-state={previewState === 'hover' ? 'hover' : undefined}
+        data-preview-state={previewState === 'default' ? undefined : previewState}
       >
         <Dropdown
           inputId={id}
@@ -124,7 +124,7 @@ export function Select({
           optionValue="value"
           optionLabel="label"
           optionDisabled="disabled"
-          value={selected?.value ?? null}
+          value={value ?? null}
           disabled={disabled}
           required={required}
           filter={searchable}

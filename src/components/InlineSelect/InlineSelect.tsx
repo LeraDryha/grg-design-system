@@ -1,4 +1,4 @@
-import { useId, useRef } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
 import { OptionPicture, type SelectOption } from '../Select/options';
@@ -12,8 +12,13 @@ export type InlineSelectOption = SelectOption;
 /** Figma "Inline select" (424:72942): State × Type. */
 export type InlineSelectProps = {
   options: InlineSelectOption[];
-  value?: string;
+  /** Controlled value: the current language, country or currency from the application. */
+  value?: string | null;
+  /** Initial value when the application does not control the selection. */
+  defaultValue?: string | null;
   onChange?: (value: string) => void;
+  /** Shown when no available option matches the value. */
+  placeholder?: string;
   /** The name screen readers announce, such as "Country code" */
   'aria-label': string;
   /** Figma Type: Country (flag), Coin, Icon; only changes how the picture is drawn */
@@ -25,7 +30,7 @@ export type InlineSelectProps = {
   disabled?: boolean;
   className?: string;
   /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'focus';
+  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -33,19 +38,24 @@ export type InlineSelectProps = {
  * or the coin of an amount. PrimeReact Dropdown (unstyled), with the same open list as Select.
  */
 export function InlineSelect({
-  options, value, onChange, type = 'country', searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
+  options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'country', searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
   disabled, className = '', 'aria-label': label, previewState = 'default',
 }: InlineSelectProps) {
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label);
-  const selected = options.find(o => o.value === value) ?? options[0];
+  const [local, setLocal] = useState(defaultValue);
+  const [open, setOpen] = useState(false);
+  const value = controlled === undefined ? local : controlled;
+  const selected = options.find(o => o.value === value);
 
   return (
     <div
       className={`grg-inline-select ${className}`}
       data-type={type}
+      data-disabled={disabled || undefined}
+      data-open={open || previewState === 'active' || undefined}
       data-preview-state={previewState === 'default' ? undefined : previewState}
       ref={rootRef}
     >
@@ -57,7 +67,7 @@ export function InlineSelect({
         optionValue="value"
         optionLabel="label"
         optionDisabled="disabled"
-        value={selected?.value}
+        value={selected?.value ?? null}
         disabled={disabled}
         filter={searchable}
         filterBy="label,listLabel"
@@ -66,14 +76,19 @@ export function InlineSelect({
         emptyFilterMessage={noResults}
         emptyMessage={noResults}
         {...searchIcons}
-        onChange={e => onChange?.(e.value)}
+        onChange={e => {
+          if (controlled === undefined) setLocal(e.value);
+          onChange?.(e.value);
+        }}
+        onShow={() => setOpen(true)}
+        onHide={() => setOpen(false)}
         valueTemplate={() =>
           selected ? (
             <span className="grg-inline-select__value">
               <OptionPicture option={selected} className="grg-inline-select__image" />
               <span>{selected.label}</span>
             </span>
-          ) : null
+          ) : <span className="grg-inline-select__value" data-placeholder>{placeholder}</span>
         }
         itemTemplate={(o: InlineSelectOption) => <DropdownItem option={o} selected={o.value === selected?.value} />}
         dropdownIcon={<Icon name="direction-down" size={20} />}

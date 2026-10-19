@@ -117,6 +117,12 @@ Focused or open: the darkest border, and the label turns dark.
 
 <Canvas of={SelectStories.Active} />
 
+### Keyboard focus
+
+Keyboard focus adds the system blue ring.
+
+<Canvas of={SelectStories.Focused} />
+
 ### Error
 A red border and an error message, which replaces the hint. Screen readers read the message with the field.
 
@@ -145,13 +151,19 @@ The Figma examples also show a multi-select: options with checkboxes, the chosen
 (*Payman, Stripe, Mastercard Gateway, Crypto Processing and 2 others*) and a clear button. It needs Checkbox and the
 Dropdown menu with checkbox rows, so it comes after them.
 
+## Selection behaviour
+
+PrimeReact Dropdown handles option selection, keyboard navigation, filtering and dismissal. Use `value` and `onChange` for a controlled selection; pass `null` to clear it. Leave `value` unset to use internal state with an optional `defaultValue`.
+
+<Canvas of={SelectStories.Controlled} />
+
 ## Accessibility
 
 - The field is a combobox named by its label, with an expanded state and the highlighted option announced while moving with the arrow keys.
 - Enter, Space or ↓ open the list; ↑ ↓ move, Enter chooses, Escape closes. With search, typing filters the list.
 - The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`.
 - Pictures are decorative: the option names say what is chosen.
-- Focus is visible: the border turns dark in the Active state.
+- Keyboard focus adds the system blue ring, including while the list or its search input is focused. The dark Active border continues to show the field's focus state.
 
 ## Figma and code
 

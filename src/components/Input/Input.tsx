@@ -70,7 +70,7 @@ export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'focus';
+  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /** Card: groups of 4 digits. Date: DD / MM / YYYY. Phone: digits and spaces. Amount: digits and one decimal point. */
@@ -97,7 +97,7 @@ export function Input({
   coins = [], coin, onCoinChange, coinLabel = 'Currency',
   paymentMethod, paymentLabel,
   value: controlled, defaultValue = '', onValueChange, previewState = 'default',
-  id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, 'aria-describedby': describedBy, ref, ...props
+  id: suppliedId, disabled, readOnly, placeholder, className = '', onFocus, onBlur, onChange, 'aria-describedby': describedBy, ref, ...props
 }: InputProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
@@ -108,7 +108,7 @@ export function Input({
   const [revealed, setRevealed] = useState(false);
   const [status, setStatus] = useState('');
   const value = controlled ?? local;
-  const isFocused = focused || previewState === 'focus';
+  const isFocused = focused || previewState === 'active' || previewState === 'focus';
   const filled = value !== '';
 
   function setValue(next: string) {
@@ -137,7 +137,7 @@ export function Input({
 
   const htmlType = action === 'password' ? (revealed ? 'text' : 'password') : inputType ?? (type === 'phone' ? 'tel' : type === 'website' ? 'url' : 'text');
   const labelVisible = !floatingLabel || isFocused || filled;
-  const showClear = clearable && filled && !disabled && (type === 'phone' || (type === 'common' && isFocused));
+  const showClear = clearable && filled && !disabled && !readOnly && (type === 'phone' || (type === 'common' && isFocused));
   const message = error || hint;
   const separator = <span className="grg-input__separator" aria-hidden="true" />;
   const icon = (name: IconName | null | undefined, trailing = false): ReactNode =>
@@ -150,8 +150,12 @@ export function Input({
       aria-label={clearLabel}
       onMouseDown={e => e.preventDefault()}
       onClick={() => {
-        setValue('');
-        inputRef.current?.focus();
+        const input = inputRef.current;
+        if (!input) return;
+        // Use the native input event so clearing reaches both React onChange and onValueChange.
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')?.set?.call(input, '');
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.focus();
       }}
     />
   );
@@ -170,11 +174,15 @@ export function Input({
       className="grg-input__control"
       value={value}
       disabled={disabled}
+      readOnly={readOnly}
       required={required}
       placeholder={floatingLabel && label ? label : placeholder}
       aria-invalid={error ? true : undefined}
       aria-describedby={[describedBy, message ? hintId : undefined].filter(Boolean).join(' ') || undefined}
-      onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(format(type, e.target.value))}
+      onChange={(e: ChangeEvent<HTMLInputElement>) => {
+        setValue(format(type, e.target.value));
+        onChange?.(e);
+      }}
     />
   );
 
@@ -204,7 +212,7 @@ export function Input({
         data-invalid={error ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
-        data-preview-state={previewState === 'hover' ? 'hover' : undefined}
+        data-preview-state={previewState === 'default' ? undefined : previewState}
         onFocus={handleFocus}
         onBlur={handleBlur}
       >

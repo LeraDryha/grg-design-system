@@ -2,7 +2,7 @@ import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import { Button as PrimeButton } from 'primereact/button';
 import { Tooltip } from 'primereact/tooltip';
 import { Icon, type IconName } from '../Icon/Icon';
-import { useOverlayTheme } from './useOverlayTheme';
+import { useOverlayTheme } from '../../hooks/useOverlayTheme';
 import './BreadcrumbItem.css';
 
 export type BreadcrumbItemProps = {

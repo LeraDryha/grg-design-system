@@ -8,6 +8,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 <ComponentHeader
   status="ready"
+  builtOn="PrimeReact Avatar"
   figma="152-1467"
   guidelines="420-13612"
   related={[{ label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' }]}
@@ -64,10 +65,16 @@ Initials are bold and scale with the size: Heading H5 at 120, Title at 96–64, 
 
 From the left:
 
-- **Photo** (`src`): a photo or a company logo, cropped to the circle. If it fails to load, the shape shows instead.
+- **Photo** (`src`): a photo or a company logo, cropped to the circle. If it fails to load, initials (when enabled) or the shape show instead.
 - **Person** (`shape="user"`, the default): a placeholder before there is a photo.
 - **Company** (`shape="company"`): the same for an organisation.
 - **Initials** (`initials` with a `name`): the first letters of the first and last name.
+
+### Photo recovery
+
+<Canvas of={AvatarStories.PhotoRecovery} />
+
+PrimeReact handles the photo, initials and shape fallback. A new photo URL starts a new loading attempt after a previous failure.
 
 ## Colours
 

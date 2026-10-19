@@ -118,7 +118,7 @@ Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
 <Canvas of={ButtonStories.Focused} />
 
 ### Loading
-The action is running: a spinner replaces the label, and the button keeps its width so the layout does not jump.
+The action is running: a spinner replaces the label, and the button keeps its width so the layout does not jump. PrimeReact disables the button while loading; it cannot be activated and is skipped by Tab.
 
 <Canvas of={ButtonStories.Loading} />
 
@@ -130,7 +130,7 @@ Not available right now: grey fill and text, no interaction.
 ## Accessibility
 
 - The label is the button's name. An icon-only button needs `aria-label`, for example *Add*.
-- A loading button stays focusable and keeps its name; it is announced as busy (`aria-busy`) and does not react to clicks.
+- A loading button keeps its accessible name and exposes `aria-busy`. PrimeReact also sets native `disabled`, preventing activation and removing it from the Tab order.
 - A disabled button is a native disabled button: it is skipped by Tab and announced as unavailable.
 - Focus uses the system blue ring. Figma draws a light grey ring (`primary-soft-200`), about 1.2:1 against the page, which keyboard users can barely see.
 - Colours follow Figma. Known low contrast: the pressed Secondary button in destructive (2.6:1) and green (about 3:1) colours; green text on the page is at the 4.5:1 limit.

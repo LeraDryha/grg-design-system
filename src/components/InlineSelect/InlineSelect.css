@@ -12,7 +12,9 @@
   cursor: pointer;
   border-radius: var(--radius-xxs-4);
 }
-.grg-inline-select__root:not(:has([aria-expanded='true'])):has(:focus-visible) { box-shadow: var(--focus-ring); }
+.grg-inline-select:not([data-disabled]):has(:focus-visible) .grg-inline-select__root,
+.grg-inline-select[data-preview-state='focus']:not([data-disabled]) .grg-inline-select__root { box-shadow: var(--focus-ring); }
+.grg-inline-select:not([data-disabled]) .grg-inline-select__value[data-placeholder] { color: var(--text-soft-500); }
 .grg-inline-select__root[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
 
 /* PrimeReact wraps the value in a block; as a block the inline value got extra line space and sat 2–3px high */
@@ -33,11 +35,9 @@
   place-items: center;
   color: var(--icon-base-500);
 }
-.grg-inline-select__root:hover .grg-inline-select__trigger,
-.grg-inline-select[data-preview-state='hover'] .grg-inline-select__trigger { color: var(--icon-subtle-700); }
-.grg-inline-select__root[data-p-focus='true'] .grg-inline-select__trigger,
-.grg-inline-select[data-preview-state='focus'] .grg-inline-select__trigger,
-.grg-inline-select__root:has([aria-expanded='true']) .grg-inline-select__trigger { color: var(--icon-strong-1000); }
+.grg-inline-select:not([data-disabled]) .grg-inline-select__root:hover .grg-inline-select__trigger,
+.grg-inline-select[data-preview-state='hover']:not([data-disabled]) .grg-inline-select__trigger { color: var(--icon-subtle-700); }
+.grg-inline-select[data-open]:not([data-disabled]) .grg-inline-select__trigger { color: var(--icon-strong-1000); }
 .grg-inline-select__root[data-p-disabled='true'] .grg-inline-select__trigger { color: var(--icon-disabled-400); }
 
 /* The list (shared with Select) opens under the field, lined up with its left edge */

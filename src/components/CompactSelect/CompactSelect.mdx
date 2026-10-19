@@ -76,6 +76,12 @@ Open: the darkest border, and the chevron points up.
 
 <Canvas of={CompactSelectStories.Active} />
 
+### Keyboard focus
+
+Keyboard focus adds the system blue ring.
+
+<Canvas of={CompactSelectStories.Focused} />
+
 ### Error
 A red border. There is no hint under it, so explain the problem next to the select.
 
@@ -86,11 +92,18 @@ Not available right now: grey fill and chevron, no interaction.
 
 <Canvas of={CompactSelectStories.Disabled} />
 
+## Selection
+
+Set `value` to the application's current choice, or `defaultValue` for an initial choice managed by the component. Without a matching option, the control shows its empty state. It never substitutes the first option. An empty or removed value does not fire `onChange`; the application decides how to resolve it.
+
+<Canvas of={CompactSelectStories.EmptySelection} />
+<Canvas of={CompactSelectStories.MissingValue} />
+
 ## Accessibility
 
 - It is a combobox with a name from `aria-label`, an expanded state and the highlighted option announced while moving with the arrow keys.
 - Enter, Space or ↓ open the list; Escape closes it.
-- Keyboard focus shows the system blue ring (Figma has no focus state for it).
+- Keyboard focus shows the system blue ring while the control or its search input is focused, including when the list is open.
 - An error sets `aria-invalid`; write the reason next to the select.
 
 ## Figma and code

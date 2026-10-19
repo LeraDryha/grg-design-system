@@ -1,4 +1,4 @@
-import type { ComponentPropsWithRef, MouseEvent, Ref } from 'react';
+import type { ComponentPropsWithRef, Ref } from 'react';
 import { Button as PrimeButton } from 'primereact/button';
 import { Icon, type IconName } from '../Icon/Icon';
 import './Button.css';
@@ -43,22 +43,11 @@ export function Button({
   type = 'button',
   className = '',
   children,
-  onClick,
   ref,
   ...props
 }: ButtonProps) {
   const iconSize = ICON_SIZE[size];
   const onlyIcon = leftIcon ?? rightIcon ?? 'plus';
-
-  // A loading button stays focusable and keeps its name, so screen readers hear "busy" instead of losing the button.
-  // PrimeReact's own `loading` would disable it, so the state is handled here.
-  function handleClick(event: MouseEvent<HTMLButtonElement>) {
-    if (loading) {
-      event.preventDefault();
-      return;
-    }
-    onClick?.(event);
-  }
 
   return (
     <PrimeButton
@@ -74,9 +63,9 @@ export function Button({
       data-justified={justified || undefined}
       data-preview-state={previewState === 'default' ? undefined : previewState}
       aria-busy={loading || undefined}
-      aria-disabled={loading || undefined}
-      onClick={handleClick}
       {...props}
+      loading={loading}
+      loadingIcon={<span className="grg-button__loader"><Icon name="loading" size={iconSize} /></span>}
     >
       <span className="grg-button__content">
         {iconOnly ? (
@@ -89,11 +78,6 @@ export function Button({
           </>
         )}
       </span>
-      {loading && (
-        <span className="grg-button__loader">
-          <Icon name="loading" size={iconSize} />
-        </span>
-      )}
     </PrimeButton>
   );
 }

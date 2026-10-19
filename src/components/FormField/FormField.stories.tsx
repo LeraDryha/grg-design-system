@@ -1,5 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { CSSProperties } from 'react';
+import { InputText } from 'primereact/inputtext';
+import { Input } from '../Input/Input';
 import { FieldLabel, FormField, HintText, KeyValue, type FormFieldProps } from './FormField';
 
 const meta = {
@@ -10,7 +12,7 @@ const meta = {
     docs: {
       description: {
         component: [
-          'The parts every form control shares: **label**, **hint text** and **Key: value**. Input uses them today; Select and Text Area will use the same parts.',
+          'The parts every form control shares: **label**, **hint text** and **Key: value**. Input, Select and Text Area share these parts. Info buttons show help on hover, focus or tap; Escape dismisses it.',
           '',
           '`FormField` puts them around a control. The label row sits 2px above the control and takes no vertical space (as in Figma), ',
           'the hint row sits 2px below. Connect the control to the hint with `aria-describedby={hintId}`.',
@@ -52,12 +54,12 @@ const box: CSSProperties = {
   borderRadius: 'var(--radius-md-10)',
 };
 
-/** The frame with a placeholder box where the control goes. */
+/** The frame with a PrimeReact text control. */
 export const Frame: Story = {
   render: (args: FormFieldProps) => (
     <div style={{ width: 320, paddingTop: 'var(--space-600)' }}>
       <FormField {...args}>
-        <div id={args.controlId} style={box} />
+        <InputText id={args.controlId} style={box} disabled={args.disabled} required={args.required} aria-describedby={args.hintId} />
       </FormField>
     </div>
   ),
@@ -96,4 +98,11 @@ export const KeyValues: Story = {
       <KeyValue keyText="Balance" value="1 250.00 USD" />
     </div>
   ),
+};
+
+/** The floating label stays visible while its help button has focus. */
+export const Information: Story = {
+  render: () => <div style={{ width: 'calc(var(--space-4000) * 2)', paddingTop: 'var(--space-1000)' }}>
+    <Input label="Email" info="We send the receipt to this address." hint="Enter the address for your receipt." />
+  </div>,
 };

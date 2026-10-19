@@ -10,8 +10,8 @@ const sample: ButtonGroupEntry[] = [
 const meta = {
   title: 'Components/ButtonGroup', component: ButtonGroup,
   parameters: { layout: 'padded', docs: { description: { component: 'A compact choice between related options, with persistent selection and joined borders.' } } },
-  args: { items: sample, size: 'md', multiple: false, disabled: false, 'aria-label': 'Time range' },
-  argTypes: { items: { control: 'object' }, size: { control: 'inline-radio', options: ['md', 'sm'] }, disabled: { control: 'boolean' }, 'aria-label': { control: 'text' }, multiple: { control: 'boolean' }, allowEmpty: { control: 'boolean' }, value: { control: 'object' }, defaultValue: { control: 'object' }, onValueChange: { action: 'selection changed', control: false } },
+  args: { items: sample, size: 'md', disabled: false, 'aria-label': 'Time range' },
+  argTypes: { items: { control: 'object' }, size: { control: 'inline-radio', options: ['md', 'sm'] }, disabled: { control: 'boolean' }, 'aria-label': { control: 'text' }, allowEmpty: { control: 'boolean' }, value: { control: 'object' }, defaultValue: { control: 'object' }, onValueChange: { action: 'selection changed', control: false } },
 } satisfies Meta<typeof ButtonGroup>;
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -59,13 +59,12 @@ export const Disabled: Story = { args: { disabled: true } };
 export const DisabledItem: Story = { args: { items: sample.map(item => ({ ...item, disabled: item.id === 'week' })) } };
 
 function SelectionFeedback(args: ButtonGroupProps) {
-  const [value, setValue] = useState<ButtonGroupValue>(args.defaultValue ?? (args.multiple ? [] : null));
-  return <div style={column}><ButtonGroup {...args} value={value} onValueChange={(next, event) => { setValue(next); args.onValueChange?.(next, event); }} /><output aria-live="polite">Selected: {Array.isArray(value) ? value.join(', ') || 'None' : value ?? 'None'}</output></div>;
+  const [value, setValue] = useState<ButtonGroupValue>(args.defaultValue ?? null);
+  return <div style={column}><ButtonGroup {...args} value={value} onValueChange={(next, event) => { setValue(next); args.onValueChange?.(next, event); }} /><output aria-live="polite">Selected: {value ?? 'None'}</output></div>;
 }
 export const SingleSelection: Story = { args: { defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
-export const MultipleSelection: Story = { args: { multiple: true, defaultValue: ['day', 'week'] }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
 export const OptionalSelection: Story = { args: { allowEmpty: true, defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
-export const RequiredMultiple: Story = { args: { multiple: true, allowEmpty: false, defaultValue: ['day', 'week'] }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
+export const RequiredSelection: Story = { args: { allowEmpty: false, defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
 export const Selected: Story = { args: { defaultValue: 'week' } };
 export const FirstDisabled: Story = { args: { items: sample.map((item, index) => ({ ...item, disabled: index === 0 })) } };
 
@@ -74,9 +73,9 @@ function SelectionExamples(args: ButtonGroupProps) {
   const [period, setPeriod] = useState<ButtonGroupValue>('1W');
   const [view, setView] = useState<ButtonGroupValue>('list');
   return <div style={column}>
-    <ButtonGroup {...args} size="sm" multiple={false} allowEmpty={false} value={period} onValueChange={setPeriod} aria-label="Chart time range" items={['1D', '1W', '1M', '3M', '1Y'].map(label => ({ id: label, label }))} />
+    <ButtonGroup {...args} size="sm" allowEmpty={false} value={period} onValueChange={setPeriod} aria-label="Chart time range" items={['1D', '1W', '1M', '3M', '1Y'].map(label => ({ id: label, label }))} />
     <output aria-live="polite">Period: {period}</output>
-    <ButtonGroup {...args} multiple={false} allowEmpty={false} value={view} onValueChange={setView} aria-label="View" items={[{ id: 'list', label: 'List view', leftIcon: 'list-view-rectangle' }, { id: 'grid', label: 'Grid view', leftIcon: 'grid-02' }]} />
+    <ButtonGroup {...args} allowEmpty={false} value={view} onValueChange={setView} aria-label="View" items={[{ id: 'list', label: 'List view', leftIcon: 'list-view-rectangle' }, { id: 'grid', label: 'Grid view', leftIcon: 'grid-02' }]} />
     <div aria-label="View preview" style={{ display: 'grid', gridTemplateColumns: view === 'grid' ? 'repeat(2, 1fr)' : '1fr', gap: 'var(--space-200)', width: 'calc(var(--space-2000) * 3)', maxWidth: '100%' }}>
       {['Overview', 'Activity', 'Reports', 'Settings'].map(label => <div key={label} style={{ padding: 'var(--space-300)', background: 'var(--bg-weak-100)', borderRadius: 'var(--radius-xs-6)' }}>{label}</div>)}
     </div>

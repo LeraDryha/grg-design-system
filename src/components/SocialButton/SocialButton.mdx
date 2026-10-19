@@ -19,7 +19,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 A social button signs people in or up with a Google, Facebook or Apple account. Figma has the component only, without a guidelines page.
 
 <Canvas of={SocialButtonStories.Playground} />
-<Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children']} />
+<Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children', 'disabled']} />
 
 All props are listed at the end of the page.
 
@@ -89,13 +89,19 @@ Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
 
 <Canvas of={SocialButtonStories.Focused} />
 
+### Disabled
+
+Unavailable actions use `text-disabled-400`, `icon-disabled-400` and `stroke-disabled`. Native disabled prevents activation and removes the button from the Tab order. Hover and pressed styles do not apply.
+
+<Canvas of={SocialButtonStories.Disabled} />
+
 ## Accessibility
 
 - It is a real button: screen readers call it a button, Enter and Space press it.
 - The label names the account and the action. A logo-only button gets the same label as its accessible name.
 - The logo is decorative: screen readers skip it, the label says which account it is.
 - Focus uses the system blue ring.
-- Figma has no disabled state: sign-in with an account is either offered or not shown.
+- Disabled is a code extension using the system's semantic disabled tokens; Figma has no dedicated variant.
 
 ## Figma and code
 
@@ -104,6 +110,7 @@ Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
     { figma: 'Social', prop: 'social', values: 'Google, Facebook, Apple → google, facebook, apple' },
     { figma: 'Icon button', prop: 'iconOnly', values: 'on, off → true, false' },
     { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered, Active, Focused follow the pointer and keyboard' },
+    { figma: '—', prop: 'disabled', values: 'native disabled behaviour and semantic disabled colours' },
     { figma: 'Text', prop: 'children', values: 'the label; Sign in with … by default' },
   ]}
 />
