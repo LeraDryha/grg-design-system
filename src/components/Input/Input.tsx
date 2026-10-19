@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type FocusEvent, type ReactNode } from 'react';
 import { InputText } from 'primereact/inputtext';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { Icon, type IconName } from '../Icon/Icon';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { FormField } from '../FormField/FormField';
@@ -103,6 +104,7 @@ export function Input({
   const id = suppliedId ?? generatedId;
   const hintId = `${id}-hint`;
   const inputRef = useRef<HTMLInputElement | null>(null);
+  useKeyboardNavigation(inputRef);
   const [local, setLocal] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const [revealed, setRevealed] = useState(false);

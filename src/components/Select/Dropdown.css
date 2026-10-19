@@ -30,7 +30,7 @@
   border-radius: var(--radius-xs-6);
 }
 .grg-dropdown__search:hover { background: var(--bg-weak-100); }
-.grg-dropdown__search:has(:focus-visible) { box-shadow: var(--focus-ring); }
+[data-keyboard-navigation] .grg-dropdown__search:has(:focus-visible) { box-shadow: var(--focus-ring); }
 .grg-dropdown__search-icon { display: inline-grid; order: -1; color: var(--icon-base-500); }
 .grg-dropdown__search-input {
   flex: 1;

@@ -1,4 +1,5 @@
 import { useEffect, type RefObject } from 'react';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 /**
  * PrimeReact 10 Dropdown focuses a hidden read-only input but gives it no name, combobox role, expanded state
@@ -13,6 +14,7 @@ export function useDropdownCombobox(
   describedBy?: string,
   invalid?: boolean,
 ) {
+  useKeyboardNavigation(rootRef);
   useEffect(() => {
     const root = rootRef.current;
     const input = inputRef.current;

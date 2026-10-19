@@ -1,6 +1,7 @@
 import { useId, useLayoutEffect, useRef, useState, type ChangeEvent, type ComponentPropsWithRef, type KeyboardEvent, type PointerEvent } from 'react';
 import { Icon } from '../Icon/Icon';
 import { InputTextarea } from 'primereact/inputtextarea';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { FormField } from '../FormField/FormField';
 import { CharacterCounter } from './CharacterCounter';
 import './TextArea.css';
@@ -58,6 +59,7 @@ export function TextArea({
   const hintId = `${id}-hint`;
   const counterId = `${id}-counter`;
   const areaRef = useRef<HTMLTextAreaElement | null>(null);
+  useKeyboardNavigation(areaRef);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const drag = useRef<{ y: number; height: number } | null>(null);
   const [height, setHeight] = useState<number | null>(null);
