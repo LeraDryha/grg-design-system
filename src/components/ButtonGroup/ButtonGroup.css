@@ -1,0 +1,8 @@
+.grg-button-group { display: inline-flex; align-items: stretch; gap: 0; vertical-align: middle; }
+/* Figma uses centred strokes: neighbouring strokes occupy the same line.
+   Keep each item's width, but draw each shared edge once. */
+.grg-button-group > .grg-button-group-item { flex: none; }
+.grg-button-group > .grg-button-group-item + .grg-button-group-item {
+  border-left-width: 0;
+  padding-left: var(--group-pad-x);
+}

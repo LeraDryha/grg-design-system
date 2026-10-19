@@ -1,0 +1,52 @@
+.grg-button-group-item {
+  --group-pad-y: var(--space-150);
+  --group-pad-x: var(--space-300);
+  --group-radius: var(--radius-sm-8);
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-150);
+  margin: 0;
+  scroll-margin: var(--space-150);
+  border: 1px solid var(--stroke-soft-200);
+  /* Keep the component frame at 24/32px; the group draws shared edges once. */
+  padding: calc(var(--group-pad-y) - 1px) calc(var(--group-pad-x) - 1px);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-semibold);
+  letter-spacing: var(--typo-body-md-semibold-tracking);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.grg-button-group-item[data-size='sm'] {
+  --group-pad-y: var(--space-100);
+  --group-pad-x: var(--space-200);
+  --group-radius: var(--radius-xs-6);
+  font: var(--typo-body-sm-semibold);
+  letter-spacing: var(--typo-body-sm-semibold-tracking);
+}
+.grg-button-group-item[data-icon-only] { --group-pad-x: var(--group-pad-y); }
+.grg-button-group-item:is([data-side='left'], [data-side='single']) { border-top-left-radius: var(--group-radius); border-bottom-left-radius: var(--group-radius); }
+.grg-button-group-item:is([data-side='right'], [data-side='single']) { border-top-right-radius: var(--group-radius); border-bottom-right-radius: var(--group-radius); }
+.grg-button-group-item__icon { color: var(--icon-base-500); }
+/* Chromium places Nunito Sans 14/20 glyphs about 1px above Figma's baseline.
+   Align the label optically; keep the 20px line box, button and icons unchanged. */
+.grg-button-group-item[data-size='md'] .grg-button-group-item__label {
+  transform: translateY(calc(var(--space-050) / 2));
+}
+.grg-button-group-item:hover:not(:disabled, [aria-disabled="true"]),
+.grg-button-group-item[data-preview-state='hover']:not(:disabled, [aria-disabled="true"]) { background: var(--bg-weak-100); }
+.grg-button-group-item:active:not(:disabled, [aria-disabled="true"]),
+.grg-button-group-item[data-preview-state='active']:not(:disabled, [aria-disabled="true"]),
+.grg-button-group-item[data-selected]:not(:disabled, [aria-disabled="true"]) { background: var(--bg-weak-100); color: var(--text-strong-1000); }
+.grg-button-group-item:active:not(:disabled, [aria-disabled="true"]) .grg-button-group-item__icon,
+.grg-button-group-item[data-preview-state='active']:not(:disabled, [aria-disabled="true"]) .grg-button-group-item__icon,
+.grg-button-group-item[data-selected]:not(:disabled, [aria-disabled="true"]) .grg-button-group-item__icon { color: var(--icon-strong-1000); }
+.grg-button-group-item:focus-visible,
+.grg-button-group-item[data-preview-state='focus']:not(:disabled, [aria-disabled="true"]) { z-index: 1; outline: none; box-shadow: var(--focus-ring); }
+.grg-button-group-item:is(:disabled, [aria-disabled="true"]) { color: var(--text-disabled-400); border-color: var(--stroke-disabled); cursor: default; }
+.grg-button-group-item:is(:disabled, [aria-disabled="true"]) .grg-button-group-item__icon { color: var(--icon-disabled-400); }

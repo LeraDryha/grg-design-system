@@ -5,3 +5,10 @@
 @import '@fontsource/nunito-sans/700.css';
 @import '@fontsource/fira-code/400.css';
 @import '@fontsource/fira-code/500.css';
+
+/* Inherited by every text style and control. On macOS, grayscale antialiasing
+   matches Figma's lighter glyph edges while preserving the font weight tokens. */
+:root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

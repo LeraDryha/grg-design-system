@@ -126,3 +126,15 @@ Banner uses the Base status icons, Link (Black, sm-20) and Action Button (Grey, 
 | Examples (depend on the unbuilt Header) | `643:1053` |
 
 The group set shows all five items; production code follows the guidelines and collapses intermediate levels when five or more are present. Focus uses the shared system blue ring. The dropdown and tooltip retain their source tokens.
+
+## Button group
+
+| What | Node |
+|---|---|
+| Page Button Group | `128:13750` |
+| Component set `Button group item` (State × Icon only × Side × Size, 48 variants; Text, Left icon and Right icon) | `136:11562` |
+| Component set `Button group` (Quantity 2–6 × Size sm-24/md-32, ten variants) | `137:1263` |
+| Usage guidelines (anatomy, sizes, types, states and configurable quantity) | `473:26235` |
+| Examples (time range, post actions, view actions and previous/next) | `473:47923` |
+
+Code follows the actual bound component styles: Semibold, md 8px / sm 6px corners and 20px / 16px Base icons. The prose guidelines differ on weight, md radius and anatomy icon size. Active corresponds to Pressed in the guidelines. Group strokes are CENTER aligned in Figma and overlap at the joins. Code draws each shared edge once. Button group uses PrimeReact SelectButton for persistent single/multiple selection, aria-pressed and keyboard navigation. Keyboard focus uses the system blue ring.
