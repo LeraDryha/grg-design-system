@@ -2,6 +2,7 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type FormEvent } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from '../Button/Button';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import { Select, type SelectProps } from './Select';
 import { sampleCoins, sampleCountries, samplePaymentMethods, samplePayments, sampleProviders, sampleUsers } from './samples';
 import componentFrame from '../../assets/design/select/select-component.png';
@@ -217,20 +218,19 @@ export const WaitForAnEarlierChoice: Story = {
   },
 };
 
-/* ---- Sizes side by side ---- */
+/* ---- Overview ---- */
 
 /** lg-44, md-40 and sm-32. Only the paddings and corners change. */
 export const Sizes: Story = {
   render: (args: SelectProps) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
-      {(['lg', 'md', 'sm'] as const).map(size => (
-        <figure key={size} style={{ margin: 0 }}>
-          <Select {...args} size={size} type="coin" label="Currency" options={sampleCoins} defaultValue="BTC" />
-          <figcaption style={{ marginTop: 'var(--space-300)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)', textAlign: 'center' }}>
-            {{ lg: 'lg · 44px', md: 'md · 40px', sm: 'sm · 32px' }[size]}
-          </figcaption>
-        </figure>
-      ))}
+    <div style={{ paddingTop: 'var(--space-600)' }}>
+      <Showcase>
+        {(['lg', 'md', 'sm'] as const).map(size => (
+          <Variant key={size} caption={{ lg: 'lg · 44px', md: 'md · 40px', sm: 'sm · 32px' }[size]}>
+            <div style={{ width: 240 }}><Select {...args} size={size} type="coin" label="Currency" options={sampleCoins} defaultValue="BTC" /></div>
+          </Variant>
+        ))}
+      </Showcase>
     </div>
   ),
 };

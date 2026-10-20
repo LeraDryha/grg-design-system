@@ -9,6 +9,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 <ComponentHeader
   figma="274-9333"
   guidelines="451-28784"
+  designTab
   builtOn="PrimeReact TieredMenu"
   related={[
     { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
@@ -22,7 +23,9 @@ A list of actions that opens from a button: create, go to a page, change a setti
 
 <Canvas of={DropdownMenuStories.Playground} />
 
-All props are listed at the end of the page.
+```tsx
+<DropdownMenu aria-label="Create" items={items} trigger={props => <Button {...props}>Create invoice</Button>} />
+```
 
 ## When to use
 
@@ -39,15 +42,15 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={DropdownMenuStories.ItemOptions} />
+Every example is a live story; the ones with steps also run as a test in the **Interactions** tab.
 
-A row (Dropdown menu item) has three parts:
+### Send with the keyboard
 
-1. **Left icon (optional):** a Base icon, coin, flag, payment card, avatar or social logo, 20px (an avatar with a description 40px).
-2. **Label:** Body-md 14/20, with an optional description under it (Body-sm, `text-soft-500`).
-3. **Right icon:** a check on the chosen row of a single choice, a checkbox in a multiple choice, an arrow for a submenu; a badge before it if needed.
+<Canvas of={DropdownMenuStories.SendWithTheKeyboard} />
+
+Enter opens the menu from its button; ↑ ↓ move, → opens a submenu and ← closes it, Enter chooses, Escape closes and returns to the button.
 
 ## Building a menu
 
@@ -78,6 +81,18 @@ A header with the avatar, name and email (not clickable), groups with a section 
 
 A caption such as a version number, with a text button, closes the list; a check marks the chosen row.
 
+## Design decisions
+
+- **One row for every list.** Dropdown Menu, Select, Compact Select and Inline Select share the Figma *Dropdown menu item*, so a fix reaches all of them.
+- **Rows named by all their text.** A row with a description or a badge is announced with all of it (*Free Plan, 12,000 views, Upgrade*), so what people see is what a screen reader says and what voice control finds.
+- **Keyboard from PrimeReact.** TieredMenu provides the arrow keys and submenus; custom rows keep its activation, so Enter and Space work on every row.
+
+## The row
+
+<Canvas of={DropdownMenuStories.ItemOptions} />
+
+A row (Dropdown menu item) has a **left picture** (a Base icon, coin, flag, payment card, avatar or social logo, 20px; an avatar with a description 40px), a **label** (Body-md 14/20) with an optional **description**, and on the right a **check** (single choice), a **checkbox** (multiple choice) or an **arrow** (submenu), with an optional **badge** before it.
+
 ## Item types
 
 <Canvas of={DropdownMenuStories.ItemTypes} />
@@ -100,6 +115,8 @@ From the top: **Basic** (text only, 10px top and bottom), **Icon**, **Currency**
 - Pictures are decorative: the labels name the actions.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[

@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { DropdownMenu, type DropdownMenuEntry } from './DropdownMenu';
 import { DropdownMenuItem } from './DropdownMenuItem';
 import { Button } from '../Button/Button';
 import photo from '../../assets/avatar-sample.jpg';
+import componentFrame from '../../assets/design/dropdown-menu/dropdown-menu-component.png';
+import guidelinesFrame from '../../assets/design/dropdown-menu/dropdown-menu-guidelines.png';
 
 const noop = () => {};
 
@@ -65,7 +68,14 @@ const meta = {
   tags: ['ready'],
   component: DropdownMenu,
   // The docs page is DropdownMenu.mdx
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Dropdown menu item', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: { items: createInvoice, 'aria-label': 'Create', inline: false, width: 240 },
   argTypes: { items: { control: false }, trigger: { control: false } },
 } satisfies Meta<typeof DropdownMenu>;
@@ -91,17 +101,58 @@ export const Playground: Story = {
   ),
 };
 
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Send money with the keyboard only: Enter opens the menu, → opens Send, Enter chooses. */
+export const SendWithTheKeyboard: Story = {
+  name: 'Send with the keyboard',
+  render: function SendWithTheKeyboard(args) {
+    const [chosen, setChosen] = useState('');
+    const items = createInvoice.map(entry =>
+      'label' in entry && entry.label === 'Send' && 'items' in entry
+        ? { ...entry, items: entry.items?.map(sub => ({ ...sub, onSelect: () => setChosen(`Send ${'label' in sub ? sub.label.toLowerCase() : ''}`) })) }
+        : entry,
+    );
+    return (
+      <div style={{ ...space, flexDirection: 'column', alignItems: 'center', gap: 'var(--space-300)' }}>
+        <DropdownMenu {...args} items={items} trigger={props => <Button {...props} variant="primary" size="sm" leftIcon="plus">Create invoice</Button>} />
+        <output aria-live="polite" style={{ font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{chosen}</output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const trigger = canvas.getByRole('button', { name: 'Create invoice' });
+    trigger.focus();
+    await userEvent.keyboard('{Enter}');
+    await waitFor(() => expect(trigger).toHaveAttribute('aria-expanded', 'true'));
+    // ↓ ↓ to Send (the divider is skipped), → opens its submenu, ↓ to the second row, Enter chooses
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}{ArrowRight}');
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await waitFor(() => expect(canvas.getByText('Send to a bank account')).toBeVisible());
+  },
+};
+
 /** Actions with submenus (Figma example: Create invoice). */
 export const Actions: Story = { args: { inline: true, items: createInvoice, 'aria-label': 'Create' } };
 
 /** An account menu: header, groups with a section title, an item with a description and a badge, dividers. */
-export const Account: Story = { args: { inline: true, items: account, 'aria-label': 'Account', width: 240 } };
+export const Account: Story = {
+  args: { inline: true, items: account, 'aria-label': 'Account', width: 240 },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // The header isn't an action; a row with a description and a badge is named by all of its text
+    await expect(canvas.getByRole('menuitem', { name: /ashley metz/i })).toHaveAttribute('aria-disabled', 'true');
+    await expect(canvas.getByRole('menuitem', { name: 'Free Plan 12,000 views Upgrade' })).toBeVisible();
+  },
+};
 
 /** Accounts: a header with a badge, a full-width button at the end. */
 export const Accounts: Story = { args: { inline: true, items: accounts, 'aria-label': 'Accounts', width: 240 } };
 
 /** A caption with a text button at the end; a check on the chosen row. */
-export const WithCaption: Story = { args: { inline: true, items: withCaption, 'aria-label': 'Options', width: 320 } };
+export const WithCaption: Story = {
+  name: 'With a caption', args: { inline: true, items: withCaption, 'aria-label': 'Options', width: 320 } };
 
 /* ---- The item on its own ---- */
 
@@ -109,6 +160,7 @@ const panel: CSSProperties = { display: 'grid', gap: 'var(--space-050)', width: 
 
 /** The seven Figma types: Basic, Icon, Currency, Country, Payment method, Avatar, Social. */
 export const ItemTypes: Story = {
+  name: 'Item types',
   render: () => (
     <div style={panel}>
       <DropdownMenuItem label="Basic" />
@@ -124,6 +176,7 @@ export const ItemTypes: Story = {
 
 /** Options: a description, a badge, an arrow, a check (single choice) and a checkbox (multiple choice). */
 export const ItemOptions: Story = {
+  name: 'Item options',
   render: () => (
     <div style={panel}>
       <DropdownMenuItem label="Label" description="Description here!" icon="globe" />
@@ -140,6 +193,7 @@ export const ItemOptions: Story = {
 
 /** States: default, selected and disabled (hover comes from the list). */
 export const ItemStates: Story = {
+  name: 'Item states',
   render: () => (
     <div style={panel}>
       <DropdownMenuItem label="Default" coin="bitcoin-btc" />
