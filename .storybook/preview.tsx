@@ -28,6 +28,16 @@ const withTheme: Decorator = (Story, context) => {
   );
 };
 
+/**
+ * The toolbar locale switch sets the page language, which date fields follow when the product passes no locale:
+ * the order of day, month and year, the separator, the first day of the week, month and day names.
+ */
+const withLocale: Decorator = (Story, context) => {
+  const locale = (context.globals.locale ?? 'en-GB') as string;
+  document.documentElement.lang = locale;
+  return <Story key={locale} />;
+};
+
 const withPrime: Decorator = Story => (
   <PrimeReactProvider value={primeReactConfig}>
     <Story />
@@ -35,7 +45,7 @@ const withPrime: Decorator = Story => (
 );
 
 const preview: Preview = {
-  decorators: [withPrime, withTheme],
+  decorators: [withPrime, withTheme, withLocale],
   globalTypes: {
     theme: {
       description: 'Theme',
@@ -49,8 +59,22 @@ const preview: Preview = {
         dynamicTitle: true,
       },
     },
+    locale: {
+      description: 'Locale for dates',
+      toolbar: {
+        title: 'Locale',
+        icon: 'globe',
+        items: [
+          { value: 'en-GB', title: 'English (UK): DD/MM/YYYY, Monday first' },
+          { value: 'en-US', title: 'English (US): MM/DD/YYYY, Sunday first' },
+          { value: 'uk-UA', title: 'Ukrainian: DD.MM.YYYY, Monday first' },
+          { value: 'de-DE', title: 'German: DD.MM.YYYY, Monday first' },
+        ],
+        dynamicTitle: true,
+      },
+    },
   },
-  initialGlobals: { theme: 'light' },
+  initialGlobals: { theme: 'light', locale: 'en-GB' },
   parameters: {
     layout: 'centered',
     // Viewport switch in the toolbar: the widths the products are designed for

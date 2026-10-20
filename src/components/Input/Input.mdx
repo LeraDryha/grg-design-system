@@ -59,7 +59,7 @@ The error appears after people try to send the form, not while they are still ty
 
 <Canvas of={InputStories.FormatAsYouType} />
 
-Card numbers fall into groups of four, an amount takes digits and one decimal point, a date becomes DD / MM / YYYY. On phones these fields open the number keyboard.
+Card numbers fall into groups of four, an amount takes digits and one decimal point, a date takes the locale's order and separator (DD/MM/YYYY in the UK, MM/DD/YYYY in the US, DD.MM.YYYY in Ukraine; try the Locale switch in the toolbar). On phones these fields open the number keyboard.
 
 ### Phone number
 
@@ -106,7 +106,7 @@ All types share the same frame, sizes and states; they differ in what sits aroun
 - **Website:** a URL or domain after a protocol prefix (http / https).
 - **Card:** a card number in groups of four, with the payment method.
 - **Amount:** a number with a currency select. Coins come from [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
-- **Date:** a date in DD / MM / YYYY.
+- **Date:** a date in the locale's format; with a calendar, use [Date Picker](?path=/docs/components-date-picker--docs).
 - **Button:** a value with an action button: copy a referral link, reveal a password.
 
 <Canvas of={InputStories.CardPaymentMethods} />

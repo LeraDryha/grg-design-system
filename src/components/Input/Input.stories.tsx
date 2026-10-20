@@ -150,7 +150,8 @@ export const FormatAsYouType: Story = {
     await expect(amount).toHaveValue('12.50');
     const date = canvas.getByLabelText('Due date');
     await userEvent.type(date, '12122025');
-    await expect(date).toHaveValue('12 / 12 / 2025');
+    // The Storybook locale is en-GB: day, month, year
+    await expect(date).toHaveValue('12/12/2025');
   },
 };
 
@@ -220,7 +221,7 @@ const TYPES: { type: NonNullable<InputProps['type']>; caption: string; label: st
   { type: 'website', caption: 'Website', label: 'Website', value: 'golden.ratio.com' },
   { type: 'card', caption: 'Card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentMethod: 'mastercard' } },
   { type: 'amount', caption: 'Amount', label: 'Amount', value: '100.00', props: { coins: sampleCoins } },
-  { type: 'date', caption: 'Date', label: 'Date', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
+  { type: 'date', caption: 'Date', label: 'Date', value: '12/12/2025', props: { rightIcon: undefined } },
   { type: 'button', caption: 'Button', label: 'Referral link', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
 ];
 
