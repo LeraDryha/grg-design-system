@@ -84,6 +84,7 @@ A caption such as a version number, with a text button, closes the list; a check
 ## Design decisions
 
 - **One row for every list.** Dropdown Menu, Select, Compact Select and Inline Select share the Figma *Dropdown menu item*, so a fix reaches all of them.
+- **Rows keep their height.** Every row without a description is 40px, with or without the check and with a checkbox too (Figma draws checkbox rows 36px), so choosing a row never makes it jump.
 - **Rows named by all their text.** A row with a description or a badge is announced with all of it (*Free Plan, 12,000 views, Upgrade*), so what people see is what a screen reader says and what voice control finds.
 - **Keyboard from PrimeReact.** TieredMenu provides the arrow keys and submenus; custom rows keep its activation, so Enter and Space work on every row.
 
