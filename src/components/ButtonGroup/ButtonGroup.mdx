@@ -1,13 +1,13 @@
 import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
 import * as Stories from './ButtonGroup.stories';
+import { ButtonGroupItem } from './ButtonGroupItem';
 import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
 
 <Meta of={Stories} />
 
-# Button group
+# Button Group
 
 <ComponentHeader figma="137-1263" guidelines="473-26235" designTab builtOn="PrimeReact SelectButton" related={[
-  { label: 'Button group item', href: '/?path=/docs/components-buttongroupitem--docs' },
   { label: 'Button', href: '/?path=/docs/components-button--docs', relation: 'See also' },
 ]} />
 
@@ -54,6 +54,12 @@ Icon-only options keep their `label` as a name (*List view*, *Grid view*). Tab e
 
 A disabled option can't be chosen. The whole group can be disabled too.
 
+### A single toggle
+
+<Canvas of={Stories.ASingleToggle} />
+
+One item on its own, for an on/off choice: pass `selected` and update it in `onClick`; it exposes `aria-pressed`. The default `type="button"` doesn't submit a surrounding form.
+
 ### Narrow
 
 <Canvas of={Stories.Narrow} />
@@ -77,7 +83,16 @@ What the code adds to the Figma file, and why:
 <Canvas of={Stories.Sizes} />
 
 md-32: 14/20 Semibold text, 20px icons. sm-24: 12/16 Semibold text, 16px icons. Icon-only items are square. Use the same size throughout a group.
-Figma shows groups of 2–6 items; the array can hold another number. Each item is a [Button group item](/?path=/docs/components-buttongroupitem--docs).
+Figma shows groups of 2–6 items; the array can hold another number. Each item is a Button group item, described below.
+
+## Button group item
+
+<Canvas of={Stories.ItemSides} />
+
+The button inside the group; Figma has it as its own component (*Button group item*). The group gives each item its **Left**, **Center** or **Right** corners; **single** rounds all four.
+Hover adds a weak background; pressed and selected add strong text and icons (Figma *Active*). Left and right icons are independent; icon-only items use `label` as their name.
+
+<ArgTypes of={ButtonGroupItem} />
 
 ## Accessibility
 

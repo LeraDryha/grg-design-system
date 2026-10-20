@@ -1,5 +1,6 @@
 import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
 import * as Stories from './Breadcrumbs.stories';
+import { BreadcrumbItem } from './BreadcrumbItem';
 import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
 
 <Meta of={Stories} />
@@ -7,7 +8,6 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 # Breadcrumbs
 
 <ComponentHeader figma="574-1037" guidelines="638-1495" designTab builtOn="PrimeReact BreadCrumb + Menu + Tooltip" related={[
-  { label: 'Breadcrumb item', href: '/?path=/docs/components-breadcrumbitem--docs' },
   { label: 'Link', href: '/?path=/docs/components-link--docs', relation: 'See also' },
 ]} />
 
@@ -79,7 +79,17 @@ What the code adds to the Figma file, and why:
 <Canvas of={Stories.Quantities} />
 
 The four Figma group variants, with automatic collapsing turned off (`collapse={false}`). One size: 14/20 text, 20px icons and separators, 6px gaps; items are at most 200px wide.
-Each level is a [Breadcrumb item](/?path=/docs/components-breadcrumbitem--docs).
+Each level is a Breadcrumb item, described below.
+
+## Breadcrumb item
+
+<Canvas of={Stories.ItemTypes} />
+
+One level of the path; Figma has it as its own component (*Breadcrumb item*), and the group builds it from each entry in `items`.
+One size: 14/20 text, a 20px icon (*home* by default), a 6px gap and a 200px maximum width. Ancestors are grey and turn strong on hover and focus; the current page is Medium.
+Turning Text off keeps the label as the item's name; if both Icon and Text are off, the code keeps the text, so an item is never unnamed.
+
+<ArgTypes of={BreadcrumbItem} />
 
 ## Accessibility
 
@@ -104,6 +114,7 @@ The Figma frames are in the **Design** tab of every story.
   { figma: 'Item / Icon', prop: 'items[].icon', values: 'On → Base icon name (home by default); Off → null' },
   { figma: 'Item / Text', prop: 'items[].showLabel', values: 'On, Off → true, false; label remains accessible when hidden' },
   { figma: 'Item / State', prop: '(interaction) · current', values: 'Default, Hovered, Focused follow interaction; the group sets the last item to Current' },
+  { figma: 'Item (standalone)', prop: 'BreadcrumbItem', values: 'label · icon · showLabel · current · href · onNavigate' },
   { figma: 'Guidelines / Overflow', prop: 'collapse · maxVisibleItems', values: 'automatic collapse by quantity, ancestor length and available width; four visible entries by default' },
   { figma: 'Guidelines / Tooltip', prop: '(automatic)', values: 'shown only when the current title is clipped; hover, focus or tap' },
   { figma: '—', prop: 'items[].href · onNavigate', values: 'native destination or client-side navigation callback' },

@@ -19,7 +19,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 A social button signs people in or up with a Google, Facebook or Apple account. Figma has the component only, without a guidelines page.
 
 <Canvas of={SocialButtonStories.Playground} />
-<Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children', 'disabled']} />
+<Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children']} />
 
 ```tsx
 <SocialButton social="google" onClick={signInWithGoogle} />
@@ -56,16 +56,11 @@ In forms the buttons take the width of the form and stack, as in the Figma sign-
 
 A 44 × 44 square (Figma *Icon button*). The label isn't visible, but screen readers still hear it as the button's name.
 
-### Unavailable
-
-<Canvas of={SocialButtonStories.Unavailable} />
-
-Figma has no disabled variant. The code uses the system's disabled colours (`text-disabled-400`, `icon-disabled-400`, `stroke-disabled`); the button is natively disabled, so Tab skips it.
-
 ## Design decisions
 
 - **Logos keep their brand colours.** Google and Facebook keep theirs; the black Apple logo turns white on the dark theme, so it stays visible.
 - **The logo is decorative.** Screen readers skip it; the label says which account it is.
+- **No disabled state.** Figma has none: an account that can't be used is left out of the list rather than shown greyed. While sign-in is in progress, the product shows that on the page.
 - **States are behaviour, not props.** The border darkens on hover (`stroke-strong-500`) and press (`stroke-stronger-900`); keyboard focus shows the system blue ring.
 
 ## Accounts
@@ -93,7 +88,6 @@ The Figma component is in the **Design** tab of every story. Figma has no guidel
     { figma: 'Social', prop: 'social', values: 'Google, Facebook, Apple → google, facebook, apple' },
     { figma: 'Icon button', prop: 'iconOnly', values: 'on, off → true, false' },
     { figma: 'State', prop: '(behaviour)', values: 'Hovered, Active, Focused follow the pointer and keyboard' },
-    { figma: '—', prop: 'disabled', values: 'not in Figma: native disabled and the system disabled colours' },
     { figma: 'Text', prop: 'children', values: 'the label; Sign in with … by default' },
   ]}
 />

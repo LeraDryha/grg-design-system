@@ -6,7 +6,8 @@ import './SocialButton.css';
 const BRAND = { google: 'Google', facebook: 'Facebook', apple: 'Apple' } as const;
 
 /** Figma "Social button" (68:17758): State × Icon button × Social. */
-export type SocialButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
+/** No disabled state: Figma has none, and an account that can't be used is left out rather than shown greyed. */
+export type SocialButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type' | 'disabled'> & {
   /** Figma Social: Google, Facebook, Apple */
   social: keyof typeof BRAND;
   /** Square button with the logo only (Figma Icon button = on). Screen readers still hear the label. */
@@ -22,7 +23,6 @@ export type SocialButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & 
 export function SocialButton({
   social,
   iconOnly = false,
-  disabled = false,
   type = 'button',
   className = '',
   children,
@@ -35,13 +35,12 @@ export function SocialButton({
       // PrimeReact 10 types Button as a class, but at runtime the ref receives the <button> element
       ref={ref as unknown as Ref<PrimeButton>}
       type={type}
-      disabled={disabled}
       className={`grg-social-button ${className}`}
       data-icon-only={iconOnly || undefined}
       aria-label={iconOnly && typeof label === 'string' ? label : undefined}
       {...props}
     >
-      <SocialIcon platform={social} size={24} variant={disabled ? 'gray' : 'brand'} />
+      <SocialIcon platform={social} size={24} variant="brand" />
       {!iconOnly && <span className="grg-social-button__label">{label}</span>}
     </PrimeButton>
   );

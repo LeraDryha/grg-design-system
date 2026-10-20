@@ -17,11 +17,10 @@ const meta = {
     // The Design tab: the Figma component as an image (the company's file isn't linked publicly; Figma has no guidelines page)
     design: [{ name: 'Component', type: 'image', url: componentFrame }],
   },
-  args: { social: 'google', iconOnly: false, disabled: false, children: undefined },
+  args: { social: 'google', iconOnly: false, children: undefined },
   argTypes: {
     social: { control: 'inline-radio', options: ACCOUNTS },
     iconOnly: { control: 'boolean' },
-    disabled: { control: 'boolean' },
     children: { control: 'text', description: 'Label; "Sign in with …" (the Figma text) by default' },
     onClick: { action: 'clicked', control: false },
     ref: { control: false, table: { disable: true } },
@@ -63,20 +62,6 @@ export const LogoOnly: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     for (const name of ['Google', 'Facebook', 'Apple']) await expect(canvas.getByRole('button', { name: `Sign in with ${name}` })).toBeVisible();
-  },
-};
-
-/** Not available right now, for example while the account service is down. Not in Figma: the system's disabled colours. */
-export const Unavailable: Story = {
-  args: { disabled: true },
-  render: (args: SocialButtonProps) => (
-    <div style={{ display: 'flex', gap: 'var(--space-300)' }}>
-      <SocialButton {...args} />
-      <SocialButton {...args} iconOnly />
-    </div>
-  ),
-  play: async ({ canvasElement }) => {
-    for (const button of within(canvasElement).getAllByRole('button')) await expect(button).toBeDisabled();
   },
 };
 

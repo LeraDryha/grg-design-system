@@ -2,9 +2,11 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Breadcrumbs, type BreadcrumbsProps, type BreadcrumbEntry } from './Breadcrumbs';
+import { BreadcrumbItem } from './BreadcrumbItem';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/breadcrumbs/breadcrumbs-component.png';
 import guidelinesFrame from '../../assets/design/breadcrumbs/breadcrumbs-guidelines.png';
+import itemFrame from '../../assets/design/breadcrumb-item/breadcrumb-item-component.png';
 
 const sample: BreadcrumbEntry[] = [
   { id: 'home', label: 'Home', icon: 'home', showLabel: false, href: '#home' },
@@ -26,6 +28,7 @@ const meta = {
     // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
     design: [
       { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Breadcrumb item', type: 'image', url: itemFrame },
       { name: 'Guidelines', type: 'image', url: guidelinesFrame },
     ],
   },
@@ -103,6 +106,19 @@ export const Quantities: Story = {
       {[5, 4, 3, 2].map(count => (
         <Variant key={count} caption={`${count} items`}><Breadcrumbs {...args} items={figmaItems.slice(0, count)} /></Variant>
       ))}
+    </Showcase>
+  ),
+};
+
+/** Breadcrumb item, the level inside the group: Icon, Icon + Text, Text, and the current page. */
+export const ItemTypes: Story = {
+  name: 'Item types',
+  render: () => (
+    <Showcase>
+      <Variant caption="Icon"><BreadcrumbItem label="Home" href="#home" showLabel={false} /></Variant>
+      <Variant caption="Icon + Text"><BreadcrumbItem label="Breadcrumb" href="#level" /></Variant>
+      <Variant caption="Text"><BreadcrumbItem label="Breadcrumb" href="#level" icon={null} /></Variant>
+      <Variant caption="Current page"><BreadcrumbItem label="Breadcrumb" icon={null} current /></Variant>
     </Showcase>
   ),
 };

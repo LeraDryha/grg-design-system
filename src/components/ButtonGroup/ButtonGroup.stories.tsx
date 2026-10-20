@@ -3,15 +3,17 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
 import { expect, userEvent, within } from 'storybook/test';
 import { ButtonGroup, type ButtonGroupProps, type ButtonGroupValue, type ButtonGroupEntry } from './ButtonGroup';
+import { ButtonGroupItem } from './ButtonGroupItem';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/button-group/button-group-component.png';
 import guidelinesFrame from '../../assets/design/button-group/button-group-guidelines.png';
+import itemFrame from '../../assets/design/button-group-item/button-group-item-component.png';
 
 const sample: ButtonGroupEntry[] = [
   { id: 'day', label: 'Day' }, { id: 'week', label: 'Week' }, { id: 'month', label: 'Month' },
 ];
 const meta = {
-  title: 'Components/ButtonGroup',
+  title: 'Components/Button Group',
   // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
   tags: ['ready'], component: ButtonGroup,
   parameters: {
@@ -20,6 +22,7 @@ const meta = {
     // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
     design: [
       { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Button group item', type: 'image', url: itemFrame },
       { name: 'Guidelines', type: 'image', url: guidelinesFrame },
     ],
   },
@@ -103,6 +106,21 @@ export const AnUnavailableOption: Story = {
   },
 };
 
+/** A single toggle: one item on its own keeps its selected look and says it's pressed. */
+export const ASingleToggle: Story = {
+  name: 'A single toggle',
+  render: function ASingleToggle() {
+    const [on, setOn] = useState(false);
+    return <ButtonGroupItem side="single" label="Bold" leftIcon={null} rightIcon={null} selected={on} onClick={() => setOn(!on)} />;
+  },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', { name: 'Bold' });
+    await expect(button).toHaveAttribute('aria-pressed', 'false');
+    await userEvent.click(button);
+    await expect(button).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
 /** Long labels in a narrow space: a labelled scroll region keeps the buttons whole. */
 export const Narrow: Story = {
   args: { items: [{ id: 'overview', label: 'Account overview' }, { id: 'activity', label: 'Account activity' }, { id: 'preferences', label: 'Account preferences' }] },
@@ -133,6 +151,18 @@ export const Sizes: Story = {
     <Showcase>
       <Variant caption="md · 32px"><ButtonGroup {...args} size="md" /></Variant>
       <Variant caption="sm · 24px"><ButtonGroup {...args} size="sm" /></Variant>
+    </Showcase>
+  ),
+};
+
+/** Button group item, the button inside the group: its corners follow its position. */
+export const ItemSides: Story = {
+  name: 'Item sides',
+  render: () => (
+    <Showcase>
+      {(['left', 'center', 'right', 'single'] as const).map(side => (
+        <Variant key={side} caption={side[0].toUpperCase() + side.slice(1)}><ButtonGroupItem label="Button" side={side} rightIcon={null} /></Variant>
+      ))}
     </Showcase>
   ),
 };
