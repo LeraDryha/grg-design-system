@@ -12,8 +12,11 @@
   font: var(--typo-body-md-regular);
 }
 .grg-menu-item[data-basic] { gap: var(--space-250); padding-block: var(--space-250); }
-/* With a checkbox the row is 36px tall: the 20px checkbox sets the height, not a 24px icon */
-.grg-menu-item:has(.grg-menu-item__checkbox):not([data-description]) { padding-block: var(--space-200); }
+/* Every row without a description is 40px tall, with or without the check, and with a checkbox too (a design
+   decision: Figma draws checkbox rows 36px). Choosing a row never changes its height; the 24px check and arrow sit
+   in the row's padding instead of stretching it. */
+.grg-menu-item:not([data-description]) { box-sizing: border-box; min-height: var(--space-1000); }
+.grg-menu-item :is(.grg-menu-item__check, .grg-menu-item__arrow) { margin-block: calc(-1 * var(--space-050)); }
 
 .grg-menu-item__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-100); min-width: 0; }
 .grg-menu-item__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

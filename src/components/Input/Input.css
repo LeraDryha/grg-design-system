@@ -61,7 +61,7 @@
 }
 .grg-input__control::placeholder { color: var(--text-soft-500); opacity: 1; }
 /* On focus the label floats above, so the placeholder copy of it goes away */
-.grg-input__box[data-focused] .grg-input__control::placeholder { color: transparent; }
+.grg-input__box[data-focused]:not([data-type='date']) .grg-input__control::placeholder { color: transparent; }
 .grg-input__box[data-disabled] .grg-input__control::placeholder { color: var(--text-disabled-400); }
 
 /* Left icon stays grey; the trailing icon turns red with an error */

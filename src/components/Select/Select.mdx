@@ -103,6 +103,7 @@ What the code adds to the Figma file, and why:
   than 10. The code applies it by itself; `searchable` overrides it.
 - **One row for every list.** Select, Compact Select, Inline Select and Dropdown Menu share the Figma *Dropdown menu item*,
   so a fix or a new option type reaches all of them.
+- **Rows keep their height.** Every row is 40px, with or without the check and with a checkbox in a multi-select too (Figma draws checkbox rows 36px), so ticking a row never makes the list jump.
 - **Focus you can see.** Figma draws focus in `primary-soft-200`, which keyboard users can barely see; the code uses the
   system blue ring, and only for keyboard focus.
 - **States are behaviour, not props.** Hover, focus and open come from the pointer and the keyboard, so they are tried

@@ -1,0 +1,169 @@
+/* Date Picker. Every value is a token; Figma layer names in the comments. Figma: Date picker (272:2619),
+   Day label, Day cell, Month and Period range. */
+
+/* ---- Panel (Date picker): presets, divider, calendar ---- */
+.grg-date-panel {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  gap: var(--space-600);
+  padding: var(--space-600);
+  border-radius: var(--radius-xl-16);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+}
+/* With presets the panel starts 16px from the left, as in Figma */
+.grg-date-panel[data-presets] { padding-left: var(--space-400); }
+
+/* Presets (Figma period filter of Period range rows) */
+.grg-date-panel__presets { flex: none; }
+.grg-date-panel__preset-list { display: grid; gap: var(--space-050); min-width: calc(var(--space-2000) * 1.5 + var(--space-050)); margin: 0; padding: 0; list-style: none; outline: none; }
+.grg-date-panel__preset-item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-250) var(--space-300);
+  border-radius: var(--radius-md-10);
+  cursor: pointer;
+}
+.grg-date-panel__preset { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: var(--space-250); white-space: nowrap; }
+.grg-date-panel__check { display: inline-grid; margin-block: calc(-1 * var(--space-050)); visibility: hidden; }
+.grg-date-panel__check[data-on] { visibility: visible; }
+.grg-date-panel__preset-item:where(:hover):not([aria-disabled='true']) { background: var(--bg-muted-50); }
+.grg-date-panel__preset-item[aria-selected='true'] { background: var(--bg-weak-100); }
+.grg-date-panel__preset-item[aria-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+/* The option under the arrow keys, while the list has keyboard focus */
+.grg-date-panel__preset-item[data-p-focused='true'] { box-shadow: inset 0 0 0 1px var(--stroke-strong-500); }
+.grg-date-panel__preset-list:focus-visible .grg-date-panel__preset-item[data-p-focused='true'] { box-shadow: var(--focus-ring); }
+.grg-date-panel__preset-list:focus-visible { outline: none; }
+.grg-date-panel__divider { flex: none; width: 1px; background: var(--stroke-soft-200); }
+
+/* ---- Calendar ---- */
+.grg-calendar { display: block; }
+.grg-calendar__panel { display: grid; gap: var(--space-400); }
+.grg-calendar__groups { display: flex; gap: var(--space-600); }
+.grg-calendar__group { display: grid; gap: var(--space-400); align-content: start; width: calc(var(--space-1000) * 7); }
+
+/* Header: arrows on the outer edges, the month and year lists between them */
+.grg-calendar__header { display: flex; align-items: center; gap: var(--space-200); height: var(--space-800); }
+.grg-calendar__title { display: flex; flex: 1; align-items: center; justify-content: center; gap: var(--space-050); }
+.grg-calendar__arrow {
+  display: inline-grid;
+  place-items: center;
+  width: var(--space-800);
+  height: var(--space-800);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--icon-strong-1000);
+  cursor: pointer;
+}
+.grg-calendar__arrow:where(:hover) { background: var(--bg-weak-100); }
+.grg-calendar__arrow:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+/* Two months move together: the first has no next arrow, the second no previous one (kept for alignment) */
+.grg-calendar__arrow[style*='hidden'] { visibility: hidden; }
+.grg-calendar__title-text {
+  padding: var(--space-150) var(--space-300);
+  border: 0;
+  background: transparent;
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-semibold);
+}
+.grg-calendar__title-button {
+  padding: var(--space-150) var(--space-300);
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-semibold);
+  cursor: pointer;
+}
+.grg-calendar__title-button:where(:hover) { background: var(--bg-weak-100); }
+.grg-calendar__title-button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+/* The month and year lists: no more than about seven rows, then they scroll */
+.grg-date-panel__navigator .grg-dropdown-menu__list { max-height: calc(var(--space-1000) * 7 + var(--space-200) * 2); overflow-y: auto; }
+
+/* Days (Figma dates: Day label row, Day cell grid; 40 × 40 cells) */
+.grg-calendar__table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+.grg-calendar__table th { padding: 0; height: var(--space-1000); font-weight: inherit; }
+.grg-calendar__weekday { color: var(--text-soft-500); font: var(--typo-body-md-regular); }
+.grg-calendar__day { position: relative; height: var(--space-1000); padding: 0; text-align: center; }
+.grg-calendar__day-label {
+  position: relative;
+  z-index: 1;
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: calc(var(--space-1000) - 2px);
+  height: calc(var(--space-1000) - 2px);
+  margin: 1px;
+  border-radius: var(--radius-md-10);
+  color: var(--text-strong-1000);
+  cursor: pointer;
+  outline: none;
+}
+/* Days of the months around, and days that can't be chosen */
+.grg-calendar__number { font-style: normal; }
+.grg-calendar__day-label[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+.grg-calendar__day-label:where(:hover):not([data-p-disabled='true'], [data-p-highlight='true']) { background: var(--bg-weak-100); }
+/* Active (chosen), and the start and finish of a period */
+.grg-calendar__day-label[data-p-highlight='true'] { background: var(--primary-base-1000); color: var(--text-inverce); }
+.grg-calendar__day-label:focus-visible { box-shadow: var(--focus-ring); }
+/* Today (Figma Current): the gold dot under the number */
+.grg-calendar__today {
+  position: absolute;
+  bottom: var(--space-050);
+  left: 50%;
+  width: var(--space-150);
+  height: var(--space-150);
+  translate: -50% 0;
+  border-radius: var(--radius-fully-rounded);
+  background: var(--primary-gold-base);
+}
+/* A period (Figma Period, Period type): a band behind the days, joined to the start and finish squares */
+.grg-calendar__day[data-range]::before {
+  content: '';
+  position: absolute;
+  inset: 1px 0;
+  background: var(--primary-weak-100);
+}
+.grg-calendar__day[data-range='start']::before { left: 50%; }
+.grg-calendar__day[data-range='end']::before { right: 50%; }
+.grg-calendar__day[data-range='single']::before { display: none; }
+.grg-calendar__day[data-range='middle'] .grg-calendar__day-label { background: transparent; color: var(--text-strong-1000); }
+
+/* Month grid (Figma Month: 88 × 40 cells), and the year grid that opens from it */
+.grg-calendar__months,
+.grg-calendar__years { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-200) 0; width: calc(var(--space-1000) * 7); }
+.grg-calendar__month {
+  display: grid;
+  place-items: center;
+  height: calc(var(--space-1000) - 2px);
+  margin: 1px var(--space-050);
+  border-radius: var(--radius-md-10);
+  cursor: pointer;
+  outline: none;
+}
+.grg-calendar__month:where(:hover):not([data-p-highlight='true'], [data-p-disabled='true']) { background: var(--bg-weak-100); }
+.grg-calendar__month[data-p-highlight='true'] { background: var(--primary-base-1000); color: var(--text-inverce); }
+.grg-calendar__month[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+.grg-calendar__month:focus-visible { box-shadow: var(--focus-ring); }
+
+/* Buttons: Reset and Apply on the right */
+.grg-calendar__buttons { display: flex; justify-content: flex-end; gap: var(--space-300); }
+
+/* ---- Field with the panel under it ---- */
+.grg-date-picker { position: relative; width: 100%; }
+.grg-date-picker__overlay { position: absolute; z-index: 20; top: calc(100% + var(--space-200)); left: 0; }
+.grg-date-picker .grg-input__box { cursor: pointer; }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,175 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as DatePickerStories from './DatePicker.stories';
+import { DatePickerPanel } from './DatePickerPanel';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={DatePickerStories} />
+
+# Date Picker
+
+<ComponentHeader
+  figma="272-2619"
+  guidelines="475-30447"
+  designTab
+  builtOn="PrimeReact Calendar and ListBox"
+  related={[
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'Uses' },
+    { label: 'Dropdown Menu', href: '?path=/docs/components-dropdown-menu--docs', relation: 'Uses' },
+    { label: 'Button', href: '?path=/docs/components-button--docs', relation: 'Uses' },
+  ]}
+/>
+
+A date field with a calendar under it, for one date or a period. People can type the date in their own format or choose it in the calendar.
+For filters it adds ready-made periods (presets), two months side by side, and Reset / Apply.
+
+<Canvas of={DatePickerStories.Playground} />
+<Controls of={DatePickerStories.Playground} include={['label', 'selectionMode', 'double', 'presets', 'buttons', 'view', 'locale', 'minDate', 'maxDate', 'disabled']} />
+
+```tsx
+<DatePicker label="Due date" value={dueDate} onChange={setDueDate} />
+<DatePicker label="Period" selectionMode="range" double presets value={period} onChange={setPeriod} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A date people pick from a calendar: a due date, a delivery date, a contract start',
+    'A period for a report or a filter, with presets such as Last 30 days',
+    'A whole month, such as a statement month, with the month grid',
+  ]}
+  donts={[
+    'A date people know by heart and type quickly, such as a date of birth on a long form: an Input of the Date type is enough',
+    'A time of day: Date Picker has no time',
+    'Several separate dates at once: not supported',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once.
+
+### Pick a due date
+
+<Canvas of={DatePickerStories.PickADueDate} />
+
+A click on the field opens the calendar. Choosing a day fills the field and closes the calendar; focus returns to the field.
+
+### Type or use the keyboard
+
+<Canvas of={DatePickerStories.TypeOrUseTheKeyboard} />
+
+Digits fall into the locale's format as people type (*05012026* → *05/01/2026* in the UK). ↓ opens the calendar on that day; the arrows move by day, PageUp and PageDown by month, Enter chooses, Escape closes and returns to the field.
+
+### Choose a period
+
+<Canvas of={DatePickerStories.ChooseAPeriod} />
+
+Two months and the presets for a report filter. A preset fills the period in the calendar and moves it into view. Nothing changes until **Apply**, so the data behind the filter isn't reloaded on every click.
+
+### Follow the locale
+
+<Canvas of={DatePickerStories.FollowTheLocale} />
+
+The same date in three locales. Open each one: the week starts on Monday in the UK and Ukraine, on Sunday in the US; month and day names follow the language.
+
+### Jump to another year
+
+<Canvas of={DatePickerStories.JumpToAnotherYear} />
+
+The month and year in the header are lists (the system's [Dropdown Menu](?path=/docs/components-dropdown-menu--docs)), for dates far from today.
+
+### Limit the dates
+
+<Canvas of={DatePickerStories.LimitTheDates} />
+
+`minDate`, `maxDate` and `disabledDates` turn days grey; they can't be chosen and the arrow keys skip them.
+
+### Choose a month
+
+<Canvas of={DatePickerStories.ChooseAMonth} />
+
+`view="month"` shows the Figma *Month* grid instead of days. The year above it opens a grid of years.
+
+### Start over
+
+<Canvas of={DatePickerStories.StartOver} />
+
+**Reset** clears the choice in the calendar; **Apply** sends it, including an empty one.
+
+### Unavailable
+
+<Canvas of={DatePickerStories.Unavailable} />
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **The format follows the locale.** Figma's examples show both *16/01/2016* and *MM/DD/YYYY*. In code nothing is fixed: the order of day, month and year, the separator, the first day of the week and the month and day names all come from the locale the product passes (`locale`), else from the page language, else from the browser. The field and the calendar read the same description, so they always agree. The **Locale** switch in the toolbar shows it on every page.
+- **Two months move together.** Figma draws arrows and lists in both months. In code, as in PrimeReact, the months always follow each other: the arrows sit on the outer edges and the lists in the first month.
+- **Our field, PrimeReact's calendar.** The field is the system's Input (label, hint, error, the same frame as other fields); the calendar is PrimeReact Calendar inside a panel under it.
+- **Apply for filters.** PrimeReact applies a date at once and offers Today / Clear. Figma's Reset / Apply apply only on Apply, which suits filters; they are on by default for a period and off for one date (`buttons`).
+- **Today in words.** Figma marks today with a gold dot; screen readers hear the full date and "today".
+- **Days named in full.** Each day is a grid cell named *Monday, 5 January 2026*, not just *5*.
+- **"Mon", not "Mo".** The Figma *Day label* part shows *Mo*, the calendar *Mon*; the code uses the short names of the locale, as the calendar does.
+- **Mobile later.** The Figma bottom sheet (*Specify a period*) waits for the Modal component.
+
+## Types
+
+<Canvas of={DatePickerStories.Types} />
+
+The open calendar on its own (`DatePickerPanel`, the Figma *Date picker*): **Default** for one date, **Range** with two months and Reset / Apply, and **Presets** for filters.
+The panel has 24px padding (16px on the left with presets), 16px corners and the small elevation; two months sit 24px apart.
+
+## Parts
+
+Figma ships the calendar's pieces as their own components. In code they are parts of Date Picker:
+
+- **Day label:** the weekday names, Body-md in the soft colour.
+- **Day cell:** 40 × 40. Hovered: a light fill. Active (chosen): black with white text. Disabled and days of other months: grey. Current: the gold dot. In a period: a band joins the start and finish squares.
+- **Month:** 88 × 40 cells of the month grid, with the same Hovered and Active look.
+- **Period range:** a row of the preset list; hovered with a light fill, selected with a fill and a check.
+
+<ArgTypes of={DatePickerPanel} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Typing | Fills the date in the locale's format |
+| ↓ (in the field) | Opens the calendar and moves focus to the chosen day, or today |
+| ← → ↑ ↓ | Move by day and week |
+| PageUp · PageDown | Previous and next month |
+| Home · End | First and last day of the week |
+| Enter | Chooses the day |
+| Escape | Closes the calendar and returns to the field |
+| Tab | Moves to the presets, the lists, the arrows and the buttons |
+
+- The field is a combobox that opens a dialog (`aria-haspopup="dialog"`, `aria-expanded`); the calendar is a named dialog with a grid of days.
+- The chosen day is announced as selected; disabled days are announced as unavailable.
+- The presets are a listbox; ↑ ↓ move and the chosen period is announced as selected.
+- Colours follow Figma. Days of other months and disabled days use `text-disabled-400`, below 4.5:1, as disabled controls may.
+
+## Figma and code
+
+The Figma frames (Date picker, Day cell, Month, Period range and the guidelines) are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Double', prop: 'double', values: 'On → true: two months side by side' },
+    { figma: 'Presets', prop: 'presets', values: 'true → the Figma list; or your own presets (range only)' },
+    { figma: 'Buttons', prop: 'buttons', values: 'Reset and Apply; on by default for a period' },
+    { figma: 'Type: Default · Range', prop: 'selectionMode', values: 'single, range' },
+    { figma: 'Month select · Year select', prop: '(automatic) · yearRange', values: 'lists in the header; years ten either side of today by default' },
+    { figma: 'Month', prop: 'view', values: 'month → the month grid' },
+    { figma: 'Day cell: Disabled', prop: 'minDate · maxDate · disabledDates', values: 'days that can\'t be chosen' },
+    { figma: 'Day cell: Current', prop: '(automatic)', values: 'today, with the gold dot' },
+    { figma: 'Day cell: Period · Period type', prop: '(automatic)', values: 'start, middle and finish of the chosen period' },
+    { figma: '—', prop: 'locale', values: 'BCP 47 code such as en-GB, en-US, uk-UA; the page or browser language by default' },
+    { figma: 'Field (Examples)', prop: 'label · hint · error · required · disabled', values: 'the Input parts' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={DatePickerStories} />

@@ -6,12 +6,13 @@ import { ActionButton } from '../ActionButton/ActionButton';
 import { FormField } from '../FormField/FormField';
 import { InlineSelect, type InlineSelectOption } from '../InlineSelect/InlineSelect';
 import { PaymentIcon, paymentMethods, type PaymentMethod } from '../PaymentIcon/PaymentIcon';
+import { dateLocale } from '../../locale/dates';
 import './Input.css';
 
 /** Figma "input" component set (73:3711): Type × State × Size × Filled, with Top/Bottom rows and icon booleans. */
 export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 'prefix' | 'value' | 'defaultValue' | 'children'> & {
   /** Figma Type. Common: plain text. Phone: country code + number. Website: protocol prefix. Card: card number with a payment icon.
-   *  Amount: number + coin. Date: DD / MM / YYYY. Button: text with an action (copy, reveal password). */
+   *  Amount: number + coin. Date: day, month and year in the locale's order (en-GB 05/01/2026, en-US 01/05/2026). Button: text with an action (copy, reveal password). */
   type?: 'common' | 'phone' | 'website' | 'card' | 'amount' | 'date' | 'button';
   /** HTML input type, for the browser keyboard and autofill (email, password, tel, url…) */
   inputType?: 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
@@ -63,6 +64,9 @@ export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 
   coin?: string;
   onCoinChange?: (value: string) => void;
   coinLabel?: string;
+  /** Date type: the locale that decides the order and separator, such as en-GB (DD/MM/YYYY) or en-US (MM/DD/YYYY).
+   *  The page language or the browser's language by default. */
+  locale?: string;
   /** Card type: the card's payment method from Payment method icons, such as `mastercard` */
   paymentMethod?: PaymentMethod;
   /** Name of the payment method for screen readers; the Figma name by default, such as "Mastercard" */
@@ -72,13 +76,10 @@ export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 
   onValueChange?: (value: string) => void;
 };
 
-/** Card: groups of 4 digits. Date: DD / MM / YYYY. Phone: digits and spaces. Amount: digits and one decimal point. */
-function format(type: InputProps['type'], raw: string) {
+/** Card: groups of 4 digits. Date: the locale's order and separator. Phone: digits and spaces. Amount: digits and one decimal point. */
+function format(type: InputProps['type'], raw: string, locale?: string) {
   if (type === 'card') return raw.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ');
-  if (type === 'date') {
-    const d = raw.replace(/\D/g, '').slice(0, 8);
-    return [d.slice(0, 2), d.slice(2, 4), d.slice(4)].filter(Boolean).join(' / ');
-  }
+  if (type === 'date') return dateLocale(locale).formatDigits(raw);
   if (type === 'phone') return raw.replace(/[^\d ]/g, '');
   if (type === 'amount') return raw.replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
   return raw;
@@ -94,7 +95,7 @@ export function Input({
   action, copyLabel = 'Copy', copiedMessage = 'Copied', showPasswordLabel = 'Show password', hidePasswordLabel = 'Hide password',
   countries = [], country, onCountryChange, countryLabel = 'Country code',
   coins = [], coin, onCoinChange, coinLabel = 'Currency',
-  paymentMethod, paymentLabel,
+  paymentMethod, paymentLabel, locale,
   value: controlled, defaultValue = '', onValueChange,
   id: suppliedId, disabled, readOnly, placeholder, className = '', onFocus, onBlur, onChange, 'aria-describedby': describedBy, ref, ...props
 }: InputProps) {
@@ -170,17 +171,18 @@ export function Input({
       }}
       id={id}
       type={htmlType}
-      inputMode={INPUT_MODE[type as keyof typeof INPUT_MODE]}
+      inputMode={INPUT_MODE[type as keyof typeof INPUT_MODE] ?? props.inputMode}
       className="grg-input__control"
       value={value}
       disabled={disabled}
       readOnly={readOnly}
       required={required}
-      placeholder={floatingLabel && label ? label : placeholder}
+      // A focused, empty date field shows the format to type in the locale's order, such as DD/MM/YYYY
+      placeholder={type === 'date' && (focused || !floatingLabel) ? placeholder ?? dateLocale(locale).placeholder : floatingLabel && label ? label : placeholder}
       aria-invalid={error ? true : undefined}
       aria-describedby={[describedBy, message ? hintId : undefined].filter(Boolean).join(' ') || undefined}
       onChange={(e: ChangeEvent<HTMLInputElement>) => {
-        setValue(format(type, e.target.value));
+        setValue(format(type, e.target.value, locale));
         onChange?.(e);
       }}
     />
