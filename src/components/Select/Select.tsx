@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type HTMLAttributes, type RefObject } from 'react';
+import { useEffect, useId, useRef, useState, type HTMLAttributes, type RefObject } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { PrimeReactProvider } from 'primereact/api';
@@ -61,12 +61,12 @@ export type SelectProps = {
   onValuesChange?: (values: string[]) => void;
   /** Name of the clear button of a multi-select */
   clearLabel?: string;
+  /** Opens the list when the field first appears, for a step where choosing is the only task. Doesn't move focus. */
+  defaultOpen?: boolean;
   disabled?: boolean;
   id?: string;
   name?: string;
   className?: string;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -77,14 +77,21 @@ export function Select({
   options, value: controlled, defaultValue, onChange, type = 'common', size = 'md',
   label, floatingLabel = true, placeholder, required, optional, info, hint, error, hintIcon = true, topKey, topValue,
   icon = true, emptyIcon, searchable, searchPlaceholder = 'Search', noResults = 'There are no search results', loading = false,
-  multiple = false, values: controlledValues, defaultValues = [], onValuesChange, clearLabel = 'Clear selection',
-  disabled, id: suppliedId, name, className = '', previewState = 'default',
+  multiple = false, values: controlledValues, defaultValues = [], onValuesChange, clearLabel = 'Clear selection', defaultOpen = false,
+  disabled, id: suppliedId, name, className = '',
 }: SelectProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
   const hintId = `${id}-hint`;
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<Dropdown>(null);
+  const multiRef = useRef<MultiSelect>(null);
+  // PrimeReact's own show(): it opens the list without scrolling the page to the field
+  useEffect(() => {
+    if (defaultOpen) (multiple ? multiRef : dropdownRef).current?.show();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [local, setLocal] = useState(defaultValue);
   const [localValues, setLocalValues] = useState<string[]>(defaultValues);
   const values = controlledValues ?? localValues;
@@ -94,7 +101,7 @@ export function Select({
   const [focused, setFocused] = useState(false);
   const value = controlled === undefined ? local : controlled;
   const selected = options.find(o => o.value === value);
-  const isFocused = focused || open || previewState === 'active' || previewState === 'focus';
+  const isFocused = focused || open;
   const labelVisible = !floatingLabel || isFocused || (multiple ? chosen.length > 0 : !!selected);
   const message = error || hint;
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, message ? hintId : undefined, !!error);
@@ -132,7 +139,6 @@ export function Select({
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
         data-open={open || undefined}
-        data-preview-state={previewState === 'default' ? undefined : previewState}
       >
         {multiple ? (
           // PrimeReact 10 marks the option under the arrow keys only with its .p-focus class (the pass-through
@@ -140,6 +146,7 @@ export function Select({
           // styles are structural only; no PrimeReact theme is loaded.
           <PrimeReactProvider value={{ ...primeReactConfig, unstyled: false }}>
           <MultiSelect
+            ref={multiRef}
             inputId={id}
             name={name}
             // PrimeReact types the ref as a select; at runtime it is the hidden input
@@ -227,6 +234,7 @@ export function Select({
           </PrimeReactProvider>
         ) : (
           <Dropdown
+            ref={dropdownRef}
             inputId={id}
             name={name}
             focusInputRef={inputRef}

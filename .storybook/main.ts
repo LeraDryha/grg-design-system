@@ -10,6 +10,10 @@ const config: StorybookConfig = {
       options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
     },
     '@storybook/addon-a11y',
+    // A Design tab next to each story: the Figma frames as images (the company file itself isn't linked)
+    '@storybook/addon-designs',
+    // Hover, active and focus shown by Storybook itself, so components need no documentation-only props
+    'storybook-addon-pseudo-states',
   ],
   framework: '@storybook/react-vite',
   core: { disableTelemetry: true },

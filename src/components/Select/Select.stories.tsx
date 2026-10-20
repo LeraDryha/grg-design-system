@@ -1,47 +1,56 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { useState, type CSSProperties } from 'react';
+import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { Select, type SelectProps } from './Select';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 import { sampleCoins, sampleCountries, samplePaymentMethods, samplePayments, sampleProviders, sampleUsers } from './samples';
+import componentFrame from '../../assets/design/select/select-component.png';
+import guidelinesFrame from '../../assets/design/select/select-guidelines.png';
 
-/** A single field is 320px wide, as in Figma, with room for the floating label above. */
+/** A field is 320px wide, as in Figma, with room for the floating label above and the open list below */
 const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>;
-/** Room under the field for the open list */
-const withList: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)', minHeight: 360 }}><Story /></div>;
+/** For a list that is open from the start: room for it inside the card */
+const withList: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)', minHeight: 400 }}><Story /></div>;
 
-/** Opens the list once the story is shown */
-const openList = async ({ canvasElement }: { canvasElement: HTMLElement }) => {
-  canvasElement.querySelector<HTMLElement>('.grg-select__box')?.click();
+/** Opens the list unless it is open already (stories with defaultOpen) */
+const openTheList = async (canvasElement: HTMLElement) => {
+  // People click the field; the combobox input inside it is visually hidden, as in PrimeReact
+  if (!within(canvasElement).queryByRole('listbox')) await userEvent.click(canvasElement.querySelector<HTMLElement>('.grg-select__box')!);
 };
 
 const meta = {
   title: 'Components/Select',
   component: Select,
   // The docs page is Select.mdx
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: { description: { component: 'A field that opens a list to choose one or several options.' } },
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: {
     options: samplePayments,
     type: 'common',
     size: 'md',
-    label: 'Select payment',
+    label: 'Payment type',
     floatingLabel: true,
     required: false,
     optional: false,
     hint: '',
     error: '',
     icon: true,
-    searchable: false,
     disabled: false,
-    previewState: 'default',
   },
   argTypes: {
     options: { control: false },
     type: { control: 'select', options: ['common', 'country', 'user', 'payment', 'coin'] },
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     onChange: { action: 'changed', control: false },
+    onValuesChange: { action: 'values changed', control: false },
   },
 } satisfies Meta<typeof Select>;
 
@@ -50,134 +59,157 @@ type Story = StoryObj<typeof meta>;
 
 const SAMPLES = { common: samplePayments, country: sampleCountries, user: sampleUsers, payment: samplePaymentMethods, coin: sampleCoins };
 
-/** Edit everything in Controls. Choosing a type also picks its sample options. */
+/** Try everything in Controls. Choosing a type also picks its sample options. */
 export const Playground: Story = {
-  decorators: [withList],
+  decorators: [field],
   render: (args: SelectProps) => <Select {...args} options={SAMPLES[args.type ?? 'common']} />,
 };
 
-/** Every part of the field, numbered as in the Figma guidelines. */
-export const Anatomy: Story = {
-  args: {
-    floatingLabel: false,
-    placeholder: 'Placeholder',
-    required: true,
-    optional: true,
-    info: 'The payment type sets the tax rules.',
-    hint: 'This is a hint text to help user.',
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Countries: a long list gets a search row by itself (more than 10 options). Typing filters the list. */
+export const SearchALongList: Story = {
+  decorators: [withList],
+  args: { type: 'country', label: 'Country of residence', options: sampleCountries, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await openTheList(canvasElement);
+    const search = await canvas.findByRole('textbox', { name: /search/i });
+    await userEvent.type(search, 'po');
+    await waitFor(() => expect(canvas.getAllByRole('option')).toHaveLength(1));
+    await expect(canvas.getByRole('option', { name: /poland/i })).toBeVisible();
   },
-  render: (args: SelectProps) => (
-    <AnatomyBlock
-      markers={[
-        { n: 1, target: '.grg-select__box', side: 'right' },
-        { n: 2, target: '.grg-field-label__name', side: 'top' },
-        { n: 3, target: '.grg-field-label__star', side: 'top' },
-        { n: 4, target: '.grg-field-label__extra', side: 'top' },
-        { n: 5, target: '.grg-field-label__info', side: 'top' },
-        { n: 6, target: '.grg-select__text', side: 'bottom' },
-        { n: 7, target: '.grg-hint .grg-icon', side: 'bottom' },
-        { n: 8, target: '.grg-hint > span:last-child', side: 'bottom' },
-        { n: 9, target: '.grg-select__icon', side: 'left' },
-        { n: 10, target: '.grg-select__trigger', side: 'top' },
-      ]}
-    >
-      <Select {...args} />
-    </AnatomyBlock>
-  ),
 };
 
-/** Fields one under another, with room for each label */
-const column: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' };
-
-/** Common, Country, User, Payment method and Coin, filled, from the top. */
-export const Types: Story = {
-  render: (args: SelectProps) => (
-    <div style={column}>
-      <Select {...args} type="common" label="Select payment" options={samplePayments} defaultValue="utility" />
-      <Select {...args} type="country" label="Select country" options={sampleCountries} defaultValue="BG" />
-      <Select {...args} type="user" label="Select user" options={sampleUsers} defaultValue="brad-zemlak" />
-      <Select {...args} type="payment" label="Select payment method" options={samplePaymentMethods} defaultValue="mastercard" />
-      <Select {...args} type="coin" label="Select currency" options={sampleCoins} defaultValue="BTC" />
-    </div>
-  ),
+/** Choosing with the keyboard only: Tab to the field, ↓ to open, ↓ to move, Enter to choose. */
+export const ChooseWithTheKeyboard: Story = {
+  decorators: [field],
+  args: { type: 'coin', label: 'Currency', options: sampleCoins },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.tab();
+    await expect(canvas.getByRole('combobox')).toHaveFocus();
+    await userEvent.keyboard('{ArrowDown}');
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await waitFor(() => expect(canvas.getByText('Ethereum (ETH)')).toBeVisible());
+  },
 };
 
-/** lg-44, md-40 and sm-32, from the top. Only the paddings and corners change. */
+/** Several providers at once: checkboxes in the list; the field lists the choices in the order they were picked. */
+export const ChooseSeveral: Story = {
+  decorators: [field],
+  args: { multiple: true, label: 'Cash register', options: sampleProviders, defaultValues: ['payman', 'stripe', 'mastercard', 'crypto', 'visa'], onValuesChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await openTheList(canvasElement);
+    await userEvent.click(await canvas.findByText('SWIFT USD'));
+    await userEvent.click(canvas.getByText('Adyen'));
+    // Picked last, listed last: choice order, not list order (Adyen sits third in the list, SWIFT fifth)
+    await waitFor(() => expect(args.onValuesChange).toHaveBeenLastCalledWith(['payman', 'stripe', 'mastercard', 'crypto', 'visa', 'swift', 'adyen']));
+    await expect(canvasElement.querySelector('.grg-overflow-summary__text')).toHaveTextContent(/^Payman, Stripe.* and \d others$/);
+    await expect(canvas.getByRole('option', { name: /swift usd/i })).toHaveAttribute('aria-selected', 'true');
+  },
+};
+
+/** A required choice in a form: the error appears when the form is sent without it, and goes once something is chosen. */
+export const RequiredInAForm: Story = {
+  decorators: [field],
+  render: function RequiredInAForm(args: SelectProps) {
+    const [value, setValue] = useState<string | null>(null);
+    const [sent, setSent] = useState(false);
+    const submit = (event: FormEvent) => {
+      event.preventDefault();
+      setSent(true);
+    };
+    return (
+      <form onSubmit={submit} noValidate style={{ display: 'grid', gap: 'var(--space-600)' }}>
+        <Select {...args} label="Payment type" required value={value} onChange={setValue} error={sent && !value ? 'Choose a payment type' : ''} />
+        <Button type="submit" variant="primary">Pay</Button>
+      </form>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Pay' }));
+    await expect(await canvas.findByText('Choose a payment type')).toBeVisible();
+    await expect(canvas.getByRole('combobox')).toHaveAttribute('aria-invalid', 'true');
+  },
+};
+
+/** People: photos, initials or a company shape, from Avatar. */
+export const People: Story = {
+  decorators: [field],
+  args: { type: 'user', label: 'Assignee', options: sampleUsers, defaultValue: 'warren-fritsch' },
+};
+
+/** While the options load, the list shows grey rows (Figma Skeleton). */
+export const Loading: Story = {
+  decorators: [withList],
+  args: { type: 'user', label: 'Assignee', options: sampleUsers, loading: true, searchable: true, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await openTheList(canvasElement);
+    await expect(await canvas.findByRole('status', { name: 'Loading' })).toBeVisible();
+  },
+};
+
+/** Nothing to show (Figma Empty): the search found nothing, or the list is empty. */
+export const NoResults: Story = {
+  decorators: [withList],
+  args: { type: 'user', label: 'Assignee', options: [], searchable: true, defaultOpen: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await openTheList(canvasElement);
+    await expect(await canvas.findByText('There are no search results')).toBeVisible();
+  },
+};
+
+/** A parent form owns the value and can clear it, as with PrimeReact Dropdown. */
+export const Controlled: Story = {
+  decorators: [field],
+  render: function Controlled(args: SelectProps) {
+    const [value, setValue] = useState<string | null>('utility');
+    return (
+      <div style={{ display: 'grid', gap: 'var(--space-400)' }}>
+        <Select {...args} value={value} onChange={next => { setValue(next); args.onChange?.(next); }} />
+        <Button onClick={() => setValue(null)}>Clear selection</Button>
+        <output aria-live="polite">Selected: {value ?? 'None'}</output>
+      </div>
+    );
+  },
+};
+
+/* ---- Design overview: sizes and states side by side ---- */
+
+const grid: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-1000) var(--space-800)', paddingTop: 'var(--space-600)' };
+const caption: CSSProperties = { font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)', marginBottom: 'var(--space-800)' };
+const Cell = ({ title, children, id }: { title: string; children: ReactNode; id?: string }) => (
+  <div id={id}><div style={caption}>{title}</div>{children}</div>
+);
+
+/** lg-44, md-40 and sm-32. Only the paddings and corners change. */
 export const Sizes: Story = {
   render: (args: SelectProps) => (
-    <div style={column}>
+    <div style={grid}>
       {(['lg', 'md', 'sm'] as const).map(size => (
-        <Select key={size} {...args} size={size} type="coin" label="Select a currency" options={sampleCoins} defaultValue="BTC" />
+        <Cell key={size} title={{ lg: 'lg-44', md: 'md-40', sm: 'sm-32' }[size]}>
+          <Select {...args} size={size} type="coin" label="Currency" options={sampleCoins} defaultValue="BTC" />
+        </Cell>
       ))}
     </div>
   ),
 };
 
-/** The open list: a search row for long lists, a check on the chosen option. */
-export const OpenList: Story = {
-  decorators: [withList],
-  args: { type: 'country', label: 'Select country', options: sampleCountries, defaultValue: 'BG', searchable: true },
-  parameters: { docs: { story: { autoplay: true } } },
-  play: openList,
-};
-
-/* ---- States: one story each, as is usual in Storybook ---- */
-
-/** Empty: the label sits inside as the placeholder. */
-export const Default: Story = { decorators: [field] };
-
-/** A parent can clear a controlled selection with null, matching PrimeReact Dropdown. */
-export const Controlled: Story = {
-  decorators: [withList],
-  render: function Controlled(args) {
-    const [value, setValue] = useState<string | null>(null);
-    return <div style={{ display: 'grid', gap: 'var(--space-400)' }}>
-      <Select {...args} value={value} onChange={next => { setValue(next); args.onChange?.(next); }} />
-      <Button onClick={() => setValue(null)}>Clear selection</Button>
-      <output aria-live="polite">Selected: {value ?? 'None'}</output>
-    </div>;
-  },
-};
-
-/** With a value: the label stays above. */
-export const Filled: Story = { decorators: [field], args: { defaultValue: 'utility' } };
-
-/** Pointer over the field: a light fill and a darker border. */
-export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: 'utility' } };
-
-/** Focused or open: the darkest border, the label floats and turns dark. */
-export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: 'utility' } };
-
-/** Keyboard focus: system blue ring. */
-export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'utility' } };
-
-/** Red border and message; the message replaces the hint. */
-export const ErrorState: Story = { name: 'Error', decorators: [field], args: { required: true, error: 'Choose a payment type' } };
-
-/** Not available: grey fill and text, no interaction. */
-export const Disabled: Story = { decorators: [field], args: { disabled: true, defaultValue: 'utility' } };
-
-/** Empty, focused, filled. What happens at each step is described on the docs page. */
-export const FloatingLabel: Story = {
+/** The look of each state. Hover is shown by Storybook (pseudo-states); focus and the open list are live in the examples above. */
+export const States: Story = {
+  parameters: { pseudo: { hover: ['#state-hovered .grg-select__box'] } },
   render: (args: SelectProps) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
-      <Select {...args} />
-      <Select {...args} previewState="focus" />
-      <Select {...args} defaultValue="utility" />
+    <div style={grid}>
+      <Cell title="Default"><Select {...args} /></Cell>
+      <Cell title="Filled"><Select {...args} defaultValue="utility" /></Cell>
+      <Cell title="Hovered" id="state-hovered"><Select {...args} defaultValue="utility" /></Cell>
+      <Cell title="Error"><Select {...args} required error="Choose a payment type" /></Cell>
+      <Cell title="Disabled"><Select {...args} disabled defaultValue="utility" /></Cell>
     </div>
   ),
-};
-
-/** Multi-select: checkboxes in the list; the field lists the choices with commas, in choice order, and sums up the rest. */
-export const Multiple: Story = {
-  decorators: [withList],
-  args: { multiple: true, label: 'Cash register', options: sampleProviders, defaultValues: ['payman', 'stripe', 'mastercard', 'crypto', 'swift', 'visa'] },
-};
-
-/** While the options load: grey rows in the list (Figma Skeleton). */
-export const Loading: Story = {
-  decorators: [withList],
-  args: { type: 'user', label: 'Select user', options: sampleUsers, loading: true, searchable: true },
-  parameters: { docs: { story: { autoplay: true } } },
-  play: openList,
 };

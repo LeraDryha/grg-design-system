@@ -17,3 +17,8 @@
 .docs-story:has(.grg-theme[data-theme='dark']) {
   background: var(--color-neutral-900);
 }
+
+/* Open lists and menus may reach past their example card on docs pages, as they would over a real page,
+   so a card doesn't need empty space reserved under every field. */
+:is(.sbdocs-preview, .docs-story):has(.grg-select, .grg-compact-select, .grg-inline-select, .grg-dropdown-menu-host) { overflow: visible; }
+.sbdocs-preview:has([role='listbox'], [role='menu']) { position: relative; z-index: 2; }

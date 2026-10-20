@@ -10,182 +10,144 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   status="ready"
   figma="404-42432"
   guidelines="459-37807"
-  builtOn="PrimeReact Dropdown"
+  designTab
+  builtOn="PrimeReact Dropdown and MultiSelect"
   related={[
     { label: 'Form Field', href: '?path=/docs/components-form-field--docs', relation: 'Uses' },
+    { label: 'Dropdown Menu', href: '?path=/docs/components-dropdown-menu--docs', relation: 'Uses' },
     { label: 'Compact Select', href: '?path=/docs/components-compact-select--docs', relation: 'See also' },
     { label: 'Inline Select', href: '?path=/docs/components-inline-select--docs', relation: 'See also' },
   ]}
 />
 
-A field that opens a list to choose one option: a payment type, a country, a user, a payment method, a coin.
-It shares the label, hint and states with Input; the type sets the picture before the value.
+Select lets people choose from a known list without typing: a country, a currency, a person, a payment method.
+It is the field version of the [Dropdown Menu](?path=/docs/components-dropdown-menu--docs): the same rows, with a label,
+a hint and the states of Input, so a form reads as one system.
 
 <Canvas of={SelectStories.Playground} />
-<Controls of={SelectStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'searchable', 'disabled']} />
+<Controls of={SelectStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'multiple', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<Select label="Country of residence" type="country" options={countries} onChange={setCountry} />
+```
 
 ## When to use
 
 <DoDont
   dos={[
-    'Choosing one option from a known list: payment type, country, user, payment method, currency',
-    'A search row for long lists: countries, users, coins',
-    'The picture that helps recognise the option: a flag, a logo, a photo',
+    'Choosing one option, or several, from a known list: payment type, country, person, payment method, currency',
+    'Lists that are too long to show at once; with more than 10 options a search row appears',
+    'Options that are easier to recognise with a picture: a flag, a coin, a photo',
   ]}
   donts={[
-    'Two or three options that people should see at once: use Radio or Segment control',
+    'Two or three options people should see at once: use Radio or Button group',
     'Free text: use Input',
     'A short choice next to another control, without a label: use Compact Select',
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={SelectStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once.
 
-1. **Container:** the field frame. Its border and fill show the state: hovered, active, error, disabled.
-2. **Label:** what the field asks for. Inside the empty field it works as the placeholder, then floats above.
-3. **Required asterisk:** a choice is needed before the form can be sent.
-4. **Additional text (optional):** a short note after the label, such as *(Optional)*.
-5. **Info button (optional):** more context about the field.
-6. **Placeholder:** the chosen option, or the label or a placeholder until there is one.
-7. **Icon:** marks the hint; turns red together with an error.
-8. **Hint text (optional):** help about the choice. An error message replaces it.
-9. **Picture (optional, Figma Icon):** 20 × 20, set by the type: a Base icon, a flag, a photo, a payment card (28 × 20) or a coin. An empty field shows a placeholder icon: coin, globe, user or card.
-10. **Chevron:** points down, up while the list is open.
+### Search a long list
 
-Parts 2–8 are the shared field parts, the same as in Input: see [Form Field](?path=/docs/components-form-field--docs).
+<Canvas of={SelectStories.SearchALongList} />
 
-## Types
+Countries are a long list, so a search row appears by itself. Typing *po* leaves Poland.
 
-<Canvas of={SelectStories.Types} />
+### Choose with the keyboard
 
-From the top:
+<Canvas of={SelectStories.ChooseWithTheKeyboard} />
 
-- **Common:** any list, with a Base icon per option or one icon for the field. Payment type, category.
-- **Country:** a flag from [Country icons](?path=/docs/foundations-icons-country-icons--docs).
-- **User:** an [Avatar](?path=/docs/components-avatar--docs) at 20px: a photo, initials or a person or company shape.
-- **Payment method:** a card from [Payment method icons](?path=/docs/foundations-icons-payment-method-icons--docs), 28 × 20.
-- **Coin:** a logo from [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
+Tab to the field, ↓ opens the list, ↓ moves, Enter chooses. The blue focus ring appears only when people use the keyboard.
 
-## Sizes
+### Choose several
+
+<Canvas of={SelectStories.ChooseSeveral} />
+
+With `multiple`, every row gets a checkbox and the list stays open. The field lists the choices with commas and sums up
+the rest (*Payman, Stripe and 3 others*), updating as the field narrows.
+
+### Required in a form
+
+<Canvas of={SelectStories.RequiredInAForm} />
+
+The error appears after people try to send the form, not while they are still filling it in, and goes once they choose.
+
+### People
+
+<Canvas of={SelectStories.People} />
+
+### Loading and no results
+
+<Canvas of={SelectStories.Loading} />
+<Canvas of={SelectStories.NoResults} />
+
+### Controlled by a form
+
+<Canvas of={SelectStories.Controlled} />
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **Choice order, not list order.** In a multi-select the field keeps the order in which people picked options, as the
+  Figma examples ask. When the list overflows, what they picked first stays visible. (PrimeReact would follow the list order.)
+- **Search from 11 options.** The Figma guidelines show 9 rows without scrolling and a search row once the list is longer
+  than 10. The code applies it by itself; `searchable` overrides it.
+- **One row for every list.** Select, Compact Select, Inline Select and Dropdown Menu share the Figma *Dropdown menu item*,
+  so a fix or a new option type reaches all of them.
+- **Focus you can see.** Figma draws focus in `primary-soft-200`, which keyboard users can barely see; the code uses the
+  system blue ring, and only for keyboard focus.
+- **States are behaviour, not props.** Hover, focus and open come from the pointer and the keyboard. The component has no
+  documentation-only state switch; Storybook shows the hover look itself.
+
+## Sizes and states
 
 <Canvas of={SelectStories.Sizes} />
 
-From the top:
+<Canvas of={SelectStories.States} />
 
-- **lg-44:** 12px paddings, 10px corners. Forms with few fields.
-- **md-40:** 10px paddings, 10px corners. The default for product forms.
-- **sm-32:** 6px top and bottom, 8px on the sides, 8px corners. Dense screens: filters, tables.
-
-The label (Body-md Semibold 14/20), the value (Body-md 14/20) and the 20px picture stay the same in every size.
-The label row is 2px above the field, the hint row 2px under it.
-
-## Open list
-
-<Canvas of={SelectStories.OpenList} />
-
-The list opens 8px under the field, on the floating surface with a small shadow, 12px corners and 8px padding (Figma Dropdown).
-
-- **Rows** (Dropdown menu item): 40px, the option's picture and name; a light fill on hover and while moving with the arrow keys; a check on the chosen option.
-- **Search** (`searchable`): a row at the top that filters the list as people type, with a clear button. Use it for long lists, as in the Figma examples for countries, users and coins.
-- After about six rows the list scrolls.
-
-Its rows are the [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) item: options can also carry a description, a badge or a social logo.
-
-## States
-
-### Default
-Empty: the label sits inside the field as the placeholder.
-
-<Canvas of={SelectStories.Default} />
-
-### Filled
-With a value, the label stays above the field.
-
-<Canvas of={SelectStories.Filled} />
-
-### Hovered
-Pointer over the field: a light fill and a darker border.
-
-<Canvas of={SelectStories.Hovered} />
-
-### Active
-Focused or open: the darkest border, and the label turns dark.
-
-<Canvas of={SelectStories.Active} />
-
-### Keyboard focus
-
-Tab or Shift+Tab shows the blue focus ring. Clicking or tapping activates the control without the ring; typing after a click keeps the Active appearance.
-
-Keyboard focus adds the system blue ring.
-
-<Canvas of={SelectStories.Focused} />
-
-### Error
-A red border and an error message, which replaces the hint. Screen readers read the message with the field.
-
-<Canvas of={SelectStories.ErrorState} />
-
-### Disabled
-Not available right now: grey fill, text and icons, no interaction.
-
-<Canvas of={SelectStories.Disabled} />
-
-## Floating label
-
-<Canvas of={SelectStories.FloatingLabel} />
-
-From the left:
-
-1. **Empty.** The label is the placeholder: it sits inside the field, in the placeholder colour.
-2. **Focused or open.** The label moves above the field and turns dark.
-3. **Filled.** The label stays above while the field has a value.
+- **Default:** empty; the label sits inside as the placeholder and floats above on focus.
+- **Filled:** the label stays above.
+- **Hovered:** a light fill and a darker border.
+- **Active** (focused or open): the darkest border and a dark label; see the examples.
+- **Error:** a red border, and the message replaces the hint.
+- **Disabled:** grey fill and text, no interaction.
 
 The floating label **takes no vertical space**: leave 22px above every field in a form layout.
 
-## Multi-select
-
-<Canvas of={SelectStories.Multiple} />
-
-With `multiple`, the list shows a checkbox on every row and stays open while people choose. The field lists the chosen
-options with commas, **in the order they were chosen**; when they don't fit, the rest is summed up
-(*Payman, Stripe and 4 others*) and the summary updates as the field resizes. A clear button empties the choice.
-
-## Long lists, loading and no results
-
-- Up to **9 rows** show without scrolling; with 10 or more the list scrolls.
-- With **more than 10 options** a search row appears by itself (Figma guidelines); `searchable` turns it on or off.
-- While the options load (`loading`), the list shows grey rows (Figma *Skeleton*):
-
-<Canvas of={SelectStories.Loading} />
-
-- When the search finds nothing, the list says *There are no search results* (Figma *Empty*).
-
 ## Accessibility
 
-- The field is a combobox named by its label, with an expanded state and the highlighted option announced while moving with the arrow keys.
-- Enter, Space or ↓ open the list; ↑ ↓ move, Enter chooses, Escape closes. With search, typing filters the list.
-- The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the field; the blue ring shows |
+| ↓ or Enter or Space | Opens the list |
+| ↑ ↓ | Moves through the options |
+| Enter | Chooses the option (in a multi-select, ticks it and keeps the list open) |
+| Escape | Closes the list and keeps focus on the field |
+| Typing | Filters the list when there is a search row |
+
+- The field is a combobox named by its label; the option under the arrow keys is announced.
+- The hint and the error are read with the field; an error also marks it as invalid.
 - Pictures are decorative: the option names say what is chosen.
-- Keyboard focus adds the system blue ring, including while the list or its search input is focused. The dark Active border continues to show the field's focus state.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[
     { figma: 'Type', prop: 'type', values: 'Common, Country, User, Payment method, Coin → common, country, user, payment, coin' },
     { figma: 'Size', prop: 'size', values: 'lg-44px, md-40px, sm-32px → lg, md, sm' },
-    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered and Active follow the pointer, focus and the list; Error → error; Disabled → disabled' },
-    { figma: 'Filled', prop: 'value / defaultValue', values: 'on when an option is chosen' },
+    { figma: 'State', prop: '(behaviour) · error · disabled', values: 'Hovered and Active follow the pointer, focus and the list; Error → error; Disabled → disabled' },
+    { figma: 'Filled', prop: 'value · defaultValue · values', values: 'on when an option is chosen' },
     { figma: 'Top · Floating label', prop: 'label · floatingLabel', values: 'text; floats by default' },
     { figma: 'Star · Text · Icon (label)', prop: 'required · optional · info', values: 'boolean · true or text · text behind the info button' },
     { figma: 'Icon', prop: 'icon · emptyIcon', values: 'shows the picture · the icon of an empty Common select' },
     { figma: 'Hint text', prop: 'hint · error', values: 'text; an error replaces the hint' },
-    { figma: 'Dropdown (examples)', prop: 'options · searchable', values: 'the list; a search row at the top' },
+    { figma: 'Dropdown (examples)', prop: 'options · searchable · multiple · loading', values: 'the list; search; checkboxes; skeleton' },
   ]}
 />
 

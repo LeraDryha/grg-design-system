@@ -3,9 +3,6 @@ import './DocBlocks.css';
 
 /* Building blocks for component docs pages (see instructions.md, "Component page"). */
 
-const FIGMA_FILE = 'https://www.figma.com/design/r3E5XdifyoiiNeuj7mOjBk/';
-export const figmaUrl = (node: string) => `${FIGMA_FILE}?node-id=${node}`;
-
 const STATUS = {
   ready: 'Ready',
   'in-progress': 'In progress',
@@ -14,29 +11,25 @@ const STATUS = {
 
 export type ComponentHeaderProps = {
   status: keyof typeof STATUS;
-  /** Figma node of the component set, as in the URL: "73-3711" */
+  /** Figma node of the component set, as in the URL: "73-3711". For maintainers only: the design file belongs
+   *  to the company and is never linked from the public Storybook. Its frames are shown in the Design tab. */
   figma: string;
-  /** Figma node of the usage guidelines */
+  /** Figma node of the usage guidelines (maintainers only, not linked) */
   guidelines?: string;
+  /** The page's stories have a Design tab with the Figma frames */
+  designTab?: boolean;
   /** The PrimeReact component it is built on */
   builtOn?: string;
   /** Other docs pages: parts it uses, or related components to see */
   related?: { label: string; href: string; relation?: 'Uses' | 'See also' }[];
 };
 
-/** The line under a component's title: status, Figma links, what it is built on. */
-export function ComponentHeader({ status, figma, guidelines, builtOn, related = [] }: ComponentHeaderProps) {
+/** The line under a component's title: status, where the design lives, what it is built on. */
+export function ComponentHeader({ status, designTab = false, builtOn, related = [] }: ComponentHeaderProps) {
   return (
     <div className="sb-unstyled doc-header">
       <span className="doc-status" data-status={status}>{STATUS[status]}</span>
-      <a className="doc-chip" href={figmaUrl(figma)} target="_blank" rel="noreferrer">
-        Component in Figma <span aria-hidden="true">↗</span>
-      </a>
-      {guidelines && (
-        <a className="doc-chip" href={figmaUrl(guidelines)} target="_blank" rel="noreferrer">
-          Usage guidelines <span aria-hidden="true">↗</span>
-        </a>
-      )}
+      <span className="doc-chip doc-chip--quiet">Designed in Figma{designTab ? ': see the Design tab of each story' : ''}</span>
       {builtOn && <span className="doc-chip doc-chip--quiet">Built on {builtOn}</span>}
       {related.map(r => (
         <a key={r.href} className="doc-chip" href={r.href} target="_top">
