@@ -3,7 +3,7 @@ import { SelectButton } from 'primereact/selectbutton';
 import { ButtonGroupItemContent, type ButtonGroupItemProps } from './ButtonGroupItem';
 import './ButtonGroup.css';
 
-export type ButtonGroupEntry = Pick<ButtonGroupItemProps, 'label' | 'leftIcon' | 'rightIcon' | 'iconOnly' | 'disabled' | 'previewState' | 'aria-label'> & { id: string };
+export type ButtonGroupEntry = Pick<ButtonGroupItemProps, 'label' | 'leftIcon' | 'rightIcon' | 'iconOnly' | 'disabled' | 'aria-label'> & { id: string };
 export type ButtonGroupValue = string | null;
 export type ButtonGroupProps = Omit<ComponentPropsWithoutRef<'div'>, 'children' | 'onSelect' | 'defaultValue' | 'unselectable'> & {
   /** Figma Quantity: array length; source variants contain 2–6 items. */
@@ -45,7 +45,6 @@ export function ButtonGroup({ items, size = 'md', value, defaultValue = null, al
       return {
         className: 'grg-button-group-item', 'data-size': size, 'data-side': side(items.indexOf(item)),
         'data-icon-only': item.iconOnly || undefined,
-        'data-preview-state': item.previewState === 'default' ? undefined : item.previewState,
         'data-selected': context.selected || undefined,
         'aria-label': item['aria-label'] || item.label,
         onFocus: event => {

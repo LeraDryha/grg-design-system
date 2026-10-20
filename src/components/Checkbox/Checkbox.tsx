@@ -38,8 +38,6 @@ export type CheckboxProps = {
   value?: string;
   className?: string;
   ref?: Ref<HTMLInputElement>;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -49,7 +47,7 @@ export type CheckboxProps = {
  */
 export function Checkbox({
   checked: controlled, defaultChecked = false, onChange, indeterminate = false, size = 'sm', destructive = false, invalid = false,
-  disabled, required, 'aria-label': ariaLabel, 'aria-describedby': describedBy, id, name, value, className = '', ref, previewState = 'default',
+  disabled, required, 'aria-label': ariaLabel, 'aria-describedby': describedBy, id, name, value, className = '', ref,
 }: CheckboxProps) {
   const [local, setLocal] = useState(defaultChecked);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -92,7 +90,6 @@ export function Checkbox({
           'data-state': shape,
           'data-destructive': destructive || invalid || undefined,
           'data-disabled': disabled || undefined,
-          'data-preview-state': previewState === 'default' ? undefined : previewState,
         } as object,
         input: { className: 'grg-checkbox__input', 'aria-checked': indeterminate ? 'mixed' : undefined, 'aria-invalid': invalid || undefined } as object,
         box: { className: 'grg-checkbox__box' },

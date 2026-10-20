@@ -27,8 +27,7 @@
 .grg-compact-select[data-size='sm'] .grg-compact-select__box { --cs-pad-y: var(--space-150); --cs-pad-x: var(--space-200); --cs-radius: var(--radius-sm-8); }
 
 /* States (Figma State) */
-.grg-compact-select:not([data-disabled]) .grg-compact-select__box:where(:hover),
-.grg-compact-select[data-preview-state='hover'] .grg-compact-select__box { --cs-bg: var(--bg-weak-100); --cs-border: var(--stroke-strong-500); }
+.grg-compact-select:not([data-disabled]) .grg-compact-select__box:where(:hover) { --cs-bg: var(--bg-weak-100); --cs-border: var(--stroke-strong-500); }
 .grg-compact-select[data-open] .grg-compact-select__box { --cs-bg: var(--surface-floating); --cs-border: var(--stroke-stronger-900); }
 .grg-compact-select[data-invalid] .grg-compact-select__box { --cs-border: var(--error-base-600); }
 .grg-compact-select[data-disabled] .grg-compact-select__box {
@@ -38,8 +37,7 @@
   cursor: default;
 }
 /* Keep the keyboard ring while focus is in the control or its search panel, including when open. */
-.grg-compact-select[data-keyboard-navigation]:not([data-disabled]):has(:focus-visible) .grg-compact-select__box,
-.grg-compact-select[data-preview-state='focus']:not([data-disabled]) .grg-compact-select__box { box-shadow: var(--focus-ring); }
+.grg-compact-select[data-keyboard-navigation]:not([data-disabled]):has(:focus-visible) .grg-compact-select__box { box-shadow: var(--focus-ring); }
 
 .grg-compact-select__value { display: flex; align-items: center; }
 .grg-compact-select__value > .grg-icon { color: var(--icon-base-500); }

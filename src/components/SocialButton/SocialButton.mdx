@@ -8,6 +8,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 <ComponentHeader
   figma="68-17758"
+  designTab
   builtOn="PrimeReact Button"
   related={[
     { label: 'Social icons', href: '?path=/docs/foundations-icons-social-icons--docs', relation: 'Uses' },
@@ -20,7 +21,9 @@ A social button signs people in or up with a Google, Facebook or Apple account. 
 <Canvas of={SocialButtonStories.Playground} />
 <Controls of={SocialButtonStories.Playground} include={['social', 'iconOnly', 'children', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<SocialButton social="google" onClick={signInWithGoogle} />
+```
 
 ## When to use
 
@@ -37,79 +40,60 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={SocialButtonStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** a 44px tall frame with a 1px border; the border carries the state.
-2. **Logo:** the Brand social icon, 24px. Google and Facebook keep their colours; the black Apple logo turns white on the dark theme.
-3. **Button label:** *Sign in with Google* by default, as in Figma. Change it where the action differs: *Sign up with Google*, *Continue with Apple*.
+### Sign up
+
+<Canvas of={SocialButtonStories.SignUp} />
+
+In forms the buttons take the width of the form and stack, as in the Figma sign-up examples. The label says the action: *Sign up with Google* here, *Sign in with Google* (the Figma text) by default.
+
+### Logo only
+
+<Canvas of={SocialButtonStories.LogoOnly} />
+
+A 44 × 44 square (Figma *Icon button*). The label isn't visible, but screen readers still hear it as the button's name.
+
+### Unavailable
+
+<Canvas of={SocialButtonStories.Unavailable} />
+
+Figma has no disabled variant. The code uses the system's disabled colours (`text-disabled-400`, `icon-disabled-400`, `stroke-disabled`); the button is natively disabled, so Tab skips it.
+
+## Design decisions
+
+- **Logos keep their brand colours.** Google and Facebook keep theirs; the black Apple logo turns white on the dark theme, so it stays visible.
+- **The logo is decorative.** Screen readers skip it; the label says which account it is.
+- **States are behaviour, not props.** The border darkens on hover (`stroke-strong-500`) and press (`stroke-stronger-900`); keyboard focus shows the system blue ring.
 
 ## Accounts
 
 <Canvas of={SocialButtonStories.Accounts} />
 
-From the left: **Google**, **Facebook** and **Apple**.
-
-## Content
-
-<Canvas of={SocialButtonStories.Content} />
-
-From the left:
-
-- **With a label:** the default. People read which account they use.
-- **Logo only (Figma Icon button):** a 44 × 44 square. Screen readers still hear the label.
-
-## Full width
-
-<Canvas of={SocialButtonStories.FullWidth} />
-
-In forms the buttons take the width of the form and stack, as in the Figma sign-up examples: put them in a column, and each button fills it.
-
-## States
-
-### Default
-At rest.
-
-<Canvas of={SocialButtonStories.Default} />
-
-### Hovered
-Pointer over the button: the border turns `stroke-strong-500`.
-
-<Canvas of={SocialButtonStories.Hovered} />
-
-### Pressed
-While the button is pressed: the border turns `stroke-stronger-900`. In Figma this state is called Active.
-
-<Canvas of={SocialButtonStories.Pressed} />
-
-### Focused
-Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
-
-<Canvas of={SocialButtonStories.Focused} />
-
-### Disabled
-
-Unavailable actions use `text-disabled-400`, `icon-disabled-400` and `stroke-disabled`. Native disabled prevents activation and removes the button from the Tab order. Hover and pressed styles do not apply.
-
-<Canvas of={SocialButtonStories.Disabled} />
+Show all supported accounts together, in the same content and width. Don't mix buttons with and without labels in one group.
 
 ## Accessibility
 
-- It is a real button: screen readers call it a button, Enter and Space press it.
-- The label names the account and the action. A logo-only button gets the same label as its accessible name.
-- The logo is decorative: screen readers skip it, the label says which account it is.
-- Focus uses the system blue ring.
-- Disabled is a code extension using the system's semantic disabled tokens; Figma has no dedicated variant.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the button; the blue ring shows |
+| Enter or Space | Presses the button |
+
+- It is a real button: screen readers call it a button.
+- The label names the account and the action. A logo-only button gets the same label as its name.
 
 ## Figma and code
+
+The Figma component is in the **Design** tab of every story. Figma has no guidelines page for it.
 
 <PropsMapping
   rows={[
     { figma: 'Social', prop: 'social', values: 'Google, Facebook, Apple → google, facebook, apple' },
     { figma: 'Icon button', prop: 'iconOnly', values: 'on, off → true, false' },
-    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered, Active, Focused follow the pointer and keyboard' },
-    { figma: '—', prop: 'disabled', values: 'native disabled behaviour and semantic disabled colours' },
+    { figma: 'State', prop: '(behaviour)', values: 'Hovered, Active, Focused follow the pointer and keyboard' },
+    { figma: '—', prop: 'disabled', values: 'not in Figma: native disabled and the system disabled colours' },
     { figma: 'Text', prop: 'children', values: 'the label; Sign in with … by default' },
   ]}
 />

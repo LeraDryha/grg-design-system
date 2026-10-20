@@ -1,8 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { expect, within } from 'storybook/test';
 import { Link, type LinkProps } from './Link';
 import { baseIconNames } from '../../icons/names';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/link/link-component.png';
+import guidelinesFrame from '../../assets/design/link/link-guidelines.png';
 
 const iconOptions = [undefined, ...baseIconNames.filter(n => n !== 'loading')];
 
@@ -12,6 +14,13 @@ const meta = {
   tags: ['ready'],
   component: Link,
   // The docs page is Link.mdx
+  parameters: {
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: {
     children: 'Link button',
     href: '#',
@@ -21,7 +30,6 @@ const meta = {
     rightIcon: 'maximize',
     external: false,
     disabled: false,
-    previewState: 'default',
   },
   argTypes: {
     children: { control: 'text', description: 'Label (Figma Text)' },
@@ -29,7 +37,6 @@ const meta = {
     size: { control: 'inline-radio', options: ['md', 'sm', 'xs'] },
     leftIcon: { control: 'select', options: iconOptions, labels: { undefined: 'none' } },
     rightIcon: { control: 'select', options: iconOptions, labels: { undefined: 'none' } },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     onClick: { action: 'clicked', control: false },
     ref: { control: false, table: { disable: true } },
   },
@@ -38,71 +45,64 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const row: CSSProperties = { display: 'flex', alignItems: 'center', gap: 'var(--space-800)' };
-
 /** Edit everything in Controls. */
 export const Playground: Story = {};
 
-/** Container, icon and label, numbered as in the Figma guidelines. */
-export const Anatomy: Story = {
-  render: (args: LinkProps) => (
-    <AnatomyBlock
-      width="auto"
-      markers={[
-        { n: 1, target: '.grg-link', side: 'left' },
-        { n: 2, target: '.grg-link .grg-icon', side: 'top' },
-        { n: 3, target: '.grg-link > span:not(.grg-icon)', side: 'bottom' },
-      ]}
-    >
-      <Link {...args} />
-    </AnatomyBlock>
-  ),
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Documentation in a new tab: the external icon, and screen readers hear that a tab opens. */
+export const OpenExternalDocs: Story = {
+  name: 'Open external docs',
+  args: { children: 'API references', href: 'https://example.com/docs', external: true, rightIcon: 'maximize' },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: /api references.*opens in a new tab/i });
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
+  },
 };
 
-/** Text only and text with an icon. */
-export const Content: Story = {
+/** View all, in a card: the Blue link stands out from the content around it. */
+export const ViewAllInACard: Story = {
+  name: 'View all in a card',
+  args: { children: 'View all invoices', color: 'blue', size: 'sm', rightIcon: undefined },
   render: (args: LinkProps) => (
-    <div style={row}>
-      <Link {...args} rightIcon={undefined} />
-      <Link {...args} />
+    <div style={{ display: 'grid', gap: 'var(--space-300)', width: 300, padding: 'var(--space-500)', border: '1px solid var(--stroke-soft-200)', borderRadius: 'var(--radius-lg-12)' }}>
+      <span style={{ font: 'var(--typo-body-md-semibold)', color: 'var(--text-strong-1000)' }}>Recent invoices</span>
+      <span style={{ font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>3 invoices waiting for payment</span>
+      <span><Link {...args} /></span>
     </div>
   ),
 };
 
-/** Black and Blue, from the left. */
+/** Not available yet: no address, announced as unavailable and skipped by Tab. */
+export const Unavailable: Story = {
+  args: { children: 'Download statement', disabled: true, rightIcon: undefined },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByText('Download statement').closest('a')!;
+    await expect(link).not.toHaveAttribute('href');
+    await expect(link).toHaveAttribute('aria-disabled', 'true');
+  },
+};
+
+/* ---- Overview ---- */
+
+/** Black (underlined) and Blue. */
 export const Colors: Story = {
   render: (args: LinkProps) => (
-    <div style={row}>
-      <Link {...args} color="black" />
-      <Link {...args} color="blue" />
-    </div>
+    <Showcase>
+      <Variant caption="Black (default)"><Link {...args} color="black" /></Variant>
+      <Variant caption="Blue"><Link {...args} color="blue" /></Variant>
+    </Showcase>
   ),
 };
 
-/** md-24, sm-20 and xs-16, from the left. */
+/** md-24, sm-20 and xs-16. */
 export const Sizes: Story = {
   render: (args: LinkProps) => (
-    <div style={row}>
-      <Link {...args} size="md" />
-      <Link {...args} size="sm" />
-      <Link {...args} size="xs" />
-    </div>
+    <Showcase>
+      <Variant caption="md · 24px"><Link {...args} size="md" /></Variant>
+      <Variant caption="sm · 20px"><Link {...args} size="sm" /></Variant>
+      <Variant caption="xs · 16px"><Link {...args} size="xs" /></Variant>
+    </Showcase>
   ),
 };
-
-/* ---- States: one story each ---- */
-
-/** At rest. */
-export const Default: Story = {};
-
-/** Pointer over the link: the underline gets darker. */
-export const Hovered: Story = { args: { previewState: 'hover' } };
-
-/** While the link is pressed (Figma State: Active): the darkest underline. */
-export const Pressed: Story = { args: { previewState: 'active' } };
-
-/** Reached with the keyboard: the system focus ring. */
-export const Focused: Story = { args: { previewState: 'focus' } };
-
-/** Not available right now. */
-export const Disabled: Story = { args: { disabled: true } };

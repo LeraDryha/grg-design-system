@@ -225,3 +225,17 @@ export function Anatomy({ markers, width = 320, children }: { markers: AnatomyMa
     </div>
   );
 }
+
+/** Overview stories (types, sizes, colours): the variants side by side, each with a quiet caption under it. */
+export function Showcase({ children, column = false }: { children: ReactNode; column?: boolean }) {
+  return <div className="doc-showcase" data-column={column || undefined}>{children}</div>;
+}
+
+export function Variant({ caption, children }: { caption: ReactNode; children: ReactNode }) {
+  return (
+    <figure className="doc-variant">
+      <div className="doc-variant__stage">{children}</div>
+      <figcaption className="doc-variant__caption">{caption}</figcaption>
+    </figure>
+  );
+}

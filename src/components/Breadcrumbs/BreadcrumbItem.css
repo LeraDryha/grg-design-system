@@ -28,18 +28,16 @@
 .grg-breadcrumb-item__control:is(a, button) { cursor: pointer; }
 .grg-breadcrumb-item__control:is(a, button):hover,
 .grg-breadcrumb-item__control:focus-visible,
-.grg-breadcrumb-item[data-preview-state] .grg-breadcrumb-item__control,
 .grg-breadcrumb-item[data-current] .grg-breadcrumb-item__control { color: var(--text-strong-1000); }
 .grg-breadcrumb-item__control:is(a, button):hover .grg-breadcrumb-item__icon,
 .grg-breadcrumb-item__control:focus-visible .grg-breadcrumb-item__icon,
-.grg-breadcrumb-item:is([data-preview-state], [data-current]) .grg-breadcrumb-item__icon { color: var(--icon-strong-1000); }
+.grg-breadcrumb-item[data-current] .grg-breadcrumb-item__icon { color: var(--icon-strong-1000); }
 .grg-breadcrumb-item[data-current] .grg-breadcrumb-item__control {
   font: var(--typo-body-md-medium);
   letter-spacing: var(--typo-body-md-medium-tracking);
 }
 .grg-breadcrumb-item[data-current] .grg-breadcrumb-item__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.grg-breadcrumb-item__control:focus-visible,
-.grg-breadcrumb-item[data-preview-state='focus'] .grg-breadcrumb-item__control { outline: none; box-shadow: var(--focus-ring); }
+.grg-breadcrumb-item__control:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* A 24px target without adding padding to Figma's 20px row. */
 .grg-breadcrumb-item__control:is(a, button, [tabindex='0'])::before {

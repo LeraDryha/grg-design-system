@@ -9,6 +9,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 <ComponentHeader
   figma="73-3711"
   guidelines="422-71016"
+  designTab
   builtOn="PrimeReact InputText"
   related={[{ label: 'Form Field', href: '?path=/docs/components-form-field--docs' }]}
 />
@@ -17,9 +18,11 @@ A one-line text field with a label, an optional hint and extra information on th
 Seven types cover the data the products ask for: plain text, phone numbers, websites, card numbers, amounts, dates and values with an action.
 
 <Canvas of={InputStories.Playground} />
-<Controls of={InputStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'disabled', 'leftIcon', 'previewState']} />
+<Controls of={InputStories.Playground} include={['type', 'size', 'label', 'hint', 'error', 'required', 'disabled', 'leftIcon']} />
 
-All props are listed at the end of the page.
+```tsx
+<Input label="Email" inputType="email" hint="We send the receipt to this address" onValueChange={setEmail} />
+```
 
 ## When to use
 
@@ -36,22 +39,61 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={InputStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once.
 
-1. **Container:** the field frame. Its border and fill show the state: hovered, active, error, disabled.
-2. **Label:** what the field asks for. Inside the empty field it works as the placeholder, then floats above.
-3. **Required asterisk:** the field must be filled before the form can be sent.
-4. **Additional text (optional):** a short note after the label, such as *(Optional)*.
-5. **Info button (optional):** more context about the field, without taking space in the form.
-6. **Placeholder:** where the person types; shows the label or an example until there is a value.
-7. **Icon:** marks the hint; turns red together with an error.
-8. **Hint text (optional):** help or the expected format, such as *Passwords must contain at least 8 characters*. An error message replaces it.
-9. **Top Key: Value (optional):** extra information about the field, such as a balance or a limit.
-10. **Bottom Value (optional):** a value under the field, such as a character count or a fee.
+### Sign in
 
-Label, hint and Key: value are shared with Select and Text Area: see [Form Field](?path=/docs/components-form-field--docs).
+<Canvas of={InputStories.SignIn} />
+
+The password field is the Button type with a reveal action. *Show password* turns into *Hide password* and is announced as pressed.
+
+### Check an email
+
+<Canvas of={InputStories.CheckAnEmail} />
+
+The error appears after people try to send the form, not while they are still typing. It replaces the hint, turns the border red, and screen readers read it with the field.
+
+### Format as you type
+
+<Canvas of={InputStories.FormatAsYouType} />
+
+Card numbers fall into groups of four, an amount takes digits and one decimal point, a date becomes DD / MM / YYYY. On phones these fields open the number keyboard.
+
+### Phone number
+
+<Canvas of={InputStories.PhoneNumber} />
+
+The country code is its own select ([Inline Select](?path=/docs/components-inline-select--docs)) with flags from [Country icons](?path=/docs/foundations-icons-country-icons--docs). The number takes digits and spaces only.
+
+### Copy a referral link
+
+<Canvas of={InputStories.CopyAReferralLink} />
+
+A read-only value with a copy button. Copying is announced as *Copied*.
+
+### Unavailable
+
+<Canvas of={InputStories.Unavailable} />
+
+`disabled` when the whole field is unavailable, with a hint that says why. `readOnly` keeps the value available for focus, selection and copying (see the example above).
+
+### Controlled by a form
+
+<Canvas of={InputStories.ControlledByAForm} />
+
+The field supports standard React `value` + `onChange`, as well as the simpler `onValueChange`. Typing and the clear button both update the form.
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **The floating label is a real label.** Inside the empty field it works as the placeholder, then floats above on focus or with a value. It stays the field's name for screen readers the whole time. It **takes no vertical space**: leave 22px above every field in a form layout.
+- **Focus ring for the keyboard only.** Tab shows the blue ring; a click or tap shows the dark Active border without the ring.
+- **Formatting in the field.** Card, amount, date and phone values are cleaned up while typing, so the form receives what it expects.
+- **States are behaviour, not props.** Hovered and Active follow the pointer and focus; try them in any example. Error and disabled are props, and each has its own example.
+- **One frame for every field.** Label, hint and Key: value are shared with Select and Text Area: see [Form Field](?path=/docs/components-form-field--docs).
 
 ## Types
 
@@ -59,116 +101,47 @@ All types share the same frame, sizes and states; they differ in what sits aroun
 
 <Canvas of={InputStories.Types} />
 
-- **Common:** standard text or numbers without extra logic. Name, title, city, address, comment, username.
-- **Phone:** a country code select, then the number. Contact phone, SMS verification number.
-- **Website:** a URL or domain after a protocol prefix (http / https). Website, company site.
-- **Card:** a card number in groups of four, with the payment method. Card number, payment details.
-- **Amount:** a number with a currency select. Invoice amount, transfer amount, fee, limit.
-- **Date:** a date in DD / MM / YYYY. Due date, birth date, start and end dates.
-- **Button:** a value with an action button. Copy a referral link, reveal a password.
-
-Flags and coins come from [Country icons](?path=/docs/foundations-icons-country-icons--docs) and [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
-
-### Card: payment methods
+- **Common:** standard text or numbers. Name, title, city, address, username.
+- **Phone:** a country code select, then the number.
+- **Website:** a URL or domain after a protocol prefix (http / https).
+- **Card:** a card number in groups of four, with the payment method.
+- **Amount:** a number with a currency select. Coins come from [Coin icons](?path=/docs/foundations-icons-coin-icons--docs).
+- **Date:** a date in DD / MM / YYYY.
+- **Button:** a value with an action button: copy a referral link, reveal a password.
 
 <Canvas of={InputStories.CardPaymentMethods} />
 
-The Card field shows the card's payment method on the right, from [Payment method icons](?path=/docs/foundations-icons-payment-method-icons--docs):
-Visa, Mastercard, American Express, Discover, UnionPay and JCB here. Screen readers hear its name.
+The Card field shows the card's payment method from [Payment method icons](?path=/docs/foundations-icons-payment-method-icons--docs). Screen readers hear its name.
 
 ## Sizes
 
 <Canvas of={InputStories.Sizes} />
 
-From the top:
-
-- **lg-44:** 12px paddings, 10px corners. Forms with few fields, sign-up and payment screens.
-- **md-40:** 10px paddings, 10px corners. The default for product forms.
-- **sm-32:** 6px top and bottom, 8px on the sides, 8px corners. Dense screens: filters, tables, toolbars.
-
-Text (Body-md 14/20) and icons (20px) stay the same in every size.
-
-## States
-
-### Default
-Empty: the label sits inside the field as the placeholder.
-
-<Canvas of={InputStories.Default} />
-
-### Filled
-With a value, the label stays above the field.
-
-<Canvas of={InputStories.Filled} />
-
-### Hovered
-Pointer over the field: a light fill and a darker border.
-
-<Canvas of={InputStories.Hovered} />
-
-### Active
-Focused: the darkest border, and the label turns dark. With a value, a clear button appears.
-
-<Canvas of={InputStories.Active} />
-
-### Keyboard focus
-
-Tab or Shift+Tab shows the blue focus ring. Clicking or tapping activates the control without the ring; typing after a click keeps the Active appearance.
-
-Keyboard focus adds the system blue ring.
-
-<Canvas of={InputStories.Focused} />
-
-### Error
-A red border and an error message, which replaces the hint. Screen readers read the message with the field.
-
-<Canvas of={InputStories.ErrorState} />
-
-### Disabled
-Not available right now: grey fill and text, no interaction.
-
-<Canvas of={InputStories.Disabled} />
-
-## Floating label
-
-<Canvas of={InputStories.FloatingLabel} />
-
-From the left:
-
-1. **Empty.** The label is the placeholder: it sits inside the field, in the placeholder colour.
-2. **Focused.** The label moves above the field and turns dark; the field is ready for typing.
-3. **Filled.** The label stays above while the field has a value. Clearing the field brings it back inside.
-
-The floating label **takes no vertical space**: leave 22px above every field in a form layout.
-
-## Form integration
-
-The Common input supports standard React `value` + `onChange`, as well as the simpler `onValueChange` callback. Typing and clearing both update the form.
-
-<Canvas of={InputStories.Controlled} />
-
-`readOnly` keeps the value available for focus, selection and copying, but prevents editing and hides the clear button. Use `disabled` when the whole control is unavailable.
-
-<Canvas of={InputStories.ReadOnly} />
-
-The label's info button shows help on hover, keyboard focus or tap. Escape dismisses the help without moving focus.
+lg-44 for forms with few fields (sign-up, payment), md-40 by default, sm-32 on dense screens (filters, tables, toolbars).
+Text (Body-md 14/20) and icons (20px) stay the same in every size; only paddings and corners change.
 
 ## Accessibility
 
-- The label is a real `<label>` connected to the field, so it stays the field's name even while it is shown as the placeholder.
-- The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`, so screen readers read it with the field.
-- Every button in the field has a name: *Clear*, *Copy referral link*, *Show password* (with `aria-pressed`). Copying is announced as *Copied*.
-- The country and coin selects are comboboxes with a name, an expanded state and the highlighted option announced while moving with the arrow keys.
-- Keyboard focus adds the system blue ring around the field. Buttons inside the field have their own blue ring. The dark Active border continues to show the field's focus state.
-- Phone, card, amount and date fields open the number keyboard on phones.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus into the field, then to each button in it; the blue ring shows |
+| Escape | Closes the info help without moving focus |
+| ↑ ↓ (country, coin) | Move through the options of the select |
+
+- The hint and the error are connected with `aria-describedby`; an error also sets `aria-invalid`.
+- Every button in the field has a name: *Clear*, *Copy referral link*, *Show password* (with `aria-pressed`).
+- The country and coin selects are comboboxes with a name; the highlighted option is announced.
 - Colours follow Figma. In the dark theme the prefix and unit text (`icon-base-500`) reach about 3.8:1 on the surface, below the 4.5:1 for text.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[
     { figma: 'Type', prop: 'type', values: 'Common, Phone, Website, Card, Amount, Date, Button → common … button' },
     { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
-    { figma: 'State', prop: '(behaviour) · previewState', values: 'Hovered and Active follow the pointer and focus; Error → error; Disabled → disabled' },
+    { figma: 'State', prop: '(behaviour) · error · disabled', values: 'Hovered and Active follow the pointer and focus; Error → error; Disabled → disabled' },
     { figma: 'Filled', prop: 'value / defaultValue', values: 'on when the field has a value' },
     { figma: 'Top · Label', prop: 'label · floatingLabel', values: 'text; floats by default' },
     { figma: 'Star · Text · Icon (label)', prop: 'required · optional · info', values: 'boolean · true or text · text behind the info button' },

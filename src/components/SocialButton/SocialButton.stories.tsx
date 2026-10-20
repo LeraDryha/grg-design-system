@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { expect, fn, userEvent, within } from 'storybook/test';
 import { SocialButton, type SocialButtonProps } from './SocialButton';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/social-button/social-button-component.png';
+
+const ACCOUNTS = ['google', 'facebook', 'apple'] as const;
+const NAMES = { google: 'Google', facebook: 'Facebook', apple: 'Apple' };
 
 const meta = {
   title: 'Components/Social Button',
@@ -9,13 +13,16 @@ const meta = {
   tags: ['ready'],
   component: SocialButton,
   // The docs page is SocialButton.mdx
-  args: { social: 'google', iconOnly: false, disabled: false, children: undefined, previewState: 'default' },
+  parameters: {
+    // The Design tab: the Figma component as an image (the company's file isn't linked publicly; Figma has no guidelines page)
+    design: [{ name: 'Component', type: 'image', url: componentFrame }],
+  },
+  args: { social: 'google', iconOnly: false, disabled: false, children: undefined },
   argTypes: {
-    social: { control: 'inline-radio', options: ['google', 'facebook', 'apple'] },
+    social: { control: 'inline-radio', options: ACCOUNTS },
     iconOnly: { control: 'boolean' },
     disabled: { control: 'boolean' },
     children: { control: 'text', description: 'Label; "Sign in with …" (the Figma text) by default' },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     onClick: { action: 'clicked', control: false },
     ref: { control: false, table: { disable: true } },
   },
@@ -24,72 +31,67 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const row: CSSProperties = { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-400)' };
-
 /** Edit everything in Controls. */
 export const Playground: Story = {};
 
-/** Container, logo and label. */
-export const Anatomy: Story = {
-  render: (args: SocialButtonProps) => (
-    <AnatomyBlock
-      width="auto"
-      markers={[
-        { n: 1, target: '.grg-social-button', side: 'left' },
-        { n: 2, target: '.grg-social-button .grg-social-icon', side: 'top' },
-        { n: 3, target: '.grg-social-button__label', side: 'bottom' },
-      ]}
-    >
-      <SocialButton {...args} />
-    </AnatomyBlock>
-  ),
-};
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
 
-/** Google, Facebook and Apple, from the left. */
-export const Accounts: Story = {
+/** Sign up: every supported account, full width and stacked, as in the Figma sign-up examples. */
+export const SignUp: Story = {
+  name: 'Sign up',
+  args: { onClick: fn() },
   render: (args: SocialButtonProps) => (
-    <div style={row}>
-      <SocialButton {...args} social="google" />
-      <SocialButton {...args} social="facebook" />
-      <SocialButton {...args} social="apple" />
+    <div style={{ display: 'grid', gap: 'var(--space-200)', width: 'min(376px, 100%)' }}>
+      {ACCOUNTS.map(social => <SocialButton key={social} {...args} social={social}>Sign up with {NAMES[social]}</SocialButton>)}
     </div>
   ),
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Sign up with Apple' }));
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
 };
 
-/** With a label and logo only (Figma Icon button), from the left. */
-export const Content: Story = {
+/** Logo only, where space is tight: the buttons still have their names for screen readers. */
+export const LogoOnly: Story = {
+  name: 'Logo only',
   render: (args: SocialButtonProps) => (
-    <div style={row}>
+    <div style={{ display: 'flex', gap: 'var(--space-300)' }}>
+      {ACCOUNTS.map(social => <SocialButton key={social} {...args} social={social} iconOnly />)}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    for (const name of ['Google', 'Facebook', 'Apple']) await expect(canvas.getByRole('button', { name: `Sign in with ${name}` })).toBeVisible();
+  },
+};
+
+/** Not available right now, for example while the account service is down. Not in Figma: the system's disabled colours. */
+export const Unavailable: Story = {
+  args: { disabled: true },
+  render: (args: SocialButtonProps) => (
+    <div style={{ display: 'flex', gap: 'var(--space-300)' }}>
       <SocialButton {...args} />
       <SocialButton {...args} iconOnly />
     </div>
   ),
+  play: async ({ canvasElement }) => {
+    for (const button of within(canvasElement).getAllByRole('button')) await expect(button).toBeDisabled();
+  },
 };
 
-/** Full width, stacked, as in the sign-up form. */
-export const FullWidth: Story = {
+/* ---- Overview ---- */
+
+/** Google, Facebook and Apple, with a label and logo only. */
+export const Accounts: Story = {
   render: (args: SocialButtonProps) => (
-    <div style={{ display: 'grid', gap: 'var(--space-200)', width: 'min(376px, 100%)' }}>
-      <SocialButton {...args} social="facebook" />
-      <SocialButton {...args} social="google" />
-      <SocialButton {...args} social="apple" />
-    </div>
+    <Showcase>
+      {ACCOUNTS.map(social => (
+        <Variant key={social} caption={NAMES[social]}>
+          <SocialButton {...args} social={social} />
+          <SocialButton {...args} social={social} iconOnly />
+        </Variant>
+      ))}
+    </Showcase>
   ),
 };
-
-/* ---- States: one story each ---- */
-
-/** At rest. */
-export const Default: Story = {};
-
-/** Pointer over the button: a darker border. */
-export const Hovered: Story = { args: { previewState: 'hover' } };
-
-/** While the button is pressed (Figma State: Active): the darkest border. */
-export const Pressed: Story = { args: { previewState: 'active' } };
-
-/** Reached with the keyboard: the system focus ring. */
-export const Focused: Story = { args: { previewState: 'focus' } };
-
-/** Disabled for all providers, with text and icon-only variants. */
-export const Disabled: Story = { args: { disabled: true }, render: args => <div style={row}>{(['google', 'facebook', 'apple'] as const).map(social => <div key={social} style={row}><SocialButton {...args} social={social} /><SocialButton {...args} social={social} iconOnly /></div>)}</div> };

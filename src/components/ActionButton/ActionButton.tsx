@@ -12,14 +12,12 @@ export type ActionButtonProps = Omit<ComponentPropsWithRef<'button'>, 'children'
   size?: 'md' | 'sm' | 'xs';
   /** Figma Color: Grey, Blue, Red */
   color?: 'grey' | 'blue' | 'red';
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 const ICON_SIZE = { md: 24, sm: 20, xs: 16 } as const;
 
 /** PrimeReact Button (unstyled); the look comes from ActionButton.css and the tokens. */
-export function ActionButton({ icon, size = 'md', color = 'grey', previewState = 'default', type = 'button', className = '', ref, ...props }: ActionButtonProps) {
+export function ActionButton({ icon, size = 'md', color = 'grey', type = 'button', className = '', ref, ...props }: ActionButtonProps) {
   return (
     <PrimeButton
       // PrimeReact 10 types Button as a class, but at runtime the ref receives the <button> element
@@ -28,7 +26,6 @@ export function ActionButton({ icon, size = 'md', color = 'grey', previewState =
       className={`grg-action-button ${className}`}
       data-size={size}
       data-color={color}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
       {...props}
     >
       <Icon name={icon} size={ICON_SIZE[size]} />

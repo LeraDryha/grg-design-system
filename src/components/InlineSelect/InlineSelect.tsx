@@ -29,8 +29,6 @@ export type InlineSelectProps = {
   noResults?: string;
   disabled?: boolean;
   className?: string;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -39,7 +37,7 @@ export type InlineSelectProps = {
  */
 export function InlineSelect({
   options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'country', searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
-  disabled, className = '', 'aria-label': label, previewState = 'default',
+  disabled, className = '', 'aria-label': label,
 }: InlineSelectProps) {
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -55,8 +53,7 @@ export function InlineSelect({
       className={`grg-inline-select ${className}`}
       data-type={type}
       data-disabled={disabled || undefined}
-      data-open={open || previewState === 'active' || undefined}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
+      data-open={open || undefined}
       ref={rootRef}
     >
       <Dropdown

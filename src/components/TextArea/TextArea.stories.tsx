@@ -1,8 +1,12 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { useState, type CSSProperties } from 'react';
+import { useState, type FormEvent } from 'react';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { TextArea, type TextAreaProps } from './TextArea';
 import { CharacterCounter } from './CharacterCounter';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Button } from '../Button/Button';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/text-area/text-area-component.png';
+import guidelinesFrame from '../../assets/design/text-area/text-area-guidelines.png';
 
 const MESSAGE =
   'Text Area component, an efficient way to collect multi-line feedback, offers distinct states and the option to add a label, counter, hint text, and more.';
@@ -16,7 +20,14 @@ const meta = {
   tags: ['ready'],
   component: TextArea,
   // The docs page is TextArea.mdx
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: {
     size: 'lg',
     label: 'Message',
@@ -29,11 +40,9 @@ const meta = {
     maxLength: 200,
     resizable: true,
     disabled: false,
-    previewState: 'default',
   },
   argTypes: {
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     onValueChange: { action: 'value changed', control: false },
     onChange: { action: 'native change', control: false },
@@ -47,115 +56,124 @@ type Story = StoryObj<typeof meta>;
 /** Edit everything in Controls. Click the field to see the label float; type up to 200 characters to see the limit. */
 export const Playground: Story = { decorators: [field] };
 
-/** Standard form integration: the native onChange updates the application's value. */
-export const Controlled: Story = {
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Feedback with a limit: the counter follows the text, and the browser stops typing at the limit. */
+export const WriteFeedback: Story = {
+  name: 'Write feedback',
+  decorators: [field],
+  args: { label: 'Your feedback', maxLength: 40, hint: 'What could we do better?' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const area = canvas.getByLabelText('Your feedback');
+    await userEvent.type(area, 'The payment page could load faster.');
+    await expect(canvas.getByText('35/40')).toBeVisible();
+    await userEvent.type(area, ' Thanks a lot!');
+    await expect(area).toHaveValue('The payment page could load faster. Than');
+    await expect(canvas.getByText('40/40')).toBeVisible();
+  },
+};
+
+/** A required message: the error appears when the form is sent empty, and goes once people write. */
+export const RequiredInAForm: Story = {
+  name: 'Required in a form',
+  render: function RequiredInAForm(args: TextAreaProps) {
+    const [value, setValue] = useState('');
+    const [sent, setSent] = useState(false);
+    const submit = (event: FormEvent) => {
+      event.preventDefault();
+      setSent(true);
+    };
+    return (
+      <form onSubmit={submit} noValidate style={{ display: 'grid', gap: 'var(--space-600)', width: 320, paddingTop: 'var(--space-600)' }}>
+        <TextArea {...args} label="Reason for the refund" required value={value} onValueChange={setValue} error={sent && !value ? 'This field is required' : ''} />
+        <Button type="submit" variant="primary">Send request</Button>
+      </form>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Send request' }));
+    const area = canvas.getByLabelText(/reason for the refund/i);
+    await expect(await canvas.findByText('This field is required')).toBeVisible();
+    await expect(area).toHaveAttribute('aria-invalid', 'true');
+    await userEvent.type(area, 'Charged twice');
+    await waitFor(() => expect(canvas.queryByText('This field is required')).toBeNull());
+  },
+};
+
+/** Make it taller: drag the handle at the bottom right, or Tab to it and use the arrow keys. */
+export const ResizeWithTheKeyboard: Story = {
+  name: 'Resize with the keyboard',
+  decorators: [field],
+  args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 190) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const handle = canvas.getByRole('separator', { name: 'Resize text area' });
+    const before = Number(handle.getAttribute('aria-valuenow'));
+    handle.focus();
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}');
+    await waitFor(() => expect(Number(handle.getAttribute('aria-valuenow'))).toBe(before + 40));
+    await userEvent.keyboard('{End}');
+    await waitFor(() => expect(handle).toHaveAttribute('aria-valuenow', '400'));
+  },
+};
+
+/** Saved text over the limit: shown with an error, never cut without asking. */
+export const SavedTextOverTheLimit: Story = {
+  name: 'Saved text over the limit',
+  decorators: [field],
+  args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 214) },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByText('Character limit exceeded.')).toBeVisible();
+    await expect(canvas.getByRole('textbox')).toHaveValue(`${MESSAGE} ${MESSAGE}`.slice(0, 214));
+  },
+};
+
+/** Not available right now: grey fill, text and counter, no interaction. */
+export const Unavailable: Story = { decorators: [field], args: { disabled: true, defaultValue: MESSAGE } };
+
+/** A parent form owns the value through the standard onChange. */
+export const ControlledByAForm: Story = {
+  name: 'Controlled by a form',
   decorators: [field],
   args: { maxLength: 20 },
   render: function Controlled(args) {
     const [value, setValue] = useState('');
     return <><TextArea {...args} value={value} onChange={event => { setValue(event.target.value); args.onChange?.(event); }} /><output aria-live="polite">Form value: {value || 'Empty'}</output></>;
   },
-};
-
-/** Every part of the field, numbered as in the Figma guidelines. */
-export const Anatomy: Story = {
-  args: {
-    floatingLabel: false,
-    required: true,
-    optional: true,
-    info: 'We read every message.',
-    placeholder: 'Placeholder',
-    topKey: 'Key',
-    topValue: 'Value',
-    hint: 'This is a hint text to help user.',
-    bottomValue: 'Value',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.type(canvas.getByLabelText('Message'), 'Hello');
+    await expect(canvas.getByText('Form value: Hello')).toBeVisible();
   },
-  render: (args: TextAreaProps) => (
-    <AnatomyBlock
-      markers={[
-        { n: 1, target: '.grg-textarea__box', side: 'right' },
-        { n: 2, target: '.grg-field-label__name', side: 'top' },
-        { n: 3, target: '.grg-field-label__star', side: 'top' },
-        { n: 4, target: '.grg-field-label__extra', side: 'top' },
-        { n: 5, target: '.grg-field-label__info', side: 'top' },
-        { n: 6, target: '.grg-textarea__control', side: 'left' },
-        { n: 7, target: '.grg-hint .grg-icon', side: 'bottom' },
-        { n: 8, target: '.grg-hint > span:last-child', side: 'bottom' },
-        { n: 9, target: '.grg-field__top .grg-key-value', side: 'top' },
-        { n: 10, target: '.grg-field__bottom .grg-key-value', side: 'bottom' },
-        { n: 11, target: '.grg-counter', side: 'bottom' },
-        { n: 12, target: '.grg-textarea__resize', side: 'right' },
-      ]}
-    >
-      <TextArea {...args} />
-    </AnatomyBlock>
-  ),
 };
 
-/** Fields one under another, with room for each label */
-const column: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' };
+/* ---- Overview ---- */
 
-/** lg, md and sm, from the top. Only the paddings change. */
+/** lg, md and sm. Only the paddings change. */
 export const Sizes: Story = {
   render: (args: TextAreaProps) => (
-    <div style={column}>
-      {(['lg', 'md', 'sm'] as const).map(size => <TextArea key={size} {...args} size={size} defaultValue={MESSAGE} />)}
+    <div style={{ width: 320, paddingTop: 'var(--space-600)' }}>
+      <Showcase column>
+        {(['lg', 'md', 'sm'] as const).map(size => (
+          <Variant key={size} caption={{ lg: 'lg · 44px base', md: 'md · 40px base', sm: 'sm · 32px base' }[size]}>
+            <div style={{ width: '100%' }}><TextArea {...args} size={size} defaultValue={MESSAGE} /></div>
+          </Variant>
+        ))}
+      </Showcase>
     </div>
   ),
 };
 
-/** Drag the handle at the bottom right down to make the field taller, and back up; or focus it with Tab and use the arrow keys. */
-export const Resizing: Story = { decorators: [field], args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 190) } };
-
-/** The counter on its own: Default, Error and Disabled, from the left. */
+/** The counter on its own: Default, Error and Disabled. */
 export const Counter: Story = {
   render: () => (
-    <div style={{ display: 'flex', gap: 'var(--space-800)' }}>
-      <CharacterCounter count={153} max={200} />
-      <CharacterCounter count={214} max={200} state="error" />
-      <CharacterCounter count={153} max={200} state="disabled" />
-    </div>
-  ),
-};
-
-/* ---- States: one story each, as is usual in Storybook ---- */
-
-/** Empty: the label sits inside as the placeholder. */
-export const Default: Story = { decorators: [field] };
-
-/** With a value: the label stays above, the counter shows the length. */
-export const Filled: Story = { decorators: [field], args: { defaultValue: MESSAGE } };
-
-/** Pointer over the field: a light fill and a darker border. */
-export const Hovered: Story = {
-  decorators: [field],
-  args: { previewState: 'hover', defaultValue: MESSAGE },
-  // Known contrast note: the Figma counter grey on the hover fill is below 4.5:1. Listed in the Accessibility panel, not failed, until the colour is decided in Figma
-  parameters: { a11y: { test: 'todo' } },
-};
-
-/** Focused: the darkest border, the label floats and turns dark. */
-export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: MESSAGE } };
-
-/** Keyboard focus: system blue ring. */
-export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: MESSAGE } };
-
-/** Red border, message and counter. Empty and required, as in Figma. */
-export const ErrorState: Story = { name: 'Error', decorators: [field], args: { required: true, error: 'This field is required' } };
-
-/** An existing application value over the limit: it is shown with an error, without silently truncating saved text. */
-export const OverLimit: Story = { decorators: [field], args: { defaultValue: `${MESSAGE} ${MESSAGE}`.slice(0, 214) } };
-
-/** Not available: grey fill and text, no interaction. */
-export const Disabled: Story = { decorators: [field], args: { disabled: true, defaultValue: MESSAGE } };
-
-/** Empty, focused, filled. What happens at each step is described on the docs page. */
-export const FloatingLabel: Story = {
-  render: (args: TextAreaProps) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
-      <TextArea {...args} />
-      <TextArea {...args} previewState="focus" />
-      <TextArea {...args} defaultValue={MESSAGE} />
-    </div>
+    <Showcase>
+      <Variant caption="Default"><CharacterCounter count={153} max={200} /></Variant>
+      <Variant caption="Error"><CharacterCounter count={214} max={200} state="error" /></Variant>
+      <Variant caption="Disabled"><CharacterCounter count={153} max={200} state="disabled" /></Variant>
+    </Showcase>
   ),
 };

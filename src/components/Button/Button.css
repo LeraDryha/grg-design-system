@@ -83,15 +83,12 @@
 .grg-button[data-variant='text'] { --btn-bg: transparent; --btn-bg-hover: var(--tone-ghost-hover); --btn-bg-active: var(--tone-ghost-active); --btn-fg: var(--tone-fg); }
 
 /* ---- States (Figma State) ---- */
-.grg-button:hover:not(:disabled, [data-loading]),
-.grg-button[data-preview-state='hover'] { background: var(--btn-bg-hover); }
+.grg-button:hover:not(:disabled, [data-loading]) { background: var(--btn-bg-hover); }
 
-.grg-button:active:not(:disabled, [data-loading]),
-.grg-button[data-preview-state='active'] { background: var(--btn-bg-active); }
+.grg-button:active:not(:disabled, [data-loading]) { background: var(--btn-bg-active); }
 
 /* Focused: the system focus ring (src/styles/system.css) */
-.grg-button:focus-visible,
-.grg-button[data-preview-state='focus'] {
+.grg-button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }

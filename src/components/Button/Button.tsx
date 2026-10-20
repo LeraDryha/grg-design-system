@@ -23,8 +23,6 @@ export type ButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & {
   justified?: boolean;
   /** HTML button type */
   type?: 'button' | 'submit' | 'reset';
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 const ICON_SIZE = { xlg: 24, lg: 24, md: 20, sm: 20, xs: 16 } as const;
@@ -39,7 +37,6 @@ export function Button({
   iconOnly = false,
   loading = false,
   justified = false,
-  previewState = 'default',
   type = 'button',
   className = '',
   children,
@@ -61,7 +58,6 @@ export function Button({
       data-icon-only={iconOnly || undefined}
       data-loading={loading || undefined}
       data-justified={justified || undefined}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
       aria-busy={loading || undefined}
       {...props}
       loading={loading}

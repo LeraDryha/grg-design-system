@@ -34,17 +34,13 @@
 .grg-checkbox__icon { display: none; }
 
 /* Empty: grey ring, darker on hover, black while pressed */
-.grg-checkbox:hover,
-.grg-checkbox[data-preview-state='hover'] { --cb-color: var(--stroke-strong-500); }
-.grg-checkbox:active,
-.grg-checkbox[data-preview-state='active'] { --cb-color: var(--primary-base-1000); }
+.grg-checkbox:hover { --cb-color: var(--stroke-strong-500); }
+.grg-checkbox:active { --cb-color: var(--primary-base-1000); }
 
 /* Checked or indeterminate: filled, lighter on hover, lighter still while pressed */
 .grg-checkbox:is([data-state='checked'], [data-state='indeterminate']) { --cb-color: var(--primary-base-1000); }
-.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):hover,
-.grg-checkbox:is([data-state='checked'], [data-state='indeterminate'])[data-preview-state='hover'] { --cb-color: var(--primary-darker-800); }
-.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):active,
-.grg-checkbox:is([data-state='checked'], [data-state='indeterminate'])[data-preview-state='active'] { --cb-color: var(--primary-dark-700); }
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):hover { --cb-color: var(--primary-darker-800); }
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):active { --cb-color: var(--primary-dark-700); }
 
 /* Destructive: red in every state */
 .grg-checkbox[data-destructive],
@@ -56,8 +52,7 @@
 .grg-checkbox[data-disabled]:is([data-state='checked'], [data-state='indeterminate']) { --cb-color: var(--bg-soft-200); }
 
 /* Keyboard focus: the system ring (Figma draws a 4px primary-soft-200 frame, hard to see) */
-.grg-checkbox:has(.grg-checkbox__input:focus-visible),
-.grg-checkbox[data-preview-state='focus'] { box-shadow: var(--focus-ring); }
+.grg-checkbox:has(.grg-checkbox__input:focus-visible) { box-shadow: var(--focus-ring); }
 
 @media (prefers-reduced-motion: reduce) {
   .grg-checkbox__box { transition: none; }

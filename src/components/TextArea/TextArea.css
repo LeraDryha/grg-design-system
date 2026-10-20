@@ -34,11 +34,9 @@
 .grg-textarea__box[data-size='sm'] { --ta-pad-y: var(--space-150); --ta-pad-x: var(--space-200); }
 
 /* States (Figma State) */
-.grg-textarea__box:where(:hover):not([data-disabled]),
-.grg-textarea__box[data-preview-state='hover'] { --ta-bg: var(--bg-weak-100); --ta-border: var(--stroke-strong-500); }
+.grg-textarea__box:where(:hover):not([data-disabled]) { --ta-bg: var(--bg-weak-100); --ta-border: var(--stroke-strong-500); }
 .grg-textarea__box[data-focused] { --ta-bg: transparent; --ta-border: var(--stroke-stronger-900); }
-.grg-textarea__box:not([data-disabled]):has(.grg-textarea__control[data-keyboard-navigation]:focus-visible),
-.grg-textarea__box[data-preview-state='focus']:not([data-disabled]) { box-shadow: var(--focus-ring); }
+.grg-textarea__box:not([data-disabled]):has(.grg-textarea__control[data-keyboard-navigation]:focus-visible) { box-shadow: var(--focus-ring); }
 .grg-textarea__box[data-invalid] { --ta-border: var(--error-base-600); }
 .grg-textarea__box[data-disabled] {
   --ta-bg: var(--bg-weak-100);

@@ -30,13 +30,10 @@
 .grg-link[data-color='blue'] { --link-color: var(--info-base-600); }
 
 /* States: Black darkens its underline; Blue keeps its look, as in Figma */
-.grg-link:hover:not([aria-disabled]),
-.grg-link[data-preview-state='hover'] { --link-line: var(--stroke-strong-500); }
-.grg-link:active:not([aria-disabled]),
-.grg-link[data-preview-state='active'] { --link-line: var(--stroke-stronger-900); }
+.grg-link:hover:not([aria-disabled]) { --link-line: var(--stroke-strong-500); }
+.grg-link:active:not([aria-disabled]) { --link-line: var(--stroke-stronger-900); }
 
-.grg-link:focus-visible,
-.grg-link[data-preview-state='focus'] {
+.grg-link:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }

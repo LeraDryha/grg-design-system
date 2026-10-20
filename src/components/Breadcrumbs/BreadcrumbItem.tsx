@@ -18,13 +18,11 @@ export type BreadcrumbItemProps = {
   showLabel?: boolean;
   /** Figma State Current: the current page, with Medium text and aria-current. */
   current?: boolean;
-  /** Figma Default, Hovered, Focused: static documentation only; live links follow interaction. */
-  previewState?: 'default' | 'hover' | 'focus';
   className?: string;
 };
 
 /** The reusable Breadcrumb item. PrimeReact BreadCrumb uses it through its item template. */
-export function BreadcrumbItem({ label, href, onNavigate, icon = 'home', showLabel = true, current = false, previewState = 'default', className = '' }: BreadcrumbItemProps) {
+export function BreadcrumbItem({ label, href, onNavigate, icon = 'home', showLabel = true, current = false, className = '' }: BreadcrumbItemProps) {
   const root = useRef<HTMLSpanElement>(null);
   const text = useRef<HTMLSpanElement>(null);
   const tooltip = useRef<Tooltip>(null);
@@ -62,7 +60,7 @@ export function BreadcrumbItem({ label, href, onNavigate, icon = 'home', showLab
   </>;
   const common = { className: 'grg-breadcrumb-item__control', 'aria-label': !visibleLabel ? label : undefined };
 
-  return <span ref={root} className={`grg-breadcrumb-item ${className}`} data-current={current || undefined} data-preview-state={previewState === 'default' ? undefined : previewState}>
+  return <span ref={root} className={`grg-breadcrumb-item ${className}`} data-current={current || undefined}>
     {current
       ? <span {...common} role={!visibleLabel ? 'img' : undefined} aria-current="page" tabIndex={truncated ? 0 : undefined}
           aria-describedby={truncated && tooltipOpen ? tooltipId : undefined}

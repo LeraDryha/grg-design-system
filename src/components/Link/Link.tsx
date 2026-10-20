@@ -20,8 +20,6 @@ export type LinkProps = Omit<ComponentPropsWithRef<'a'>, 'color'> & {
   externalLabel?: string;
   /** Not available: no navigation, announced as unavailable */
   disabled?: boolean;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 const ICON_SIZE = { md: 24, sm: 20, xs: 16 } as const;
@@ -41,7 +39,6 @@ export function Link({
   external = false,
   externalLabel = '(opens in a new tab)',
   disabled = false,
-  previewState = 'default',
   className = '',
   children,
   onClick,
@@ -68,7 +65,6 @@ export function Link({
       aria-disabled={disabled || undefined}
       data-color={color}
       data-size={size}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
       onClick={handleClick}
     >
       {leftIcon && <Icon name={leftIcon} size={iconSize} />}

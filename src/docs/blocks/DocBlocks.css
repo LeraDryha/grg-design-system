@@ -141,3 +141,17 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
   font: var(--typo-caption-sm-semibold);
   pointer-events: none;
 }
+
+/* Showcase: variants side by side, captions under them */
+.doc-showcase {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: center;
+  gap: var(--space-800);
+}
+.doc-showcase[data-column] { flex-direction: column; align-items: stretch; }
+.doc-variant { display: grid; justify-items: center; gap: var(--space-300); margin: 0; }
+.doc-showcase[data-column] .doc-variant { justify-items: stretch; }
+.doc-variant__stage { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-400); }
+.doc-variant__caption { font: var(--typo-body-sm-regular); color: var(--text-soft-500); text-align: center; }

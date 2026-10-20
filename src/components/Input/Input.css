@@ -35,11 +35,9 @@
 .grg-input__box[data-type='card'] { padding-block: calc(var(--in-pad-y) - var(--space-050) - 1px); }
 
 /* States (Figma State) */
-.grg-input__box:where(:hover):not([data-disabled]),
-.grg-input__box[data-preview-state='hover'] { --in-bg: var(--bg-weak-100); --in-border: var(--stroke-strong-500); }
+.grg-input__box:where(:hover):not([data-disabled]) { --in-bg: var(--bg-weak-100); --in-border: var(--stroke-strong-500); }
 .grg-input__box[data-focused] { --in-bg: transparent; --in-border: var(--stroke-stronger-900); }
-.grg-input__box:not([data-disabled]):has(.grg-input__control[data-keyboard-navigation]:focus-visible),
-.grg-input__box[data-preview-state='focus']:not([data-disabled]) { box-shadow: var(--focus-ring); }
+.grg-input__box:not([data-disabled]):has(.grg-input__control[data-keyboard-navigation]:focus-visible) { box-shadow: var(--focus-ring); }
 .grg-input__box[data-invalid] { --in-border: var(--error-base-600); --in-trailing: var(--error-base-600); }
 .grg-input__box[data-disabled] {
   --in-bg: var(--bg-weak-100);

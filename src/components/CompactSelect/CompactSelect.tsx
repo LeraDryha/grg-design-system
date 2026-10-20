@@ -30,8 +30,6 @@ export type CompactSelectProps = {
   id?: string;
   name?: string;
   className?: string;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -41,7 +39,7 @@ export type CompactSelectProps = {
 export function CompactSelect({
   options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'default', size = 'md', 'aria-label': label,
   searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
-  invalid, disabled, id: suppliedId, name, className = '', previewState = 'default',
+  invalid, disabled, id: suppliedId, name, className = '',
 }: CompactSelectProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
@@ -61,8 +59,7 @@ export function CompactSelect({
       data-size={size}
       data-invalid={invalid || undefined}
       data-disabled={disabled || undefined}
-      data-open={open || previewState === 'active' || undefined}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
+      data-open={open || undefined}
     >
       <Dropdown
         inputId={id}

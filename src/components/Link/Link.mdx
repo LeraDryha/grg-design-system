@@ -9,6 +9,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 <ComponentHeader
   figma="132-3886"
   guidelines="73-2606"
+  designTab
   builtOn="native link (a)"
   related={[{ label: 'Button', href: '?path=/docs/components-button--docs', relation: 'See also' }]}
 />
@@ -18,7 +19,9 @@ A link takes people to another page, view or external resource. In Figma it is c
 <Canvas of={LinkStories.Playground} />
 <Controls of={LinkStories.Playground} include={['children', 'href', 'color', 'size', 'rightIcon', 'external', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<Link href="/invoices">View all invoices</Link>
+```
 
 ## When to use
 
@@ -35,84 +38,64 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={LinkStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** the link area. The Black link has a 1px line under the whole container.
-2. **Icon (optional):** before or after the label. Use the standard Base icons; their size follows the link size (16, 20 or 24px). Use *maximize* for links that open an external resource. Social, country or coin icons need to be agreed first.
-3. **Button label:** where the link goes, in a few words: *View all invoices*, *API references*.
+### Open external docs
 
-## Content
+<Canvas of={LinkStories.OpenExternalDocs} />
 
-<Canvas of={LinkStories.Content} />
+With `external`, the link opens in a new tab, shows the *maximize* icon, and screen readers hear *(opens in a new tab)* after the label.
 
-From the left: **text only** and **text with an icon**.
+### View all in a card
 
-## Colours
+<Canvas of={LinkStories.ViewAllInACard} />
+
+The Blue link stands out from the card's content without an underline: the colour marks it as a link.
+
+### Unavailable
+
+<Canvas of={LinkStories.Unavailable} />
+
+A disabled link has no address and is marked `aria-disabled`, since links have no disabled state of their own; Tab skips it.
+
+## Design decisions
+
+- **A real link, not a button.** PrimeReact has no link component, so this is a native `<a href>`: screen readers call it a link, Enter follows it, and the browser can open it in a new tab or copy its address.
+- **Focus you can see.** Figma draws a light rounded frame (`primary-soft-200` for Black, `info-light-200` for Blue); the code uses the system blue ring, only for keyboard focus.
+- **A 24px target.** The smaller sizes keep a 24px tall touch area.
+- **States are behaviour, not props.** The Black link's underline darkens on hover and press; the Blue link keeps its look, as in Figma.
+
+## Colours and sizes
 
 <Canvas of={LinkStories.Colors} />
 
-From the left:
-
-- **Black:** the default, with an underline that gets darker on hover and press.
-- **Blue:** links that need to stand out from the surrounding content, such as *View details* in a card. No underline: the colour marks it as a link.
-
-## Sizes
+**Black** is the default, with an underline that gets darker on hover and press. **Blue** is for links that need to stand out from the content around them.
 
 <Canvas of={LinkStories.Sizes} />
 
-From the left:
-
-- **md-24:** Body-lg/Semibold label (16/24), 24px icon.
-- **sm-20:** Body-md/Semibold label (14/20), 20px icon.
-- **xs-16:** Body-sm/Semibold label (12/16), 16px icon.
-
-The smaller sizes keep a 24px tall touch area.
-
-## States
-
-### Default
-At rest.
-
-<Canvas of={LinkStories.Default} />
-
-### Hovered
-Pointer over the link: the Black link's underline gets darker. The Blue link keeps its look, as in Figma.
-
-<Canvas of={LinkStories.Hovered} />
-
-### Pressed
-While the link is pressed: the darkest underline. In Figma this state is called Active.
-
-<Canvas of={LinkStories.Pressed} />
-
-### Focused
-Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
-
-<Canvas of={LinkStories.Focused} />
-
-### Disabled
-Not available right now: grey label and icon, no navigation.
-
-<Canvas of={LinkStories.Disabled} />
+md-24 with a Body-lg/Semibold label, sm-20 with Body-md/Semibold, xs-16 with Body-sm/Semibold. The icon follows the size (24, 20 or 16px).
 
 ## Accessibility
 
-- It is a real link (`<a href>`): screen readers call it a link, Enter follows it, and the browser can open it in a new tab or copy its address.
-- With `external`, it opens in a new tab and screen readers hear *(opens in a new tab)* after the label.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the link; the blue ring shows |
+| Enter | Follows the link |
+
 - The label says where the link goes. Avoid *Click here* or *Read more* without context.
-- A disabled link has no address and is marked `aria-disabled`, since links have no disabled state of their own; it is skipped by Tab.
-- Focus uses the system blue ring. Figma draws a light rounded frame (`primary-soft-200` for Black, `info-light-200` for Blue), which keyboard users can barely see.
 - The Blue link has no hover or pressed change in Figma; people still see the pointer cursor.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[
     { figma: 'Color', prop: 'color', values: 'Black, Blue → black, blue' },
     { figma: 'Size', prop: 'size', values: 'md-24, sm-20, xs-16 → md, sm, xs' },
-    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
+    { figma: 'State', prop: '(behaviour) · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
     { figma: 'Left icon · Right icon', prop: 'leftIcon · rightIcon', values: 'icon name; maximize for external links' },
     { figma: 'Text', prop: 'children', values: 'the label' },
     { figma: '—', prop: 'href · external', values: 'the address; external opens a new tab' },

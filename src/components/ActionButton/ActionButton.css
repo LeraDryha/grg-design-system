@@ -22,14 +22,11 @@
 .grg-action-button[data-color='blue'] { --ab-color: var(--info-base-600); --ab-hover: var(--info-subtle-500); --ab-active: var(--info-subtle-500); }
 .grg-action-button[data-color='red'] { --ab-color: var(--error-base-600); --ab-hover: var(--error-strong-700); --ab-active: var(--error-stronger-800); }
 
-.grg-action-button:hover:not(:disabled),
-.grg-action-button[data-preview-state='hover'] { color: var(--ab-hover); }
+.grg-action-button:hover:not(:disabled) { color: var(--ab-hover); }
 
-.grg-action-button:active:not(:disabled),
-.grg-action-button[data-preview-state='active'] { color: var(--ab-active); }
+.grg-action-button:active:not(:disabled) { color: var(--ab-active); }
 
-.grg-action-button:focus-visible,
-.grg-action-button[data-preview-state='focus'] {
+.grg-action-button:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
 }

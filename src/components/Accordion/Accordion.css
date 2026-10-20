@@ -49,14 +49,11 @@
 .grg-accordion__leading-icon { color: var(--icon-base-500); }
 .grg-accordion[data-chevron-position='after'] .grg-accordion__chevron { order: 2; }
 
-.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:hover),
-.grg-accordion[data-preview-state='hover'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-strong-500); }
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:hover) { --accordion-stroke: var(--stroke-strong-500); }
 /* Pointer focus remains after a click; it must not keep the pressed border active. */
-.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:active),
-.grg-accordion[data-preview-state='active'] .grg-accordion__item:not([data-disabled]) { --accordion-stroke: var(--stroke-stronger-900); }
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:active) { --accordion-stroke: var(--stroke-stronger-900); }
 
-.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:focus-visible),
-.grg-accordion[data-preview-state='focus'] .grg-accordion__item:not([data-disabled]) {
+.grg-accordion__item:not([data-disabled]):has(.grg-accordion__toggle:focus-visible) {
   --accordion-stroke: var(--stroke-stronger-900);
   box-shadow: var(--focus-ring);
 }

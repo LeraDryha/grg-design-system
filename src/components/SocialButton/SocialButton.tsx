@@ -12,8 +12,6 @@ export type SocialButtonProps = Omit<ComponentPropsWithRef<'button'>, 'type'> & 
   /** Square button with the logo only (Figma Icon button = on). Screen readers still hear the label. */
   iconOnly?: boolean;
   type?: 'button' | 'submit';
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -25,7 +23,6 @@ export function SocialButton({
   social,
   iconOnly = false,
   disabled = false,
-  previewState = 'default',
   type = 'button',
   className = '',
   children,
@@ -41,7 +38,6 @@ export function SocialButton({
       disabled={disabled}
       className={`grg-social-button ${className}`}
       data-icon-only={iconOnly || undefined}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
       aria-label={iconOnly && typeof label === 'string' ? label : undefined}
       {...props}
     >

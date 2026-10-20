@@ -70,8 +70,6 @@ export type InputProps = Omit<ComponentPropsWithRef<'input'>, 'size' | 'type' | 
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /** Card: groups of 4 digits. Date: DD / MM / YYYY. Phone: digits and spaces. Amount: digits and one decimal point. */
@@ -97,7 +95,7 @@ export function Input({
   countries = [], country, onCountryChange, countryLabel = 'Country code',
   coins = [], coin, onCoinChange, coinLabel = 'Currency',
   paymentMethod, paymentLabel,
-  value: controlled, defaultValue = '', onValueChange, previewState = 'default',
+  value: controlled, defaultValue = '', onValueChange,
   id: suppliedId, disabled, readOnly, placeholder, className = '', onFocus, onBlur, onChange, 'aria-describedby': describedBy, ref, ...props
 }: InputProps) {
   const generatedId = useId();
@@ -110,7 +108,7 @@ export function Input({
   const [revealed, setRevealed] = useState(false);
   const [status, setStatus] = useState('');
   const value = controlled ?? local;
-  const isFocused = focused || previewState === 'active' || previewState === 'focus';
+  const isFocused = focused;
   const filled = value !== '';
 
   function setValue(next: string) {
@@ -214,7 +212,6 @@ export function Input({
         data-invalid={error ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
-        data-preview-state={previewState === 'default' ? undefined : previewState}
         onFocus={handleFocus}
         onBlur={handleBlur}
       >

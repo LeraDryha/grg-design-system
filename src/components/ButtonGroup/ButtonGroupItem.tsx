@@ -18,15 +18,13 @@ export type ButtonGroupItemProps = Omit<ComponentPropsWithRef<'button'>, 'childr
   iconOnly?: boolean;
   /** Persistent toggle state. The assembled selection group manages this through SelectButton. */
   selected?: boolean;
-  /** Figma State Default, Hovered, Active: static previews; Disabled uses the native disabled prop. */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /** PrimeReact Button with the geometry and tokens of the Button group item set. */
-export function ButtonGroupItem({ label, size = 'md', side = 'left', leftIcon = 'plus', rightIcon = 'plus', iconOnly = false, selected, previewState = 'default', type = 'button', className = '', ref, 'aria-label': ariaLabel, ...props }: ButtonGroupItemProps) {
+export function ButtonGroupItem({ label, size = 'md', side = 'left', leftIcon = 'plus', rightIcon = 'plus', iconOnly = false, selected, type = 'button', className = '', ref, 'aria-label': ariaLabel, ...props }: ButtonGroupItemProps) {
   return <PrimeButton {...props} unstyled ref={ref as unknown as Ref<PrimeButton>} type={type}
     className={`grg-button-group-item ${className}`} data-size={size} data-side={side}
-    data-icon-only={iconOnly || undefined} data-preview-state={previewState === 'default' ? undefined : previewState}
+    data-icon-only={iconOnly || undefined}
     data-selected={selected || undefined} aria-pressed={selected}
     aria-label={ariaLabel || (iconOnly ? label : undefined)}
   >

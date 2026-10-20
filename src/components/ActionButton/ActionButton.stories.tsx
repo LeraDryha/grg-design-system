@@ -1,8 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import type { CSSProperties } from 'react';
+import { useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ActionButton, type ActionButtonProps } from './ActionButton';
 import { baseIconNames } from '../../icons/names';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/action-button/action-button-component.png';
+import guidelinesFrame from '../../assets/design/action-button/action-button-guidelines.png';
 
 const meta = {
   title: 'Components/Action Button',
@@ -10,13 +13,19 @@ const meta = {
   tags: ['ready'],
   component: ActionButton,
   // The docs page is ActionButton.mdx
-  args: { icon: 'pencil', 'aria-label': 'Edit', size: 'md', color: 'grey', disabled: false, previewState: 'default' },
+  parameters: {
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
+  args: { icon: 'pencil', 'aria-label': 'Edit', size: 'md', color: 'grey', disabled: false },
   argTypes: {
     icon: { control: 'select', options: baseIconNames },
     'aria-label': { control: 'text', description: 'The name screen readers announce, such as "Copy link"' },
     size: { control: 'inline-radio', options: ['md', 'sm', 'xs'] },
     color: { control: 'inline-radio', options: ['grey', 'blue', 'red'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     disabled: { control: 'boolean' },
     onClick: { action: 'clicked', control: false },
     ref: { control: false, table: { disable: true } },
@@ -26,74 +35,88 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const row: CSSProperties = { display: 'flex', alignItems: 'center', gap: 'var(--space-800)' };
+const text = { font: 'var(--typo-body-md-regular)', color: 'var(--text-strong-1000)' };
 
 /** Edit everything in Controls. */
 export const Playground: Story = {};
 
-/** Container and icon, numbered as in the Figma guidelines. */
-export const Anatomy: Story = {
-  render: (args: ActionButtonProps) => (
-    <AnatomyBlock
-      width="auto"
-      markers={[
-        { n: 1, target: '.grg-action-button', side: 'left' },
-        { n: 2, target: '.grg-action-button .grg-icon', side: 'top' },
-      ]}
-    >
-      <ActionButton {...args} />
-    </AnatomyBlock>
-  ),
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Copy a value: the button sits next to what it copies, and says so when it's done. */
+export const CopyAValue: Story = {
+  name: 'Copy a value',
+  render: function CopyAValue(args: ActionButtonProps) {
+    const [copied, setCopied] = useState(false);
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-200)' }}>
+        <span style={text}>TX-4821-9907</span>
+        <ActionButton
+          {...args}
+          size="sm"
+          icon={copied ? 'copy-check' : 'copy'}
+          aria-label="Copy transaction ID"
+          onClick={() => setCopied(true)}
+        />
+        <output aria-live="polite" style={{ font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>
+          {copied ? 'Copied' : ''}
+        </output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Copy transaction ID' }));
+    await waitFor(() => expect(canvas.getByText('Copied')).toBeVisible());
+  },
 };
 
-/** md-24, sm-20 and xs-16, from the left. */
+/** Row actions in a table: quiet icons that say in words what they do. */
+export const RowActions: Story = {
+  name: 'Row actions',
+  args: { onClick: fn() },
+  render: (args: ActionButtonProps) => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-600)', ...text }}>
+      <span style={{ minWidth: 160 }}>Invoice #1042</span>
+      <div style={{ display: 'flex', gap: 'var(--space-300)' }}>
+        <ActionButton {...args} size="sm" icon="pencil" aria-label="Edit invoice #1042" />
+        <ActionButton {...args} size="sm" icon="copy" aria-label="Duplicate invoice #1042" />
+        <ActionButton {...args} size="sm" icon="trash" color="red" aria-label="Delete invoice #1042" />
+      </div>
+    </div>
+  ),
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Keyboard only: Tab moves along the row, Enter runs the action
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'Edit invoice #1042' })).toHaveFocus();
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect(canvas.getByRole('button', { name: 'Delete invoice #1042' })).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledTimes(1);
+  },
+};
+
+/* ---- Overview ---- */
+
+/** md-24, sm-20 and xs-16. */
 export const Sizes: Story = {
   render: (args: ActionButtonProps) => (
-    <div style={row}>
-      <ActionButton {...args} size="md" />
-      <ActionButton {...args} size="sm" />
-      <ActionButton {...args} size="xs" />
-    </div>
+    <Showcase>
+      <Variant caption="md · 24px"><ActionButton {...args} size="md" /></Variant>
+      <Variant caption="sm · 20px"><ActionButton {...args} size="sm" /></Variant>
+      <Variant caption="xs · 16px"><ActionButton {...args} size="xs" /></Variant>
+    </Showcase>
   ),
 };
 
-/** Black (grey), blue and red, from the left. */
+/** Black (grey), blue and red. */
 export const Colors: Story = {
   render: (args: ActionButtonProps) => (
-    <div style={row}>
-      <ActionButton {...args} color="grey" />
-      <ActionButton {...args} color="blue" />
-      <ActionButton {...args} color="red" />
-    </div>
+    <Showcase>
+      <Variant caption="Black (grey)"><ActionButton {...args} color="grey" /></Variant>
+      <Variant caption="Blue"><ActionButton {...args} color="blue" icon="information-circle" aria-label="Details" /></Variant>
+      <Variant caption="Red"><ActionButton {...args} color="red" icon="trash" aria-label="Delete" /></Variant>
+    </Showcase>
   ),
 };
-
-/** Typical actions, from the Figma usage row: edit, copy, more, info, delete. */
-export const Usage: Story = {
-  render: (args: ActionButtonProps) => (
-    <div style={row}>
-      <ActionButton {...args} icon="pencil" aria-label="Edit" />
-      <ActionButton {...args} icon="copy" aria-label="Copy" />
-      <ActionButton {...args} icon="menu-circle-vertical-01" aria-label="More actions" />
-      <ActionButton {...args} icon="information-circle" color="blue" aria-label="Details" />
-      <ActionButton {...args} icon="trash" color="red" aria-label="Delete" />
-    </div>
-  ),
-};
-
-/* ---- States: one story each ---- */
-
-/** At rest. */
-export const Default: Story = {};
-
-/** Pointer over the button: the icon gets darker. */
-export const Hovered: Story = { args: { previewState: 'hover' } };
-
-/** While the button is pressed (Figma State: Active). */
-export const Pressed: Story = { args: { previewState: 'active' } };
-
-/** Reached with the keyboard: the system focus ring. */
-export const Focused: Story = { args: { previewState: 'focus' } };
-
-/** Not available right now. */
-export const Disabled: Story = { args: { disabled: true } };

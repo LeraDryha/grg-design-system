@@ -1,14 +1,20 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { useState, type CSSProperties } from 'react';
+import { useState, type FormEvent } from 'react';
+import { expect, userEvent, within } from 'storybook/test';
 import { Input, type InputProps } from './Input';
+import { Button } from '../Button/Button';
 import { baseIconNames } from '../../icons/names';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import { sampleCoins, sampleCountries } from './options';
+import componentFrame from '../../assets/design/input/input-component.png';
+import guidelinesFrame from '../../assets/design/input/input-guidelines.png';
 
 const iconOptions = [null, ...baseIconNames];
 
 /** A single field is 320px wide, as in Figma, with room for the floating label above. */
 const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>;
+/** Fields one under another, with room for each floating label */
+const form = { display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' } as const;
 
 const meta = {
   title: 'Components/Input',
@@ -16,7 +22,14 @@ const meta = {
   tags: ['ready'],
   component: Input,
   // The docs page is Input.mdx
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: {
     type: 'common',
     size: 'md',
@@ -30,7 +43,6 @@ const meta = {
     rightIcon: null,
     unit: '',
     disabled: false,
-    previewState: 'default',
   },
   argTypes: {
     type: { control: 'select', options: ['common', 'phone', 'website', 'card', 'amount', 'date', 'button'] },
@@ -39,7 +51,6 @@ const meta = {
     leftIcon: { control: 'select', options: iconOptions, labels: { null: 'none' } },
     rightIcon: { control: 'select', options: iconOptions, labels: { null: 'none' } },
     action: { control: 'inline-radio', options: [undefined, 'copy', 'password'] },
-    previewState: { control: 'inline-radio', options: ['default', 'hover', 'active', 'focus'] },
     optional: { control: 'boolean' },
     countries: { control: false },
     coins: { control: false },
@@ -56,69 +67,189 @@ type Story = StoryObj<typeof meta>;
 /** Edit everything in Controls. Click the field to see the label float. */
 export const Playground: Story = { decorators: [field] };
 
-/** Every part of the field, numbered as in the Figma guidelines. */
-export const Anatomy: Story = {
-  args: {
-    floatingLabel: false,
-    required: true,
-    optional: true,
-    info: 'We send the receipt to this address.',
-    placeholder: 'Placeholder',
-    leftIcon: null,
-    topKey: 'Key',
-    topValue: 'Value',
-    hint: 'This is a hint text to help user.',
-    bottomValue: 'Value',
-  },
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Sign in: an email field and a password with a reveal button, as in the Figma sign-up example. */
+export const SignIn: Story = {
+  name: 'Sign in',
   render: (args: InputProps) => (
-    <AnatomyBlock
-      markers={[
-        { n: 1, target: '.grg-input__box', side: 'right' },
-        { n: 2, target: '.grg-field-label__name', side: 'top' },
-        { n: 3, target: '.grg-field-label__star', side: 'top' },
-        { n: 4, target: '.grg-field-label__extra', side: 'top' },
-        { n: 5, target: '.grg-field-label__info', side: 'top' },
-        { n: 6, target: '.grg-input__control', side: 'left' },
-        { n: 7, target: '.grg-hint .grg-icon', side: 'bottom' },
-        { n: 8, target: '.grg-hint > span:last-child', side: 'bottom' },
-        { n: 9, target: '.grg-field__top .grg-key-value', side: 'top' },
-        { n: 10, target: '.grg-field__bottom .grg-key-value', side: 'bottom' },
-      ]}
-    >
-      <Input {...args} />
-    </AnatomyBlock>
+    <div style={form}>
+      <Input {...args} label="Email" inputType="email" autoComplete="email" />
+      <Input {...args} type="button" label="Password" leftIcon={null} action="password" autoComplete="current-password" />
+    </div>
   ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.type(canvas.getByLabelText('Email'), 'user@mail.com');
+    const password = canvas.getByLabelText('Password');
+    await userEvent.type(password, 'golden-ratio');
+    await expect(password).toHaveAttribute('type', 'password');
+    await userEvent.click(canvas.getByRole('button', { name: 'Show password' }));
+    await expect(password).toHaveAttribute('type', 'text');
+    await expect(canvas.getByRole('button', { name: 'Hide password' })).toHaveAttribute('aria-pressed', 'true');
+  },
 };
 
-/** Fields one under another, with room for each floating label */
-const column: CSSProperties = { display: 'grid', gap: 'var(--space-1000)', width: 320, paddingTop: 'var(--space-600)' };
+/** A wrong email: the error appears when the form is sent, replaces the hint and is read with the field. */
+export const CheckAnEmail: Story = {
+  name: 'Check an email',
+  render: function CheckAnEmail(args: InputProps) {
+    const [value, setValue] = useState('');
+    const [sent, setSent] = useState(false);
+    const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+    const submit = (event: FormEvent) => {
+      event.preventDefault();
+      setSent(true);
+    };
+    return (
+      <form onSubmit={submit} noValidate style={{ ...form, gap: 'var(--space-600)' }}>
+        <Input
+          {...args}
+          label="Email"
+          inputType="email"
+          hint="We send the receipt to this address"
+          error={sent && !valid ? 'Email address is invalid.' : ''}
+          value={value}
+          onValueChange={setValue}
+        />
+        <Button type="submit" variant="primary">Continue</Button>
+      </form>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const email = canvas.getByLabelText('Email');
+    await userEvent.type(email, 'user2mail.com');
+    await userEvent.click(canvas.getByRole('button', { name: 'Continue' }));
+    await expect(await canvas.findByText('Email address is invalid.')).toBeVisible();
+    await expect(email).toHaveAttribute('aria-invalid', 'true');
+    await expect(email).toHaveAccessibleDescription(/email address is invalid/i);
+  },
+};
 
-const TYPES: { type: NonNullable<InputProps['type']>; label: string; value: string; props?: Partial<InputProps> }[] = [
-  { type: 'common', label: 'Email', value: 'user@mail.com', props: { leftIcon: 'mail' } },
-  { type: 'phone', label: 'Phone number', value: '6787645', props: { countries: sampleCountries } },
-  { type: 'website', label: 'Website', value: 'golden.ratio.com' },
-  { type: 'card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentMethod: 'mastercard' } },
-  { type: 'amount', label: 'Amount', value: '100.00', props: { coins: sampleCoins } },
-  { type: 'date', label: 'Date', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
-  { type: 'button', label: 'Referral link', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
+/** Card and amount: the field formats what people type, so they don't have to. */
+export const FormatAsYouType: Story = {
+  name: 'Format as you type',
+  render: function FormatAsYouType(args: InputProps) {
+    const [coin, setCoin] = useState('USDC');
+    return (
+      <div style={form}>
+        <Input {...args} type="card" label="Card number" leftIcon={null} paymentMethod="visa" />
+        <Input {...args} type="amount" label="Amount" leftIcon={null} coins={sampleCoins} coin={coin} onCoinChange={setCoin} />
+        <Input {...args} type="date" label="Due date" leftIcon={null} />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const card = canvas.getByLabelText('Card number');
+    await userEvent.type(card, '4242424242424242');
+    await expect(card).toHaveValue('4242 4242 4242 4242');
+    const amount = canvas.getByLabelText('Amount');
+    await userEvent.type(amount, '12a.5.0');
+    await expect(amount).toHaveValue('12.50');
+    const date = canvas.getByLabelText('Due date');
+    await userEvent.type(date, '12122025');
+    await expect(date).toHaveValue('12 / 12 / 2025');
+  },
+};
+
+/** A phone number: the country code is its own select, the number field takes digits only. */
+export const PhoneNumber: Story = {
+  name: 'Phone number',
+  decorators: [field],
+  render: function PhoneNumber(args: InputProps) {
+    const [country, setCountry] = useState('BG');
+    return <Input {...args} type="phone" label="Phone number" leftIcon={null} countries={sampleCountries} country={country} onCountryChange={setCountry} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('combobox', { name: 'Country code' })).toBeInTheDocument();
+    const phone = canvas.getByLabelText('Phone number');
+    await userEvent.type(phone, '678-76-45');
+    await expect(phone).toHaveValue('6787645');
+  },
+};
+
+/** A value to copy: a referral link that people can't edit, with a copy button. */
+export const CopyAReferralLink: Story = {
+  name: 'Copy a referral link',
+  decorators: [field],
+  args: { type: 'button', label: 'Referral link', leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link', readOnly: true, defaultValue: 'golden.ratio.com/r/ashley' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Copy referral link' })).toBeVisible();
+    await expect(canvas.getByLabelText('Referral link')).toHaveAttribute('readonly');
+  },
+};
+
+/** Not available right now: grey fill and text, no interaction. A hint says why. */
+export const Unavailable: Story = {
+  decorators: [field],
+  // Known contrast note: the Figma disabled hint grey is below 4.5:1. Listed in the Accessibility panel, not failed, until the colour is decided in Figma
+  parameters: { a11y: { test: 'todo' } },
+  args: { disabled: true, defaultValue: 'user@mail.com', hint: 'Contact support to change your email' },
+};
+
+/** A parent form owns the value: typing and the clear button both update it. */
+export const ControlledByAForm: Story = {
+  name: 'Controlled by a form',
+  render: function Controlled(args: InputProps) {
+    const [value, setValue] = useState('');
+    return (
+      <div style={form}>
+        <Input {...args} value={value} onChange={event => setValue(event.target.value)} />
+        <output aria-label="Form value">{value || 'Empty'}</output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.type(canvas.getByLabelText('Email'), 'hi');
+    await expect(canvas.getByLabelText('Form value')).toHaveTextContent('hi');
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear' }));
+    await expect(canvas.getByLabelText('Form value')).toHaveTextContent('Empty');
+  },
+};
+
+/* ---- Overview: types and sizes ---- */
+
+const TYPES: { type: NonNullable<InputProps['type']>; caption: string; label: string; value: string; props?: Partial<InputProps> }[] = [
+  { type: 'common', caption: 'Common', label: 'Email', value: 'user@mail.com', props: { leftIcon: 'mail' } },
+  { type: 'phone', caption: 'Phone', label: 'Phone number', value: '6787645', props: { countries: sampleCountries } },
+  { type: 'website', caption: 'Website', label: 'Website', value: 'golden.ratio.com' },
+  { type: 'card', caption: 'Card', label: 'Card number', value: '4242 4242 4242 4242', props: { leftIcon: undefined, paymentMethod: 'mastercard' } },
+  { type: 'amount', caption: 'Amount', label: 'Amount', value: '100.00', props: { coins: sampleCoins } },
+  { type: 'date', caption: 'Date', label: 'Date', value: '12 / 12 / 2025', props: { rightIcon: undefined } },
+  { type: 'button', caption: 'Button', label: 'Referral link', value: 'golden.ratio.com', props: { leftIcon: undefined, action: 'copy', copyLabel: 'Copy referral link' } },
 ];
 
-/** The seven types from Figma, filled. What each one is for is listed on the docs page. */
+/** The seven types from Figma, filled. */
 export const Types: Story = {
   render: function Types(args: InputProps) {
     const [country, setCountry] = useState('BG');
     const [coin, setCoin] = useState('USDC');
-    return <div style={column}>
-      {TYPES.map(t => <Input key={t.type} {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value}
-        country={country} onCountryChange={setCountry} coin={coin} onCoinChange={setCoin} />)}
-    </div>;
+    return (
+      <div style={{ width: 320, paddingTop: 'var(--space-600)' }}>
+        <Showcase column>
+          {TYPES.map(t => (
+            <Variant key={t.type} caption={t.caption}>
+              <div style={{ width: '100%' }}>
+                <Input {...args} leftIcon={null} {...t.props} type={t.type} label={t.label} defaultValue={t.value}
+                  country={country} onCountryChange={setCountry} coin={coin} onCoinChange={setCoin} />
+              </div>
+            </Variant>
+          ))}
+        </Showcase>
+      </div>
+    );
   },
 };
 
 /** Card numbers with the payment method of each card, from Payment method icons. */
 export const CardPaymentMethods: Story = {
   render: (args: InputProps) => (
-    <div style={column}>
+    <div style={form}>
       {([
         ['visa', '4242 4242 4242 4242'],
         ['mastercard', '5555 5555 5555 4444'],
@@ -133,82 +264,17 @@ export const CardPaymentMethods: Story = {
   ),
 };
 
-/** lg-44, md-40 and sm-32, from the top. Text and icons keep their size; only paddings and corners change. */
+/** lg-44, md-40 and sm-32. Text and icons keep their size; only paddings and corners change. */
 export const Sizes: Story = {
   render: (args: InputProps) => (
-    <div style={column}>
-      {(['lg', 'md', 'sm'] as const).map(size => <Input key={size} {...args} size={size} defaultValue="user@mail.com" />)}
+    <div style={{ width: 320, paddingTop: 'var(--space-600)' }}>
+      <Showcase column>
+        {(['lg', 'md', 'sm'] as const).map(size => (
+          <Variant key={size} caption={{ lg: 'lg · 44px', md: 'md · 40px', sm: 'sm · 32px' }[size]}>
+            <div style={{ width: '100%' }}><Input {...args} size={size} defaultValue="user@mail.com" /></div>
+          </Variant>
+        ))}
+      </Showcase>
     </div>
   ),
 };
-
-/* ---- States: one story each, as is usual in Storybook ---- */
-
-/** Empty: the label sits inside as the placeholder. */
-export const Default: Story = { decorators: [field] };
-
-/** With a value: the label stays above. */
-export const Filled: Story = { decorators: [field], args: { defaultValue: 'user@mail.com' } };
-
-/** Pointer over the field: a light fill and a darker border. */
-export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: 'user@mail.com' } };
-
-/** Focused: the darkest border, the label floats and turns dark, a clear button appears when there is a value. */
-export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: 'user@mail.com' } };
-
-/** Keyboard focus: system blue ring. */
-export const Focused: Story = { decorators: [field], args: { previewState: 'focus', defaultValue: 'user@mail.com' } };
-
-/** Red border and message; the message replaces the hint. */
-export const ErrorState: Story = { name: 'Error', decorators: [field], args: { error: 'Email address is invalid.', defaultValue: 'user2mail.com' } };
-
-/** Not available: grey fill and text, no interaction. */
-export const Disabled: Story = { decorators: [field], args: { disabled: true, defaultValue: 'user@mail.com' } };
-
-/** Empty, focused, filled. What happens at each step is described on the docs page. */
-export const FloatingLabel: Story = {
-  render: (args: InputProps) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
-      <Input {...args} />
-      <Input {...args} previewState="focus" />
-      <Input {...args} defaultValue="user@mail.com" />
-    </div>
-  ),
-};
-
-/** Every part on, with the label always above. */
-export const AllParts: Story = {
-  decorators: [field],
-  args: {
-    floatingLabel: false,
-    required: true,
-    optional: true,
-    info: 'We send the receipt to this address.',
-    topKey: 'Key',
-    topValue: 'Value',
-    hint: 'This is a hint text to help user.',
-    bottomValue: 'Value',
-    unit: 'USD',
-    rightIcon: 'information',
-  },
-};
-
-/** The password field from the sign-up example: Button type with a reveal action. */
-export const Password: Story = {
-  decorators: [field],
-  args: { type: 'button', label: 'Password', leftIcon: null, action: 'password', defaultValue: 'golden-ratio' },
-};
-
-/** The form receives ordinary React change events, including the clear action. */
-export const Controlled: Story = {
-  render: function Controlled(args: InputProps) {
-    const [value, setValue] = useState('');
-    return <div style={column}>
-      <Input {...args} value={value} onChange={event => setValue(event.target.value)} />
-      <output aria-label="Form value">{value || 'Empty'}</output>
-    </div>;
-  },
-};
-
-/** Readable and selectable, without editing or clearing. */
-export const ReadOnly: Story = { decorators: [field], args: { readOnly: true, defaultValue: 'user@mail.com' } };

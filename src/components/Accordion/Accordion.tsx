@@ -28,8 +28,6 @@ export type AccordionProps = Omit<ComponentPropsWithoutRef<'div'>, 'title' | 'ch
   disabled?: boolean;
   /** The header's heading level within the surrounding page. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
-  /** Static documentation preview of Figma Default, Hovered and Active, plus system keyboard focus. */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /**
@@ -51,7 +49,6 @@ export function Accordion({
   onExpandedChange,
   disabled = false,
   headingLevel = 3,
-  previewState = 'default',
   id,
   className = '',
   ...props
@@ -66,7 +63,6 @@ export function Accordion({
       id={id ?? `grg-accordion-${autoId}`}
       className={`grg-accordion ${className}`}
       data-chevron-position={chevronPosition}
-      data-preview-state={previewState === 'default' ? undefined : previewState}
       activeIndex={isExpanded ? 0 : null}
       onTabChange={event => {
         const next = event.index === 0;

@@ -42,8 +42,6 @@ export type TextAreaProps = Omit<ComponentPropsWithRef<'textarea'>, 'value' | 'd
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** Shows a state as static, for documentation only */
-  previewState?: 'default' | 'hover' | 'active' | 'focus';
 };
 
 /** PrimeReact InputTextarea (unstyled) inside the shared field frame, as Input. Figma is the source of every value in TextArea.css. */
@@ -51,7 +49,7 @@ export function TextArea({
   size = 'lg', label, floatingLabel = true, required, optional, info,
   hint, error, hintIcon = true, topKey, topValue, bottomValue,
   counter = true, maxLength, limitError = 'Character limit exceeded.', resizable = true, resizeLabel = 'Resize text area',
-  value: controlled, defaultValue = '', onValueChange, previewState = 'default',
+  value: controlled, defaultValue = '', onValueChange,
   id: suppliedId, disabled, placeholder, className = '', onFocus, onBlur, onChange, rows = 3, 'aria-describedby': describedBy, ref, ...props
 }: TextAreaProps) {
   const generatedId = useId();
@@ -74,7 +72,7 @@ export function TextArea({
   const [local, setLocal] = useState(defaultValue);
   const [focused, setFocused] = useState(false);
   const value = controlled ?? local;
-  const isFocused = focused || previewState === 'active' || previewState === 'focus';
+  const isFocused = focused;
   const filled = value !== '';
   const overLimit = maxLength !== undefined && value.length > maxLength;
   const shownError = error || (overLimit ? limitError : undefined);
@@ -144,7 +142,6 @@ export function TextArea({
         data-invalid={shownError ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
-        data-preview-state={previewState === 'default' ? undefined : previewState}
         // A click on the empty part of the field (around the counter) puts the cursor in the text.
         // On click, not mouse down: mouse down on the corner starts resizing the field.
         onClick={e => {

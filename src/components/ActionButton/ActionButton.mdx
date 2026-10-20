@@ -9,6 +9,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 <ComponentHeader
   figma="31-6651"
   guidelines="72-2431"
+  designTab
   builtOn="PrimeReact Button"
   related={[{ label: 'Button', href: '?path=/docs/components-button--docs', relation: 'See also' }]}
 />
@@ -18,7 +19,9 @@ A compact icon-only control for quick, local actions: copy, edit, open a small m
 <Canvas of={ActionButtonStories.Playground} />
 <Controls of={ActionButtonStories.Playground} include={['icon', 'aria-label', 'size', 'color', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<ActionButton icon="copy" aria-label="Copy transaction ID" onClick={copy} />
+```
 
 ## When to use
 
@@ -35,83 +38,60 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={ActionButtonStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** the button area, no fill or border. Only the icon colour changes between states.
-2. **Icon:** use the standard Base icons; their size follows the button size. Social, country or coin icons need to be agreed first.
+### Copy a value
 
-## Sizes
+<Canvas of={ActionButtonStories.CopyAValue} />
+
+The button sits right after the value it copies. After a click the icon turns into a check and *Copied* is announced.
+
+### Row actions
+
+<Canvas of={ActionButtonStories.RowActions} />
+
+Each name says the action and the row (*Delete invoice #1042*), so a screen reader user knows which row it applies to.
+
+## Design decisions
+
+- **A name is required.** The button has no visible text, so `aria-label` is a required prop: the code won't build without it.
+- **A 24 × 24 target at every size.** sm-20 and xs-16 keep a 24 × 24 touch area around the icon, the WCAG 2.2 minimum target size, without changing the Figma layout.
+- **Focus you can see.** Figma draws a light rounded frame around the icon; the code uses the system blue ring, only for keyboard focus.
+- **States are behaviour, not props.** Hovered, Pressed (Figma *Active*) and Focused come from the pointer and the keyboard; try them in the examples.
+
+## Sizes and colours
 
 <Canvas of={ActionButtonStories.Sizes} />
 
-From the left:
-
-- **md-24:** 24 × 24 icon.
-- **sm-20:** 20 × 20 icon. Inside fields, such as Input's copy and reveal buttons.
-- **xs-16:** 16 × 16 icon. Next to small text, such as the info button of a field label.
-
-The small sizes keep a 24 × 24 touch area around the icon.
-
-## Colours
+md-24 on its own, sm-20 inside fields (Input's copy and reveal buttons), xs-16 next to small text (the info button of a field label).
 
 <Canvas of={ActionButtonStories.Colors} />
 
-From the left:
-
-- **Black:** utility actions like copy, edit, duplicate, more, and other non-primary interactions. In Figma and code this colour is called Grey.
-- **Blue:** informational or context-specific actions where the colour reinforces the meaning: info, help, view details.
+- **Black:** utility actions like copy, edit, duplicate, more. In Figma and code this colour is called Grey.
+- **Blue:** informational actions where the colour reinforces the meaning: info, help, view details.
 - **Red:** destructive actions: delete, remove.
-
-## Usage
-
-<Canvas of={ActionButtonStories.Usage} />
-
-From the left: edit, copy, more actions, details, delete.
-
-## States
-
-### Default
-At rest.
-
-<Canvas of={ActionButtonStories.Default} />
-
-### Hovered
-Pointer over the button: the icon gets one step darker (lighter in the dark theme).
-
-<Canvas of={ActionButtonStories.Hovered} />
-
-### Pressed
-While the button is pressed: the strongest icon colour. In Figma this state is called Active.
-
-<Canvas of={ActionButtonStories.Pressed} />
-
-### Focused
-Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
-
-<Canvas of={ActionButtonStories.Focused} />
-
-### Disabled
-Not available right now: a light grey icon, no interaction.
-
-<Canvas of={ActionButtonStories.Disabled} />
 
 ## Accessibility
 
-- The button has no visible text, so `aria-label` is required: say what happens, such as *Copy referral link* or *Delete row*, not the icon's name.
-- The icon is decorative; the name comes from `aria-label`.
-- Small sizes (sm-20, xs-16) keep a 24 × 24 touch area, the WCAG 2.2 minimum target size.
-- Focus uses the system blue ring. Figma draws a light rounded frame around the icon, which keyboard users can barely see.
-- A disabled action button is a native disabled button: skipped by Tab and announced as unavailable.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the button; the blue ring shows |
+| Enter or Space | Runs the action |
+
+- Say what happens, such as *Copy referral link* or *Delete row*, not the icon's name. The icon itself is decorative.
+- A disabled action button is a native disabled button: Tab skips it and it is announced as unavailable.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[
     { figma: 'Size', prop: 'size', values: 'md-24px, sm-20px, xs-16px → md, sm, xs' },
     { figma: 'Color', prop: 'color', values: 'Grey (Black in the guidelines), Blue, Red → grey, blue, red' },
-    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
+    { figma: 'State', prop: '(behaviour) · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
     { figma: 'Icon (instance swap)', prop: 'icon', values: 'icon name from Base icons' },
     { figma: '—', prop: 'aria-label', values: 'required: the action in words' },
   ]}
