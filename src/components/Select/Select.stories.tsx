@@ -3,7 +3,7 @@ import { useState, type CSSProperties } from 'react';
 import { Button } from '../Button/Button';
 import { Select, type SelectProps } from './Select';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
-import { sampleCoins, sampleCountries, samplePaymentMethods, samplePayments, sampleUsers } from './samples';
+import { sampleCoins, sampleCountries, samplePaymentMethods, samplePayments, sampleProviders, sampleUsers } from './samples';
 
 /** A single field is 320px wide, as in Figma, with room for the floating label above. */
 const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--space-600)' }}><Story /></div>;
@@ -166,4 +166,18 @@ export const FloatingLabel: Story = {
       <Select {...args} defaultValue="utility" />
     </div>
   ),
+};
+
+/** Multi-select: checkboxes in the list; the field lists the choices with commas, in choice order, and sums up the rest. */
+export const Multiple: Story = {
+  decorators: [withList],
+  args: { multiple: true, label: 'Cash register', options: sampleProviders, defaultValues: ['payman', 'stripe', 'mastercard', 'crypto', 'swift', 'visa'] },
+};
+
+/** While the options load: grey rows in the list (Figma Skeleton). */
+export const Loading: Story = {
+  decorators: [withList],
+  args: { type: 'user', label: 'Select user', options: sampleUsers, loading: true, searchable: true },
+  parameters: { docs: { story: { autoplay: true } } },
+  play: openList,
 };

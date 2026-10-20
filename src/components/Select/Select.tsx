@@ -1,9 +1,13 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type HTMLAttributes, type RefObject } from 'react';
 import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
+import { PrimeReactProvider } from 'primereact/api';
+import { primeReactConfig } from '../../primereact-config';
+import { OverflowSummary } from './OverflowSummary';
 import { Icon, type IconName } from '../Icon/Icon';
 import { FormField } from '../FormField/FormField';
 import { EMPTY_ICON, OptionPicture, type OptionKind, type SelectOption } from './options';
-import { DropdownItem, dropdownPanelPt, searchIcons } from './dropdown';
+import { DropdownItem, DropdownSkeleton, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons } from './dropdown';
 import { useDropdownCombobox } from './useDropdownCombobox';
 import './Select.css';
 
@@ -42,11 +46,21 @@ export type SelectProps = {
   icon?: boolean;
   /** Icon of an empty Common select (Figma: coin) */
   emptyIcon?: IconName;
-  /** A search row at the top of the list, for long lists (Figma examples: countries, users, coins) */
+  /** A search row at the top of the list. On by default with more than 10 options (Figma guidelines). */
   searchable?: boolean;
   searchPlaceholder?: string;
-  /** Shown when the search finds nothing */
+  /** Shown when the search finds nothing (Figma Empty) */
   noResults?: string;
+  /** The options are loading: the list shows grey rows (Figma Skeleton) */
+  loading?: boolean;
+  /** Multi-select (Figma examples): checkboxes in the list, the choices listed in the field with commas */
+  multiple?: boolean;
+  /** Chosen options of a multi-select, in choice order */
+  values?: string[];
+  defaultValues?: string[];
+  onValuesChange?: (values: string[]) => void;
+  /** Name of the clear button of a multi-select */
+  clearLabel?: string;
   disabled?: boolean;
   id?: string;
   name?: string;
@@ -62,7 +76,8 @@ export type SelectProps = {
 export function Select({
   options, value: controlled, defaultValue, onChange, type = 'common', size = 'md',
   label, floatingLabel = true, placeholder, required, optional, info, hint, error, hintIcon = true, topKey, topValue,
-  icon = true, emptyIcon, searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
+  icon = true, emptyIcon, searchable, searchPlaceholder = 'Search', noResults = 'There are no search results', loading = false,
+  multiple = false, values: controlledValues, defaultValues = [], onValuesChange, clearLabel = 'Clear selection',
   disabled, id: suppliedId, name, className = '', previewState = 'default',
 }: SelectProps) {
   const generatedId = useId();
@@ -71,12 +86,16 @@ export function Select({
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [local, setLocal] = useState(defaultValue);
+  const [localValues, setLocalValues] = useState<string[]>(defaultValues);
+  const values = controlledValues ?? localValues;
+  const chosen = values.map(v => options.find(o => o.value === v)).filter((o): o is SelectOption => !!o);
+  const withSearch = searchable ?? options.length >= SEARCH_FROM;
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const value = controlled === undefined ? local : controlled;
   const selected = options.find(o => o.value === value);
   const isFocused = focused || open || previewState === 'active' || previewState === 'focus';
-  const labelVisible = !floatingLabel || isFocused || !!selected;
+  const labelVisible = !floatingLabel || isFocused || (multiple ? chosen.length > 0 : !!selected);
   const message = error || hint;
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, message ? hintId : undefined, !!error);
 
@@ -115,53 +134,148 @@ export function Select({
         data-open={open || undefined}
         data-preview-state={previewState === 'default' ? undefined : previewState}
       >
-        <Dropdown
-          inputId={id}
-          name={name}
-          focusInputRef={inputRef}
-          appendTo="self"
-          options={options}
-          optionValue="value"
-          optionLabel="label"
-          optionDisabled="disabled"
-          value={value ?? null}
-          disabled={disabled}
-          required={required}
-          filter={searchable}
-          filterBy="label,listLabel"
-          filterPlaceholder={searchPlaceholder}
-          showFilterClear={searchable}
-          emptyFilterMessage={noResults}
-          emptyMessage={noResults}
-          {...searchIcons}
-          onChange={e => {
-            if (controlled === undefined) setLocal(e.value);
-            onChange?.(e.value);
-          }}
-          onShow={() => setOpen(true)}
-          onHide={() => setOpen(false)}
-          onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
-          valueTemplate={() => (
-            <span className="grg-select__value">
-              {lead}
-              <span className="grg-select__text" data-placeholder={!selected || undefined}>
-                {selected ? selected.label : floatingLabel ? label : placeholder ?? ''}
+        {multiple ? (
+          // PrimeReact 10 marks the option under the arrow keys only with its .p-focus class (the pass-through
+          // context it gives for this is empty), so this one widget keeps PrimeReact's class names. Its base
+          // styles are structural only; no PrimeReact theme is loaded.
+          <PrimeReactProvider value={{ ...primeReactConfig, unstyled: false }}>
+          <MultiSelect
+            inputId={id}
+            name={name}
+            // PrimeReact types the ref as a select; at runtime it is the hidden input
+            inputRef={inputRef as unknown as RefObject<HTMLSelectElement>}
+            appendTo="self"
+            scrollHeight={LIST_HEIGHT}
+            options={loading ? [] : options}
+            optionValue="value"
+            optionLabel="label"
+            optionDisabled="disabled"
+            value={values}
+            disabled={disabled}
+            filter={withSearch}
+            filterBy="label,listLabel"
+            filterPlaceholder={searchPlaceholder}
+            emptyFilterMessage={noResults}
+            // Typed as text, but PrimeReact renders any node here: the skeleton while loading
+            emptyMessage={(loading ? <DropdownSkeleton /> : noResults) as unknown as string}
+            showSelectAll={false}
+            showClear={chosen.length > 0 && !disabled}
+            {...searchIcons}
+            onChange={e => {
+              const next = (e.value as string[]) ?? [];
+              // Keep the order in which the options were chosen, as Figma asks
+              const ordered = [...values.filter(v => next.includes(v)), ...next.filter(v => !values.includes(v))];
+              if (controlledValues === undefined) setLocalValues(ordered);
+              onValuesChange?.(ordered);
+            }}
+            onShow={() => setOpen(true)}
+            onHide={() => setOpen(false)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            selectedItemTemplate={(v: string | undefined) =>
+              // Called once per chosen option: the first call draws the whole summary, or the placeholder when empty
+              v === undefined || v === values[0] ? (
+                <span className="grg-select__value">
+                  {icon && type === 'common' && <span className="grg-select__icon"><Icon name={empty} size={20} /></span>}
+                  {chosen.length ? (
+                    <OverflowSummary className="grg-select__text" labels={chosen.map(o => o.label)} />
+                  ) : (
+                    <span className="grg-select__text" data-placeholder>{floatingLabel ? label : placeholder ?? ''}</span>
+                  )}
+                </span>
+              ) : null
+            }
+            itemTemplate={(o: SelectOption) => <DropdownItem option={o} selected={values.includes(o.value)} multiple />}
+            dropdownIcon={<Icon name="direction-down" size={20} />}
+            // A function, so PrimeReact's click and keyboard handlers reach the button (an element would drop them)
+            clearIcon={({ iconProps }: { iconProps: HTMLAttributes<HTMLSpanElement> }) => (
+              <span
+                {...iconProps}
+                className="grg-select__clear"
+                role="button"
+                aria-label={clearLabel}
+                onClick={e => {
+                  // Clearing shouldn't also open the list
+                  e.stopPropagation();
+                  iconProps.onClick?.(e);
+                }}
+              >
+                <Icon name="remove" size={20} />
               </span>
-            </span>
-          )}
-          itemTemplate={(o: SelectOption) => <DropdownItem option={o} selected={o.value === selected?.value} />}
-          dropdownIcon={<Icon name="direction-down" size={20} />}
-          collapseIcon={<Icon name="direction-up" size={20} />}
-          pt={{
-            root: { className: 'grg-select__box', 'aria-activedescendant': undefined, 'aria-disabled': disabled || undefined },
-            input: { className: 'grg-select__input' },
-            select: { 'aria-hidden': true },
-            hiddenSelectedMessage: { className: 'grg-sr-only' },
-            trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
-            ...dropdownPanelPt(label),
-          }}
-        />
+            )}
+            pt={{
+              root: { className: 'grg-select__box', 'aria-disabled': disabled || undefined } as object,
+              labelContainer: { className: 'grg-select__input' },
+              label: { className: 'grg-select__label' },
+              hiddenInputWrapper: { className: 'grg-sr-only' },
+              trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
+              panel: { className: 'grg-dropdown' },
+              // Without search the header would hold only the hidden close button and a divider
+              header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
+              filterContainer: { className: 'grg-dropdown__search' },
+              filterInput: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` },
+              closeButton: { hidden: true },
+              wrapper: { className: 'grg-dropdown__scroll' },
+              list: { className: 'grg-dropdown__list', 'aria-label': label },
+              // Each option gets an id, so the combobox can point at the one under the arrow keys
+              item: ({ context }: { context: { index: number } }) => ({ className: 'grg-dropdown__option', id: `${id}-option-${context.index}` }),
+              // PrimeReact moves focus to this checkbox when an option is clicked, so it stays focusable: hidden visually, not removed
+              checkboxContainer: { className: 'grg-sr-only' },
+              emptyMessage: { className: 'grg-dropdown__empty', role: 'option', 'aria-disabled': true, 'aria-selected': false } as object,
+            }}
+          />
+          </PrimeReactProvider>
+        ) : (
+          <Dropdown
+            inputId={id}
+            name={name}
+            focusInputRef={inputRef}
+            appendTo="self"
+            scrollHeight={LIST_HEIGHT}
+            options={options}
+            optionValue="value"
+            optionLabel="label"
+            optionDisabled="disabled"
+            value={value ?? null}
+            disabled={disabled}
+            required={required}
+            filter={withSearch}
+            filterBy="label,listLabel"
+            filterPlaceholder={searchPlaceholder}
+            showFilterClear={withSearch}
+            emptyFilterMessage={noResults}
+            emptyMessage={noResults}
+            {...searchIcons}
+            onChange={e => {
+              if (controlled === undefined) setLocal(e.value);
+              onChange?.(e.value);
+            }}
+            onShow={() => setOpen(true)}
+            onHide={() => setOpen(false)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            valueTemplate={() => (
+              <span className="grg-select__value">
+                {lead}
+                <span className="grg-select__text" data-placeholder={!selected || undefined}>
+                  {selected ? selected.label : floatingLabel ? label : placeholder ?? ''}
+                </span>
+              </span>
+            )}
+            itemTemplate={(o: SelectOption) => <DropdownItem option={o} selected={o.value === selected?.value} />}
+            {...(loading && { options: [], emptyMessage: <DropdownSkeleton />, emptyFilterMessage: <DropdownSkeleton /> })}
+            dropdownIcon={<Icon name="direction-down" size={20} />}
+            collapseIcon={<Icon name="direction-up" size={20} />}
+            pt={{
+              root: { className: 'grg-select__box', 'aria-activedescendant': undefined, 'aria-disabled': disabled || undefined },
+              input: { className: 'grg-select__input' },
+              select: { 'aria-hidden': true },
+              hiddenSelectedMessage: { className: 'grg-sr-only' },
+              trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
+              ...dropdownPanelPt(label),
+            }}
+          />
+        )}
       </div>
     </FormField>
   );

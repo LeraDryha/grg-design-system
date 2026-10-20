@@ -93,7 +93,7 @@ The list opens 8px under the field, on the floating surface with a small shadow,
 - **Search** (`searchable`): a row at the top that filters the list as people type, with a clear button. Use it for long lists, as in the Figma examples for countries, users and coins.
 - After about six rows the list scrolls.
 
-The list is the start of the Dropdown menu component, which Figma also uses for menus; descriptions, badges and checkboxes come with it.
+Its rows are the [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) item: options can also carry a description, a badge or a social logo.
 
 ## States
 
@@ -149,15 +149,21 @@ The floating label **takes no vertical space**: leave 22px above every field in 
 
 ## Multi-select
 
-The Figma examples also show a multi-select: options with checkboxes, the chosen ones listed in the field with commas
-(*Payman, Stripe, Mastercard Gateway, Crypto Processing and 2 others*) and a clear button. It needs Checkbox and the
-Dropdown menu with checkbox rows, so it comes after them.
+<Canvas of={SelectStories.Multiple} />
 
-## Selection behaviour
+With `multiple`, the list shows a checkbox on every row and stays open while people choose. The field lists the chosen
+options with commas, **in the order they were chosen**; when they don't fit, the rest is summed up
+(*Payman, Stripe and 4 others*) and the summary updates as the field resizes. A clear button empties the choice.
 
-PrimeReact Dropdown handles option selection, keyboard navigation, filtering and dismissal. Use `value` and `onChange` for a controlled selection; pass `null` to clear it. Leave `value` unset to use internal state with an optional `defaultValue`.
+## Long lists, loading and no results
 
-<Canvas of={SelectStories.Controlled} />
+- Up to **9 rows** show without scrolling; with 10 or more the list scrolls.
+- With **more than 10 options** a search row appears by itself (Figma guidelines); `searchable` turns it on or off.
+- While the options load (`loading`), the list shows grey rows (Figma *Skeleton*):
+
+<Canvas of={SelectStories.Loading} />
+
+- When the search finds nothing, the list says *There are no search results* (Figma *Empty*).
 
 ## Accessibility
 

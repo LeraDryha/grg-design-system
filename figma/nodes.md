@@ -146,3 +146,13 @@ Code follows the actual bound component styles: Semibold, md 8px / sm 6px corner
 | Component set `Checkbox` (State × Indeterminate × Selected × Size × Destructive, 36 variants) | `135:11986` |
 | Component set `Checkbox label` (Flip × Selected × Details, with Sublabel, Description, Link button) | `136:5147` |
 | Usage guidelines (anatomy, sizes, variants, states) | `473:55568` |
+
+## Dropdown menu
+
+| What | Node |
+|---|---|
+| Component set `Dropdown menu item` (State × Type × Checkbox × Description, Badge and Arrow, 112 variants) | `274:9333` |
+| Component set `Dropdown misc items` (Search ×4, Button, Caption, Content divider line and text) | `451:29358` |
+| Usage guidelines (anatomy, types, states, options) | `451:26692` |
+| Guidelines: combining and placing items (gaps, padding, 9 rows, search over 10, skeleton, empty) | `451:28784` |
+| Examples (currency select, actions with submenus, account menus) | `459:33170` |

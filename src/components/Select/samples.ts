@@ -63,3 +63,7 @@ export const sampleCurrencies: SelectOption[] = [
   { value: 'UAH', label: 'UAH', listLabel: 'Hryvnia (UAH)', coin: 'uah' },
   { value: 'CNY', label: 'CNY', listLabel: 'Yuan (CNY)', coin: 'cny' },
 ];
+
+export const sampleProviders: SelectOption[] = [
+  'Payman', 'Stripe', 'Adyen', 'SEPA EUR', 'SWIFT USD', 'Visa Processing', 'Mastercard Gateway', 'Crypto Processing', 'Internal Settlement',
+].map(label => ({ value: label.split(' ')[0].toLowerCase(), label }));

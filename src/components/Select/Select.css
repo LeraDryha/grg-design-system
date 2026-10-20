@@ -76,3 +76,17 @@
 @media (prefers-reduced-motion: reduce) {
   .grg-select__box { transition: none; }
 }
+
+/* Multi-select: the chosen names in one line, the rest summed up; a clear button before the chevron */
+.grg-select__label { display: flex; align-items: center; min-width: 0; }
+.grg-overflow-summary { position: relative; display: block; flex: 1; min-width: 0; overflow: hidden; white-space: nowrap; }
+.grg-overflow-summary__measure { position: absolute; visibility: hidden; white-space: nowrap; }
+.grg-select__value:has(.grg-overflow-summary) { flex: 1; }
+.grg-select__clear {
+  display: inline-grid;
+  flex: none;
+  border-radius: var(--radius-xxs-4);
+  color: var(--icon-base-500);
+  cursor: pointer;
+}
+.grg-select__clear:where(:hover) { color: var(--icon-subtle-700); }

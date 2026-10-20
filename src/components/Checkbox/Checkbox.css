@@ -62,3 +62,6 @@
 @media (prefers-reduced-motion: reduce) {
   .grg-checkbox__box { transition: none; }
 }
+
+/* The drawing alone inside a list row: the row carries hover and pointer */
+.grg-checkbox--mark { cursor: inherit; }

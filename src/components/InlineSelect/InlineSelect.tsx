@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
 import { OptionPicture, type SelectOption } from '../Select/options';
-import { DropdownItem, dropdownPanelPt, searchIcons } from '../Select/dropdown';
+import { DropdownItem, LIST_HEIGHT, dropdownPanelPt, searchIcons } from '../Select/dropdown';
 import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import './InlineSelect.css';
 
@@ -63,6 +63,7 @@ export function InlineSelect({
         inputId={id}
         focusInputRef={inputRef}
         appendTo="self"
+        scrollHeight={LIST_HEIGHT}
         options={options}
         optionValue="value"
         optionLabel="label"

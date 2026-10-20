@@ -34,13 +34,13 @@ export function useDropdownCombobox(
       } else {
         input.removeAttribute('aria-controls');
       }
-      const active = list?.querySelector<HTMLElement>('[role="option"][data-p-focused="true"]');
+      const active = list?.querySelector<HTMLElement>('[role="option"][data-p-focused="true"], [role="option"].p-focus');
       if (active?.id) input.setAttribute('aria-activedescendant', active.id);
       else input.removeAttribute('aria-activedescendant');
     };
     sync();
     const observer = new MutationObserver(sync);
-    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-p-focused'] });
+    observer.observe(root, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-p-focused', 'class'] });
     return () => observer.disconnect();
   }, [rootRef, inputRef, listId, label, describedBy, invalid]);
 }

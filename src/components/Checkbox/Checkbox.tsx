@@ -101,3 +101,26 @@ export function Checkbox({
     />
   );
 }
+
+/**
+ * The checkbox drawing alone, without a native checkbox: for rows that already are an option themselves,
+ * such as a multi-select list, where a second control inside the option would confuse screen readers.
+ */
+export function CheckboxMark({
+  checked = false, indeterminate = false, size = 'md', disabled = false, className = '',
+}: Pick<CheckboxProps, 'checked' | 'indeterminate' | 'size' | 'disabled' | 'className'>) {
+  const shape = indeterminate ? 'indeterminate' : checked ? 'checked' : 'unchecked';
+  const style = { '--cb-shape': `url("${SHAPES[size][shape]}")` } as CSSProperties;
+  return (
+    <span
+      className={`grg-checkbox grg-checkbox--mark ${className}`}
+      data-size={size}
+      data-state={shape}
+      data-disabled={disabled || undefined}
+      style={style}
+      aria-hidden="true"
+    >
+      <span className="grg-checkbox__box" />
+    </span>
+  );
+}

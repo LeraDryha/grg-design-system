@@ -1,0 +1,30 @@
+/* Dropdown menu item. Figma: 8px padding and gap (Basic, without a picture: 10px top and bottom, 10px gap),
+   Body-md label, Body-sm description in text-soft-500, a 24px check or arrow, a 20px checkbox. */
+
+.grg-menu-item {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-200);
+  min-width: 0;
+  padding: var(--space-200);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+}
+.grg-menu-item[data-basic] { gap: var(--space-250); padding-block: var(--space-250); }
+/* With a checkbox the row is 36px tall: the 20px checkbox sets the height, not a 24px icon */
+.grg-menu-item:has(.grg-menu-item__checkbox):not([data-description]) { padding-block: var(--space-200); }
+
+.grg-menu-item__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-100); min-width: 0; }
+.grg-menu-item__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.grg-menu-item__description { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+
+.grg-menu-item .grg-option-picture--icon { color: var(--icon-base-500); }
+.grg-menu-item__check { color: var(--icon-strong-1000); }
+.grg-menu-item__arrow { color: var(--icon-base-500); }
+.grg-menu-item__badge { flex: none; }
+
+.grg-menu-item[data-disabled] { color: var(--text-disabled-400); }
+.grg-menu-item[data-disabled] .grg-menu-item__description { color: var(--text-disabled-400); }
+.grg-menu-item[data-disabled] .grg-option-picture { opacity: 0.5; }
+.grg-menu-item[data-disabled] :is(.grg-option-picture--icon, .grg-menu-item__arrow, .grg-menu-item__check) { color: var(--icon-disabled-400); opacity: 1; }

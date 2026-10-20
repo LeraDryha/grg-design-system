@@ -1,0 +1,82 @@
+/* Dropdown menu. Figma: the Dropdown panel (Select/Dropdown.css) with menu rows, submenus and misc items:
+   Content divider line and text, Caption, Button. */
+
+.grg-dropdown-menu-host { position: relative; display: inline-block; }
+
+.grg-dropdown-menu { width: max-content; min-width: calc(var(--space-5000) + var(--space-1000)); }
+.grg-dropdown-menu-host .grg-dropdown-menu:not(.grg-dropdown-menu--inline) { top: calc(100% + var(--space-200)); left: 0; }
+.grg-dropdown-menu-host[data-align='end'] .grg-dropdown-menu:not(.grg-dropdown-menu--inline) { right: 0; left: auto; }
+.grg-dropdown-menu--inline { position: static; }
+
+.grg-dropdown-menu__list { outline: none; }
+.grg-dropdown-menu__item { position: relative; flex-direction: column; }
+.grg-dropdown-menu__content { display: flex; min-width: 0; }
+/* PrimeReact marks the row under the arrow keys with data-p-visited, an opened submenu with data-p-highlight */
+.grg-dropdown-menu__item[data-p-visited='true'] > .grg-dropdown-menu__content,
+.grg-dropdown-menu__item[data-p-highlight='true'] > .grg-dropdown-menu__content { background: var(--bg-weak-100); border-radius: var(--radius-sm-8); }
+.grg-dropdown-menu__item:where(:hover) { background: transparent; }
+.grg-dropdown-menu__item > .grg-dropdown-menu__content:where(:hover) { background: var(--bg-weak-100); border-radius: var(--radius-sm-8); }
+.grg-dropdown-menu__item[data-p-disabled='true'] > .grg-dropdown-menu__content { background: transparent; cursor: default; }
+
+/* Submenu: a second panel 8px to the right of its row, open while the row is active */
+.grg-dropdown-menu__submenu {
+  top: calc(-1 * var(--space-200));
+  left: calc(100% + var(--space-200));
+  display: none;
+  width: max-content;
+  min-width: var(--space-5000);
+}
+.grg-dropdown-menu__item[data-p-highlight='true'] > .grg-dropdown-menu__submenu { display: flex; }
+
+/* Content divider line: 1px stroke-soft-200 with 2px above and below */
+.grg-dropdown-menu__divider { height: 1px; margin-block: var(--space-050); background: var(--stroke-soft-200); }
+
+/* Content divider text: a small title over a group */
+.grg-dropdown-menu__section { cursor: default; }
+.grg-dropdown-menu__section-text {
+  padding: var(--space-200) var(--space-200) var(--space-050);
+  font: var(--typo-caption-sm-regular);
+  color: var(--text-soft-500);
+  text-transform: uppercase;
+}
+
+/* Header: who the menu belongs to; normal colours, not a control */
+.grg-dropdown-menu__header > .grg-dropdown-menu__content { cursor: default; }
+.grg-dropdown-menu__header .grg-menu-item[data-disabled] { color: var(--text-strong-1000); }
+.grg-dropdown-menu__header .grg-menu-item[data-disabled] .grg-menu-item__description { color: var(--text-soft-500); }
+.grg-dropdown-menu__header .grg-menu-item[data-disabled] .grg-option-picture { opacity: 1; }
+
+/* Caption: a note with a text button (Figma: 10px top and bottom, 8px on the sides) */
+.grg-dropdown-menu__caption-row {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-250);
+  padding: var(--space-100) var(--space-200);
+}
+.grg-dropdown-menu__caption-text { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-dropdown-menu__caption-row .grg-button { pointer-events: none; }
+
+/* Button: a full-width outline button (Figma: Button Text sm-32 in a 4px / 8px frame; the examples draw it outlined) */
+.grg-dropdown-menu__button > .grg-dropdown-menu__content:where(:hover) { background: transparent; }
+.grg-dropdown-menu__button-face {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-150);
+  margin: var(--space-100) 0;
+  padding: calc(var(--space-150) - 1px) var(--space-300);
+  border: 1px solid var(--stroke-stronger-900);
+  border-radius: var(--radius-sm-8);
+  font: var(--typo-body-md-semibold);
+  color: var(--text-strong-1000);
+}
+.grg-dropdown-menu__button > .grg-dropdown-menu__content:where(:hover) .grg-dropdown-menu__button-face { background: var(--bg-weak-100); }
+.grg-dropdown-menu__button[data-p-visited='true'] > .grg-dropdown-menu__content { background: transparent; }
+.grg-dropdown-menu__button[data-p-visited='true'] .grg-dropdown-menu__button-face { box-shadow: var(--focus-ring); }
+
+/* Keyboard focus on the open menu: the row under the arrow keys gets the light fill above */
+/* The action link PrimeReact keeps around each row: it fills the row and looks like nothing itself */
+.grg-dropdown-menu__action { display: flex; flex: 1; min-width: 0; color: inherit; text-decoration: none; outline: none; }

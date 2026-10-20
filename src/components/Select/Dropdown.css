@@ -46,8 +46,8 @@
 .grg-dropdown__search-input::placeholder { color: var(--text-soft-500); opacity: 1; }
 .grg-dropdown__search-clear { display: inline-grid; color: var(--icon-base-500); cursor: pointer; }
 
-/* The list scrolls after about six rows */
-.grg-dropdown__scroll { max-height: calc(var(--space-4000) + var(--space-2000) + var(--space-1200)); overflow-y: auto; }
+/* Up to nine 40px rows show (plus the 2px gaps); with ten or more the list scrolls (Figma guidelines) */
+.grg-dropdown__scroll { max-height: calc(var(--space-4000) * 2 + var(--space-1400)); overflow-y: auto; }
 .grg-dropdown__list {
   display: flex;
   flex-direction: column;
@@ -57,30 +57,40 @@
   list-style: none;
 }
 
-/* Dropdown menu item: 40px, 8px padding and gap, 8px corners */
+/* Rows: Dropdown menu item (DropdownMenu/DropdownMenuItem.css); the list gives hover, focus and corners */
 .grg-dropdown__option {
   display: flex;
   border-radius: var(--radius-sm-8);
   cursor: pointer;
 }
-.grg-dropdown__option:hover,
-.grg-dropdown__option[data-p-focused='true'] { background: var(--bg-weak-100); }
-.grg-dropdown__option[data-p-disabled='true'] { color: var(--text-disabled-400); cursor: default; background: transparent; }
-.grg-dropdown__item-wrap { display: flex; flex: 1; min-width: 0; }
-.grg-dropdown__item {
-  display: flex;
-  flex: 1;
-  align-items: center;
-  gap: var(--space-200);
-  min-width: 0;
-  padding: var(--space-200);
-}
-.grg-dropdown__item .grg-option-picture--icon { color: var(--icon-base-500); }
-.grg-dropdown__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.grg-dropdown__item > .grg-icon:last-child { color: var(--icon-strong-1000); }
-.grg-dropdown__option[data-p-disabled='true'] .grg-option-picture { opacity: 0.5; }
+.grg-dropdown__option:where(:hover),
+.grg-dropdown__option[data-p-focused='true'],
+.grg-dropdown__option.p-focus { background: var(--bg-weak-100); }
+.grg-dropdown__option[data-p-disabled='true'] { cursor: default; background: transparent; }
+.grg-dropdown__item-wrap,
+.grg-dropdown__option > span { display: flex; flex: 1; min-width: 0; }
 
-.grg-dropdown__empty { padding: var(--space-200); color: var(--text-soft-500); }
+/* Empty (Figma): the search found nothing */
+.grg-dropdown__empty {
+  padding: var(--space-1200) var(--space-200);
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  text-align: center;
+}
+
+.grg-dropdown__empty:has(.grg-dropdown__skeleton) { padding: 0; }
+
+/* Skeleton (Figma): five light bars while the options load */
+.grg-dropdown__skeleton { display: flex; flex-direction: column; gap: var(--space-050); }
+.grg-dropdown__skeleton-row {
+  height: var(--space-1000);
+  border-radius: var(--radius-sm-8);
+  background: linear-gradient(90deg, var(--bg-weak-100), var(--bg-soft-200), var(--bg-weak-100));
+  background-size: 200% 100%;
+  animation: grg-skeleton 1.2s ease-in-out infinite;
+}
+@keyframes grg-skeleton { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) { .grg-dropdown__skeleton-row { animation: none; } }
 
 /* Pictures of the options (shared with the fields) */
 .grg-option-picture { flex: none; }
@@ -96,3 +106,7 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Parts hidden through pass-through stay hidden even where PrimeReact's structural styles set a display */
+.grg-dropdown [hidden],
+.grg-select__box [hidden] { display: none !important; }

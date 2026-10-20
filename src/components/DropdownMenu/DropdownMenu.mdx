@@ -1,0 +1,119 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as DropdownMenuStories from './DropdownMenu.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={DropdownMenuStories} />
+
+# Dropdown Menu
+
+<ComponentHeader
+  status="ready"
+  figma="274-9333"
+  guidelines="451-28784"
+  builtOn="PrimeReact TieredMenu"
+  related={[
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs', relation: 'Uses' },
+    { label: 'Checkbox', href: '?path=/docs/components-checkbox--docs', relation: 'Uses' },
+  ]}
+/>
+
+A list of actions that opens from a button: create, go to a page, change a setting, sign out. Its rows are the Figma
+*Dropdown menu item*, the same rows as in the open list of Select, Compact Select and Inline Select.
+
+<Canvas of={DropdownMenuStories.Playground} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Actions that belong to one button or avatar: Create invoice, the account menu',
+    'Grouping related actions with section titles and dividers; a submenu for a second level',
+    'A badge or a description where an action needs more context: Upgrade, Manage',
+  ]}
+  donts={[
+    'Choosing a value in a form: use Select (the same rows, with a field)',
+    'One or two actions: show them as buttons',
+    'More than one level of submenus: people lose their way',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={DropdownMenuStories.ItemOptions} />
+
+A row (Dropdown menu item) has three parts:
+
+1. **Left icon (optional):** a Base icon, coin, flag, payment card, avatar or social logo, 20px (an avatar with a description 40px).
+2. **Label:** Body-md 14/20, with an optional description under it (Body-sm, `text-soft-500`).
+3. **Right icon:** a check on the chosen row of a single choice, a checkbox in a multiple choice, an arrow for a submenu; a badge before it if needed.
+
+## Building a menu
+
+Following the Figma guidelines *Combining and placing dropdown items*:
+
+- Rows are stacked with **2px** between them, in a panel with **8px** padding, **12px** corners, `surface-floating` and the small elevation; rows fill the width.
+- The menu opens **8px** under its trigger.
+- Up to **9 rows** show without scrolling; with 10 or more the list scrolls, and with more than 10 a **search** row helps (Select adds it by itself).
+- Extra parts (Figma *Dropdown misc items*): **search**, **divider line**, **divider text** (a section title), **caption** with a text button, and a full-width **button**.
+
+### Actions with submenus
+
+<Canvas of={DropdownMenuStories.Actions} />
+
+### Account menu
+
+<Canvas of={DropdownMenuStories.Account} />
+
+A header with the avatar, name and email (not clickable), groups with a section title, an item with a description and a badge, and dividers.
+
+### Accounts
+
+<Canvas of={DropdownMenuStories.Accounts} />
+
+### Caption
+
+<Canvas of={DropdownMenuStories.WithCaption} />
+
+A caption such as a version number, with a text button, closes the list; a check marks the chosen row.
+
+## Item types
+
+<Canvas of={DropdownMenuStories.ItemTypes} />
+
+From the top: **Basic** (text only, 10px top and bottom), **Icon**, **Currency**, **Country**, **Payment method**, **Avatar** and **Social**.
+
+## Item states
+
+<Canvas of={DropdownMenuStories.ItemStates} />
+
+- **Default** and **Hovered** (a light `bg-weak-100` fill, also on the row under the arrow keys).
+- **Selected:** a check, or a checked checkbox in a multiple choice.
+- **Disabled:** grey text, a faded picture; it can't be chosen and the arrow keys skip it.
+
+## Accessibility
+
+- The trigger says it opens a menu (`aria-haspopup`, `aria-expanded`); the menu has a name (`aria-label`).
+- Enter, Space or ↓ open it; ↑ ↓ move, → opens a submenu and ← closes it, Enter chooses, Escape closes and returns to the trigger.
+- Section titles and the header are not focusable; disabled rows are skipped.
+- Pictures are decorative: the labels name the actions.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'icon · coin · country · paymentMethod · avatar · social', values: 'Basic when none is set' },
+    { figma: 'State', prop: '(behaviour) · selected · disabled', values: 'Hovered follows the pointer and keys; Selected → selected; Disabled → disabled' },
+    { figma: 'Description', prop: 'description', values: 'text under the label' },
+    { figma: 'Checkbox', prop: 'multiple (DropdownMenuItem)', values: 'a checkbox instead of the check (Select multiple)' },
+    { figma: 'Badge', prop: 'badge', values: 'text, or { label, color, variant }' },
+    { figma: 'Arrow', prop: 'items', values: 'a submenu' },
+    { figma: 'Dropdown misc items', prop: "kind: 'divider' · 'section' · 'caption' · 'button' · 'header'", values: 'line, divider text, caption with a button, full-width button, account header' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={DropdownMenuStories} />
