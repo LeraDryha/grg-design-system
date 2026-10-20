@@ -12,4 +12,4 @@
 - Мета на потім: система, з якою може працювати AI-агент (описи компонентів у Figma, code syntax змінних, звірка Figma ↔ код).
 - Комітимо й пушимо лише з дозволу Lera.
 
-Запуск: `npm run storybook` (порт 6006). Збірка: `npm run build-storybook`. Токени: `npm run tokens`. Іконки: `npm run icons`.
+Запуск: `npm run storybook` (порт 6006). Тести (кожна сторі: рендер, play-кроки, WCAG 2.2 AA): `npm test`, а також віджет Run tests у сайдбарі Storybook. Збірка: `npm run build-storybook`. Токени: `npm run tokens`. Іконки: `npm run icons`.

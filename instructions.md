@@ -26,27 +26,31 @@ React 19, TypeScript, Storybook 10 (CSF 3) and **PrimeReact 10.9.9** (MIT; v11 n
 `src/components/[Name]/` holds `[Name].tsx`, `[Name].css` and `[Name].stories.tsx`. Foundations live in `src/foundations/`, docs pages in `src/docs/[Category]/`.
 
 ## Stories
-- `const meta = { … } satisfies Meta<typeof Component>` with `tags: ['autodocs']` and a component description: what it is for and when to use it.
-- A `Playground` story where everything is editable in Controls, then stories for types, sizes, states and special cases.
+- `const meta = { … } satisfies Meta<typeof Component>` with a status tag (`tags: ['ready']`, `['in-progress']` or `['draft']`: shown in the page header, and in the sidebar unless ready), a component description and `parameters.design`: the Figma frames as images for the Design tab (`src/assets/design/[name]/[name]-component.png` and `-guidelines.png`, exported without the GRX header; the company file is never linked).
+- A `Playground` story where everything is editable in Controls.
+- **Examples**: real tasks, not one story per Figma state. Each has a sentence-case `name` ("Choose several", "Disabled until ready") and, when there is behaviour to check, a `play` function (`storybook/test`): it runs in the Interactions tab, in the sidebar test widget, with `npm test` and on every push.
+- Hover, press and focus come from the pointer and the keyboard: no documentation-only state props. Error and disabled are shown inside an example that says why.
+- **Overview** stories (types, sizes, colours) use `Showcase` and `Variant` from DocBlocks: the variants side by side, a quiet caption under each.
 - Never hardcode content a prop can carry; overview stories pass `args` through.
+- A known Figma contrast problem is listed with `parameters: { a11y: { test: 'todo' } }` and a comment, never hidden.
 - Category order: Getting Started, Foundations, Components (flat, alphabetical), Contributing. No Atomic Design levels.
 
 ## Component page
-Every component gets a docs page `src/components/[Name]/[Name].mdx` (`<Meta of={Stories} />`, no `autodocs` tag), in this order. Input is the reference.
+Every component gets a docs page `src/components/[Name]/[Name].mdx` (`<Meta of={Stories} />`, no `autodocs` tag), in this order. Select is the reference.
 
-1. Title, then `ComponentHeader`: status (ready, in-progress, draft), Figma links to the component set and its guidelines, the PrimeReact base, related pages.
-2. One line on what it is, the Playground canvas and a short `Controls` list (the main props only).
+1. Title, then `ComponentHeader` with `designTab`: the status comes from the tags; the PrimeReact base and related pages. `figma` and `guidelines` node ids stay for maintainers and are never linked.
+2. One line on what it is, the Playground canvas, a short `Controls` list (the main props only) and a one-line code example.
 3. **When to use**: `DoDont`, including which component to use instead.
-4. **Anatomy**: the `Anatomy` block with numbered markers only; the parts are described in a numbered list under the card.
-5. **Types**, **Sizes**: the components alone on the card, what each one is for in a list under it. **States**: one story per state, each with a heading and a line of description.
-6. Behaviour that needs explaining (for Input, the floating label). Examples from the Figma Examples frames are added later, once every component they use is built.
-7. **Accessibility**: names, descriptions, keyboard, focus, known contrast notes.
-8. **Figma and code**: `PropsMapping`, every Figma property next to its prop.
+4. **Examples**: each example canvas with a sentence about what it shows.
+5. **Design decisions**: what the code adds to or decides beyond the Figma file, and why (focus ring, behaviour, discrepancies between the component set and the guidelines).
+6. **Types**, **Sizes** (and other overviews): the overview canvases, with what each variant is for in a short paragraph or list under them.
+7. **Accessibility**: a key table, then names, descriptions and known contrast notes.
+8. **Figma and code**: a line pointing to the Design tab, then `PropsMapping`, every Figma property next to its prop.
 9. **Props**: `ArgTypes`.
 
 The blocks live in `src/docs/blocks/DocBlocks.tsx`.
 
 ## Checks before a change is done
-- `npm run typecheck` and `npm run build-storybook` pass.
+- `npm run typecheck`, `npm test` (every story: render, play steps, WCAG 2.2 AA) and `npm run build-storybook` pass.
 - The Accessibility panel shows no violations in both themes.
 - Keyboard: every control is reachable with Tab and has a visible focus state.

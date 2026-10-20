@@ -107,7 +107,7 @@ export const AnUnavailableOption: Story = {
 export const Narrow: Story = {
   args: { items: [{ id: 'overview', label: 'Account overview' }, { id: 'activity', label: 'Account activity' }, { id: 'preferences', label: 'Account preferences' }] },
   render: (args: ButtonGroupProps) => (
-    <div className="doc-anatomy-scroll" role="region" aria-label="Scrollable account options" tabIndex={0}
+    <div className="doc-scroll" role="region" aria-label="Scrollable account options" tabIndex={0}
       style={{ width: 'calc(var(--space-2000) * 4)', maxWidth: '100%', overflowX: 'auto', padding: 'var(--space-200)', boxSizing: 'border-box' }}>
       <ButtonGroup {...args} />
     </div>

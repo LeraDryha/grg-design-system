@@ -72,74 +72,14 @@ a.doc-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .doc-dodont__col ul { margin: 0; padding-left: var(--space-500); }
 .doc-dodont__col li + li { margin-top: var(--space-100); }
 
-/* ---- State matrix: a component set board, as on the Figma pages ---- */
-.doc-matrix {
-  display: grid;
-  align-items: start;
-  column-gap: var(--space-800);
-  row-gap: 0;
-  padding: var(--space-400) var(--space-600) var(--space-200);
-  border: 1px dashed var(--add-purple-400);
-  border-radius: var(--radius-sm-8);
-}
-.doc-matrix__row { display: contents; }
-.doc-matrix__col,
-.doc-matrix__label {
-  font: var(--typo-body-sm-semibold);
-  color: var(--text-soft-500);
-}
-.doc-matrix__col { padding-bottom: var(--space-200); }
-.doc-matrix__label {
-  display: grid;
-  gap: var(--space-050);
-  max-width: 180px;
-  /* line the label up with the field, below its floating label row */
-  padding-top: calc(var(--space-600) + var(--space-250));
-}
-.doc-matrix__note { font: var(--typo-body-sm-regular); }
-/* each cell leaves room for the floating label above and the hint below */
-.doc-matrix__cell { padding: var(--space-600) 0 var(--space-500); min-width: 0; }
-
-/* ---- Anatomy ---- */
-.doc-anatomy-scroll {
+/* A labelled horizontal scroll region for content wider than the example card */
+.doc-scroll {
   max-width: 100%;
   overflow-x: auto;
 }
-.doc-anatomy-scroll:focus-visible {
+.doc-scroll:focus-visible {
   outline: none;
   box-shadow: var(--focus-ring);
-}
-.doc-anatomy__stage {
-  position: relative;
-  padding: var(--space-1600);
-}
-.doc-anatomy__leaders {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-.doc-anatomy__leaders polyline {
-  fill: none;
-  stroke: var(--primary-gold-base);
-  stroke-width: 1;
-  stroke-dasharray: 3 2;
-}
-.doc-anatomy__dot {
-  position: absolute;
-  display: grid;
-  place-items: center;
-  width: var(--space-600);
-  height: var(--space-600);
-  translate: -50% -50%;
-  border-radius: var(--radius-fully-rounded);
-  /* the Figma annotation colour, the same in both themes (a docs mark, not a component colour) */
-  background: var(--color-gold-300);
-  color: var(--color-neutral-1000);
-  font: var(--typo-caption-sm-semibold);
-  pointer-events: none;
 }
 
 /* Showcase: variants side by side, captions under them */
