@@ -9,6 +9,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 <ComponentHeader
   figma="149-19579"
   guidelines="403-29662"
+  designTab
   builtOn="PrimeReact Message"
   related={[
     { label: 'Link', href: '?path=/docs/components-link--docs', relation: 'Uses' },
@@ -21,7 +22,9 @@ A message about what happened and what to do next. One shared component for inli
 <Canvas of={AlertStories.Playground} />
 <Controls of={AlertStories.Playground} include={['title', 'description', 'status', 'size', 'filled', 'statusIcon', 'elevated', 'actionLabel', 'actionHref', 'closable']} />
 
-All props are listed at the end of the page. Close dismisses the message; **Show message** brings it back in the Playground.
+```tsx
+<Alert status="success" title="Invoice deleted" actionLabel="Undo" onAction={undo} elevated />
+```
 
 ## When to use
 
@@ -38,127 +41,73 @@ All props are listed at the end of the page. Close dismisses the message; **Show
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={AlertStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** a frame with a status border and an optional soft fill.
-2. **Status icon (optional):** the standard Base icon for the status, 16 or 20px. Other icon sets need to be agreed first.
-3. **Title:** a short sentence about what happened. Regular on its own, Medium with a description.
-4. **Description (optional):** more context, in the subtle text colour. The text wraps and the container grows with it.
-5. **Action (optional):** the Link button appearance, next to a title or below a description. A link for navigation, a button for a local action.
-6. **Close (optional):** the grey Action Button, with the *remove* icon.
+### Undo a change
 
-## Types
+<Canvas of={AlertStories.UndoAChange} />
 
-### Inline Alert
+A floating Toast after an event, with one useful next step. `onAction` makes the action a real button (Enter or Space). Non-urgent messages are announced politely.
 
-<Canvas of={AlertStories.InlineAlert} />
+### A payment failed
 
-Use it next to the content it concerns. **No elevation**, as specified in the Figma guidelines. Close is optional.
+<Canvas of={AlertStories.APaymentFailed} />
 
-### Notification & Toast
+An inline Alert next to the content it concerns. Errors are announced at once (`role="alert"`). The description says what to do.
 
-<Canvas of={AlertStories.FloatingMessage} />
+### Dismiss a notice
 
-Use **Elevation XS** for a floating message. The product chooses where it appears and how messages are queued; this component is their shared body. The shadow follows the theme.
+<Canvas of={AlertStories.DismissANotice} />
 
-## Sizes
-
-<Canvas of={AlertStories.Sizes} />
-
-From the top:
-
-- **sm-20:** Body-md/Regular (14/20), 20px status icon, Link sm-20 and Action Button sm-20. The title-only frame is 44px high.
-- **xs-16:** Body-sm/Regular (12/16), 16px status icon, Link xs-16 and Action Button xs-16. The title-only frame is 40px high.
-
-Both have 12px padding and 8px between parts. The examples are 360px wide; a message can fit a narrower container, and its text wraps.
-
-## Variants
-
-### Description
-
-<Canvas of={AlertStories.Description} />
-
-Without a description, the action sits on the right. With one, the title and description are 2px apart and the action sits 12px below them; the icon and Close align with the title.
-Figma has descriptions only in **sm-20**. Adding `description` selects that size, even when `size` is `xs`.
-
-### Outstroke & Filled
-
-<Canvas of={AlertStories.Filled} />
-
-The border and status icon keep the status colour. **Outstroke** uses `surface-floating`; **Filled** adds the status's muted background, or `bg-weak-100` for Neutral.
-
-### Optional parts
-
-<Canvas of={AlertStories.OptionalParts} />
-
-From the top: without Close, without an action, without a status icon. All three options are independent; keep the meaning clear in the text.
-
-## States
-
-### Warning
-
-Something needs attention. An amber triangle and border.
-
-<Canvas of={AlertStories.Warning} />
-
-### Error
-
-Something failed or needs correcting. A red circle with a cross and a red border.
-
-<Canvas of={AlertStories.ErrorState} />
-
-### Success
-
-An action completed successfully. A green circle with a check and a green border.
-
-<Canvas of={AlertStories.Success} />
-
-### Info
-
-Useful context or an update. A blue information icon and border.
-
-<Canvas of={AlertStories.Info} />
-
-### Neutral
-
-A general notice. A grey diamond and border.
-
-<Canvas of={AlertStories.Neutral} />
-
-## Behaviour
-
-### Closing
-
-Close hides the message and calls `onClose`. With controlled `open`, the parent updates visibility in that callback. Messages stay visible until dismissed; there is no automatic timer.
-After dismissing a floating message with the keyboard, the product should return focus to the control that opened it, or another relevant control.
-
-### Actions
-
-<Canvas of={AlertStories.LocalAction} />
-
-Use `onAction` for an action such as Undo or Retry. It is a button, activated with Enter or Space.
-
-<Canvas of={AlertStories.NavigationAction} />
-
-Use `actionHref` when the action goes somewhere. It is the existing Link, with the browser's normal navigation behaviour.
+Close hides the message and calls `onClose`. With `actionHref`, the action is a Link with the browser's normal navigation. Messages stay until dismissed: there is no timer.
 
 ### Long content
 
 <Canvas of={AlertStories.LongContent} />
 
-Content wraps and sets the height. Keep titles short, put explanations in the description, and use one clear action.
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **One component for three names.** Alert, Notification and Toast share one body; only `elevated` changes. The product decides where floating messages appear and how they queue.
+- **Announced by urgency.** Errors use `role="alert"`; other statuses use `role="status"`. Set `role` yourself for a non-urgent error or an urgent warning.
+- **No automatic dismissal.** A message never disappears while someone is reading it or using its action.
+- **Status is not colour alone.** Each status has its own icon shape, and screen readers hear a status word first (*Error*, *Success*); change it with `statusLabel`.
+- **A description means sm-20.** Figma has descriptions only in sm-20, so adding one selects that size.
+- **Corner radii from the component set:** 10px without a description, 12px with one. The guidelines text lists 8px; see Contributing/Tokens.
+
+## Types, statuses and sizes
+
+<Canvas of={AlertStories.Types} />
+
+An **inline Alert** has no elevation and sits next to the content it concerns. A **Notification or Toast** uses Elevation XS; the shadow follows the theme.
+
+<Canvas of={AlertStories.Statuses} />
+
+**Warning:** something needs attention. **Error:** something failed or needs correcting. **Success:** an action completed. **Info:** useful context or an update. **Neutral:** a general notice.
+**Outstroke** uses `surface-floating`; **Filled** adds the status's muted background.
+
+<Canvas of={AlertStories.Sizes} />
+
+sm-20: Body-md text, 20px icon. xs-16: Body-sm text, 16px icon. Both have 12px padding and 8px between parts.
+Close, the action and the status icon are independent options.
 
 ## Accessibility
 
-- Errors default to `role="alert"` with an assertive announcement; other statuses use `role="status"` with a polite announcement. Set `role` by urgency, especially for non-urgent errors or urgent warnings.
-- A screen-reader prefix names the status. Change it with `statusLabel`; the visible text should explain the situation too. Status is also shown by the icon's shape, not colour alone.
-- The icon is decorative. The action has its visible label; Close has `closeLabel`, *Close message* by default.
-- Tab reaches the action and Close; both use the system blue focus ring. The small controls keep a 24px target around their icons or labels.
-- No automatic dismissal removes a message while someone is reading or using its action.
+| Key | What it does |
+|---|---|
+| Tab | Moves to the action, then Close; the blue ring shows |
+| Enter or Space | Runs the action or closes the message |
+
+- The icon is decorative. Close has `closeLabel`, *Close message* by default.
+- The small controls keep a 24px target around their icons or labels.
+- After a floating message is dismissed with the keyboard, the product should return focus to the control that opened it.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping rows={[
   { figma: 'Size', prop: 'size', values: 'xs-16, sm-20 → xs, sm; a description always uses sm' },
@@ -172,8 +121,6 @@ Content wraps and sets the height. Keep titles short, put explanations in the de
   { figma: 'Elevation (guidelines)', prop: 'elevated', values: 'false for Alert; true for a floating Notification or Toast' },
   { figma: '—', prop: 'open · role · statusLabel · closeLabel', values: 'controlled visibility, announcement urgency and accessible words' },
 ]} />
-
-Corner radii follow the component set: **10px** without a description and **12px** with one. The Sizes guidelines text lists 8px for both sizes; see Contributing/Tokens.
 
 ## Props
 

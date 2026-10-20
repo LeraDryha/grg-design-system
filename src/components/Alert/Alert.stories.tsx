@@ -1,9 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import type { CSSProperties } from 'react';
+import { useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Alert, alertStatuses, type AlertProps } from './Alert';
 import { Button } from '../Button/Button';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/alert/alert-component.png';
+import guidelinesFrame from '../../assets/design/alert/alert-guidelines.png';
 
 const meta = {
   title: 'Components/Alert',
@@ -11,7 +14,15 @@ const meta = {
   tags: ['ready'],
   component: Alert,
   // The shared Alert, Notification & Toast docs page is Alert.mdx.
-  parameters: { layout: 'padded', docs: { description: { component: 'A contextual message about what happened and what to do next. Use it inline as an Alert, or with elevation as a Notification or Toast.' } } },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: 'A contextual message about what happened and what to do next. Use it inline as an Alert, or with elevation as a Notification or Toast.' } },
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: { title: 'Alert title here!', status: 'warning', size: 'xs', filled: false, statusIcon: true, elevated: false, actionLabel: 'Link button', closable: true, closeLabel: 'Close message' },
   argTypes: {
     title: { control: 'text' },
@@ -36,9 +47,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const row: CSSProperties = { display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: 'var(--space-800)', maxWidth: '100%' };
-const column: CSSProperties = { display: 'grid', justifyItems: 'start', gap: 'var(--space-600)', maxWidth: '100%' };
+const width = { width: 'min(360px, 100%)' };
 const description = 'Alert description here! It would look better as two lines of text';
+const STATUS_NAMES = { warning: 'Warning', error: 'Error', success: 'Success', info: 'Info', neutral: 'Neutral' };
 
 /** Edit everything in Controls; Close hides it, and Show message brings it back. */
 export const Playground: Story = {
@@ -52,70 +63,98 @@ export const Playground: Story = {
   },
 };
 
-/** Container, status icon, title, description, action and close, numbered as in Figma. */
-export const Anatomy: Story = {
-  args: { size: 'sm', description },
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
+
+/** Saved, with a way back: a Toast with Undo. The action is a real button. */
+export const UndoAChange: Story = {
+  name: 'Undo a change',
+  args: { status: 'success', size: 'sm', elevated: true, title: 'Invoice deleted', actionLabel: 'Undo', onAction: fn() },
+  render: (args: AlertProps) => <div style={width}><Alert {...args} /></div>,
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status')).toHaveTextContent(/invoice deleted/i);
+    await userEvent.click(canvas.getByRole('button', { name: 'Undo' }));
+    await expect(args.onAction).toHaveBeenCalledTimes(1);
+  },
+};
+
+/** A failed payment next to the form: an error is announced at once, and explains what to do. */
+export const APaymentFailed: Story = {
+  name: 'A payment failed',
+  args: {
+    status: 'error', size: 'sm', filled: true, closable: false,
+    title: 'The payment didn’t go through',
+    description: 'Your bank declined the card. Try another card or contact your bank.',
+    actionLabel: 'Try again', onAction: fn(),
+  },
+  render: (args: AlertProps) => <div style={width}><Alert {...args} /></div>,
+  play: async ({ canvasElement }) => {
+    await expect(within(canvasElement).getByRole('alert')).toHaveTextContent(/error/i);
+  },
+};
+
+/** Dismiss a notice: Close hides it until something brings it back. */
+export const DismissANotice: Story = {
+  name: 'Dismiss a notice',
+  args: { status: 'info', title: 'New statement available', actionLabel: 'View', actionHref: '#' },
+  render: function DismissANotice(args: AlertProps) {
+    const [open, setOpen] = useState(true);
+    return (
+      <div style={width}>
+        {open ? <Alert {...args} open onClose={() => setOpen(false)} /> : <Button size="sm" onClick={() => setOpen(true)}>Show message</Button>}
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Close message' }));
+    await waitFor(() => expect(canvas.queryByText('New statement available')).toBeNull());
+    await userEvent.click(canvas.getByRole('button', { name: 'Show message' }));
+    await expect(canvas.getByText('New statement available')).toBeVisible();
+  },
+};
+
+/** Long text: the message grows; keep the title short and put the explanation in the description. */
+export const LongContent: Story = {
+  name: 'Long content',
+  args: { size: 'sm', title: 'Your transfer is taking longer than expected', description: 'We are checking the transfer with the receiving bank. You can continue working and check its status later.', actionLabel: 'View transfer' },
+  render: (args: AlertProps) => <div style={width}><Alert {...args} /></div>,
+};
+
+/* ---- Overview ---- */
+
+/** Inline Alert (no elevation) and a floating Notification or Toast (Elevation XS). */
+export const Types: Story = {
+  args: { size: 'sm' },
   render: (args: AlertProps) => (
-    <AnatomyBlock width={360} markers={[
-      { n: 1, target: '.grg-alert', side: 'left' },
-      { n: 2, target: '.grg-alert__status-icon', side: 'bottom' },
-      { n: 3, target: '.grg-alert__title', side: 'top' },
-      { n: 4, target: '.grg-alert__description', side: 'right' },
-      { n: 5, target: '.grg-alert__action', side: 'bottom' },
-      { n: 6, target: '.grg-alert__close', side: 'top' },
-    ]}>
-      <Alert {...args} />
-    </AnatomyBlock>
+    <Showcase>
+      <Variant caption="Inline Alert"><div style={width}><Alert {...args} elevated={false} /></div></Variant>
+      <Variant caption="Notification & Toast"><div style={width}><Alert {...args} elevated /></div></Variant>
+    </Showcase>
   ),
 };
 
-/** Inline Alert: no elevation. */
-export const InlineAlert: Story = { args: { size: 'sm', elevated: false } };
+/** The five statuses, Outstroke and Filled. */
+export const Statuses: Story = {
+  render: (args: AlertProps) => (
+    <Showcase column>
+      {alertStatuses.map(status => (
+        <Variant key={status} caption={STATUS_NAMES[status]}>
+          <Alert {...args} status={status} filled={false} />
+          <Alert {...args} status={status} filled />
+        </Variant>
+      ))}
+    </Showcase>
+  ),
+};
 
-/** Floating Notification or Toast: Elevation XS, in the current theme. */
-export const FloatingMessage: Story = { args: { size: 'sm', elevated: true } };
-
-/** sm-20, then xs-16. The numbers are the text line height and icon size. */
+/** sm-20, xs-16, and sm-20 with a description. */
 export const Sizes: Story = {
-  render: (args: AlertProps) => <div style={column}><Alert {...args} description={undefined} size="sm" /><Alert {...args} description={undefined} size="xs" /></div>,
+  render: (args: AlertProps) => (
+    <Showcase column>
+      <Variant caption="sm · 20px"><div style={width}><Alert {...args} size="sm" /></div></Variant>
+      <Variant caption="xs · 16px"><div style={width}><Alert {...args} size="xs" /></div></Variant>
+      <Variant caption="With a description (sm only)"><div style={width}><Alert {...args} size="sm" description={description} /></div></Variant>
+    </Showcase>
+  ),
 };
-
-/** Outstroke and Filled for each of the five statuses, as in the Figma Options rows. */
-export const Filled: Story = {
-  render: (args: AlertProps) => <div style={column}>{alertStatuses.map(status => <div key={status} style={row}><Alert {...args} status={status} filled={false} /><Alert {...args} status={status} filled /></div>)}</div>,
-};
-
-/** Without a description, then with one. The described variant always uses sm-20. */
-export const Description: Story = {
-  args: { size: 'sm' },
-  render: (args: AlertProps) => <div style={column}><Alert {...args} description={undefined} /><Alert {...args} description={args.description || description} /></div>,
-};
-
-/** Close, action and status icon are independent options. */
-export const OptionalParts: Story = {
-  render: (args: AlertProps) => <div style={column}><Alert {...args} closable={false} /><Alert {...args} actionLabel={undefined} /><Alert {...args} statusIcon={false} /></div>,
-};
-
-/** The complete component set: 5 statuses × 2 fills × (xs, sm, sm with description). */
-export const AllVariants: Story = {
-  args: { elevated: true },
-  render: (args: AlertProps) => <div style={column}>{(['xs', 'sm', 'description'] as const).map(kind => <div key={kind} style={column}>{alertStatuses.map(status => <div key={status} style={row}>{[false, true].map(filled => <Alert key={String(filled)} {...args} status={status} size={kind === 'xs' ? 'xs' : 'sm'} description={kind === 'description' ? (args.description || description) : undefined} filled={filled} />)}</div>)}</div>)}</div>,
-};
-
-/** Text grows naturally; long words wrap instead of clipping. */
-export const LongContent: Story = {
-  args: { size: 'sm', title: 'Your transfer is taking longer than expected', description: 'We are checking the transfer with the receiving bank. You can continue working and check its status later.', actionLabel: 'View transfer' },
-};
-
-/** A navigation action uses the existing Link, rather than a button with a URL handler. */
-export const NavigationAction: Story = { args: { status: 'info', actionLabel: 'About this system', actionHref: '?path=/docs/getting-started-about--docs' } };
-
-/** A local action is a real button: Enter or Space activates it. */
-export const LocalAction: Story = { args: { status: 'success', title: 'Changes saved', actionLabel: 'Undo' } };
-
-/* Message states are its five statuses; there is no disabled or hovered message in Figma. */
-export const Warning: Story = { args: { status: 'warning' } };
-export const ErrorState: Story = { name: 'Error', args: { status: 'error' } };
-export const Success: Story = { args: { status: 'success' } };
-export const Info: Story = { args: { status: 'info' } };
-export const Neutral: Story = { args: { status: 'neutral' } };

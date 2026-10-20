@@ -1,9 +1,12 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Banner, bannerStatuses, type BannerProps } from './Banner';
 import { Button } from '../Button/Button';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/banner/banner-component.png';
+import guidelinesFrame from '../../assets/design/banner/banner-guidelines.png';
 
 const meta = {
   title: 'Components/Banner',
@@ -11,7 +14,15 @@ const meta = {
   tags: ['ready'],
   component: Banner,
   // Banner.mdx supplies the documentation.
-  parameters: { layout: 'padded', docs: { description: { component: 'A full-width message for a page-wide or service-wide notice, with an optional description, action and dismissal.' } } },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: 'A full-width message for a page-wide or service-wide notice, with an optional description, action and dismissal.' } },
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: { title: 'Banner title here!', description: 'Banner description here!', status: 'warning', filled: false, align: 'center', actionLabel: 'Link button', closable: true, closeLabel: 'Close banner' },
   argTypes: {
     title: { control: 'text' },
@@ -34,7 +45,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const column: CSSProperties = { display: 'grid', gap: 'var(--space-600)', width: '100%', minWidth: 0 };
+const STATUS_NAMES = { warning: 'Warning', error: 'Error', success: 'Success', info: 'Info', neutral: 'Neutral' };
+const full = { width: '100%', minWidth: 0 };
 
 /** Close updates Controls; Show banner restores the message. */
 export const Playground: Story = {
@@ -46,75 +58,89 @@ export const Playground: Story = {
   },
 };
 
-export const Anatomy: Story = {
-  render: (args: BannerProps) => <div className="doc-anatomy-scroll" role="region" aria-label="Banner anatomy diagram" tabIndex={0}><AnatomyBlock width="auto" markers={[
-    { n: 1, target: '.grg-banner', side: 'left' },
-    { n: 2, target: '.grg-banner__status-icon', side: 'top' },
-    { n: 3, target: '.grg-banner__title', side: 'bottom' },
-    { n: 4, target: '.grg-banner__description', side: 'bottom' },
-    { n: 5, target: '.grg-banner__action', side: 'top' },
-    { n: 6, target: '.grg-banner__close', side: 'right' },
-  ]}><div style={{ width: 'calc(var(--space-2000) * 9)' }}><Banner {...args} /></div></AnatomyBlock></div>,
-};
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
 
-/** Filled, then Ghost, with no outline or elevation in either case. */
-export const Types: Story = {
-  render: (args: BannerProps) => <div style={column}><Banner {...args} filled /><Banner {...args} filled={false} /></div>,
-};
-
-/** The Figma set's 10 variants: five statuses, first Ghost, then Filled. */
-export const AllVariants: Story = {
-  render: (args: BannerProps) => <div style={column}>{[false, true].map(filled => bannerStatuses.map(status => <Banner key={`${filled}-${status}`} {...args} filled={filled} status={status} />))}</div>,
-};
-
-export const Alignment: Story = {
-  args: { filled: true, status: 'error' },
-  render: (args: BannerProps) => <div style={column}><Banner {...args} align="center" /><Banner {...args} align="left" /></div>,
-};
-
-export const Description: Story = {
-  render: (args: BannerProps) => <div style={column}><Banner {...args} /><Banner {...args} description={undefined} /></div>,
-};
-
-export const OptionalParts: Story = {
-  render: (args: BannerProps) => <div style={column}>
-    <Banner {...args} actionLabel={undefined} />
-    <Banner {...args} closable={false} />
-    <Banner {...args} description={undefined} actionLabel={undefined} closable={false} />
-  </div>,
-};
-
-/** A single size that fills its parent; height follows wrapping text. */
-export const Widths: Story = {
-  render: (args: BannerProps) => <div style={column}>{['100%', 'calc(var(--space-2000) * 9)', 'calc(var(--space-2000) * 4)'].map(width => <div key={width} style={{ width, maxWidth: '100%' }}><Banner {...args} /></div>)}</div>,
-};
-
-export const LongContent: Story = {
-  args: { title: 'Scheduled maintenance on international transfers', description: 'Some transfers may take longer while we update the service. Your funds remain safe and you can continue using your account.', actionLabel: 'View maintenance details', status: 'info', filled: true },
-};
-
-/** Exercise wrapping even when the title, description or action has no spaces. */
-export const UnbrokenContent: Story = {
-  args: { title: 'SERVICE_STATUS_REFERENCE_012345678901234567890123456789', description: 'REFERENCE_ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789', actionLabel: 'VIEW_REFERENCE_ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789', align: 'left', filled: true },
-};
-
-export const NavigationAction: Story = {
-  args: { status: 'info', actionLabel: 'About this system', actionHref: '/?path=/docs/getting-started-about--docs' },
-};
-
-export const LocalAction: Story = {
-  args: { title: 'Connection interrupted', description: 'Reconnect to refresh your balances.', actionLabel: 'Retry', filled: true },
-  render: function LocalAction(args: BannerProps) {
-    const [attempts, setAttempts] = useState(0);
-    return <div style={column}>
-      <Banner {...args} onAction={() => { args.onAction?.(); setAttempts(n => n + 1); }} />
-      {attempts > 0 && <span role="status">Retry requested ({attempts})</span>}
-    </div>;
+/** Planned maintenance across the service: a Filled Info banner with a link to the details. */
+export const PlannedMaintenance: Story = {
+  name: 'Planned maintenance',
+  args: {
+    status: 'info', filled: true,
+    title: 'Scheduled maintenance on international transfers',
+    description: 'Some transfers may take longer on Saturday, 02:00–04:00 UTC.',
+    actionLabel: 'View details', actionHref: '#',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('status')).toHaveTextContent(/scheduled maintenance/i);
+    await expect(canvas.getByRole('link', { name: 'View details' })).toBeVisible();
   },
 };
 
-export const Warning: Story = { args: { status: 'warning' } };
-export const ErrorState: Story = { name: 'Error', args: { status: 'error' } };
-export const Success: Story = { args: { status: 'success' } };
-export const Info: Story = { args: { status: 'info' } };
-export const Neutral: Story = { args: { status: 'neutral' } };
+/** The connection dropped: Retry is a local action, and the banner stays until the problem is solved. */
+export const ConnectionLost: Story = {
+  name: 'Connection lost',
+  args: { status: 'error', filled: true, title: 'Connection interrupted', description: 'Reconnect to refresh your balances.', actionLabel: 'Retry', closable: false, onAction: fn() },
+  render: function ConnectionLost(args: BannerProps) {
+    const [attempts, setAttempts] = useState(0);
+    return (
+      <div style={{ display: 'grid', gap: 'var(--space-400)', ...full }}>
+        <Banner {...args} onAction={() => { args.onAction?.(); setAttempts(n => n + 1); }} />
+        {attempts > 0 && <span role="status" style={{ font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>Retry requested ({attempts})</span>}
+      </div>
+    );
+  },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('alert')).toHaveTextContent(/connection interrupted/i);
+    await userEvent.click(canvas.getByRole('button', { name: 'Retry' }));
+    await expect(args.onAction).toHaveBeenCalledTimes(1);
+    await expect(canvas.getByText('Retry requested (1)')).toBeVisible();
+  },
+};
+
+/** A notice people can put aside: Close hides it. */
+export const DismissANotice: Story = {
+  name: 'Dismiss a notice',
+  args: { status: 'neutral', title: 'Statements now arrive on the 1st of each month', description: undefined, actionLabel: undefined },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Close banner' }));
+    await waitFor(() => expect(canvas.queryByText(/statements now arrive/i)).toBeNull());
+  },
+};
+
+/** Long text on a narrow page: the icon stays with the title; the rest wraps and Close keeps its place. */
+export const LongContent: Story = {
+  name: 'Long content',
+  args: { title: 'Scheduled maintenance on international transfers', description: 'Some transfers may take longer while we update the service. Your funds remain safe and you can continue using your account.', actionLabel: 'View maintenance details', status: 'info', filled: true },
+  render: (args: BannerProps) => <div style={{ width: 'calc(var(--space-2000) * 4)', maxWidth: '100%' }}><Banner {...args} /></div>,
+};
+
+/* ---- Overview ---- */
+
+/** Filled and Ghost, for each of the five statuses. */
+export const Statuses: Story = {
+  render: (args: BannerProps) => (
+    <Showcase column>
+      {bannerStatuses.map(status => (
+        <Variant key={status} caption={STATUS_NAMES[status]}>
+          <div style={{ display: 'grid', gap: 'var(--space-200)', ...full }}>
+            <Banner {...args} status={status} filled />
+            <Banner {...args} status={status} filled={false} />
+          </div>
+        </Variant>
+      ))}
+    </Showcase>
+  ),
+};
+
+/** Center (default) and left. */
+export const Alignment: Story = {
+  args: { filled: true, status: 'error' },
+  render: (args: BannerProps) => (
+    <Showcase column>
+      <Variant caption="Center (default)"><div style={full}><Banner {...args} align="center" /></div></Variant>
+      <Variant caption="Left"><div style={full}><Banner {...args} align="left" /></div></Variant>
+    </Showcase>
+  ),
+};
