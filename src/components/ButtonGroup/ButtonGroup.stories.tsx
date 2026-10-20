@@ -1,8 +1,11 @@
-import { useState, type CSSProperties } from 'react';
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
+import { expect, userEvent, within } from 'storybook/test';
 import { ButtonGroup, type ButtonGroupProps, type ButtonGroupValue, type ButtonGroupEntry } from './ButtonGroup';
-import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
+import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
+import componentFrame from '../../assets/design/button-group/button-group-component.png';
+import guidelinesFrame from '../../assets/design/button-group/button-group-guidelines.png';
 
 const sample: ButtonGroupEntry[] = [
   { id: 'day', label: 'Day' }, { id: 'week', label: 'Week' }, { id: 'month', label: 'Month' },
@@ -11,15 +14,22 @@ const meta = {
   title: 'Components/ButtonGroup',
   // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
   tags: ['ready'], component: ButtonGroup,
-  parameters: { layout: 'padded', docs: { description: { component: 'A compact choice between related options, with persistent selection and joined borders.' } } },
+  parameters: {
+    layout: 'padded',
+    docs: { description: { component: 'A compact choice between related options, with persistent selection and joined borders.' } },
+    // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
+    design: [
+      { name: 'Component', type: 'image', url: componentFrame },
+      { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+    ],
+  },
   args: { items: sample, size: 'md', disabled: false, 'aria-label': 'Time range' },
   argTypes: { items: { control: 'object' }, size: { control: 'inline-radio', options: ['md', 'sm'] }, disabled: { control: 'boolean' }, 'aria-label': { control: 'text' }, allowEmpty: { control: 'boolean' }, value: { control: 'object' }, defaultValue: { control: 'object' }, onValueChange: { action: 'selection changed', control: false } },
 } satisfies Meta<typeof ButtonGroup>;
 export default meta;
 type Story = StoryObj<typeof meta>;
-const row: CSSProperties = { display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 'var(--space-600)', padding: 'var(--space-200)' };
-const column: CSSProperties = { display: 'grid', justifyItems: 'start', gap: 'var(--space-600)', padding: 'var(--space-200)' };
-const scroll: CSSProperties = { maxWidth: '100%', overflowX: 'auto', padding: 'var(--space-200)', boxSizing: 'border-box' };
+
+const note = { font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' };
 
 export const Playground: Story = {
   render: function Playground(args) {
@@ -27,66 +37,102 @@ export const Playground: Story = {
     return <ButtonGroup {...args} onValueChange={(value, event) => { updateArgs({ value }); args.onValueChange?.(value, event); }} />;
   },
 };
-export const Anatomy: Story = {
-  render: (args: ButtonGroupProps) => <div className="doc-anatomy-scroll" role="region" aria-label="Button group anatomy" tabIndex={0}>
-    <AnatomyBlock width="auto" markers={[
-      { n: 1, target: '.grg-button-group-item', side: 'left' },
-      { n: 2, target: '.grg-button-group-item__icon', side: 'top' },
-      { n: 3, target: '.grg-button-group-item__label', side: 'bottom' },
-      { n: 4, target: '.grg-button-group', side: 'right' },
-    ]}><ButtonGroup {...args} items={args.items.map((item, index) => ({ ...item, leftIcon: index === 0 ? 'plus' : item.leftIcon }))} /></AnatomyBlock>
-  </div>,
-};
-export const Types: Story = {
-  render: (args: ButtonGroupProps) => <div style={column}>
-    <ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: null, rightIcon: null, iconOnly: false }))} />
-    <ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: item.leftIcon ?? 'plus', rightIcon: null, iconOnly: false }))} />
-    <ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: item.leftIcon ?? 'plus', iconOnly: true }))} />
-  </div>,
-};
-export const Sizes: Story = { render: (args: ButtonGroupProps) => <div style={row}>{(['md', 'sm'] as const).map(size => <ButtonGroup key={size} {...args} size={size} />)}</div> };
-export const Quantities: Story = {
-  args: { items: Array.from({ length: 6 }, (_, i) => ({ id: `action-${i}`, label: 'Button' })), 'aria-label': 'Related options' },
-  render: (args: ButtonGroupProps) => <div className="doc-anatomy-scroll" role="region" aria-label="Button group quantities" tabIndex={0} style={scroll}>
-    <div style={{ ...row, alignItems: 'start', width: 'max-content', flexWrap: 'nowrap' }}>{(['md', 'sm'] as const).map(size => <div key={size} style={column}>
-      {[6, 5, 4, 3, 2].map(quantity => <ButtonGroup key={quantity} {...args} size={size} items={args.items.slice(0, quantity)} />)}
-    </div>)}</div>
-  </div>,
-};
-export const Default: Story = {};
-export const Hovered: Story = { render: (args: ButtonGroupProps) => <ButtonGroup {...args} items={args.items.map((item, i) => ({ ...item, previewState: i === 1 ? 'hover' : 'default' }))} /> };
-export const Pressed: Story = { render: (args: ButtonGroupProps) => <ButtonGroup {...args} items={args.items.map((item, i) => ({ ...item, previewState: i === 1 ? 'active' : 'default' }))} /> };
-export const Focused: Story = { render: (args: ButtonGroupProps) => <ButtonGroup {...args} items={args.items.map((item, i) => ({ ...item, previewState: i === 1 ? 'focus' : 'default' }))} /> };
-export const Disabled: Story = { args: { disabled: true } };
-export const DisabledItem: Story = { args: { items: sample.map(item => ({ ...item, disabled: item.id === 'week' })) } };
 
-function SelectionFeedback(args: ButtonGroupProps) {
-  const [value, setValue] = useState<ButtonGroupValue>(args.defaultValue ?? null);
-  return <div style={column}><ButtonGroup {...args} value={value} onValueChange={(next, event) => { setValue(next); args.onValueChange?.(next, event); }} /><output aria-live="polite">Selected: {value ?? 'None'}</output></div>;
-}
-export const SingleSelection: Story = { args: { defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
-export const OptionalSelection: Story = { args: { allowEmpty: true, defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
-export const RequiredSelection: Story = { args: { allowEmpty: false, defaultValue: 'week' }, render: (args: ButtonGroupProps) => <SelectionFeedback {...args} /> };
-export const Selected: Story = { args: { defaultValue: 'week' } };
-export const FirstDisabled: Story = { args: { items: sample.map((item, index) => ({ ...item, disabled: index === 0 })) } };
+/* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
 
-/** Selection examples from Figma, with state connected to the displayed content. */
-function SelectionExamples(args: ButtonGroupProps) {
-  const [period, setPeriod] = useState<ButtonGroupValue>('1W');
-  const [view, setView] = useState<ButtonGroupValue>('list');
-  return <div style={column}>
-    <ButtonGroup {...args} size="sm" allowEmpty={false} value={period} onValueChange={setPeriod} aria-label="Chart time range" items={['1D', '1W', '1M', '3M', '1Y'].map(label => ({ id: label, label }))} />
-    <output aria-live="polite">Period: {period}</output>
-    <ButtonGroup {...args} allowEmpty={false} value={view} onValueChange={setView} aria-label="View" items={[{ id: 'list', label: 'List view', leftIcon: 'list-view-rectangle' }, { id: 'grid', label: 'Grid view', leftIcon: 'grid-02' }]} />
-    <div aria-label="View preview" style={{ display: 'grid', gridTemplateColumns: view === 'grid' ? 'repeat(2, 1fr)' : '1fr', gap: 'var(--space-200)', width: 'calc(var(--space-2000) * 3)', maxWidth: '100%' }}>
-      {['Overview', 'Activity', 'Reports', 'Settings'].map(label => <div key={label} style={{ padding: 'var(--space-300)', background: 'var(--bg-weak-100)', borderRadius: 'var(--radius-xs-6)' }}>{label}</div>)}
-    </div>
-  </div>;
-}
-export const Examples: Story = { render: (args: ButtonGroupProps) => <SelectionExamples {...args} /> };
+/** A chart's time range: one option is always chosen, and the choice stays after the pointer leaves. */
+export const ChooseATimeRange: Story = {
+  name: 'Choose a time range',
+  render: function ChooseATimeRange(args: ButtonGroupProps) {
+    const [period, setPeriod] = useState<ButtonGroupValue>('1W');
+    return (
+      <div style={{ display: 'grid', gap: 'var(--space-300)', justifyItems: 'start' }}>
+        <ButtonGroup {...args} size="sm" allowEmpty={false} value={period} onValueChange={setPeriod} aria-label="Chart time range"
+          items={['1D', '1W', '1M', '3M', '1Y'].map(label => ({ id: label, label }))} />
+        <output aria-live="polite" style={note}>Showing: {period}</output>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: '1M' }));
+    await expect(canvas.getByRole('button', { name: '1M' })).toHaveAttribute('aria-pressed', 'true');
+    await expect(canvas.getByRole('button', { name: '1W' })).toHaveAttribute('aria-pressed', 'false');
+    // allowEmpty={false}: a second click keeps the choice
+    await userEvent.click(canvas.getByRole('button', { name: '1M' }));
+    await expect(canvas.getByText('Showing: 1M')).toBeVisible();
+  },
+};
+
+/** List or grid: icons with names, and the preview follows the choice. */
+export const SwitchTheView: Story = {
+  name: 'Switch the view',
+  render: function SwitchTheView(args: ButtonGroupProps) {
+    const [view, setView] = useState<ButtonGroupValue>('list');
+    return (
+      <div style={{ display: 'grid', gap: 'var(--space-400)', justifyItems: 'start' }}>
+        <ButtonGroup {...args} allowEmpty={false} value={view} onValueChange={setView} aria-label="View"
+          items={[{ id: 'list', label: 'List view', leftIcon: 'list-view-rectangle', iconOnly: true }, { id: 'grid', label: 'Grid view', leftIcon: 'grid-02', iconOnly: true }]} />
+        <div aria-label="View preview" style={{ display: 'grid', gridTemplateColumns: view === 'grid' ? 'repeat(2, 1fr)' : '1fr', gap: 'var(--space-200)', width: 'calc(var(--space-2000) * 3)', maxWidth: '100%' }}>
+          {['Overview', 'Activity', 'Reports', 'Settings'].map(label => (
+            <div key={label} style={{ padding: 'var(--space-300)', background: 'var(--bg-weak-100)', borderRadius: 'var(--radius-xs-6)', font: 'var(--typo-body-md-regular)', color: 'var(--text-strong-1000)' }}>{label}</div>
+          ))}
+        </div>
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    // Keyboard: Tab into the group, → moves focus, Space chooses
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect(canvas.getByRole('button', { name: 'Grid view' })).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await expect(canvas.getByRole('button', { name: 'Grid view' })).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+/** One option not available right now: it can't be chosen. */
+export const AnUnavailableOption: Story = {
+  name: 'An unavailable option',
+  args: { items: sample.map(item => ({ ...item, disabled: item.id === 'month' })), defaultValue: 'day' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Month' }));
+    await expect(canvas.getByRole('button', { name: 'Day' })).toHaveAttribute('aria-pressed', 'true');
+  },
+};
+
+/** Long labels in a narrow space: a labelled scroll region keeps the buttons whole. */
 export const Narrow: Story = {
   args: { items: [{ id: 'overview', label: 'Account overview' }, { id: 'activity', label: 'Account activity' }, { id: 'preferences', label: 'Account preferences' }] },
-  render: (args: ButtonGroupProps) => <div className="doc-anatomy-scroll" role="region" aria-label="Scrollable account options" tabIndex={0} style={{ ...scroll, width: 'calc(var(--space-2000) * 4)' }}><ButtonGroup {...args} /></div>,
+  render: (args: ButtonGroupProps) => (
+    <div className="doc-anatomy-scroll" role="region" aria-label="Scrollable account options" tabIndex={0}
+      style={{ width: 'calc(var(--space-2000) * 4)', maxWidth: '100%', overflowX: 'auto', padding: 'var(--space-200)', boxSizing: 'border-box' }}>
+      <ButtonGroup {...args} />
+    </div>
+  ),
 };
-export const SingleItem: Story = { args: { items: [sample[0]] } };
-export const Empty: Story = { args: { items: [] } };
+
+/* ---- Overview ---- */
+
+/** Text only, text and icon, icon only. */
+export const Types: Story = {
+  render: (args: ButtonGroupProps) => (
+    <Showcase column>
+      <Variant caption="Text"><ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: null, rightIcon: null, iconOnly: false }))} /></Variant>
+      <Variant caption="Text and icon"><ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: item.leftIcon ?? 'plus', rightIcon: null, iconOnly: false }))} /></Variant>
+      <Variant caption="Icon only"><ButtonGroup {...args} items={args.items.map(item => ({ ...item, leftIcon: item.leftIcon ?? 'plus', iconOnly: true }))} /></Variant>
+    </Showcase>
+  ),
+};
+
+/** md-32 and sm-24. */
+export const Sizes: Story = {
+  render: (args: ButtonGroupProps) => (
+    <Showcase>
+      <Variant caption="md · 32px"><ButtonGroup {...args} size="md" /></Variant>
+      <Variant caption="sm · 24px"><ButtonGroup {...args} size="sm" /></Variant>
+    </Showcase>
+  ),
+};

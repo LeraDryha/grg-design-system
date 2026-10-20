@@ -6,7 +6,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 # Button group
 
-<ComponentHeader figma="137-1263" guidelines="473-26235" builtOn="PrimeReact SelectButton" related={[
+<ComponentHeader figma="137-1263" guidelines="473-26235" designTab builtOn="PrimeReact SelectButton" related={[
   { label: 'Button group item', href: '/?path=/docs/components-buttongroupitem--docs' },
   { label: 'Button', href: '/?path=/docs/components-button--docs', relation: 'See also' },
 ]} />
@@ -16,7 +16,9 @@ A compact choice between related options, with persistent selection and one shar
 <Canvas of={Stories.Playground} />
 <Controls of={Stories.Playground} include={['items', 'size', 'value', 'allowEmpty', 'disabled', 'aria-label']} />
 
-Edit each entry's `label`, `leftIcon`, `rightIcon`, `iconOnly` and `disabled` in **Items**. Array length sets the quantity. Use stable, unique IDs for the options.
+```tsx
+<ButtonGroup aria-label="Time range" items={[{ id: 'day', label: 'Day' }, { id: 'week', label: 'Week' }]} value={range} onValueChange={setRange} />
+```
 
 ## When to use
 
@@ -30,120 +32,67 @@ Edit each entry's `label`, `leftIcon`, `rightIcon`, `iconOnly` and `disabled` in
   'Switching tab panels with tab semantics: use Tabs',
 ]} />
 
-## Anatomy
+## Examples
 
-<Canvas of={Stories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Item container:** a button with a 1px outline. The first item's left corners are rounded.
-2. **Icon:** an optional Base icon, 20px in md or 16px in sm.
-3. **Label:** Semibold text, with a 6px gap to each icon.
-4. **Group:** a named collection of related options. Center items have square corners; the last item's right corners are rounded. Items have zero gap and a single shared border. Figma’s centred strokes overlap at the joins; CSS draws each join once.
+### Choose a time range
 
-## Types
+<Canvas of={Stories.ChooseATimeRange} />
 
-<Canvas of={Stories.Types} />
+The chosen option stays highlighted after the pointer leaves and is announced as pressed. With `allowEmpty={false}` a second click keeps it; by default, as in PrimeReact SelectButton, a second click clears it.
 
-From the top: **Text only**, **Text + icon** and **Icon only**. Each item may have its own icons. Icon-only buttons use `label` as their accessible name.
+### Switch the view
 
-## Sizes
+<Canvas of={Stories.SwitchTheView} />
 
-<Canvas of={Stories.Sizes} />
+Icon-only options keep their `label` as a name (*List view*, *Grid view*). Tab enters the group, arrow keys move between options, Space chooses.
 
-- **md-32:** 32px height, 14/20 Semibold text, 20px icons, 6px vertical and 12px horizontal padding, 8px outer corners.
-- **sm-24:** 24px height, 12/16 Semibold text, 16px icons, 4px vertical and 8px horizontal padding, 6px outer corners.
-- Icon-only items use equal horizontal and vertical padding, making them 32×32 or 24×24.
+### An unavailable option
 
-The component's bound styles are the source of truth: the guidelines' prose says Medium and gives md a 6px radius, while the actual component uses **Semibold and 8px**. Code follows the component in both sizes. The anatomy prose also mentions 24px icons; the actual sizes are **20px and 16px**.
+<Canvas of={Stories.AnUnavailableOption} />
 
-### Quantity
+A disabled option can't be chosen. The whole group can be disabled too.
 
-<Canvas of={Stories.Quantities} />
-
-The source has **6, 5, 4, 3 and 2 items**, from the top, in both sizes. The array may contain another quantity when the content needs it. The group assigns Left, Center and Right automatically. A single item receives rounded corners on both sides; an empty array renders no buttons.
-
-## States
-
-### Default
-
-Transparent fill, `stroke-soft-200`, `text-subtle-700` and `icon-base-500`.
-
-<Canvas of={Stories.Default} />
-
-### Hovered
-
-The hovered item gains `bg-weak-100`; text and icons retain their default colours.
-
-<Canvas of={Stories.Hovered} />
-
-### Pressed
-
-While pressed, the item uses `bg-weak-100`, `text-strong-1000` and `icon-strong-1000`. A selected item keeps the strong appearance after release.
-
-<Canvas of={Stories.Pressed} />
-
-### Selected
-
-The chosen option stays highlighted after pointer release and blur. It exposes `aria-pressed="true"`. The strong appearance uses the Active style from the component set.
-
-<Canvas of={Stories.Selected} />
-
-### Disabled
-
-Disabled buttons use the disabled stroke, text and icon tokens, without a fill. They cannot be selected. Focus movement follows PrimeReact 10.9.9, including its handling of disabled options.
-
-<Canvas of={Stories.Disabled} />
-<Canvas of={Stories.DisabledItem} />
-
-### Keyboard focus
-
-The shared blue focus ring is drawn above neighbouring items, so it stays visible.
-
-<Canvas of={Stories.Focused} />
-
-## Behaviour
-
-Selection uses [PrimeReact 10.9.9 SelectButton](https://v10.primereact.org/selectbutton/). The Figma guide describes visual states and quantity; the selection behaviour follows SelectButton and the time-range / view examples.
-
-### Single selection
-
-<Canvas of={Stories.SingleSelection} />
-
-Clicking a different option selects it and clears the previous selection. Hovering only changes the hover appearance. By default, clicking the selected option clears it, as in PrimeReact SelectButton. Only single selection is supported. Use `defaultValue` for an initial ID, or `value` and `onValueChange` to control selection.
-
-### Optional selection
-
-<Canvas of={Stories.OptionalSelection} />
-
-`allowEmpty` is true by default: a second click clears the selected option. `allowEmpty={false}` prevents clearing an existing selection; supply an initial value if an option must be selected from the start.
-
-<Canvas of={Stories.RequiredSelection} />
-
-PrimeReact owns keyboard interaction: Tab enters the group, arrow keys move focus, and Space toggles the focused option. Tab leaves the group. This wrapper does not add Enter or Home/End handlers. In PrimeReact 10.9.9, arrow navigation can focus a disabled option, but activation cannot select it.
-
-Use the same size throughout a group. Labels stay on one line and determine each item's width. The border between adjacent items is drawn once.
-
-### Narrow layouts
+### Narrow
 
 <Canvas of={Stories.Narrow} />
 
-Keep option labels concise. When the full row cannot fit, place it in a labelled horizontal scroll region, as shown here. This preserves button sizes and joined corners; keyboard focus brings each button into view. The component itself keeps its natural width.
+Keep labels short. When the row can't fit, put it in a labelled horizontal scroll region; focus brings each option into view.
 
-## Examples
+## Design decisions
 
-<Canvas of={Stories.Examples} />
+What the code adds to the Figma file, and why:
 
-The time-range and List/Grid examples from Figma now retain their selected value. The view example also rearranges its preview when the choice changes.
+- **Selection that stays.** Figma shows the look of each state; the behaviour (one choice, kept after release) comes from PrimeReact SelectButton and the time-range and view examples. The selected option uses Figma's *Active* style.
+- **Positions are automatic.** The group gives each item its Left, Center or Right corners; a single item is rounded on both sides.
+- **One line between items.** Figma's centred strokes overlap at the joins; the code draws each join once.
+- **Focus above the neighbours.** The blue focus ring is drawn over the next item, so it stays visible.
+- **Styles from the component set.** The guidelines text says Medium labels, a 6px md radius and 24px icons; the component uses Semibold, 8px and 20 / 16px icons, and the code follows the component.
+
+## Types and sizes
+
+<Canvas of={Stories.Types} />
+
+<Canvas of={Stories.Sizes} />
+
+md-32: 14/20 Semibold text, 20px icons. sm-24: 12/16 Semibold text, 16px icons. Icon-only items are square. Use the same size throughout a group.
+Figma shows groups of 2–6 items; the array can hold another number. Each item is a [Button group item](/?path=/docs/components-buttongroupitem--docs).
 
 ## Accessibility
 
-- Give the group a contextual `aria-label`, such as “Time range”. PrimeReact provides `role="group"`.
-- Every button needs a meaningful `label`; icon-only buttons expose it as their accessible name. Icons are decorative.
-- Keyboard behaviour is inherited from PrimeReact SelectButton: arrows move focus and Space changes selection. Options use button roles with `aria-pressed`.
-- SelectButton exposes disabled options through `aria-disabled`. They cannot change the value; the entire group can also be disabled. PrimeReact 10.9.9 can still focus individually disabled options.
-- Focus uses `var(--focus-ring)` and is layered above neighbouring buttons.
-- Colours follow Figma in both themes. The subtle outline is a grouping cue; preserve sufficient contrast for the labels and icons on the chosen surface.
+| Key | What it does |
+|---|---|
+| Tab | Enters and leaves the group |
+| ← → | Move focus between options |
+| Space | Chooses the focused option |
+
+- Give the group a contextual `aria-label`, such as *Time range*; PrimeReact provides `role="group"`. Options are buttons with `aria-pressed`.
+- In PrimeReact 10.9.9, arrow keys can focus a disabled option, but it can't be chosen.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping rows={[
   { figma: 'Group / Quantity', prop: 'items', values: '2–6 → array length; other quantities are supported' },
@@ -153,7 +102,7 @@ The time-range and List/Grid examples from Figma now retain their selected value
   { figma: 'Item / Left icon', prop: 'items[].leftIcon', values: 'Base icon name; null or omitted → off in the assembled group' },
   { figma: 'Item / Right icon', prop: 'items[].rightIcon', values: 'Base icon name; null or omitted → off in the assembled group' },
   { figma: 'Item / Icon only', prop: 'items[].iconOnly', values: 'On, Off → true, false' },
-  { figma: 'Item / State', prop: '(interaction) · disabled · items[].disabled · items[].previewState', values: 'Default and Hovered follow interaction; selected options retain Active styling; disabled options cannot be selected; previewState is for documentation' },
+  { figma: 'Item / State', prop: '(interaction) · disabled · items[].disabled', values: 'Default and Hovered follow interaction; selected options keep Active styling; disabled options cannot be selected' },
   { figma: 'Selection behaviour', prop: 'value · defaultValue · onValueChange', values: 'single selected ID or null; controlled or internal state' },
   { figma: 'Selection options', prop: 'allowEmpty', values: 'single selection only; clearing is allowed by default' },
   { figma: '—', prop: 'aria-label', values: 'accessible group name' },

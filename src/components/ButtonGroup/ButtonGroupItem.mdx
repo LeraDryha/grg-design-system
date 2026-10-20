@@ -6,7 +6,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 # Button group item
 
-<ComponentHeader figma="136-11562" guidelines="473-26235" builtOn="PrimeReact Button" related={[
+<ComponentHeader figma="136-11562" guidelines="473-26235" designTab builtOn="PrimeReact Button" related={[
   { label: 'Button group', href: '/?path=/docs/components-buttongroup--docs', relation: 'See also' },
   { label: 'Button', href: '/?path=/docs/components-button--docs', relation: 'See also' },
 ]} />
@@ -14,92 +14,45 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 The visual item used by Button group, with corners determined by its position and a persistent selected state.
 
 <Canvas of={Stories.Playground} />
-<Controls of={Stories.Playground} include={['label', 'size', 'side', 'leftIcon', 'rightIcon', 'iconOnly', 'disabled', 'selected', 'previewState']} />
+<Controls of={Stories.Playground} include={['label', 'size', 'side', 'leftIcon', 'rightIcon', 'iconOnly', 'disabled', 'selected']} />
 
 ## When to use
 
-<DoDont dos={['An internal part of Button group', 'A short action label with optional Base icons', 'A familiar icon-only action with a meaningful label']} donts={['A standalone primary action: use Button', 'Manually assigning every item’s position: use Button group', 'Using the pressed preview as persistent selection without selection semantics']} />
+<DoDont dos={['An internal part of Button group', 'A short action label with optional Base icons', 'A familiar icon-only action with a meaningful label']} donts={['A standalone primary action: use Button', 'Manually assigning every item’s position: use Button group', 'A persistent choice without aria-pressed: pass selected']} />
 
-## Anatomy
+## Examples
 
-<Canvas of={Stories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** a button with a 1px stroke and corners defined by its Side.
-2. **Icon:** an optional Base icon, separated from the label by 6px.
-3. **Label:** Semibold text; `label` also names an icon-only button.
+### A toggle
 
-## Types
+<Canvas of={Stories.AToggle} />
+
+On its own, pass `selected` and update it in `onClick`; the item exposes `aria-pressed`. For a choice between options with arrow keys, use Button group.
+The default `type="button"` doesn't submit a surrounding form.
+
+## Types, sides and sizes
 
 <Canvas of={Stories.Types} />
 
-From the left: **Text only**, **Text + icon** and **Icon only**.
-
-<Canvas of={Stories.Icons} />
-
-Left and right icons can be chosen independently. The standalone item defaults to plus icons on both sides, as in Figma. Icon-only uses the left icon, then the right icon, with plus as the fallback.
-
-### Sides
+Left and right icons are independent; the standalone item has plus icons on both sides by default, as in Figma.
 
 <Canvas of={Stories.Sides} />
 
-**Left** rounds the left corners, **Center** has square corners and **Right** rounds the right corners. The assembled group assigns these automatically. **Single** rounds all corners for a one-item group.
-
-## Sizes
+**Left** rounds the left corners, **Center** has none, **Right** rounds the right corners. Button group assigns them automatically; **single** rounds all four.
 
 <Canvas of={Stories.Sizes} />
 
-- **md-32:** 32px high, 14/20 Semibold, 20px icons, 6×12px padding and 8px rounded corners.
-- **sm-24:** 24px high, 12/16 Semibold, 16px icons, 4×8px padding and 6px rounded corners.
-
-Icon-only items are square. The actual bound component styles take precedence over the guidelines' Medium label and md 6px radius descriptions.
-
-## States
-
-### Default
-
-Transparent fill with subtle text, base icons and a soft border.
-
-<Canvas of={Stories.Default} />
-
-### Hovered
-
-A weak background appears; text and icon colours stay the same.
-
-<Canvas of={Stories.Hovered} />
-
-### Pressed
-
-Figma **Active**: a weak background with strong text and icons, during a press. The same strong appearance is retained for a selected option.
-
-<Canvas of={Stories.Pressed} />
-
-### Selected
-
-A persistent choice, exposed with `aria-pressed`. The assembled group manages selection through PrimeReact SelectButton.
-
-<Canvas of={Stories.Selected} />
-
-### Disabled
-
-Disabled text, icon and border; no activation or Tab stop.
-
-<Canvas of={Stories.Disabled} />
-
-### Keyboard focus
-
-The shared blue focus ring remains visible above neighbouring items.
-
-<Canvas of={Stories.Focused} />
-
-## Behaviour
-
-The standalone item uses PrimeReact Button. Pass `selected` and update it in `onClick` for a controlled toggle; use Button group for single selection and arrow navigation. The default `type="button"` avoids submitting a surrounding form; `submit` and `reset` are available explicitly. `previewState` exists for static documentation; normal buttons respond to hover and press automatically.
+md-32: 14/20 Semibold, 20px icons, 6 × 12px padding, 8px corners. sm-24: 12/16 Semibold, 16px icons, 4 × 8px padding, 6px corners.
+Hover adds a weak background; pressed and selected add strong text and icons (Figma *Active*).
 
 ## Accessibility
 
-Tab reaches each enabled button; Enter and Space activate it. The visible label names the button. Icon-only buttons use `label`, or an explicit `aria-label` when more context is needed. Icons are decorative. Native disabled buttons cannot be activated. Keyboard focus uses `var(--focus-ring)`.
+Tab reaches each enabled button; Enter and Space activate it. Icon-only buttons use `label`, or `aria-label` when more context is needed. Icons are decorative. Keyboard focus uses the system blue ring.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping rows={[
   { figma: 'Text', prop: 'label', values: 'visible text and icon-only accessible name' },
@@ -108,7 +61,7 @@ Tab reaches each enabled button; Enter and Space activate it. The visible label 
   { figma: 'Left icon', prop: 'leftIcon', values: 'On → Base icon name (plus by default); Off → null' },
   { figma: 'Right icon', prop: 'rightIcon', values: 'On → Base icon name (plus by default); Off → null' },
   { figma: 'Icon only', prop: 'iconOnly', values: 'On, Off → true, false' },
-  { figma: 'State', prop: '(interaction) · selected · disabled · previewState', values: 'Default/Hovered → interaction; Active → pressed or selected; Disabled → disabled' },
+  { figma: 'State', prop: '(interaction) · selected · disabled', values: 'Default/Hovered → interaction; Active → pressed or selected; Disabled → disabled' },
 ]} />
 
 ## Props
