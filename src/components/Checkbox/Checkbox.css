@@ -1,0 +1,64 @@
+/* Checkbox. Figma: 16 or 20px; the box is the Figma shape drawn as a mask in the state colour. */
+
+.grg-checkbox {
+  --cb-size: var(--space-400);
+  --cb-color: var(--stroke-base-300);
+
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  width: var(--cb-size);
+  height: var(--cb-size);
+  border-radius: var(--radius-xxs-4);
+  cursor: pointer;
+}
+.grg-checkbox[data-size='md'] { --cb-size: var(--space-500); border-radius: var(--radius-xs-6); }
+
+/* The native checkbox covers the box: it takes the clicks and the keyboard, and stays invisible */
+.grg-checkbox__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.grg-checkbox__box {
+  width: 100%;
+  height: 100%;
+  background: var(--cb-color);
+  mask: var(--cb-shape) center / contain no-repeat;
+  transition: background-color 120ms ease;
+}
+.grg-checkbox__icon { display: none; }
+
+/* Empty: grey ring, darker on hover, black while pressed */
+.grg-checkbox:hover,
+.grg-checkbox[data-preview-state='hover'] { --cb-color: var(--stroke-strong-500); }
+.grg-checkbox:active,
+.grg-checkbox[data-preview-state='active'] { --cb-color: var(--primary-base-1000); }
+
+/* Checked or indeterminate: filled, lighter on hover, lighter still while pressed */
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']) { --cb-color: var(--primary-base-1000); }
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):hover,
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate'])[data-preview-state='hover'] { --cb-color: var(--primary-darker-800); }
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate']):active,
+.grg-checkbox:is([data-state='checked'], [data-state='indeterminate'])[data-preview-state='active'] { --cb-color: var(--primary-dark-700); }
+
+/* Destructive: red in every state */
+.grg-checkbox[data-destructive],
+.grg-checkbox[data-destructive]:is(:hover, :active) { --cb-color: var(--error-base-600); }
+
+/* Disabled */
+.grg-checkbox[data-disabled],
+.grg-checkbox[data-disabled]:is(:hover, :active) { --cb-color: var(--stroke-disabled); cursor: default; }
+.grg-checkbox[data-disabled]:is([data-state='checked'], [data-state='indeterminate']) { --cb-color: var(--bg-soft-200); }
+
+/* Keyboard focus: the system ring (Figma draws a 4px primary-soft-200 frame, hard to see) */
+.grg-checkbox:has(.grg-checkbox__input:focus-visible),
+.grg-checkbox[data-preview-state='focus'] { box-shadow: var(--focus-ring); }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-checkbox__box { transition: none; }
+}

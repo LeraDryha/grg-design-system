@@ -1,0 +1,152 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CheckboxStories from './Checkbox.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={CheckboxStories} />
+
+# Checkbox
+
+<ComponentHeader
+  status="ready"
+  figma="135-11986"
+  guidelines="473-55568"
+  builtOn="PrimeReact Checkbox"
+  related={[{ label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' }]}
+/>
+
+A box to turn an option on or off, on its own or with a label. With a label (`CheckboxLabel`, Figma *Checkbox label*)
+it can carry a sublabel, a description and a link, and flip to the right for lists.
+
+<Canvas of={CheckboxStories.Playground} />
+<Controls of={CheckboxStories.Playground} include={['checked', 'indeterminate', 'size', 'destructive', 'disabled']} />
+
+All props are listed at the end of the page.
+
+## When to use
+
+<DoDont
+  dos={[
+    'Options people can turn on or off independently: several of a list, or one agreement',
+    'Selecting rows in a table or items in a list, with a parent checkbox for all of them',
+    'A choice that takes effect when the form is sent',
+  ]}
+  donts={[
+    'One choice out of several: use Radio or Select',
+    'A setting that takes effect at once: use Switch',
+    'An action: use Button',
+  ]}
+/>
+
+## Anatomy
+
+<Canvas of={CheckboxStories.Anatomy} />
+
+1. **Checkbox:** the box. Empty, checked or indeterminate.
+2. **Label (optional):** what the option is, Body-md/Medium 14/20. The whole label is clickable.
+
+## Sizes
+
+<Canvas of={CheckboxStories.Sizes} />
+
+From the left: **md-20** (20 × 20) and **sm-16** (16 × 16, the default). The label stays Body-md/Medium 14/20 in both;
+the checkbox sits in a frame as tall as the first line, so it lines up with the label.
+
+## Selection
+
+<Canvas of={CheckboxStories.Selection} />
+
+From the left:
+
+- **Empty:** a grey ring.
+- **Checked:** filled, with the check cut out.
+- **Indeterminate:** filled, with a dash: some, not all, of the items below are selected. Use it for a parent checkbox.
+
+## With label
+
+<Canvas of={CheckboxStories.WithLabel} />
+
+From the top: label only; with a **sublabel** (*(Optional)*, Body-sm); with a **description** and a **link** (Link, xs, blue);
+and **flipped**, with the checkbox on the right, for lists where the text comes first. The gaps follow Figma: 8px between
+the checkbox and the text, 4px between the label and the sublabel, 2px to the description, 10px to the link.
+
+## List with a parent
+
+<Canvas of={CheckboxStories.ListWithParent} />
+
+A parent checkbox selects or clears all items. While only some are selected it shows the indeterminate dash.
+Try it: select and clear the items.
+
+## States
+
+Each state shows empty, checked and indeterminate.
+
+### Default
+At rest.
+
+<Canvas of={CheckboxStories.Default} />
+
+### Hovered
+Pointer over it: the ring gets darker; a filled box gets a little lighter.
+
+<Canvas of={CheckboxStories.Hovered} />
+
+### Pressed
+While it is pressed: the ring turns black; a filled box gets lighter still. In Figma this state is called Active.
+
+<Canvas of={CheckboxStories.Pressed} />
+
+### Focused
+Reached with the keyboard: the system focus ring, a 2px gap and a 4px blue ring.
+
+<Canvas of={CheckboxStories.Focused} />
+
+### Disabled
+Not available right now: a light ring or fill, and grey text with a label.
+
+<Canvas of={CheckboxStories.Disabled} />
+
+### Destructive
+Red in every state, for a choice that removes something. For a missing required choice, use Error.
+
+<Canvas of={CheckboxStories.Destructive} />
+
+### Error
+A required choice that is missing, such as accepting the Terms or confirming the risks before a withdrawal: the
+checkbox turns red and a message under the label says what to do. It is the same Hint text as under Input and Select,
+2px under the text. Screen readers read the message with the checkbox and hear that it is invalid.
+
+<Canvas of={CheckboxStories.ErrorState} />
+
+Show it after people try to send the form, not while they are still filling it in. Lists and tables don't need it:
+there is no wrong choice there. Figma has no error message under a checkbox; Destructive there covers both meanings,
+so the code splits them: `destructive` for the look of a removing choice, `error` (with a label) or `invalid` for a mistake.
+
+## Accessibility
+
+- It is a native checkbox: screen readers call it a checkbox, Space switches it, it works in forms.
+- With a label, the label names it and clicking the label switches it; the description is read with it. A checkbox on its own needs `aria-label`.
+- Indeterminate is announced as *mixed*. PrimeReact 10 has no indeterminate state, so the component sets it on the native checkbox.
+- Focus uses the system blue ring. Figma draws a 4px `primary-soft-200` frame, which keyboard users can barely see.
+- An error is not shown by colour alone: `error` writes the message under the label and connects it with `aria-describedby`; `invalid` sets `aria-invalid`.
+- Colours follow Figma. The empty ring (`stroke-base-300`) reaches about 1.5:1 against the surface, under the 3:1 WCAG asks for controls; the label next to it helps people find it.
+
+## Figma and code
+
+<PropsMapping
+  rows={[
+    { figma: 'Selected', prop: 'checked · defaultChecked', values: 'On, Off → true, false' },
+    { figma: 'Indeterminate', prop: 'indeterminate', values: 'On → true' },
+    { figma: 'Size', prop: 'size', values: 'sm-16, md-20 → sm, md' },
+    { figma: 'Destructive', prop: 'destructive · invalid', values: 'On → true: the look · a mistake (aria-invalid)' },
+    { figma: '— (code)', prop: 'CheckboxLabel error', values: 'error message under the label' },
+    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered, Active, Focused follow the pointer and keyboard; Disabled → disabled' },
+    { figma: 'Checkbox label: Label · Sublabel', prop: 'CheckboxLabel label · sublabel', values: 'text' },
+    { figma: 'Checkbox label: Description · Link button', prop: 'description · link', values: 'text · { label, href }' },
+    { figma: 'Checkbox label: Flip', prop: 'flip', values: 'On → the checkbox on the right' },
+    { figma: 'Checkbox label: Details', prop: '(follows description and link)', values: 'Enabled when either is set' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={CheckboxStories} />

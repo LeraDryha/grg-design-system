@@ -138,3 +138,11 @@ The group set shows all five items; production code follows the guidelines and c
 | Examples (time range, post actions, view actions and previous/next) | `473:47923` |
 
 Code follows the actual bound component styles: Semibold, md 8px / sm 6px corners and 20px / 16px Base icons. The prose guidelines differ on weight, md radius and anatomy icon size. Active corresponds to Pressed in the guidelines. Group strokes are CENTER aligned in Figma and overlap at the joins. Code draws each shared edge once. Button group uses PrimeReact SelectButton for persistent single selection, aria-pressed and keyboard navigation. Keyboard focus uses the system blue ring.
+
+## Checkbox
+
+| What | Node |
+|---|---|
+| Component set `Checkbox` (State × Indeterminate × Selected × Size × Destructive, 36 variants) | `135:11986` |
+| Component set `Checkbox label` (Flip × Selected × Details, with Sublabel, Description, Link button) | `136:5147` |
+| Usage guidelines (anatomy, sizes, variants, states) | `473:55568` |
