@@ -7,6 +7,8 @@ import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Banner',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Banner,
   // Banner.mdx supplies the documentation.
   parameters: { layout: 'padded', docs: { description: { component: 'A full-width message for a page-wide or service-wide notice, with an optional description, action and dismissal.' } } },

@@ -5,7 +5,9 @@ import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
-  title: 'Components/ButtonGroupItem', component: ButtonGroupItem,
+  title: 'Components/ButtonGroupItem',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'], component: ButtonGroupItem,
   parameters: { layout: 'padded', docs: { description: { component: 'A compact action button with the edge shape required by its position in Button group.' } } },
   args: { label: 'Button', size: 'md', side: 'left', leftIcon: 'plus', rightIcon: 'plus', iconOnly: false, disabled: false, previewState: 'default', type: 'button' },
   argTypes: {

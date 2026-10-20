@@ -7,6 +7,8 @@ import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Alert',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Alert,
   // The shared Alert, Notification & Toast docs page is Alert.mdx.
   parameters: { layout: 'padded', docs: { description: { component: 'A contextual message about what happened and what to do next. Use it inline as an Alert, or with elevation as a Notification or Toast.' } } },

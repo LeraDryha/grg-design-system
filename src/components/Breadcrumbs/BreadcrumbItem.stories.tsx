@@ -5,7 +5,9 @@ import { baseIconNames } from '../../icons/names';
 import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
-  title: 'Components/BreadcrumbItem', component: BreadcrumbItem,
+  title: 'Components/BreadcrumbItem',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'], component: BreadcrumbItem,
   parameters: { layout: 'padded', docs: { description: { component: 'One level in Breadcrumbs: an ancestor link, an icon-only root or the current page.' } } },
   args: { label: 'Breadcrumb', href: '#ancestor', icon: 'home', showLabel: true, current: false, previewState: 'default' },
   argTypes: {

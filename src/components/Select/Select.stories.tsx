@@ -20,6 +20,8 @@ const openTheList = async (canvasElement: HTMLElement) => {
 
 const meta = {
   title: 'Components/Select',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Select,
   // The docs page is Select.mdx
   parameters: {
@@ -69,6 +71,7 @@ export const Playground: Story = {
 
 /** Countries: a long list gets a search row by itself (more than 10 options). Typing filters the list. */
 export const SearchALongList: Story = {
+  name: 'Search a long list',
   decorators: [withList],
   args: { type: 'country', label: 'Country of residence', options: sampleCountries, defaultOpen: true },
   play: async ({ canvasElement }) => {
@@ -83,6 +86,7 @@ export const SearchALongList: Story = {
 
 /** Choosing with the keyboard only: Tab to the field, ↓ to open, ↓ to move, Enter to choose. */
 export const ChooseWithTheKeyboard: Story = {
+  name: 'Choose with the keyboard',
   decorators: [field],
   args: { type: 'coin', label: 'Currency', options: sampleCoins },
   play: async ({ canvasElement }) => {
@@ -97,6 +101,7 @@ export const ChooseWithTheKeyboard: Story = {
 
 /** Several providers at once: checkboxes in the list; the field lists the choices in the order they were picked. */
 export const ChooseSeveral: Story = {
+  name: 'Choose several',
   decorators: [field],
   args: { multiple: true, label: 'Cash register', options: sampleProviders, defaultValues: ['payman', 'stripe', 'mastercard', 'crypto', 'visa'], onValuesChange: fn() },
   play: async ({ args, canvasElement }) => {
@@ -113,6 +118,7 @@ export const ChooseSeveral: Story = {
 
 /** A required choice in a form: the error appears when the form is sent without it, and goes once something is chosen. */
 export const RequiredInAForm: Story = {
+  name: 'Required in a form',
   decorators: [field],
   render: function RequiredInAForm(args: SelectProps) {
     const [value, setValue] = useState<string | null>(null);
@@ -155,6 +161,7 @@ export const Loading: Story = {
 
 /** Nothing to show (Figma Empty): the search found nothing, or the list is empty. */
 export const NoResults: Story = {
+  name: 'No results',
   decorators: [withList],
   args: { type: 'user', label: 'Assignee', options: [], searchable: true, defaultOpen: true },
   play: async ({ canvasElement }) => {
@@ -166,6 +173,7 @@ export const NoResults: Story = {
 
 /** A parent form owns the value and can clear it, as with PrimeReact Dropdown. */
 export const Controlled: Story = {
+  name: 'Controlled by a form',
   decorators: [field],
   render: function Controlled(args: SelectProps) {
     const [value, setValue] = useState<string | null>('utility');
@@ -181,6 +189,7 @@ export const Controlled: Story = {
 
 /** A field that waits for an earlier choice: disabled until the payment type is chosen, with a hint that says why. */
 export const WaitForAnEarlierChoice: Story = {
+  name: 'Wait for an earlier choice',
   decorators: [field],
   render: function WaitForAnEarlierChoice(args: SelectProps) {
     const [paymentType, setPaymentType] = useState<string | null>(null);

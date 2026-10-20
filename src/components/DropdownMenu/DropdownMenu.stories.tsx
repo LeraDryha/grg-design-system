@@ -61,6 +61,8 @@ const withCaption: DropdownMenuEntry[] = [
 
 const meta = {
   title: 'Components/Dropdown Menu',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: DropdownMenu,
   // The docs page is DropdownMenu.mdx
   parameters: { layout: 'centered' },

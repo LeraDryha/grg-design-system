@@ -7,7 +7,7 @@ import { FieldLabel, FormField, HintText, KeyValue, type FormFieldProps } from '
 const meta = {
   title: 'Components/Form Field',
   component: FormField,
-  tags: ['autodocs'],
+  tags: ['autodocs', 'ready'],
   parameters: {
     docs: {
       description: {
@@ -80,6 +80,8 @@ export const Label: Story = {
 
 /** Figma "Hint text": Default, Error, Disabled. An error replaces the hint. */
 export const Hint: Story = {
+  // Known contrast note: the Figma disabled hint grey (WCAG exempts disabled controls; axe still flags the text) is below 4.5:1. Listed in the Accessibility panel, not failed, until the colour is decided in Figma
+  parameters: { a11y: { test: 'todo' } },
   render: () => (
     <div style={column}>
       <HintText>This is a hint text to help user.</HintText>

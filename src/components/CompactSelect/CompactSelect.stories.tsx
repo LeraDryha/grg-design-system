@@ -6,6 +6,8 @@ import { sampleCoins, sampleCountries, sampleCurrencies, samplePayments } from '
 
 const meta = {
   title: 'Components/Compact Select',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: CompactSelect,
   // The docs page is CompactSelect.mdx
   parameters: { layout: 'centered' },

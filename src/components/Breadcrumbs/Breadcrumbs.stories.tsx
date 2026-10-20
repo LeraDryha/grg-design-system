@@ -13,7 +13,9 @@ const figmaItems: BreadcrumbEntry[] = Array.from({ length: 5 }, (_, i) => ({ id:
 const overflowItems: BreadcrumbEntry[] = [sample[0], { id: 'settings', label: 'Settings', icon: null, href: '#settings' }, ...sample.slice(1)];
 
 const meta = {
-  title: 'Components/Breadcrumbs', component: Breadcrumbs,
+  title: 'Components/Breadcrumbs',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'], component: Breadcrumbs,
   parameters: { layout: 'padded', docs: { description: { component: 'A navigable path from the root to the current page, with hidden ancestor levels in an overflow menu.' } } },
   args: { items: sample, maxVisibleItems: 4, collapse: true, 'aria-label': 'Breadcrumbs', overflowLabel: 'Show hidden breadcrumb levels' },
   argTypes: {

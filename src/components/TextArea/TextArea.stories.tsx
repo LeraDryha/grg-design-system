@@ -12,6 +12,8 @@ const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--s
 
 const meta = {
   title: 'Components/Text Area',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: TextArea,
   // The docs page is TextArea.mdx
   parameters: { layout: 'centered' },
@@ -125,7 +127,12 @@ export const Default: Story = { decorators: [field] };
 export const Filled: Story = { decorators: [field], args: { defaultValue: MESSAGE } };
 
 /** Pointer over the field: a light fill and a darker border. */
-export const Hovered: Story = { decorators: [field], args: { previewState: 'hover', defaultValue: MESSAGE } };
+export const Hovered: Story = {
+  decorators: [field],
+  args: { previewState: 'hover', defaultValue: MESSAGE },
+  // Known contrast note: the Figma counter grey on the hover fill is below 4.5:1. Listed in the Accessibility panel, not failed, until the colour is decided in Figma
+  parameters: { a11y: { test: 'todo' } },
+};
 
 /** Focused: the darkest border, the label floats and turns dark. */
 export const Active: Story = { decorators: [field], args: { previewState: 'active', defaultValue: MESSAGE } };

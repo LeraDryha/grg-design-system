@@ -8,6 +8,8 @@ const iconOptions = [undefined, ...baseIconNames.filter(n => n !== 'loading')];
 
 const meta = {
   title: 'Components/Link',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Link,
   // The docs page is Link.mdx
   args: {

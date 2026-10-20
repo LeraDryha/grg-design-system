@@ -8,6 +8,8 @@ import photo from '../../assets/avatar-sample.jpg';
 
 const meta = {
   title: 'Components/Avatar',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Avatar,
   // The docs page is Avatar.mdx
   parameters: { layout: 'centered' },

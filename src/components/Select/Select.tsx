@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type HTMLAttributes, type RefObject } from 'react';
+import { useEffect, useId, useRef, useState, type HTMLAttributes, type MouseEvent, type RefObject } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { MultiSelect } from 'primereact/multiselect';
 import { PrimeReactProvider } from 'primereact/api';
@@ -224,10 +224,15 @@ export function Select({
               closeButton: { hidden: true },
               wrapper: { className: 'grg-dropdown__scroll' },
               list: { className: 'grg-dropdown__list', 'aria-label': label },
-              // Each option gets an id, so the combobox can point at the one under the arrow keys
-              item: ({ context }: { context: { index: number } }) => ({ className: 'grg-dropdown__option', id: `${id}-option-${context.index}` }),
-              // PrimeReact moves focus to this checkbox when an option is clicked, so it stays focusable: hidden visually, not removed
-              checkboxContainer: { className: 'grg-sr-only' },
+              // Each option gets an id, so the combobox can point at the one under the arrow keys. A click keeps focus
+              // in the field (or the search), as in a listbox; PrimeReact would move it to the option's own checkbox.
+              item: ({ context }: { context: { index: number } }) => ({
+                className: 'grg-dropdown__option',
+                id: `${id}-option-${context.index}`,
+                onMouseDown: (event: MouseEvent) => event.preventDefault(),
+              }),
+              // The option itself is the checkbox (aria-selected); PrimeReact's inner checkbox would be a second control
+              checkboxContainer: { hidden: true },
               emptyMessage: { className: 'grg-dropdown__empty', role: 'option', 'aria-disabled': true, 'aria-selected': false } as object,
             }}
           />

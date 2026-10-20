@@ -11,6 +11,8 @@ const sampleRows: AccordionKeyValueRow[] = [1, 2, 3, 4, 5].map(n => ({ id: Strin
 
 const meta = {
   title: 'Components/Accordion',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Accordion,
   // Accordion.mdx documents the component and its Description and Key-value parts.
   parameters: { layout: 'padded', docs: { description: { component: 'An expandable section that keeps a title visible and reveals a text description or key–value details when opened.' } } },

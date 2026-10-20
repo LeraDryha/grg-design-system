@@ -12,6 +12,8 @@ const field: Decorator = Story => <div style={{ width: 320, paddingTop: 'var(--s
 
 const meta = {
   title: 'Components/Input',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Input,
   // The docs page is Input.mdx
   parameters: { layout: 'centered' },

@@ -8,6 +8,8 @@ import { samplePayments } from '../Select/samples';
 
 const meta = {
   title: 'Components/Inline Select',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: InlineSelect,
   // The docs page is InlineSelect.mdx
   parameters: { layout: 'centered' },

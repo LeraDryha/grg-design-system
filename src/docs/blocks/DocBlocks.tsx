@@ -1,4 +1,5 @@
 import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useOf } from '@storybook/addon-docs/blocks';
 import './DocBlocks.css';
 
 /* Building blocks for component docs pages (see instructions.md, "Component page"). */
@@ -9,8 +10,11 @@ const STATUS = {
   draft: 'Draft',
 } as const;
 
+type Status = keyof typeof STATUS;
+
 export type ComponentHeaderProps = {
-  status: keyof typeof STATUS;
+  /** Pages with stories take the status from the stories' tags (one source, also shown in the sidebar) */
+  status?: Status;
   /** Figma node of the component set, as in the URL: "73-3711". For maintainers only: the design file belongs
    *  to the company and is never linked from the public Storybook. Its frames are shown in the Design tab. */
   figma: string;
@@ -24,8 +28,21 @@ export type ComponentHeaderProps = {
   related?: { label: string; href: string; relation?: 'Uses' | 'See also' }[];
 };
 
+/** Tags of the stories a docs page belongs to; none on a page without stories */
+function useMetaTags(): string[] {
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const of = useOf('meta');
+    return of.type === 'meta' ? of.preparedMeta.tags ?? [] : [];
+  } catch {
+    return [];
+  }
+}
+
 /** The line under a component's title: status, where the design lives, what it is built on. */
-export function ComponentHeader({ status, designTab = false, builtOn, related = [] }: ComponentHeaderProps) {
+export function ComponentHeader({ status: given, designTab = false, builtOn, related = [] }: ComponentHeaderProps) {
+  const tags = useMetaTags();
+  const status = given ?? (Object.keys(STATUS) as Status[]).find(s => tags.includes(s)) ?? 'draft';
   return (
     <div className="sb-unstyled doc-header">
       <span className="doc-status" data-status={status}>{STATUS[status]}</span>

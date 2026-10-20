@@ -8,7 +8,9 @@ const sample: ButtonGroupEntry[] = [
   { id: 'day', label: 'Day' }, { id: 'week', label: 'Week' }, { id: 'month', label: 'Month' },
 ];
 const meta = {
-  title: 'Components/ButtonGroup', component: ButtonGroup,
+  title: 'Components/ButtonGroup',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'], component: ButtonGroup,
   parameters: { layout: 'padded', docs: { description: { component: 'A compact choice between related options, with persistent selection and joined borders.' } } },
   args: { items: sample, size: 'md', disabled: false, 'aria-label': 'Time range' },
   argTypes: { items: { control: 'object' }, size: { control: 'inline-radio', options: ['md', 'sm'] }, disabled: { control: 'boolean' }, 'aria-label': { control: 'text' }, allowEmpty: { control: 'boolean' }, value: { control: 'object' }, defaultValue: { control: 'object' }, onValueChange: { action: 'selection changed', control: false } },

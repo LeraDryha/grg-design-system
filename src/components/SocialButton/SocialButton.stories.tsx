@@ -5,6 +5,8 @@ import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Social Button',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: SocialButton,
   // The docs page is SocialButton.mdx
   args: { social: 'google', iconOnly: false, disabled: false, children: undefined, previewState: 'default' },

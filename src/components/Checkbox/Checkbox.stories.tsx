@@ -6,6 +6,8 @@ import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Checkbox',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: Checkbox,
   // The docs page is Checkbox.mdx
   parameters: { layout: 'centered' },

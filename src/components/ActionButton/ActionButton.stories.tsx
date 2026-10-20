@@ -6,6 +6,8 @@ import { Anatomy as AnatomyBlock } from '../../docs/blocks/DocBlocks';
 
 const meta = {
   title: 'Components/Action Button',
+  // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
+  tags: ['ready'],
   component: ActionButton,
   // The docs page is ActionButton.mdx
   args: { icon: 'pencil', 'aria-label': 'Edit', size: 'md', color: 'grey', disabled: false, previewState: 'default' },

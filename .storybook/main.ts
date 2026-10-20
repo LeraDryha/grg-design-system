@@ -14,9 +14,11 @@ const config: StorybookConfig = {
     '@storybook/addon-designs',
     // Hover, active and focus shown by Storybook itself, so components need no documentation-only props
     'storybook-addon-pseudo-states',
+    // Runs every story as a test (render, play steps, accessibility) from the sidebar; see vitest.config.ts
+    '@storybook/addon-vitest',
   ],
   framework: '@storybook/react-vite',
-  core: { disableTelemetry: true },
+  core: { disableTelemetry: true, disableWhatsNewNotifications: true },
   viteFinal: config => {
     const onwarn = config.build?.rollupOptions?.onwarn;
     return {

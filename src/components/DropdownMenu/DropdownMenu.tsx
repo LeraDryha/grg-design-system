@@ -136,7 +136,9 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
         root: { className: `grg-dropdown grg-dropdown-menu ${inline ? 'grg-dropdown-menu--inline' : ''}` },
         menu: { className: 'grg-dropdown__list grg-dropdown-menu__list', 'aria-label': label } as object,
         submenu: { className: 'grg-dropdown grg-dropdown__list grg-dropdown-menu__submenu' },
-        menuitem: { className: 'grg-dropdown__option grg-dropdown-menu__item' },
+        // PrimeReact names each row by its label alone; without that name a row is named by all of its visible text
+        // (label, description, badge), so what people see is what a screen reader says and voice control finds
+        menuitem: { className: 'grg-dropdown__option grg-dropdown-menu__item', 'aria-label': undefined },
         content: { className: 'grg-dropdown-menu__content' },
         action: { className: 'grg-dropdown-menu__action' },
         separator: { className: 'grg-dropdown-menu__divider' },
