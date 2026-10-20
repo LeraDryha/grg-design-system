@@ -3,6 +3,7 @@ import { Icon, type IconName } from '../components/Icon/Icon';
 import { Input } from '../components/Input/Input';
 import { CoinIcon, coinNames, type CoinName } from '../components/CoinIcon/CoinIcon';
 import { CountryIcon, countryCodes, type CountryCode } from '../components/CountryIcon/CountryIcon';
+import { FileIcon, fileFormats } from '../components/FileIcon/FileIcon';
 import { PaymentIcon, paymentMethods, type PaymentMethod } from '../components/PaymentIcon/PaymentIcon';
 import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type SocialPlatform } from '../components/SocialIcon/SocialIcon';
 import { baseIconNames } from '../icons/names';
@@ -268,6 +269,8 @@ const pictureSets = {
   coin: { entries: coinNames, noun: 'coins', draw: (key: string, size: number) => <CoinIcon name={key as CoinName} size={size as 20 | 24} /> },
   payment: { entries: paymentMethods, noun: 'payment methods', draw: (key: string, size: number) => <PaymentIcon method={key as PaymentMethod} size={size as 20 | 24 | 32} /> },
   country: { entries: countryCodes, noun: 'countries', draw: (key: string, size: number) => <CountryIcon code={key as CountryCode} size={size as 20 | 24} /> },
+  // File format icons come in 32 and 40 only
+  file: { entries: fileFormats, noun: 'formats', draw: (key: string, size: number) => <FileIcon file={key} size={size >= 40 ? 40 : 32} /> },
 };
 
 type PictureSet = keyof typeof pictureSets;
