@@ -102,6 +102,8 @@ const preview: Preview = {
     a11y: {
       // WCAG 2.2 AA: violations are listed in the Accessibility panel
       options: { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'] },
+      // An open list is scrolled by its combobox (the arrow keys move the active option into view), not by Tab
+      config: { rules: [{ id: 'scrollable-region-focusable', selector: ':not(.grg-dropdown__scroll)' }] },
       test: 'error',
     },
   },

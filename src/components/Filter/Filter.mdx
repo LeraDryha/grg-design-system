@@ -1,0 +1,156 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FilterStories from './Filter.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={FilterStories} />
+
+# Filter
+
+<ComponentHeader
+  figma="1321-17152"
+  guidelines="2136-4164"
+  designTab
+  builtOn="PrimeReact Dropdown, MultiSelect and Tooltip"
+  related={[
+    { label: 'Action Button', href: '?path=/docs/components-action-button--docs', relation: 'Uses' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs', relation: 'Uses' },
+    { label: 'Date Picker', href: '?path=/docs/components-date-picker--docs', relation: 'Uses' },
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+  ]}
+/>
+
+A compact filter for tables and lists. It shows what it filters (*Merchant*), opens the same list as Select, and once a value is chosen
+turns gold, keeps its label, shows the value or a count, and gets a clear button.
+
+<Canvas of={FilterStories.Playground} />
+<Controls of={FilterStories.Playground} include={['label', 'type', 'size', 'searchable', 'disabled']} />
+
+```tsx
+<Filter label="Merchant" type="multiple" options={merchants} searchable value={merchants} onChange={setMerchants} />
+<Filter label="Status" options={statuses} value={status} onChange={setStatus} />
+<Filter label="Created date" type="date" value={period} onChange={setPeriod} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Narrowing a table or a list by one property: merchant, status, type, currency, date',
+    'A row of filters over a table, with a Reset text button at the end',
+    'Several values of one property at once: the filter shows how many',
+  ]}
+  donts={[
+    'A field in a form, with a label and a hint: use Select',
+    'Searching by text, such as an ID: use Input with a search icon',
+    'Sorting: a filter narrows the list, it doesn\'t reorder it',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once.
+
+### Choose one merchant
+
+<Canvas of={FilterStories.ChooseOneMerchant} />
+
+The filter keeps its label, shows the chosen value after a divider, and the clear button takes the chevron's place.
+
+### Choose several
+
+<Canvas of={FilterStories.ChooseSeveral} />
+
+Each tick applies at once and the list stays open, so several can be ticked in a row; a click outside or Escape closes it. The filter shows a count instead of the names.
+
+### Filter by status
+
+<Canvas of={FilterStories.FilterByStatus} />
+
+A chosen status shows as a status Badge (the colour comes with the option: `status: 'success'`); several statuses show a count. A short fixed list has no search row.
+
+### A long value
+
+<Canvas of={FilterStories.ALongValue} />
+
+The filter is 264px at most; a longer value is cut with an ellipsis. Hover or keyboard focus shows it in full in a tooltip; for several values the tooltip lists the names.
+
+### Clear with the keyboard
+
+<Canvas of={FilterStories.ClearWithTheKeyboard} />
+
+The clear button is the system's Action Button next to the filter, a Tab stop of its own named *Clear Merchant filter*. After clearing, focus returns to the filter.
+
+### Filter by date
+
+<Canvas of={FilterStories.FilterByDate} />
+
+`type="date"` opens [Date Picker](?path=/docs/components-date-picker--docs): two months, presets, and Apply. Once applied the filter shows the preset's name (*Last 30 days*) or the dates in the locale's format.
+
+### A filter bar
+
+<Canvas of={FilterStories.AFilterBar} />
+
+Filters sit side by side in the sm size, with the text Button **Reset** at the end; it clears them all and is disabled while nothing is applied.
+
+### Unavailable
+
+<Canvas of={FilterStories.Unavailable} />
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **Applied at once, except dates.** As in Jira, Linear and GitHub, every choice updates the table right away and the list stays open for more. A period needs two clicks (start and end), so the date filter applies on Apply. A product that loads data from a server can wait a moment after the last tick and send one request.
+- **Search depends on the data, not the count.** Lists that come from data and grow (merchants, counterparties, currencies) turn search on with `searchable`; short fixed lists (status, type) don't need it. Without the prop, search comes with more than 10 options, as in Select.
+- **A clear button you can reach.** PrimeReact's own clear icon sits inside the field and can't be reached with the keyboard. Here it is the Action Button next to the filter: visually inside the same frame, a separate Tab stop in code.
+- **The full value is never lost.** The tooltip shows it on hover and on keyboard focus; screen readers always hear the label and what is applied (*Merchant: 2 selected, Corefy, Crypto Proxy*).
+- **The same list everywhere.** Rows, search, checkboxes and the keyboard are shared with Select, Compact Select and Dropdown Menu.
+- **Focus you can see.** Figma has no focus state; the code uses the system blue ring.
+
+## Applied and sizes
+
+<Canvas of={FilterStories.Applied} />
+
+**None:** the label and a chevron. **Single:** the label, a divider and the value (Body-md/Medium). **Multi:** the label and a numeric Badge. **Status:** the label and a filled status Badge.
+Applied filters use the gold fill (`primary-gold-muted-50`) and stroke (`primary-gold-subtle-400`); hovered they get darker, open they get the strongest gold stroke.
+
+<Canvas of={FilterStories.Sizes} />
+
+lg-44 and md-40 have 12 and 10px paddings and a sm-20 Badge; sm-32 has 6 × 8px paddings, 8px corners and an xs-16 Badge. Label and value stay Body-md 14/20.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the filter, then to its clear button |
+| ↓ or Enter or Space | Opens the list |
+| ↑ ↓ | Move through the options |
+| Enter or Space | Chooses an option; in Multi, ticks it and keeps the list open |
+| Escape | Closes the list or the calendar |
+| Typing (with search) | Filters the list |
+
+- The filter is a combobox named by its label and what is applied; the list is a listbox, and the option under the arrow keys is announced.
+- The date filter is a button that opens a dialog with the calendar.
+- Colours follow Figma. The Warning status Badge (Passive) is below 4.5:1 in the light theme, as on the Badge page.
+
+## Figma and code
+
+The Figma frames (the component, the guidelines and the behaviour page) are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Applied', prop: 'value · type', values: 'None: no value; Single: one value (type single, or one of type multiple); Multi: several values (type multiple)' },
+    { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
+    { figma: 'State', prop: '(behaviour) · disabled', values: 'Hovered follows the pointer; Active (Pressed in the guidelines) is the open list; Disabled → disabled' },
+    { figma: 'Label · Value', prop: 'label · options', values: 'the label; the chosen option\'s label' },
+    { figma: 'Badge (count)', prop: '(automatic)', values: 'the number of chosen values, Filled Neutral, sm-20 or xs-16' },
+    { figma: 'Status filter behavior', prop: 'options[].status', values: 'Badge colour of a status: success, warning, error, info, neutral' },
+    { figma: 'Action button (Remove)', prop: 'clearLabel', values: 'clears the filter; "Clear Merchant filter" by default' },
+    { figma: '— (Examples: Created date)', prop: 'type="date" · presets · locale', values: 'a period from Date Picker' },
+    { figma: '—', prop: 'searchable', values: 'a search row; on by default with more than 10 options' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={FilterStories} />

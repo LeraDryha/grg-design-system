@@ -1,0 +1,108 @@
+/* Filter. Every value is a token; Figma: Filter (1321:17152). Paddings, gap and corners as Compact Select;
+   applied filters turn gold. */
+
+.grg-filter {
+  --f-pad-y: var(--space-250);
+  --f-pad-x: var(--space-250);
+  --f-radius: var(--radius-md-10);
+  --f-border: var(--stroke-base-300);
+  --f-bg: transparent;
+
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-200);
+  /* 264px at most (Figma guidelines); a longer value is cut with an ellipsis */
+  max-width: calc(var(--space-2000) * 3 + var(--space-600));
+  border: 1px solid var(--f-border);
+  border-radius: var(--f-radius);
+  background: var(--f-bg);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.grg-filter[data-size='lg'] { --f-pad-y: var(--space-300); --f-pad-x: var(--space-300); }
+.grg-filter[data-size='sm'] { --f-pad-y: var(--space-150); --f-pad-x: var(--space-200); --f-radius: var(--radius-sm-8); }
+
+/* States (Figma State × Applied) */
+.grg-filter:not([data-disabled]):where(:hover) { --f-border: var(--stroke-strong-500); }
+.grg-filter[data-open] { --f-border: var(--stroke-stronger-900); }
+.grg-filter:not([data-applied='none']) { --f-bg: var(--primary-gold-muted-50); --f-border: var(--primary-gold-subtle-400); }
+.grg-filter:not([data-applied='none'], [data-disabled]):where(:hover) { --f-bg: var(--primary-gold-soft-100); --f-border: var(--primary-gold-base); }
+.grg-filter:not([data-applied='none'])[data-open] { --f-bg: var(--primary-gold-muted-50); --f-border: var(--primary-gold-strong-600); }
+.grg-filter[data-disabled] { --f-bg: var(--bg-weak-100); --f-border: var(--stroke-disabled); color: var(--text-disabled-400); }
+/* Keyboard focus on the filter itself (the clear button has its own ring) */
+.grg-filter[data-keyboard-navigation]:not([data-disabled]):has(.grg-filter__trigger :focus-visible, .grg-filter__button:focus-visible) { box-shadow: var(--focus-ring); }
+
+/* The trigger fills the frame up to the clear button, so the whole filter opens the list */
+.grg-filter__trigger {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  gap: var(--space-200);
+  min-width: 0;
+  padding: calc(var(--f-pad-y) - 1px) calc(var(--f-pad-x) - 1px);
+  border: 0;
+  border-radius: inherit;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.grg-filter:not([data-applied='none']) .grg-filter__trigger { padding-right: 0; }
+.grg-filter[data-disabled] .grg-filter__trigger { cursor: default; }
+.grg-filter__button:focus-visible { outline: none; }
+.grg-filter__input,
+.grg-filter__label-wrap { display: flex; align-items: center; min-width: 0; overflow: hidden; }
+
+.grg-filter__content { display: flex; align-items: center; gap: var(--space-200); min-width: 0; white-space: nowrap; }
+.grg-filter__label { flex: none; color: var(--text-soft-500); }
+.grg-filter__separator { flex: none; width: 1px; height: var(--space-400); border-radius: var(--radius-xxs-4); background: var(--stroke-strong-500); }
+.grg-filter__value { min-width: 0; overflow: hidden; text-overflow: ellipsis; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-filter__chevron { display: inline-grid; flex: none; color: var(--icon-base-500); }
+.grg-filter[data-open] .grg-filter__chevron { color: var(--icon-strong-1000); }
+/* Once applied, the clear button takes the chevron's place (Figma); PrimeReact's own styles would show it */
+.grg-filter__chevron[hidden] { display: none; }
+.grg-filter__clear { flex: none; margin-right: calc(var(--f-pad-x) - 1px); }
+
+.grg-filter[data-disabled] :is(.grg-filter__label, .grg-filter__value) { color: var(--text-disabled-400); }
+.grg-filter[data-disabled] .grg-filter__separator { background: var(--text-disabled-400); }
+.grg-filter[data-disabled] .grg-filter__chevron { color: var(--icon-disabled-400); }
+
+/* The list opens 8px under the filter; PrimeReact sets top and left inline (above it when there's no room below) */
+.grg-filter .grg-dropdown { margin-top: var(--space-200); min-width: var(--space-5000); }
+.grg-filter .grg-dropdown[style*='center bottom'] { margin-top: calc(-1 * var(--space-200)); }
+.grg-filter__overlay { position: absolute; z-index: 20; top: calc(100% + var(--space-200)); left: 0; }
+
+/* Tooltip with the full value or the chosen names (as Breadcrumbs) */
+.grg-filter-tooltip {
+  position: absolute;
+  box-sizing: border-box;
+  width: max-content;
+  max-width: min(calc(var(--space-5000) * 1.5), calc(100vw - var(--space-600)));
+  color: var(--text-inverce);
+  font: var(--typo-body-sm-regular);
+  overflow-wrap: anywhere;
+}
+.grg-filter-tooltip__text {
+  padding: var(--space-200) var(--space-300);
+  border-radius: var(--radius-xs-6);
+  background: var(--bg-base-1000);
+  box-shadow: var(--shadow-sm);
+}
+.grg-filter-tooltip__arrow { display: none; }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-filter { transition: none; }
+}
