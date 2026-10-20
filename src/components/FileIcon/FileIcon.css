@@ -1,0 +1,12 @@
+.grg-file-icon { display: inline-block; flex: none; }
+
+/* The light sheet, swapped for its dark version on the dark theme */
+.grg-file-icon--on-dark,
+[data-theme='dark'] .grg-file-icon--on-light { display: none; }
+[data-theme='dark'] .grg-file-icon--on-dark { display: inline-block; }
+
+/* A format the Figma set doesn't have: the same sheet, a neutral label */
+.grg-file-icon__sheet { stroke: var(--stroke-soft-200); }
+.grg-file-icon__fold { fill: var(--stroke-soft-200); }
+.grg-file-icon__label { fill: var(--bg-emphasis-700); }
+.grg-file-icon__text { fill: var(--text-inverce); font: var(--typo-caption-xs-semibold); }

@@ -1,0 +1,30 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { PictureGallery, PictureSizes } from '../Foundations';
+import { ComponentHeader } from '../../docs/blocks/DocBlocks';
+
+<Meta title="Foundations/Icons/File format icons" />
+
+# File format icons
+
+<ComponentHeader status="ready" figma="649-3050" />
+
+File format icons show what kind of file it is: a sheet with a coloured label, such as *pdf* in red or *xlsx* in green.
+The set has 15 formats, exported from Figma. On the dark theme the light grey sheet turns dark, so it doesn't glare.
+A format the set doesn't have (jpg, png, svg…) gets the same sheet with a neutral label and its extension.
+
+## Sizes
+
+<PictureSizes set="file" icon="pdf" sizes={[{ size: 40, label: 'lg-40px' }, { size: 32, label: 'md-32px' }]} />
+
+lg-40 in file cards (File Upload), md-32 in denser lists.
+
+## Using file format icons
+
+- The icon goes next to the file name; it is decorative, the name says what the file is.
+- `file` takes the extension or the whole file name: `<FileIcon file="my_cv.pdf" />`.
+
+## All file format icons
+
+Click an icon to copy its key.
+
+<PictureGallery set="file" />

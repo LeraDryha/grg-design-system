@@ -1,0 +1,155 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FileUploadStories from './FileUpload.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={FileUploadStories} />
+
+# File Upload
+
+<ComponentHeader
+  figma="324-4742"
+  guidelines="702-12903"
+  designTab
+  builtOn="PrimeReact FileUpload and ProgressBar"
+  related={[
+    { label: 'Action Button', href: '?path=/docs/components-action-button--docs', relation: 'Uses' },
+    { label: 'Button', href: '?path=/docs/components-button--docs', relation: 'Uses' },
+  ]}
+/>
+
+A drop zone for choosing files, and a card for each file with its progress and status. People click anywhere in the zone, or drop files on it.
+The product does the upload itself and tells the component how far each file has got.
+
+<Canvas of={FileUploadStories.Playground} />
+<Controls of={FileUploadStories.Playground} include={['hint', 'accept', 'maxFileSize', 'multiple', 'disabled']} />
+
+```tsx
+<FileUpload
+  hint="JPEG, JPG, PNG, SVG formats, up to 5 MB."
+  accept="image/png,image/jpeg,.svg"
+  maxFileSize={5 * 1024 * 1024}
+  files={files}              // [{ id, name, size, status: 'uploading' | 'completed' | 'failed', progress }]
+  onSelect={startUploading}
+  onCancel={cancel} onRemove={remove} onRetry={retry}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Adding documents to a request: a CV, a contract, a statement',
+    'A logo or a photo, one file that replaces the previous one',
+    'Several files at once, each with its own progress',
+  ]}
+  donts={[
+    'Pasting text or a link: use Input or Text Area',
+    'Choosing from files already in the product: use Select or a list',
+    'Cropping a photo: the crop step comes later, with Modal',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab. A stand-in upload moves each file to 100%; a file with *fail* in its name fails halfway.
+
+### Upload a file
+
+<Canvas of={FileUploadStories.UploadAFile} />
+
+The card shows the file's format, name, how much has arrived (*12 KB of 120 KB*), and a progress bar with the percentage; then *Completed*. Screen readers hear *my_cv.pdf uploaded*.
+
+### Several files
+
+<Canvas of={FileUploadStories.SeveralFiles} />
+
+With `multiple`, new files join the list. Each card has its own progress and its own action.
+
+### A file too big
+
+<Canvas of={FileUploadStories.AFileTooBig} />
+
+A file that doesn't pass the check (too big, or a type not in `accept`) shows as Failed with the reason: *Larger than 5 MB* or *File type not supported*. It was never sent, so there is no *Try again*; the bin removes it.
+
+### Try again
+
+<Canvas of={FileUploadStories.TryAgain} />
+
+When the upload itself fails (the network, the server), the card offers *Try again*. The product sends the file once more.
+
+### Use the keyboard
+
+<Canvas of={FileUploadStories.UseTheKeyboard} />
+
+The whole zone is one button: Tab reaches it, Enter or Space opens the file dialog. Tab then reaches each card's action (*Cancel uploading…*, *Remove…*, *Try again…*).
+
+### Upload a logo
+
+<Canvas of={FileUploadStories.UploadALogo} />
+
+Without `multiple`, a new file replaces the previous one.
+
+### Upload files in a card
+
+<Canvas of={FileUploadStories.UploadFilesInACard} />
+
+The Figma example, in a card with Cancel and Save. As a dialog it comes with Modal.
+
+### Unavailable
+
+<Canvas of={FileUploadStories.Unavailable} />
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **The product uploads, the component shows.** PrimeReact can send files itself, but with one progress for all of them and no status per file. Here PrimeReact gives the file dialog, the dropping and the size check; the product sends the files and passes each one's status and progress back. Every product has its own server and rules, so this keeps the component usable everywhere.
+- **The whole zone is a button.** In PrimeReact only a separate Choose button opens the dialog and the drop area can't be reached with the keyboard. Here the zone itself is the button, for the mouse, the keyboard and dropping.
+- **Two kinds of failure.** A file that didn't pass the check shows the reason and no *Try again*; a failed upload shows *Try again*.
+- **File format icons.** The Figma *File format icon* set: fifteen formats in their colours, with a dark-theme sheet. Formats the set doesn't have (jpg, png, svg…) get the same sheet with a neutral label and their extension.
+- **Sizes in the locale's numbers.** *1.2 MB* in English, *1,2 MB* in Ukrainian.
+- **Focus you can see.** The zone shows the system blue ring with the keyboard.
+
+## File cards and formats
+
+<Canvas of={FileUploadStories.FileCards} />
+
+**Uploading:** the progress bar and the percentage, and × to cancel. **Completed:** a green check and a bin. **Failed:** a red border and a bin; *Try again* for a failed upload, the reason for a file that didn't pass the check.
+The card has 16px padding, 16px corners and a 40px format icon.
+
+<Canvas of={FileUploadStories.FileFormatIcons} />
+
+The drop zone has 40px padding, 12px corners and a dashed border. Hovered, it gets a light fill; while a file is dragged over it, the border turns dark.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the drop zone, then to each card's action |
+| Enter or Space (zone) | Opens the file dialog |
+| Enter or Space (action) | Cancels, removes or tries again |
+
+- The zone is named by its text: the call to action and the hint (formats and size).
+- Each progress bar is named *Uploading my_cv.pdf* and reports its value.
+- Finished and failed files are announced; the format icon is decorative, the file name says what it is.
+
+## Figma and code
+
+The Figma frames (Upload area, File upload cards, File format icons and the guidelines) are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Upload area: State', prop: '(behaviour) · disabled', values: 'Hovered follows the pointer; Active while a file is dragged over; Disabled → disabled' },
+    { figma: 'Click to upload or drag and drop', prop: 'actionLabel · dropLabel', values: 'the call to action' },
+    { figma: 'JPEG, JPG, PNG, SVG formats, up to 5 MB.', prop: 'hint · accept · maxFileSize', values: 'the hint, and the check behind it' },
+    { figma: 'File upload cards: State', prop: 'files[].status · progress', values: 'Uploading, Completed, Failed → uploading, completed, failed; 0–100' },
+    { figma: 'Validation messages', prop: 'files[].error · retryable', values: 'the reason; whether Try again shows' },
+    { figma: 'Action button', prop: 'onCancel · onRemove · onRetry', values: '× while uploading; bin when done or failed; Try again' },
+    { figma: 'File format icon: Type', prop: '(from the file name)', values: '7z, csv, doc, docx, odt, pdf, pot, potx, pps, ppsx, rtf, txt, xls, xlsx, zip' },
+    { figma: '—', prop: 'multiple', values: 'several files; otherwise a new file replaces the chosen one' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={FileUploadStories} />

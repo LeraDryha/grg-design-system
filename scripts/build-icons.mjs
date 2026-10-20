@@ -110,6 +110,9 @@ const pictureSets = [
   { set: 'payment', type: 'PaymentMethod', list: 'paymentMethods', what: 'Payment method icon' },
   // Not shown in the Storybook, by decision of the design system owner
   { set: 'country', type: 'CountryCode', list: 'countryCodes', what: 'Country icon', skip: ['RU', 'BY'] },
+  // File format icons (figma/file-icons.json, exported one by one): the light grey sheet would glare on the dark
+  // theme, so each also gets a -dark file with the sheet in the dark theme's stroke-soft-200 (neutral 700)
+  { set: 'file', type: 'FileFormat', list: 'fileFormats', what: 'File format icon', sheet: ['#E5E5E5', '#404040'] },
 ];
 
 const HEX = { black: '#000000', white: '#ffffff' };
@@ -144,7 +147,7 @@ const darkVersion = svg => {
   return defs ? `${swapped}<defs>${defs}` : swapped;
 };
 
-for (const { set, type, list, what, darkDiscs = false, skip = [] } of pictureSets) {
+for (const { set, type, list, what, darkDiscs = false, sheet, skip = [] } of pictureSets) {
   const { icons: source } = JSON.parse(readFileSync(new URL(`figma/${set}-icons.json`, root)));
   const out = new URL(`src/icons/${set}/`, root);
   rmSync(out, { recursive: true, force: true });
@@ -158,7 +161,7 @@ for (const { set, type, list, what, darkDiscs = false, skip = [] } of pictureSet
       while (entries.some(e => e.key === key)) key += '-2';
       entries.push({ key, label: name + (i ? ` (${i + 1})` : '') });
       writeFileSync(new URL(`${key}.svg`, out), svg + '\n');
-      const onDark = darkDiscs && darkVersion(svg);
+      const onDark = (darkDiscs && darkVersion(svg)) || (sheet && svg.replaceAll(new RegExp(sheet[0], 'gi'), sheet[1]));
       if (onDark) {
         dark.push(key);
         writeFileSync(new URL(`${key}-dark.svg`, out), onDark + '\n');
@@ -171,8 +174,10 @@ for (const { set, type, list, what, darkDiscs = false, skip = [] } of pictureSet
       `/** Every icon of the Figma "${what}" set, in Figma order: key and Figma name. */\n` +
       `export const ${list} = [\n${entries.map(e => `  ['${e.key}', ${JSON.stringify(e.label)}],`).join('\n')}\n] as const;\n\n` +
       `export type ${type} = (typeof ${list})[number][0];\n` +
-      (darkDiscs
-        ? `\n/** Icons on a near-black disc: they have a -dark file with black and white swapped, for the dark theme. */\n` +
+      (darkDiscs || sheet
+        ? (darkDiscs
+            ? `\n/** Icons on a near-black disc: they have a -dark file with black and white swapped, for the dark theme. */\n`
+            : `\n/** Icons with a dark-theme version (a -dark file) */\n`) +
           `export const ${set}DarkVersions: readonly ${type}[] = [\n${dark.map(k => `  '${k}',`).join('\n')}\n];\n`
         : ''),
   );

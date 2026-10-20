@@ -1,0 +1,72 @@
+/* File upload. Every value is a token; Figma: Upload area (324:4742) and File upload cards (660:16427). */
+
+.grg-file-upload { display: grid; gap: var(--space-300); width: 100%; }
+
+/* ---- Drop zone (Figma Upload area) ---- */
+.grg-file-upload__content { position: relative; }
+.grg-file-upload__zone {
+  box-sizing: border-box;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-400);
+  padding: var(--space-1000);
+  border: 1px dashed var(--stroke-base-300);
+  border-radius: var(--radius-lg-12);
+  color: var(--icon-base-500);
+  text-align: center;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.grg-file-upload__zone:where(:hover) { background: var(--bg-weak-100); }
+/* Active: a file is dragged over the zone */
+.grg-file-upload__content[data-dragging] .grg-file-upload__zone { background: var(--bg-weak-100); border-color: var(--stroke-stronger-900); }
+.grg-file-upload__zone:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-file-upload[data-disabled] .grg-file-upload__zone { background: var(--bg-weak-100); border-color: var(--stroke-disabled); color: var(--icon-disabled-400); cursor: default; }
+
+.grg-file-upload__text { display: grid; gap: var(--space-100); }
+.grg-file-upload__cta { font: var(--typo-body-md-semibold); color: var(--text-strong-1000); }
+.grg-file-upload__action { color: var(--info-base-600); }
+.grg-file-upload__hint { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-file-upload[data-disabled] :is(.grg-file-upload__cta, .grg-file-upload__action, .grg-file-upload__hint) { color: var(--text-disabled-400); }
+
+/* ---- File cards ---- */
+.grg-file-upload__files { display: grid; gap: var(--space-200); margin: 0; padding: 0; list-style: none; }
+.grg-file-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-300);
+  padding: var(--space-400);
+  border: 1px solid var(--stroke-base-300);
+  border-radius: var(--radius-xl-16);
+}
+.grg-file-card[data-status='failed'] { border-color: var(--error-base-600); }
+.grg-file-card__content { display: grid; flex: 1; gap: var(--space-150); min-width: 0; }
+.grg-file-card__text { display: grid; gap: var(--space-050); padding-block: 1px; }
+.grg-file-card__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-file-card__description { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-200); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-file-card__separator { width: 1px; height: var(--space-300); background: var(--stroke-soft-200); }
+.grg-file-card__status { display: inline-flex; align-items: center; gap: var(--space-100); }
+.grg-file-card[data-status='completed'] .grg-file-card__status { color: var(--success-base-600); }
+.grg-file-card[data-status='failed'] .grg-file-card__status { color: var(--error-base-600); }
+
+/* Progress bar label (Figma: On right) */
+.grg-file-card__progress { display: flex; align-items: center; gap: var(--space-150); }
+.grg-file-card__bar { flex: 1; height: var(--space-100); overflow: hidden; border-radius: var(--radius-fully-rounded); background: var(--bg-soft-200); }
+.grg-file-card__bar-value { height: 100%; border-radius: inherit; background: var(--primary-base-1000); transition: width 200ms ease; }
+.grg-file-card__percent { font: var(--typo-body-sm-regular); color: var(--text-soft-500); font-variant-numeric: tabular-nums; }
+.grg-file-card__retry { justify-self: start; margin-left: calc(-1 * var(--space-300)); }
+.grg-file-card__action { flex: none; }
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-file-upload__zone, .grg-file-card__bar-value { transition: none; }
+}
