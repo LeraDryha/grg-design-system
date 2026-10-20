@@ -8,6 +8,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 <ComponentHeader
   figma="404-56948"
+  designTab
   builtOn="PrimeReact Dropdown"
   related={[
     { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
@@ -21,7 +22,9 @@ It opens the same list as Select. Figma has the component only, without a guidel
 <Canvas of={CompactSelectStories.Playground} />
 <Controls of={CompactSelectStories.Playground} include={['type', 'size', 'aria-label', 'searchable', 'invalid', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<CompactSelect aria-label="Currency" options={currencies} value={currency} onChange={setCurrency} />
+```
 
 ## When to use
 
@@ -38,82 +41,77 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={CompactSelectStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Container:** the frame, filled with `surface-floating`. Its border and fill show the state.
-2. **Value:** a short text (Type Default) or a picture: a Base icon, a flag or a coin, 20px.
-3. **Chevron:** points down, up while the list is open.
+### Currency next to an amount
 
-## Types
+<Canvas of={CompactSelectStories.CurrencyNextToAnAmount} />
+
+The amount field says what the select is about, so it needs no label of its own; screen readers hear its `aria-label`, *Currency*.
+
+### Pick a country
+
+<Canvas of={CompactSelectStories.PickACountry} />
+
+A flag shows without text, so the name comes from `aria-label`. For long lists, `searchable` adds a search row.
+
+### A removed value
+
+<Canvas of={CompactSelectStories.ARemovedValue} />
+
+Without a matching option the select shows its empty state. It never substitutes the first option, and doesn't fire `onChange`: the application decides how to resolve it.
+
+### Explain an error
+
+<Canvas of={CompactSelectStories.ExplainAnError} />
+
+There is no hint under a compact select, so the reason goes next to it and is connected with `aria-describedby`.
+
+### Unavailable
+
+<Canvas of={CompactSelectStories.Unavailable} />
+
+## Design decisions
+
+- **The same list as Select.** The open list, its rows and search are shared with Select, Inline Select and Dropdown Menu.
+- **No label, but always a name.** `aria-label` is a required prop: a select without visible text still has a name for screen readers.
+- **Never a silent choice.** An empty or removed value stays empty instead of jumping to the first option.
+- **States are behaviour, not props.** Hovered and Active (open) follow the pointer and the list; error and disabled are props with their own examples.
+
+## Types and sizes
 
 <Canvas of={CompactSelectStories.Types} />
 
-From the left: **Default** (short text, such as *USD*), **Icon**, **Country** and **Coin**. Pictures show without text, so the select needs `aria-label`.
-
-## Sizes
+**Default** shows a short text, such as *USD*. **Icon**, **Country** and **Coin** show a 20px picture without text.
 
 <Canvas of={CompactSelectStories.Sizes} />
 
-From the left: **lg-44** (12px paddings), **md-40** (10px) and **sm-32** (6px top and bottom, 8px on the sides, 8px corners). Match the controls next to it.
-
-## States
-
-### Default
-At rest.
-
-<Canvas of={CompactSelectStories.Default} />
-
-### Hovered
-Pointer over the select: a light fill and a darker border.
-
-<Canvas of={CompactSelectStories.Hovered} />
-
-### Active
-Open: the darkest border, and the chevron points up.
-
-<Canvas of={CompactSelectStories.Active} />
-
-### Keyboard focus
-
-Tab or Shift+Tab shows the blue focus ring. Clicking or tapping activates the control without the ring; typing after a click keeps the Active appearance.
-
-Keyboard focus adds the system blue ring.
-
-<Canvas of={CompactSelectStories.Focused} />
-
-### Error
-A red border. There is no hint under it, so explain the problem next to the select.
-
-<Canvas of={CompactSelectStories.ErrorState} />
-
-### Disabled
-Not available right now: grey fill and chevron, no interaction.
-
-<Canvas of={CompactSelectStories.Disabled} />
-
-## Selection
-
-Set `value` to the application's current choice, or `defaultValue` for an initial choice managed by the component. Without a matching option, the control shows its empty state. It never substitutes the first option. An empty or removed value does not fire `onChange`; the application decides how to resolve it.
-
-<Canvas of={CompactSelectStories.EmptySelection} />
-<Canvas of={CompactSelectStories.MissingValue} />
+Match the controls next to it: lg-44 (12px paddings), md-40 (10px), sm-32 (6px top and bottom, 8px on the sides, 8px corners).
 
 ## Accessibility
 
-- It is a combobox with a name from `aria-label`, an expanded state and the highlighted option announced while moving with the arrow keys.
-- Enter, Space or ↓ open the list; Escape closes it.
-- Keyboard focus shows the system blue ring while the control or its search input is focused, including when the list is open.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the select; the blue ring shows |
+| ↓ or Enter or Space | Opens the list |
+| ↑ ↓ | Move through the options |
+| Enter | Chooses the option |
+| Escape | Closes the list |
+
+- It is a combobox with a name from `aria-label`; the highlighted option is announced.
 - An error sets `aria-invalid`; write the reason next to the select.
 
 ## Figma and code
+
+The Figma component is in the **Design** tab of every story. Figma has no guidelines page for it.
 
 <PropsMapping
   rows={[
     { figma: 'Type', prop: 'type', values: 'Default, Icon, Country, Coin → default, icon, country, coin' },
     { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
-    { figma: 'State', prop: '(behaviour) · previewState · invalid · disabled', values: 'Hovered and Active follow the pointer and the list; Error → invalid; Disabled → disabled' },
+    { figma: 'State', prop: '(behaviour) · invalid · disabled', values: 'Hovered and Active follow the pointer and the list; Error → invalid; Disabled → disabled' },
     { figma: '—', prop: 'options · value · onChange', values: 'the list and the chosen option' },
   ]}
 />

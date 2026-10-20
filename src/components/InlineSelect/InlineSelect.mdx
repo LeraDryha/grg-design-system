@@ -8,6 +8,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 
 <ComponentHeader
   figma="424-72942"
+  designTab
   builtOn="PrimeReact Dropdown"
   related={[
     { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
@@ -21,7 +22,9 @@ It has no frame of its own and opens the same list as Select. Figma has the comp
 <Canvas of={InlineSelectStories.Playground} />
 <Controls of={InlineSelectStories.Playground} include={['type', 'aria-label', 'searchable', 'disabled']} />
 
-All props are listed at the end of the page.
+```tsx
+<InlineSelect aria-label="Country code" type="country" options={codes} value={code} onChange={setCode} />
+```
 
 ## When to use
 
@@ -37,81 +40,69 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={InlineSelectStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Picture:** a flag, a coin or a Base icon, 20px.
-2. **Value:** a short text, Body-md/Regular: *+359*, *USD*.
-3. **Chevron:** an Action button (sm, grey); darker on hover, darkest while open.
+### Inside a field
+
+<Canvas of={InlineSelectStories.InsideAField} />
+
+Input uses it in two types: **Phone** (the country code before the number) and **Amount** (the coin after the number).
+
+### Switch the language
+
+<Canvas of={InlineSelectStories.SwitchTheLanguage} />
+
+The application supplies its current language and handles the choice: translated content, routing and saving it. Use language names; a country flag doesn't identify a language.
+
+### Search the codes
+
+<Canvas of={InlineSelectStories.SearchTheCodes} />
+
+### A removed value
+
+<Canvas of={InlineSelectStories.ARemovedValue} />
+
+Without a matching option it shows its empty state. It never substitutes the first option and doesn't fire `onChange`.
+
+### Unavailable
+
+<Canvas of={InlineSelectStories.Unavailable} />
+
+## Design decisions
+
+- **No frame of its own.** It lives inside another field or a header; the chevron is an Action button (sm, grey), darker on hover, darkest while open.
+- **The same list as Select.** Rows, search and keyboard are shared with Select, Compact Select and Dropdown Menu.
+- **Focus separate from open.** The blue ring marks keyboard focus whether or not the list is open; closing the list restores the resting chevron even if focus stays.
 
 ## Types
 
 <Canvas of={InlineSelectStories.Types} />
 
-From the left: **Country** (flag), **Coin** and **Icon**. The type only changes the picture.
-
-## In fields
-
-<Canvas of={InlineSelectStories.InFields} />
-
-Input uses it in two types: **Phone** (the country code before the number) and **Amount** (the coin after the number).
-
-## Header language
-
-<Canvas of={InlineSelectStories.HeaderLanguage} />
-
-The application supplies its current language and handles the selection to update translated content, routing and persistence. This example updates the content on the canvas. Use language names; a country flag does not uniquely identify a language.
-
-## States
-
-### Default
-At rest.
-
-<Canvas of={InlineSelectStories.Default} />
-
-### Hovered
-Pointer over it: the chevron gets darker.
-
-<Canvas of={InlineSelectStories.Hovered} />
-
-### Active
-Open: the darkest chevron. Closing the list restores the resting or hovered chevron, even if focus remains.
-
-<Canvas of={InlineSelectStories.Active} />
-
-### Keyboard focus
-
-Tab or Shift+Tab shows the blue focus ring. Clicking or tapping activates the control without the ring; typing after a click keeps the Active appearance.
-
-A blue ring marks keyboard focus independently of whether the list is open.
-
-<Canvas of={InlineSelectStories.Focused} />
-
-### Disabled
-Not available right now, with its field: grey text, a faded picture and a grey chevron.
-
-<Canvas of={InlineSelectStories.Disabled} />
-
-## Selection
-
-Set `value` to the application's current choice, or `defaultValue` for an initial choice managed by the component. Without a matching option, the control shows its empty state. It never substitutes the first option. An empty or removed value does not fire `onChange`; the application decides how to resolve it.
-
-<Canvas of={InlineSelectStories.EmptySelection} />
-<Canvas of={InlineSelectStories.MissingValue} />
+**Country** (flag), **Coin** and **Icon**: the type only changes the 20px picture. The value is a short text, Body-md/Regular: *+359*, *USD*.
 
 ## Accessibility
 
-- It is a combobox with a name from `aria-label` (*Country code*, *Currency*), an expanded state and the highlighted option announced while moving with the arrow keys.
-- The picture is decorative; the value and the option names in the list say what is chosen.
-- Keyboard focus shows the system blue ring.
+| Key | What it does |
+|---|---|
+| Tab | Moves focus to the select; the blue ring shows |
+| ↓ or Enter or Space | Opens the list |
+| ↑ ↓ | Move through the options |
+| Enter | Chooses the option |
+| Escape | Closes the list |
+
+- It is a combobox with a name from `aria-label` (*Country code*, *Currency*); the highlighted option is announced.
+- The picture is decorative; the value and the option names say what is chosen.
 
 ## Figma and code
+
+The Figma component is in the **Design** tab of every story. Figma has no guidelines page for it.
 
 <PropsMapping
   rows={[
     { figma: 'Type', prop: 'type', values: 'Country, Coin, Icon → country, coin, icon' },
-    { figma: 'State', prop: '(behaviour) · previewState · disabled', values: 'Hovered and Active follow the pointer and the list; Disabled → disabled' },
+    { figma: 'State', prop: '(behaviour) · disabled', values: 'Hovered and Active follow the pointer and the list; Disabled → disabled' },
     { figma: '—', prop: 'options · value · onChange', values: 'the list and the chosen option; in Input: countries · coins' },
   ]}
 />

@@ -26,6 +26,8 @@ export type CompactSelectProps = {
   noResults?: string;
   /** Red border: the choice is missing or wrong. Explain it next to the select. */
   invalid?: boolean;
+  /** Id of the text next to the select that explains it, such as the reason for an error; read with the select */
+  'aria-describedby'?: string;
   disabled?: boolean;
   id?: string;
   name?: string;
@@ -39,7 +41,7 @@ export type CompactSelectProps = {
 export function CompactSelect({
   options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'default', size = 'md', 'aria-label': label,
   searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
-  invalid, disabled, id: suppliedId, name, className = '',
+  invalid, 'aria-describedby': describedBy, disabled, id: suppliedId, name, className = '',
 }: CompactSelectProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
@@ -49,7 +51,7 @@ export function CompactSelect({
   const [open, setOpen] = useState(false);
   const value = controlled === undefined ? local : controlled;
   const selected = options.find(o => o.value === value);
-  useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, undefined, invalid);
+  useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, describedBy, invalid);
 
   return (
     <div
