@@ -7,6 +7,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 # Avatar
 
 <ComponentHeader
+  designTab
   builtOn="PrimeReact Avatar"
   figma="152-1467"
   guidelines="420-13612"
@@ -19,7 +20,9 @@ Used in profiles, lists, comments and the User type of Select.
 <Canvas of={AvatarStories.Playground} />
 <Controls of={AvatarStories.Playground} include={['size', 'src', 'name', 'initials', 'shape', 'color', 'status']} />
 
-All props are listed at the end of the page.
+```tsx
+<Avatar name="Warren Fritsch" src={photoUrl} initials status="check" />
+```
 
 ## When to use
 
@@ -36,77 +39,71 @@ All props are listed at the end of the page.
   ]}
 />
 
-## Anatomy
+## Examples
 
-<Canvas of={AvatarStories.Anatomy} />
+Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
-1. **Image:** a photo or logo, initials, or a person or company shape, in a circle.
-2. **Status (optional):** the Status badge at the bottom right, with a 2px ring in the surface colour.
+### A list of people
 
-## Sizes
+<Canvas of={AvatarStories.AListOfPeople} />
 
-<Canvas of={AvatarStories.Sizes} />
+When the name is written next to the avatar (lists, selects), `decorative` hides the picture from screen readers, so the name isn't read twice.
 
-Eleven sizes from 120 to 16px. The status badge follows the size:
+### A verified account
 
-- **120 / 96 / 80:** Status badge md-24.
-- **64 / 56:** sm-20.
-- **48:** xs-16.
-- **40 / 32:** xxs-12.
-- **24:** mini-8, a dot without an icon.
-- **20 / 16:** no badge.
+<Canvas of={AvatarStories.AVerifiedAccount} />
 
-Initials are bold and scale with the size: Heading H5 at 120, Title at 96–64, 14px at 56 and 48, 12px at 40, 11px at 32 and 10px below, with one letter at 20 and 16.
+On its own, the avatar is an image named by the person and the status: *Warren Fritsch, verified*. Change the status words with `statusLabel`.
+
+### A photo that fails
+
+<Canvas of={AvatarStories.APhotoThatFails} />
+
+If the photo can't load, initials (when enabled) or the shape show instead. A new photo address starts a new attempt.
+
+## Design decisions
+
+- **One colour group per avatar.** Shapes use the 400 shade with the shape in 50 (Sky 400 + Sky 50); initials use 300 with the letters in 900 (Sky 300 + Sky 900). The code takes both shades from one group, so they can't be mixed. In the dark theme the shades swap places and the avatar keeps its contrast.
+- **The badge follows the size.** Avatar picks the Status badge size itself (24 at 120–80, 20 at 64–56, 16 at 48, 12 at 40–32, an 8px dot at 24, none at 20 and 16).
+- **Status is not colour alone.** Every status has its own icon from 12px up.
+- **The edit badge is a picture, not a button.** Put the action on a button next to the avatar or on its container.
 
 ## Kinds
 
 <Canvas of={AvatarStories.Kinds} />
 
-From the left:
+A **photo** or a company logo (`src`), a **person** or **company** placeholder (`shape`), or **initials** from the `name`.
 
-- **Photo** (`src`): a photo or a company logo, cropped to the circle. If it fails to load, initials (when enabled) or the shape show instead.
-- **Person** (`shape="user"`, the default): a placeholder before there is a photo.
-- **Company** (`shape="company"`): the same for an organisation.
-- **Initials** (`initials` with a `name`): the first letters of the first and last name.
+## Sizes
 
-### Photo recovery
+<Canvas of={AvatarStories.Sizes} />
 
-<Canvas of={AvatarStories.PhotoRecovery} />
-
-PrimeReact handles the photo, initials and shape fallback. A new photo URL starts a new loading attempt after a previous failure.
+Initials are bold and scale with the size: Heading H5 at 120, Title at 96–64, 14px at 56 and 48, 12px at 40, 11px at 32 and 10px below, one letter at 20 and 16.
 
 ## Colours
 
 <Canvas of={AvatarStories.Colours} />
 
-Grey by default; or one of the fourteen Additional colour groups (`color`). Both shades always come from the same group:
-
-- **Shapes:** the 400 shade in the background, the shape in 50 (Sky 400 + Sky 50).
-- **Initials:** the 300 shade in the background, the letters in 900 (Sky 300 + Sky 900).
-
-Never mix groups, such as Yellow 50 with Purple 400. In the dark theme the shades swap places, so the avatar keeps its contrast.
+Grey by default, or one of the fourteen Additional colour groups (`color`). Keep the same group for a person or company everywhere they appear.
 
 ## Status
 
 <Canvas of={AvatarStories.Statuses} />
 
-From the left: **none**, **Check** (green), **Pending** (amber), **Remove** (red, a cross), **Error** (red, a minus) and **Icon** (a grey pencil, for an avatar that can be changed).
-
-### Status badge
+**Check** (green), **Pending** (amber), **Remove** (red, a cross), **Error** (red, a minus) and **Icon** (a grey pencil, for an avatar that can be changed).
 
 <Canvas of={AvatarStories.StatusBadges} />
 
-Its own small component in Figma: five types in five sizes (24, 20, 16, 12 and 8). At 8px it is a dot without an icon.
-Avatar picks the size; use it on its own only where Avatar can't be used.
+The Status badge is its own small component in Figma: five types in five sizes. Use it on its own only where Avatar can't be used.
 
 ## Accessibility
 
-- With a `name`, the avatar is an image with that name, and the status is added to it: *Warren Fritsch, verified*. Change the status words with `statusLabel`.
-- Without a name, or with `decorative` when the name is written next to it (lists, selects), screen readers skip it.
-- The status is not shown by colour alone: each type has its own icon from 12px up.
-- The edit badge is a picture, not a button: put the action on a button next to the avatar or on the avatar's container.
+- With a `name`, the avatar is an image with that name and its status. Without a name, or with `decorative`, screen readers skip it.
+- Don't put a status badge at 16 or 20px: there is no room for it.
 
 ## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
 
 <PropsMapping
   rows={[
