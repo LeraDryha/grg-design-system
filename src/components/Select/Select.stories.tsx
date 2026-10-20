@@ -1,5 +1,5 @@
 import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
-import { useState, type CSSProperties, type FormEvent, type ReactNode } from 'react';
+import { useState, type FormEvent } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Button } from '../Button/Button';
 import { Select, type SelectProps } from './Select';
@@ -179,37 +179,49 @@ export const Controlled: Story = {
   },
 };
 
-/* ---- Design overview: sizes and states side by side ---- */
+/** A field that waits for an earlier choice: disabled until the payment type is chosen, with a hint that says why. */
+export const WaitForAnEarlierChoice: Story = {
+  decorators: [field],
+  render: function WaitForAnEarlierChoice(args: SelectProps) {
+    const [paymentType, setPaymentType] = useState<string | null>(null);
+    return (
+      <div style={{ display: 'grid', gap: 'var(--space-800)' }}>
+        <Select {...args} label="Payment type" options={samplePayments} value={paymentType} onChange={setPaymentType} />
+        <Select
+          {...args}
+          type="payment"
+          label="Payment method"
+          options={samplePaymentMethods}
+          disabled={!paymentType}
+          hint={paymentType ? '' : 'Choose a payment type first'}
+        />
+      </div>
+    );
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const [type, method] = Array.from(canvasElement.querySelectorAll<HTMLElement>('.grg-select__box'));
+    await expect(method).toHaveAttribute('aria-disabled', 'true');
+    await userEvent.click(type);
+    await userEvent.click(await canvas.findByRole('option', { name: /rent payment/i }));
+    await waitFor(() => expect(method).not.toHaveAttribute('aria-disabled'));
+  },
+};
 
-const grid: CSSProperties = { display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-1000) var(--space-800)', paddingTop: 'var(--space-600)' };
-const caption: CSSProperties = { font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)', marginBottom: 'var(--space-800)' };
-const Cell = ({ title, children, id }: { title: string; children: ReactNode; id?: string }) => (
-  <div id={id}><div style={caption}>{title}</div>{children}</div>
-);
+/* ---- Sizes side by side ---- */
 
 /** lg-44, md-40 and sm-32. Only the paddings and corners change. */
 export const Sizes: Story = {
   render: (args: SelectProps) => (
-    <div style={grid}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 240px)', gap: 'var(--space-800)', paddingTop: 'var(--space-600)' }}>
       {(['lg', 'md', 'sm'] as const).map(size => (
-        <Cell key={size} title={{ lg: 'lg-44', md: 'md-40', sm: 'sm-32' }[size]}>
+        <figure key={size} style={{ margin: 0 }}>
           <Select {...args} size={size} type="coin" label="Currency" options={sampleCoins} defaultValue="BTC" />
-        </Cell>
+          <figcaption style={{ marginTop: 'var(--space-300)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)', textAlign: 'center' }}>
+            {{ lg: 'lg · 44px', md: 'md · 40px', sm: 'sm · 32px' }[size]}
+          </figcaption>
+        </figure>
       ))}
-    </div>
-  ),
-};
-
-/** The look of each state. Hover is shown by Storybook (pseudo-states); focus and the open list are live in the examples above. */
-export const States: Story = {
-  parameters: { pseudo: { hover: ['#state-hovered .grg-select__box'] } },
-  render: (args: SelectProps) => (
-    <div style={grid}>
-      <Cell title="Default"><Select {...args} /></Cell>
-      <Cell title="Filled"><Select {...args} defaultValue="utility" /></Cell>
-      <Cell title="Hovered" id="state-hovered"><Select {...args} defaultValue="utility" /></Cell>
-      <Cell title="Error"><Select {...args} required error="Choose a payment type" /></Cell>
-      <Cell title="Disabled"><Select {...args} disabled defaultValue="utility" /></Cell>
     </div>
   ),
 };

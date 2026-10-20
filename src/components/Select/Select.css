@@ -59,8 +59,13 @@
 .grg-select__frame[data-disabled] .grg-select__trigger { color: var(--icon-disabled-400); }
 
 
-/* The list opens 8px under the field (Figma examples) */
-.grg-select__frame .grg-dropdown { top: calc(100% + var(--space-200)); left: 0; }
+/* The list opens 8px under the field (Figma examples). PrimeReact places it with inline top and left, and flips it
+   above the field when there's no room below, so the gap is a margin on top of that. */
+.grg-select__frame .grg-dropdown { margin-top: var(--space-200); }
+.grg-select__frame .grg-dropdown[style*='center bottom'] { margin-top: calc(-1 * var(--space-200)); }
+/* PrimeReact gives the multi-select box an inline position: relative only while it has a value (for its clear
+   button); the frame stays the list's anchor, so the list doesn't shift when the last choice is cleared */
+.grg-select__frame .grg-select__box { position: static !important; }
 
 .grg-sr-only {
   position: absolute !important;

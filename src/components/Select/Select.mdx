@@ -84,6 +84,12 @@ The error appears after people try to send the form, not while they are still fi
 <Canvas of={SelectStories.Loading} />
 <Canvas of={SelectStories.NoResults} />
 
+### Wait for an earlier choice
+
+<Canvas of={SelectStories.WaitForAnEarlierChoice} />
+
+A disabled field always says why in its hint, and unlocks as soon as the earlier choice is made.
+
 ### Controlled by a form
 
 <Canvas of={SelectStories.Controlled} />
@@ -100,23 +106,14 @@ What the code adds to the Figma file, and why:
   so a fix or a new option type reaches all of them.
 - **Focus you can see.** Figma draws focus in `primary-soft-200`, which keyboard users can barely see; the code uses the
   system blue ring, and only for keyboard focus.
-- **States are behaviour, not props.** Hover, focus and open come from the pointer and the keyboard. The component has no
-  documentation-only state switch; Storybook shows the hover look itself.
+- **States are behaviour, not props.** Hover, focus and open come from the pointer and the keyboard, so they are tried
+  in the examples rather than drawn one by one. Error and disabled are props, and each has its own example.
 
-## Sizes and states
+## Sizes
 
 <Canvas of={SelectStories.Sizes} />
 
-<Canvas of={SelectStories.States} />
-
-- **Default:** empty; the label sits inside as the placeholder and floats above on focus.
-- **Filled:** the label stays above.
-- **Hovered:** a light fill and a darker border.
-- **Active** (focused or open): the darkest border and a dark label; see the examples.
-- **Error:** a red border, and the message replaces the hint.
-- **Disabled:** grey fill and text, no interaction.
-
-The floating label **takes no vertical space**: leave 22px above every field in a form layout.
+Only the paddings and corners change; the text stays the same size. The floating label **takes no vertical space**: leave 22px above every field in a form layout.
 
 ## Accessibility
 

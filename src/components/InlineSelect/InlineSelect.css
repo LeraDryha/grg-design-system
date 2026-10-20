@@ -40,12 +40,14 @@
 .grg-inline-select[data-open]:not([data-disabled]) .grg-inline-select__trigger { color: var(--icon-strong-1000); }
 .grg-inline-select__root[data-p-disabled='true'] .grg-inline-select__trigger { color: var(--icon-disabled-400); }
 
-/* The list (shared with Select) opens under the field, lined up with its left edge */
+/* The list (shared with Select) opens under the field, lined up with its left edge. PrimeReact sets top and left
+   inline (above the field when there's no room below), so the offsets are margins. */
 .grg-inline-select .grg-dropdown {
-  top: calc(100% + var(--space-300));
-  left: calc(-1 * var(--space-250));
+  margin-top: var(--space-300);
+  margin-left: calc(-1 * var(--space-250));
   min-width: var(--space-5000);
 }
+.grg-inline-select .grg-dropdown[style*='center bottom'] { margin-top: calc(-1 * var(--space-300)); }
 
 .grg-sr-only {
   position: absolute !important;
