@@ -1,0 +1,29 @@
+/* API icon. Every value is a token; Figma layer names in the comments. */
+
+.grg-api-icon {
+  /* Type = Post: Info colours */
+  --api-tint: var(--info-muted-50);
+  --api-tint-active: var(--info-lighter-100);
+  --api-stroke: var(--info-light-200);
+  --api-color: var(--info-base-600);
+
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-050);
+  height: var(--space-500);
+  border-radius: var(--radius-xxs-4);
+  background: var(--api-tint);
+  /* The Figma stroke sits inside the 20px tile */
+  box-shadow: inset 0 0 0 1px var(--api-stroke);
+  color: var(--api-color);
+}
+.grg-api-icon[data-active] { background: var(--api-tint-active); }
+/* Text = On: the method name, 6px from the end */
+.grg-api-icon[data-text] { padding-right: var(--space-150); }
+.grg-api-icon__text { font: var(--typo-body-sm-medium); }
+
+.grg-api-icon[data-method='get'] { --api-tint: var(--success-muted-50); --api-tint-active: var(--success-lighter-100); --api-stroke: var(--success-light-200); --api-color: var(--success-base-600); }
+.grg-api-icon[data-method='delete'] { --api-tint: var(--error-muted-50); --api-tint-active: var(--error-lighter-100); --api-stroke: var(--error-light-200); --api-color: var(--error-base-600); }
+.grg-api-icon:is([data-method='patch'], [data-method='put']) { --api-tint: var(--warning-muted-50); --api-tint-active: var(--warning-lighter-100); --api-stroke: var(--warning-light-200); --api-color: var(--warning-base-600); }

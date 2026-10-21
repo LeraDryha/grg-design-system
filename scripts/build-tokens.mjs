@@ -34,6 +34,8 @@ const semantic = colors.filter(c => !isPrimitive(c.name));
 
 const lightLines = [...primitives, ...semantic].map(c => `  ${colorVar(c.name)}: ${valueOf(c.light)};`);
 const darkLines = [...primitives, ...semantic].filter(c => c.light !== c.dark).map(c => `  ${colorVar(c.name)}: ${valueOf(c.dark)};`);
+// The same colours with their light values, for a part that keeps the light theme inside the dark one
+const lightAgainLines = [...primitives, ...semantic].filter(c => c.light !== c.dark).map(c => `  ${colorVar(c.name)}: ${valueOf(c.light)};`);
 
 // ---- Spacing, radius, typography variables ----
 const space = variables.Spasing.map(l => l.split('|')).filter(([, t]) => t === 'F').map(([n, , v]) => `  --space-${n}: ${v}px;`);
@@ -101,10 +103,20 @@ ${effects.light.join('\n')}
 ${effects.blur.join('\n')}
 }
 
-[data-theme='dark'] {
+/* The dark theme; .grg-theme-invert turns a part dark inside the light theme (such as a Black feature card) */
+[data-theme='dark'],
+.grg-theme-invert {
   color-scheme: dark;
 ${darkLines.join('\n')}
 ${effects.dark.join('\n')}
+}
+
+/* The light theme on a part inside the dark one (data-theme="light"), and the inverted part in the dark theme */
+[data-theme='light'],
+[data-theme='dark'] .grg-theme-invert {
+  color-scheme: light;
+${lightAgainLines.join('\n')}
+${effects.light.join('\n')}
 }
 `;
 

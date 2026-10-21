@@ -1,0 +1,53 @@
+/* Feature card. Every value is a token; Figma layer names in the comments. */
+
+.grg-feature-card {
+  /* Color = White */
+  --fc-bg: var(--bg-base-0);
+  --fc-stroke: var(--stroke-soft-200);
+
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  margin: 0;
+  /* 12px around; the Figma stroke sits inside */
+  padding: calc(var(--space-300) - 1px);
+  border: 1px solid var(--fc-stroke);
+  border-radius: var(--radius-lg-12);
+  background: var(--fc-bg);
+  color: var(--text-strong-1000);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+}
+.grg-feature-card[data-color='gray'] { --fc-bg: var(--bg-muted-50); }
+/* Black: the White card in the other theme (the class grg-theme-invert swaps the tokens) */
+.grg-feature-card[data-color='black'] { --fc-stroke: var(--stroke-base-300); }
+.grg-feature-card[data-color='primary'] { --fc-bg: var(--primary-gold-base); --fc-stroke: var(--stroke-base-300); }
+/* Support on Primary: the border in the card's own gold (Figma draws gold/600 from the palette) */
+.grg-feature-card[data-color='primary'][data-type='support'] { --fc-stroke: var(--primary-gold-base); }
+
+/* Left icon: a link or a button; the whole card is the target */
+:is(a, button).grg-feature-card { cursor: pointer; }
+:is(a, button).grg-feature-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Support: the text block with the close button at the top right */
+.grg-feature-card[data-type='support'] { align-items: flex-start; }
+
+.grg-feature-card__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-feature-card[data-type='support'] .grg-feature-card__text { gap: var(--space-300); }
+.grg-feature-card__title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-250);
+  margin: 0;
+  font: var(--typo-body-md-medium);
+  color: var(--text-strong-1000);
+}
+.grg-feature-card__title-icon { flex: none; color: var(--icon-base-500); }
+.grg-feature-card__description {
+  margin: 0;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-subtle-700);
+}

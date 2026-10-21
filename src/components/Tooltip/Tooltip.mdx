@@ -1,0 +1,115 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TooltipStories from './Tooltip.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TooltipStories} />
+
+# Tooltip
+
+<ComponentHeader
+  figma="218-8460"
+  guidelines="801-2750"
+  designTab
+  builtOn="PrimeReact Tooltip"
+  related={[
+    { label: 'Action Button', href: '?path=/docs/components-action-button--docs' },
+    { label: 'Sidebar Navigation', href: '?path=/docs/components-sidebar-navigation--docs', relation: 'See also' },
+  ]}
+/>
+
+A short text that appears next to a control on hover and on keyboard focus: the name of an icon button, or a hint about a setting.
+
+<Canvas of={TooltipStories.Playground} />
+<Controls of={TooltipStories.Playground} include={['title', 'description', 'icon', 'color', 'side', 'align', 'purpose']} />
+
+```tsx
+<Tooltip title="Copy link" purpose="name">
+  <ActionButton icon="copy" aria-label="Copy link" />
+</Tooltip>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'The name of an icon-only button or link',
+    'A short hint about a setting, next to an info button',
+    'A value under the pointer, such as a point on a chart',
+  ]}
+  donts={[
+    'Anything people must read to finish a task: write it on the page or use Hint text',
+    'Links or buttons inside it: it closes when the pointer leaves; use a popover or a Modal',
+    'Errors and results: use Alert or Banner',
+    'Phones: there is no hover, so the information must be on the screen',
+  ]}
+/>
+
+## Examples
+
+### Name an icon button
+
+<Canvas of={TooltipStories.NameAnIconButton} />
+
+The tooltip shows the button's name (`purpose="name"`), and screen readers hear the same name. Tab shows it, Escape hides it.
+
+### Explain a setting
+
+<Canvas of={TooltipStories.ExplainASetting} />
+
+A title with a description and an icon. Screen readers hear the text after the button's name (`purpose="description"`).
+
+### Over a chart
+
+<Canvas of={TooltipStories.OverAChart} />
+
+Black stands out over busy content. It turns light in the dark theme.
+
+## Design decisions
+
+- **Hover and keyboard focus** both show it, after 150ms; it stays while the pointer moves onto it, and Escape closes it without moving focus (WCAG 1.4.13).
+- **Screen readers.** PrimeReact hides the tooltip from them, so its text reaches them through the control: as its name, its description, or not at all when the control already says it (`purpose`).
+- **`side` is where the tooltip opens.** Figma Side names the edge with the tip, which is the opposite: Side = Bottom is a tooltip above the control (`side="top"`). Top left / right and Bottom left / right are `align="start"` / `"end"`.
+- **It moves when there is no room**, to the opposite side.
+- **Black turns light in the dark theme**, as its tokens (`bg-base-1000`, `text-inverce`) do.
+
+## Sides
+
+<Canvas of={TooltipStories.Sides} />
+
+Hover each button. `top` is the default; tooltips in a collapsed sidebar open to the `right`.
+
+## Styles
+
+<Canvas of={TooltipStories.Styles} />
+
+- **White** for most screens; **Black** (Figma Inverted) to stand out on busy content.
+- A title alone (6px corners), with a Left icon, or a title with a description (Details = On: 12px corners, up to 301px wide).
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Focus on the control shows the tooltip |
+| Escape | Hides it; focus stays on the control |
+
+- The text is part of the control: its name (`purpose="name"`) or description (`purpose="description"`).
+- Only controls that take focus get a tooltip, so keyboard users see it too.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Edit title', prop: 'title', values: 'text' },
+    { figma: 'Description, Details = On', prop: 'description', values: 'text' },
+    { figma: 'Left icon', prop: 'icon', values: 'Base icon name' },
+    { figma: 'Color', prop: 'color', values: 'White, Black → white, black' },
+    { figma: 'Side: Bottom, Top, Right, Left', prop: 'side', values: 'top, bottom, left, right (the opposite edge)' },
+    { figma: 'Side: … left, … right', prop: 'align', values: 'start, end; center otherwise' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TooltipStories} />

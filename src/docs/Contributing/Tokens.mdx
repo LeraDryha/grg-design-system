@@ -36,6 +36,8 @@ Only the gold (light) and dark themes are part of this system. White-label palet
 |---|---|---|
 | Keyboard focus ring | 4px light grey ring (`primary-soft-200`), about 1.2:1 against the canvas | The same ring in the system blue (`--focus-ring`, Info blue), so keyboard users can see it |
 | Modal overlay | #0A0A0A at 60% with Blur/sm, drawn without a variable | `--overlay`: `neutral-1000` at 60%, with `--blur-sm`; the same in both themes |
+| Inverted parts | The Black feature card is drawn in the Dark mode inside the light theme | `.grg-theme-invert` gives a part the other theme: dark in the light theme, light in the dark one. The Black feature card uses it; the Black tooltip (`bg-base-1000`) swaps on its own |
+| A part that keeps the light theme | The Primary feature card has dark text on gold, which turns white (about 2:1) in the dark theme | `data-theme="light"` on the part: the generated `[data-theme='light']` block brings the light values back inside the dark theme |
 
 ## Known differences between Figma and code
 
@@ -53,4 +55,6 @@ Token differences and agreed implementation decisions. The table records how cod
 | Button / Loading | Figma presents Loader and Disabled as separate visual states | Loading uses PrimeReact Button's native disabled behaviour: activation is blocked and Tab skips it. The loader keeps its accessible name and `aria-busy` |
 | Input Otp examples | *Didn’t receive the code? Click to resend* is available straight away | The examples count down 30 seconds (*Resend in 0:30*) before the resend button appears, so people wait for the first code. To be added to Figma |
 | Featured icon / Neutral, Filled = Off | The tile uses `bg-base-0`; every other type uses `surface-floating` | `surface-floating` for all, so the tile matches the Modal surface in the dark theme |
+| Sidebar navigation / Collapsed | The collapsed sidebar is 76px wide, but its 40px rows with 20px sides and its 56px cards with 12px sides need 80px | 80px |
+| Feature cards / Primary, Support | The border uses the palette colour `gold/600`, not a variable | `primary-gold-base`, the card's own gold |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |

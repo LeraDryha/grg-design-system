@@ -184,3 +184,31 @@ The OTP cells frame carries the File Upload description by mistake. The resend c
 | Component set `Featured icon` (Type × Size × Filled, 36 variants), page Misc icons `693:1673` | `329:14075` |
 
 The overlay (#0A0A0A 60%, Blur/sm) has no variable; it is `--overlay` in `src/styles/system.css`.
+
+## Sidebar Navigation
+
+| What | Node |
+|---|---|
+| Page ❖ Navigation | `696:41434` |
+| Frame `Sidebar navigation` (assembled sidebars, expanded and collapsed) | `769:31419` |
+| Component set `Sidebar items` (State × Icon only × Level, 12 variants; Leading icon, Arrow, Left badge, Right badge) | `765:2532` |
+| Component set `Header card` (State × Icon only, 6 variants) | `765:2385` |
+| Component set `User profile card` (State × Icon only, 6 variants) | `765:11047` |
+| Component set `Feature cards` (Type × Color, 8 variants) | `769:16436` |
+| Usage Guidelines (anatomy, widths, options, item variants) | `771:56482` |
+| Sidebar layout architecture – Guidelines (Navigation, Content, Sidebar layouts) | `771:56644` |
+| Examples (an app page; the mobile menu with Theme and language, built with Header navigation) | `771:56684` |
+| Component set `API icons` (Type × State × Text, 20 variants), page Misc icons `693:1673` | `1356:29600` |
+
+Collapsed: Figma draws 76px; the rows (40px + 20px sides) and the cards (56px + 12px) need 80px, used in code (Contributing/Tokens).
+
+## Tooltip
+
+| What | Node |
+|---|---|
+| Page ❖ Tooltip | `218:7878` |
+| Frame `Tooltip` | `264:8479` |
+| Component set `Tooltip` (Side × Details × Color, 32 variants; Left icon, Title, Description) | `218:8460` |
+| Usage Guidelines (anatomy, colours, styles) | `801:2750` |
+
+Figma Side names the edge with the tip; the code's `side` is where the tooltip opens (the opposite edge).
