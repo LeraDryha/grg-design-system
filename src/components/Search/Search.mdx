@@ -1,0 +1,101 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SearchStories from './Search.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SearchStories} />
+
+# Search
+
+<ComponentHeader
+  figma="163-9131"
+  guidelines="779-31852"
+  designTab
+  builtOn="PrimeReact InputText"
+  related={[
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+  ]}
+/>
+
+A field to find something in a list or a page: transactions, invoices, members.
+
+<Canvas of={SearchStories.Playground} />
+<Controls of={SearchStories.Playground} include={['size', 'placeholder', 'hint', 'loading', 'disabled']} />
+
+```tsx
+<Search aria-label="Search transactions" placeholder="Search transactions" onSearch={setQuery} />
+```
+
+## When to use
+
+<DoDont
+  dos={['Finding items in a list or a table that is too long to scan', 'Above a table, next to its filters']}
+  donts={[
+    'Choosing a value from a known list: use Select with its search row',
+    'Entering data for a form: use Input',
+  ]}
+/>
+
+## Examples
+
+### Filter transactions
+
+<Canvas of={SearchStories.FilterTransactions} />
+
+The list narrows 0.3s after the last key (`searchDelay`). The count says how many match, and screen readers hear it. Escape or × clears the field, keeps the cursor in it and shows everything again.
+
+### Searching the server
+
+<Canvas of={SearchStories.SearchingTheServer} />
+
+Search on Enter only (`searchDelay={0}`). While results load, a small ring stands in for × (`loading`).
+
+### Unavailable
+
+<Canvas of={SearchStories.Unavailable} />
+
+## Design decisions
+
+- **A real search field**: screen readers hear *search*, phones show a Search key, Enter searches and Escape clears.
+- **× appears as soon as there is text**, in every state, as the guidelines say.
+- **A name for screen readers** is always there (`aria-label`, *Search* by default): the placeholder disappears as people type.
+- **One style, Outstroke.** Figma marks Gray as optional and possibly deprecated (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **Loading** is not in Figma: the xs Progress Circle in the icon slot, as many products do.
+- **Suggestions** while typing (a list under the field) aren't part of this component yet.
+
+## Sizes
+
+<Canvas of={SearchStories.Sizes} />
+
+lg-44 and md-40 for pages, sm-32 in toolbars and panels.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Enter | Searches now |
+| Escape | Clears the field |
+
+- A `searchbox` named by `aria-label`, described by the hint; busy while `loading`.
+- × is named *Clear search*; after clearing, the cursor stays in the field.
+- Known contrast from Figma: the disabled field is light (as in every disabled control).
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: 'lg-44, md-40, sm-32 → lg, md, sm' },
+    { figma: 'Style', prop: '(Outstroke only)', values: 'Gray isn\'t built' },
+    { figma: 'Filled', prop: 'value', values: 'text; × appears with text' },
+    { figma: 'State = Disabled', prop: 'disabled', values: 'boolean' },
+    { figma: 'State = Hovered, Active', prop: '(pointer, typing)', values: '—' },
+    { figma: 'Hint text', prop: 'hint', values: 'text' },
+    { figma: 'Left icon, Right icon', prop: '(always: search, ×)', values: '—' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SearchStories} />

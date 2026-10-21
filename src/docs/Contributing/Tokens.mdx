@@ -62,5 +62,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Pagination / Navigation controls | Previous comes before First (`‹ «`) and Next before Last (`› »`) | First and Last on the outside, `« ‹ … › »`, as is usual. To be fixed in Figma |
 | Progress bar, Circular progress bar / Unknown length | No state for a task whose length isn't known | Added: the bar runs a piece of the fill along the track, the ring turns a quarter of itself (PrimeReact ProgressBar and ProgressSpinner). To be added to Figma |
 | Circular progress bar guidelines / lg-64 | The label style is written *Body-mb/Medium* | Body-md/Medium, as in the component set |
+| Search / Style = Gray | Marked optional, to be reconsidered or deprecated | Not built: Outstroke only |
+| Search / Loading | No state while results load | The xs Progress Circle in place of the clear button |
 | Feature cards / Primary, Support | The border uses the palette colour `gold/600`, not a variable | `primary-gold-base`, the card's own gold |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |
