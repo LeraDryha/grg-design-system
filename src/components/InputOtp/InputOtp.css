@@ -1,0 +1,77 @@
+/* Input Otp. Every value is a token; Figma layer names in the comments. */
+
+/* OTP Input: the cells, then Hint text 2px under them */
+.grg-otp {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--space-050);
+}
+
+/* Row: 8px between the cells */
+.grg-otp__cells {
+  display: flex;
+  gap: var(--space-200);
+}
+
+/* OTP cells: 48 × 60, 16px above and below a Title-lg character, no fill */
+.grg-otp__cell {
+  --otp-border: var(--stroke-base-300);
+
+  box-sizing: border-box;
+  width: var(--space-1200);
+  margin: 0;
+  /* Figma strokes sit inside: the 1px border is part of the padding */
+  padding: calc(var(--space-400) - 1px) 0;
+  border: 1px solid var(--otp-border);
+  border-radius: var(--radius-md-10);
+  outline: none;
+  background: transparent;
+  font: var(--typo-title-lg-semibold);
+  letter-spacing: var(--typo-title-lg-semibold-tracking);
+  color: var(--text-strong-1000);
+  /* Figma Type = Cursor: the browser's own caret */
+  caret-color: var(--text-strong-1000);
+  text-align: center;
+  transition: border-color 120ms ease;
+}
+.grg-otp__cell::selection { background: var(--bg-soft-200); }
+
+/* States (Figma State): Hovered and Active follow the pointer and focus; Error and Disabled the whole row */
+.grg-otp__cell:hover:not(:disabled, :read-only) { --otp-border: var(--stroke-strong-500); }
+.grg-otp__cell:focus:not(:read-only) { --otp-border: var(--stroke-stronger-900); }
+.grg-otp[data-keyboard-navigation] .grg-otp__cell:focus-visible { box-shadow: var(--focus-ring); }
+.grg-otp[data-invalid] .grg-otp__cell { --otp-border: var(--error-base-600); }
+.grg-otp__cell:disabled,
+.grg-otp[data-loading] .grg-otp__cell {
+  --otp-border: var(--stroke-disabled);
+  color: var(--text-disabled-400);
+  cursor: default;
+}
+.grg-otp[data-loading] .grg-otp__cell { cursor: progress; }
+
+/* Checking the code: a spinner under the cells (Figma Examples) */
+.grg-otp__loader {
+  display: grid;
+  place-items: center;
+  padding-top: var(--space-600);
+  color: var(--icon-strong-1000);
+}
+.grg-otp__loader .grg-icon { animation: grg-otp-spin 1s linear infinite; }
+
+@keyframes grg-otp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-otp__cell { transition: none; }
+  .grg-otp__loader .grg-icon { animation-duration: 3s; }
+}
