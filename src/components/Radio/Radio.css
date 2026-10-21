@@ -1,0 +1,69 @@
+/* Radio. Figma: 16 or 20px; the ring is the Figma shape drawn as a mask in the state colour. */
+
+.grg-radio {
+  --rd-size: var(--space-400);
+  --rd-color: var(--stroke-base-300);
+
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  width: var(--rd-size);
+  height: var(--rd-size);
+  border-radius: var(--radius-fully-rounded);
+  cursor: pointer;
+}
+.grg-radio[data-size='md'] { --rd-size: var(--space-500); }
+
+/* The native radio covers the ring: it takes the clicks and the arrow keys, and stays invisible */
+.grg-radio__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+.grg-radio__box {
+  width: 100%;
+  height: 100%;
+  background: var(--rd-color);
+  mask: var(--rd-shape) center / contain no-repeat;
+  transition: background-color 120ms ease;
+}
+.grg-radio__icon { display: none; }
+
+/* Off: grey ring, darker on hover, black while pressed */
+.grg-radio:hover { --rd-color: var(--stroke-strong-500); }
+.grg-radio:active { --rd-color: var(--primary-base-1000); }
+/* Selected: black ring and dot, lighter on hover, lighter still while pressed */
+.grg-radio[data-state='checked'] { --rd-color: var(--primary-base-1000); }
+.grg-radio[data-state='checked']:hover { --rd-color: var(--primary-darker-800); }
+.grg-radio[data-state='checked']:active { --rd-color: var(--primary-dark-700); }
+
+/* Destructive (and a group with an error): red in every state */
+.grg-radio[data-destructive],
+.grg-radio[data-destructive]:is(:hover, :active) { --rd-color: var(--error-base-600); }
+
+/* Disabled */
+.grg-radio[data-disabled],
+.grg-radio[data-disabled]:is(:hover, :active) { --rd-color: var(--stroke-disabled); cursor: default; }
+.grg-radio[data-disabled][data-state='checked'] { --rd-color: var(--bg-soft-200); }
+
+/* Keyboard focus: the system ring (Figma draws a 4px primary-soft-200 frame) */
+.grg-radio:has(.grg-radio__input:focus-visible) { box-shadow: var(--focus-ring); }
+
+/* ---- Radio group: the title, the hint, the options, the error ---- */
+.grg-radio-group { min-width: 0; margin: 0; padding: 0; border: 0; }
+.grg-radio-group__label { margin-bottom: var(--space-300); padding: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-radio-group__body { display: flex; flex-direction: column; gap: var(--space-300); }
+/* The hint sits right under the title */
+.grg-radio-group__hint { margin: calc(var(--space-100) - var(--space-300)) 0 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-radio-group__options { display: flex; flex-direction: column; gap: var(--space-300); }
+.grg-radio-group[data-orientation='horizontal'] .grg-radio-group__options { flex-direction: row; flex-wrap: wrap; gap: var(--space-300) var(--space-600); }
+.grg-radio-group[disabled] :is(.grg-radio-group__label, .grg-radio-group__hint) { color: var(--text-disabled-400); }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-radio__box { transition: none; }
+}

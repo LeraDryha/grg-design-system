@@ -1,0 +1,118 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as RadioStories from './Radio.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={RadioStories} />
+
+# Radio
+
+<ComponentHeader
+  figma="136-11127"
+  guidelines="775-68269"
+  designTab
+  builtOn="PrimeReact RadioButton"
+  related={[
+    { label: 'Checkbox', href: '?path=/docs/components-checkbox--docs', relation: 'See also' },
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+  ]}
+/>
+
+One choice out of a few, all visible at once. `RadioGroup` gives the options a title, a hint and an error; `RadioLabel` adds a label, a description and a link to each option.
+
+<Canvas of={RadioStories.Playground} />
+<Controls of={RadioStories.Playground} include={['size', 'destructive', 'disabled']} />
+
+```tsx
+<RadioGroup label="Payout method" value={method} onChange={setMethod}>
+  <RadioLabel value="standard" label="Standard" sublabel="(Free)" description="1–3 business days." />
+  <RadioLabel value="instant" label="Instant" sublabel="(1%)" description="Within 30 minutes." />
+</RadioGroup>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Two to six options where only one can be chosen and people should see them all',
+    'Options that need a line of explanation, with Radio Label',
+  ]}
+  donts={[
+    'Several options at once: use Checkbox',
+    'Many options or a known list (countries, currencies): use Select',
+    'On or off that applies at once: use Switch',
+  ]}
+/>
+
+## Examples
+
+### Payout method
+
+<Canvas of={RadioStories.PayoutMethod} />
+
+A safe choice is made from the start. ↑ / ↓ move between the options and choose; Tab enters and leaves the group in one step.
+
+### Choose a plan
+
+<Canvas of={RadioStories.ChooseAPlan} />
+
+The text first and the radio on the right (Flip). Nothing is chosen until people choose, because no plan is safe to pick for them.
+
+### Nothing chosen
+
+<Canvas of={RadioStories.NothingChosen} />
+
+On submit without a choice, the error appears under the group and the rings turn red; screen readers hear it with each option. Choosing clears it.
+
+### Unavailable
+
+<Canvas of={RadioStories.Unavailable} />
+
+In a row (`orientation="horizontal"`); a disabled option says why.
+
+## Design decisions
+
+- **The same rules as Checkbox**: the native control (PrimeReact RadioButton) under the Figma shape, the label layout of Checkbox Label, a red error under the group with the same Hint text.
+- **RadioGroup** is not in Figma: a `fieldset` with its title (Body-md/Medium), a hint, the options 12px apart (24px in a row) and the error.
+- **A choice made beforehand** is the product's call: make it when one option is safe and common, leave it empty when people must decide.
+- **Focus** uses the system blue ring.
+
+## States and sizes
+
+<Canvas of={RadioStories.States} />
+
+sm-16 next to a label, md-20 on its own. Off is a grey ring, On a black ring with a dot; Destructive is red, for an option that removes something.
+
+## With label
+
+<Canvas of={RadioStories.WithLabel} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves into the group (to the chosen option) and out of it |
+| ↑ / ↓ (← / →) | Moves to the next option and chooses it |
+| Space | Chooses the focused option |
+
+- The group is a `fieldset` named by its title; its hint and error are read with each option.
+- Known contrast from Figma: disabled options are light (as in every disabled control).
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Radio · Selected', prop: 'RadioGroup value, or checked', values: 'the chosen value' },
+    { figma: 'Radio · Size', prop: 'size', values: 'sm-16, md-20 → sm, md' },
+    { figma: 'Radio · Destructive', prop: 'destructive; RadioGroup error', values: 'boolean; text' },
+    { figma: 'Radio · State = Disabled', prop: 'disabled', values: 'boolean' },
+    { figma: 'Radio · State = Hovered, Active, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Radio label · Label, Sublabel, Description, Link button', prop: 'RadioLabel label, sublabel, description, link', values: 'text; { label, href }' },
+    { figma: 'Radio label · Flip', prop: 'RadioLabel flip', values: 'On → true' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={RadioStories} />
