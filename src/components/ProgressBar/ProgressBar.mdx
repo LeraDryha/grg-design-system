@@ -1,0 +1,107 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ProgressBarStories from './ProgressBar.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ProgressBarStories} />
+
+# Progress Bar
+
+<ComponentHeader
+  figma="656-21789"
+  guidelines="755-10138"
+  designTab
+  builtOn="PrimeReact ProgressBar"
+  related={[
+    { label: 'Progress Circle', href: '?path=/docs/components-progress-circle--docs', relation: 'See also' },
+    { label: 'File Upload', href: '?path=/docs/components-file-upload--docs', relation: 'See also' },
+  ]}
+/>
+
+Shows how far a task or a quantity has got: an upload, a filled profile, a used limit.
+
+<Canvas of={ProgressBarStories.Playground} />
+<Controls of={ProgressBarStories.Playground} include={['value', 'color', 'label', 'description', 'valuePosition', 'valueText']} />
+
+```tsx
+<ProgressBar value={60} label="Profile complete" description="Add your address to finish." valuePosition="top" />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A task that takes a while: uploads, imports, checks',
+    'How much of something is used or done: a limit, a filled profile',
+  ]}
+  donts={[
+    'Steps people go through one by one: use Stepper Dot or a stepper',
+    'Waiting for a moment, such as a button that sends: use the button\'s loading state',
+    'A compact place, such as a card or a table cell: use Progress Circle',
+  ]}
+/>
+
+## Examples
+
+### Profile complete
+
+<Canvas of={ProgressBarStories.ProfileComplete} />
+
+The label and the value on top, what is left in the hint; screen readers hear the label, *60%* and the hint.
+
+### Withdrawal limit
+
+<Canvas of={ProgressBarStories.WithdrawalLimit} />
+
+The value as text (`valueText`), *7,200 of 10,000 USDT*; the product turns the bar yellow and then red near the limit.
+
+### Checking a file
+
+<Canvas of={ProgressBarStories.CheckingAFile} />
+
+While the length isn't known, leave out `value`: a piece of the bar runs along the track. With reduced motion it stays still.
+
+## Design decisions
+
+- **Any value from 0 to 100.** Figma has steps of 10% because of its variants.
+- **The value can be text**, such as *8 of 10 steps*; screen readers hear it instead of the percentage.
+- **Unknown length** is not in Figma; PrimeReact's moving bar, in the fill colour (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **The fill grows smoothly** (0.3s); with reduced motion it changes at once.
+- **The colour is the product's call**: nothing changes on its own at 100%.
+- File Upload's cards use this bar.
+
+## Colors
+
+<Canvas of={ProgressBarStories.Colors} />
+
+- **Primary** for most progress; **Success** when it's good to be full; **Warning** and **Error** near or over a limit; **Blue** for information.
+- The Warning fill is light against the track (Figma contrast); the value next to it says the same in text.
+
+## Value position
+
+<Canvas of={ProgressBarStories.ValuePosition} />
+
+On the right for a single line, on top with a label, at the bottom with a hint; or no value.
+
+## Accessibility
+
+- A `progressbar` with `aria-valuenow` (0–100) or `aria-valuetext`, named by the label (or `aria-label`), described by the hint.
+- Without a value it has no `aria-valuenow`, which screen readers read as busy.
+- The value text is hidden from screen readers, so it isn't read twice.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Progress bar · Percentage', prop: 'value', values: 'Empty, 10%–100% → 0–100, any value; none for unknown' },
+    { figma: 'Progress bar line · Color', prop: 'color', values: 'Primary, Green, Yellow, Red, Blue → primary, success, warning, error, info' },
+    { figma: 'Progress bar label · Label, Description', prop: 'label, description', values: 'text' },
+    { figma: 'Progress bar label · Type, Value', prop: 'valuePosition', values: 'On right, On top, On bottom → right, top, bottom; none' },
+    { figma: 'Progress bar label · Percentage', prop: 'valueText', values: 'text instead of the percentage' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={ProgressBarStories} />

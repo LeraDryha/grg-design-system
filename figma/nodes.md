@@ -265,3 +265,15 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Pagination` (Type: Default, Pagination group) | `630:37034` |
 | Component set `Pagination cell` (State, 5 variants) | `608:4909` |
 | Usage Guidelines (anatomy, states, types, single page, first and last, truncation) | `630:37035` |
+
+## Progress Bar and Progress Circle
+
+| What | Node |
+|---|---|
+| Page ❖ Progress bar | `656:3335` |
+| Component set `Progress bar` (Percentage: Empty, 10%–100%) | `656:21789` |
+| Component set `Progress bar label` (Type: On right, On top, On bottom; Label, Description, Value) | `657:21876` |
+| Component set `Progress bar line` (Color: Empty, Primary, Yellow, Green, Blue, Red) | `656:21784` |
+| Usage Guidelines, Progress bar | `755:10138` |
+| Component set `Circular progress bar` (Size × Percentage, 20 variants; Number) | `659:4751` |
+| Usage Guidelines, Circular progress bar | `756:12357` |

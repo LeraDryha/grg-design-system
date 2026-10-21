@@ -1,0 +1,78 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CircleStories from './ProgressCircle.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={CircleStories} />
+
+# Progress Circle
+
+<ComponentHeader
+  figma="659-4751"
+  guidelines="756-12357"
+  designTab
+  builtOn="PrimeReact ProgressSpinner (unknown length)"
+  related={[{ label: 'Progress Bar', href: '?path=/docs/components-progress-bar--docs', relation: 'See also' }]}
+/>
+
+Progress as a ring with the percentage inside, for compact places: a card, a list row, the steps of a short task.
+
+<Canvas of={CircleStories.Playground} />
+<Controls of={CircleStories.Playground} include={['value', 'size', 'showValue']} />
+
+```tsx
+<ProgressCircle value={50} size="lg" aria-label="Account setup" />
+```
+
+## When to use
+
+<DoDont
+  dos={['Progress in a small space: a card, a row, next to a title', 'A short sequence, such as onboarding steps']}
+  donts={['Progress with a label and a hint: use Progress Bar', 'Waiting inside a button: use the button\'s loading state']}
+/>
+
+## Examples
+
+### Onboarding steps
+
+<Canvas of={CircleStories.OnboardingSteps} />
+
+### Waiting
+
+<Canvas of={CircleStories.Waiting} />
+
+While the length isn't known, leave out `value`: PrimeReact's spinner turns a quarter of the ring on the track. With reduced motion it turns slowly.
+
+## Design decisions
+
+- **Any value from 0 to 100.** Figma has steps of 25% because of its variants.
+- **Drawn here for a known value**: PrimeReact only has a turning spinner (used for the unknown length, sized to the Figma ring).
+- **One colour**, Primary, as in Figma.
+- **No number at xs-24**: there is no room for it.
+- **Label styles**: lg Body-md/Medium (the guidelines say *Body-mb*, a typo; see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)), md Body-sm/Medium, sm Caption-xs/Medium.
+
+## Sizes and values
+
+<Canvas of={CircleStories.SizesAndValues} />
+
+lg-64 (4px stroke), md-48 (4px), sm-32 (3px), xs-24 (2px).
+
+## Accessibility
+
+- A `progressbar` with `aria-valuenow`, named by `aria-label` (required: the ring has no visible label).
+- The number inside is hidden from screen readers, so it isn't read twice.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Percentage', prop: 'value', values: '0%, 25%, 50%, 75%, 100% → 0–100, any value; none for unknown' },
+    { figma: 'Size', prop: 'size', values: 'lg-64px, md-48px, sm-32px, xs-24px → lg, md, sm, xs' },
+    { figma: 'Number', prop: 'showValue', values: 'boolean (never at xs)' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={CircleStories} />

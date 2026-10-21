@@ -1,0 +1,64 @@
+/* Progress bar. Every value is a token; Figma layer names in the comments. */
+
+/* Progress bar label: the label and the value, the bar, the description, 6px apart */
+.grg-progress-bar { display: flex; flex-direction: column; gap: var(--space-150); min-width: 0; }
+.grg-progress-bar__head,
+.grg-progress-bar__foot { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-100); }
+.grg-progress-bar__foot { align-items: flex-start; }
+/* On right: the value after the bar, 6px away */
+.grg-progress-bar__row { display: flex; align-items: center; gap: var(--space-150); }
+.grg-progress-bar__row > .grg-progress-bar__track { flex: 1; }
+
+.grg-progress-bar__label { min-width: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-progress-bar__description { flex: 1; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-progress-bar__value {
+  flex: none;
+  margin-left: auto;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* Track (Color Empty) and fill: 4px, fully rounded */
+.grg-progress-bar__track {
+  --pb-fill: var(--primary-base-1000);
+
+  position: relative;
+  height: var(--space-100);
+  overflow: hidden;
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-soft-200);
+}
+.grg-progress-bar__track[data-color='success'] { --pb-fill: var(--success-base-600); }
+.grg-progress-bar__track[data-color='warning'] { --pb-fill: var(--warning-soft-400); }
+.grg-progress-bar__track[data-color='error'] { --pb-fill: var(--error-base-600); }
+.grg-progress-bar__track[data-color='info'] { --pb-fill: var(--info-subtle-500); }
+
+/* PrimeReact sets the fill's width; it grows smoothly */
+.grg-progress-bar__fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--pb-fill);
+  transition: width 300ms ease;
+}
+
+/* Unknown length (not in Figma): a short piece of the fill runs along the track */
+.grg-progress-bar__moving { position: absolute; inset: 0; }
+.grg-progress-bar__track[data-unknown] .grg-progress-bar__fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 35%;
+  animation: grg-progress-run 1.6s ease-in-out infinite;
+}
+@keyframes grg-progress-run {
+  from { left: -35%; }
+  to { left: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-progress-bar__fill { transition: none; }
+  /* Without motion the unknown bar rests as a short piece, still and visible */
+  .grg-progress-bar__track[data-unknown] .grg-progress-bar__fill { left: 0; animation: none; }
+}

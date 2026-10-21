@@ -1,4 +1,4 @@
-import { ProgressBar } from 'primereact/progressbar';
+import { ProgressBar } from '../ProgressBar/ProgressBar';
 import { Icon } from '../Icon/Icon';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Button } from '../Button/Button';
@@ -51,15 +51,7 @@ export function FileCard({ file, locale, onCancel, onRemove, onRetry }: FileCard
           </span>
         </div>
         {file.status === 'uploading' && (
-          <div className="grg-file-card__progress">
-            <ProgressBar
-              value={progress}
-              showValue={false}
-              aria-label={`Uploading ${file.name}`}
-              pt={{ root: { className: 'grg-file-card__bar' }, value: { className: 'grg-file-card__bar-value' } } as object}
-            />
-            <span className="grg-file-card__percent">{progress}%</span>
-          </div>
+          <ProgressBar value={progress} aria-label={`Uploading ${file.name}`} className="grg-file-card__progress" />
         )}
         {file.status === 'failed' && file.retryable !== false && (
           <span className="grg-file-card__retry">
