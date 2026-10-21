@@ -1,0 +1,141 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FeedStories from './NotificationFeed.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={FeedStories} />
+
+# Notification Feed
+
+<ComponentHeader
+  figma="1870-9294"
+  guidelines="2177-47320"
+  designTab
+  builtOn="PrimeReact OverlayPanel and Skeleton"
+  related={[
+    { label: 'Topbar Navigation', href: '?path=/docs/components-topbar-navigation--docs' },
+    { label: 'Tab Menu', href: '?path=/docs/components-tab-menu--docs' },
+    { label: 'Transaction Icon', href: '?path=/docs/components-transaction-icon--docs' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+  ]}
+/>
+
+The notifications of the account, in a panel from the bell in the top bar: All and Unread, Mark all as read, the settings and the full list.
+
+<Canvas of={FeedStories.Playground} />
+<Controls of={FeedStories.Playground} include={['loading', 'layout']} />
+
+```tsx
+<NotificationFeed
+  notifications={notifications}
+  onOpen={markRead}
+  onMarkAllRead={markAllRead}
+  settingsHref="/settings/notifications"
+  viewAllHref="/notifications"
+  trigger={props => <TopbarButton action={{ label: 'Notifications', icon: 'notification', badge: '3 unread' }} buttonProps={props} />}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'What happened in the account while people were away: payments, deposits, requests',
+    'A short request that needs a decision, with its buttons (Approve, Decline)',
+  ]}
+  donts={[
+    'The result of what people just did: use Alert (toast)',
+    'A message about the whole account or the system: use Banner',
+    'Long history and filters: give it its own page (View all notifications)',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story; its steps also run as a test in the **Interactions** tab.
+
+### Read and unread
+
+<Canvas of={FeedStories.ReadAndUnread} />
+
+The bell opens the feed and focus moves to its tabs. Opening a notification marks it read; Unread shows what is left, and Mark all as read clears it. Escape or a click outside closes the feed, back on the bell.
+
+### Approve a withdrawal
+
+<Canvas of={FeedStories.ApproveAWithdrawal} />
+
+With buttons only the buttons act; the notification itself isn't a link.
+
+### Empty
+
+<Canvas of={FeedStories.Empty} />
+
+### Loading
+
+<Canvas of={FeedStories.Loading} />
+
+PrimeReact Skeleton in the system colours, in the shape of notifications; with reduced motion it doesn't shimmer.
+
+### In the top bar
+
+<Canvas of={FeedStories.InTheTopBar} />
+
+The bell is a Topbar Navigation action with its own element (`element`), so it stays in the bar on every screen.
+
+### On a phone
+
+<Canvas of={FeedStories.OnAPhone} />
+
+Under 768px the feed opens under the top bar, the full width.
+
+## Design decisions
+
+- **A panel, not a page.** PrimeReact OverlayPanel: it is placed under the bell, closes on a click outside and on Escape. It is a dialog named *Notifications*.
+- **400px wide, up to 640px tall**, as the guidelines say; the list scrolls under the header and the tabs.
+- **A notification is a link** to its details; with buttons only the buttons act, so there is one control at a time.
+- **The date follows the page's language**: *09/04/2026, 10:54:14* in British English, as in Figma.
+- **New notifications are announced** while the feed is open (*1 new notification*), quietly, without moving focus. This is the ARIA live region, the standard way for content that changes on its own; PrimeReact has nothing for it.
+- **Empty** uses a Featured Icon with the bell instead of the 3D bell picture.
+- **Words.** The title is *Notifications* and the footer *View all notifications*; Figma has them singular (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+
+## Items
+
+<Canvas of={FeedStories.Items} />
+
+- **New** (red dot) and read; a sublabel; Secondary and Primary buttons (sm-32).
+- The description shows two lines at most, then an ellipsis.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Enter / Space on the bell | Opens the feed; focus moves to the selected tab |
+| ← / → | Moves between All and Unread |
+| Tab | Moves through the notifications and buttons |
+| Escape | Closes the feed; focus goes back to the bell |
+
+- The bell is named with the count (*Notifications, 3 unread*) and has `aria-expanded`.
+- Unread notifications say *Unread* after their text.
+- Known contrast from Figma: the date (`text-disabled-400`, 10px) is about 2.6:1, under 4.5:1. A darker grey such as `text-soft-500` would pass.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Notification feed · Label, Sublabel, Description, Date', prop: 'notifications[].title, sublabel, description, date', values: 'text; a Date' },
+    { figma: 'Notification feed · New', prop: 'notifications[].unread', values: 'boolean' },
+    { figma: 'Notification feed · Icon', prop: 'notifications[].icon', values: '<TransactionIcon />' },
+    { figma: 'Notification feed · Buttons', prop: 'notifications[].primaryAction, secondaryAction', values: '{ label, onClick }' },
+    { figma: 'Notification feed · State = Hovered', prop: '(pointer)', values: '—' },
+    { figma: 'Notifications misc items · Header', prop: 'title, settingsHref', values: 'text, link' },
+    { figma: 'Notifications misc items · Tan menu', prop: 'onMarkAllRead', values: 'All and Unread, Mark all as read' },
+    { figma: 'Notifications misc items · Footer', prop: 'viewAllHref', values: 'link' },
+    { figma: 'Notifications misc items · Empty', prop: 'empty', values: '{ title, subtitle }' },
+    { figma: 'Skeleton (guidelines)', prop: 'loading', values: 'boolean' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={FeedStories} />

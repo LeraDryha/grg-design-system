@@ -92,7 +92,7 @@ What the code adds to the Figma file, and why:
 - **The active page is semibold**, as in Sidebar Navigation; Figma keeps it Medium in the bar (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
 - **The mobile menu** comes from the Figma examples: under the bar, the full width. Help and Settings move into it under a line; Notifications (`inBar`) stays in the bar until the menu opens.
 - **The theme button** shows a moon in the light theme and a sun in the dark one; screen readers hear *Dark theme, pressed / not pressed*. In the menu it is the Theme switch.
-- **Icon buttons** have tooltips with their names; the red dot is read with the name (*Notifications, new*). The notification feed comes with its own component.
+- **Icon buttons** have tooltips with their names; the red dot is read with the name (*Notifications, new*). An action can bring its own element, such as the [Notification Feed](?path=/docs/components-notification-feed--docs) with a `TopbarButton` as its bell.
 - **Page icons** are off in the bar, as the Figma bars draw them (`itemIcons` turns them on); the mobile menu shows them, like the sidebar.
 - **The bar stays at the top** while the page scrolls.
 - **Built from plain links**, like Sidebar Navigation; PrimeReact gives the menus (TieredMenu), the language list (Dropdown, through Inline Select) and the tooltips.
@@ -132,7 +132,7 @@ The Figma frames of the parts are in the **Design** tab; the bars carry the GRX 
     { figma: 'Toolbar item · Badge', prop: 'sections[].items[].badge', values: 'text' },
     { figma: 'Inline select (Type Icon)', prop: 'language', values: '{ value, options, onChange }' },
     { figma: 'Toolbar item button (moon)', prop: 'theme, onThemeChange', values: 'light, dark' },
-    { figma: 'Toolbar item buttons · Badge', prop: 'actions', values: '{ id, label, icon, href / onClick, badge, inBar }' },
+    { figma: 'Toolbar item buttons · Badge', prop: 'actions', values: '{ id, label, icon, href / onClick, badge, inBar, element }' },
     { figma: 'Avatar', prop: 'account', values: '{ name, email, photo, menu }' },
   ]}
 />

@@ -1,0 +1,130 @@
+/* Notification feed. Every value is a token; Figma layer names in the comments. */
+
+.grg-feed-anchor { display: inline-flex; }
+
+/* ---- Notification popover: 400px wide, up to 640px tall, 8px around, 2px between blocks ---- */
+.grg-feed {
+  position: absolute;
+  box-sizing: border-box;
+  width: calc(var(--space-5000) * 2);
+  max-width: calc(100vw - var(--space-800));
+  margin-top: var(--space-200);
+  border-radius: var(--radius-lg-12);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-strong-1000);
+}
+.grg-feed__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-050);
+  max-height: calc(var(--space-5000) * 3 + var(--space-1000));
+  padding: var(--space-200);
+  box-sizing: border-box;
+}
+/* Phones: under the top bar, the full width and the rest of the height. PrimeReact places the panel under the bell
+   with inline coordinates, which this layout replaces. */
+.grg-feed[data-phone] {
+  position: fixed;
+  inset: var(--space-1600) 0 0 !important;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+.grg-feed[data-phone] .grg-feed__inner { height: 100%; max-height: none; }
+
+/* Header: the title and the settings, 10px above and below, 8px sides */
+.grg-feed__header { display: flex; align-items: center; justify-content: space-between; padding: var(--space-250) var(--space-200); }
+.grg-feed__title { margin: 0; font: var(--typo-title-md-semibold); letter-spacing: var(--typo-title-md-semibold-tracking); }
+/* Action button md-24, grey */
+.grg-feed__settings { display: inline-flex; border-radius: var(--radius-fully-rounded); color: var(--icon-base-500); }
+.grg-feed__settings:hover { color: var(--icon-strong-1000); }
+.grg-feed__settings:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Content divider line */
+.grg-feed__divider { flex: none; height: 1px; margin: var(--space-050) 0; border: 0; background: var(--stroke-soft-200); }
+
+/* Tan menu: All and Unread, Mark all as read at the end, 8px around; the list scrolls under them */
+.grg-feed__tabs { flex: 1 1 auto; min-height: 0; grid-template-rows: auto minmax(0, 1fr); }
+.grg-feed__tabs :is(.grg-tab-menu__bar, .grg-tab-menu__end) { padding: var(--space-200) var(--space-200) 0; border-bottom: 0; }
+.grg-feed__tabs .grg-tab-menu__panels { min-height: 0; margin-top: var(--space-200); overflow-y: auto; }
+
+.grg-feed__list { display: flex; flex-direction: column; gap: var(--space-050); margin: 0; padding: 0; list-style: none; }
+/* Figma Skeleton: grey cards in the shape of notifications */
+.grg-feed__skeleton {
+  height: calc(var(--space-2000) + var(--space-200));
+  border-radius: var(--radius-lg-12);
+  background: linear-gradient(90deg, var(--bg-weak-100) 25%, var(--bg-soft-200) 50%, var(--bg-weak-100) 75%) 0 0 / 200% 100%;
+  animation: grg-feed-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes grg-feed-shimmer { to { background-position: -200% 0; } }
+
+/* Figma Empty: 96px above and below */
+.grg-feed__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-2400) 0;
+  text-align: center;
+}
+.grg-feed__empty .grg-featured-icon { margin-bottom: var(--space-300); }
+.grg-feed__empty-title { font: var(--typo-body-md-medium); color: var(--text-subtle-700); }
+.grg-feed__empty-subtitle { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+
+/* Footer: View all notifications, centred */
+.grg-feed__footer { display: flex; justify-content: center; padding: var(--space-250) var(--space-200); }
+.grg-feed__view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-150);
+  padding: var(--space-100) var(--space-200);
+  border-radius: var(--radius-xs-6);
+  color: var(--primary-base-1000);
+  font: var(--typo-body-sm-semibold);
+  text-decoration: none;
+}
+.grg-feed__view-all:hover { background: var(--bg-weak-100); }
+.grg-feed__view-all:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---- Notification feed item: 8px around, 12px between the icon, the text and the dot ---- */
+.grg-notification {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-300);
+  padding: var(--space-200);
+  border-radius: var(--radius-lg-12);
+  color: inherit;
+  text-decoration: none;
+}
+a.grg-notification { cursor: pointer; }
+/* State = Hovered */
+a.grg-notification:hover { background: var(--bg-weak-100); }
+a.grg-notification:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+
+.grg-notification__icon { display: flex; flex: none; }
+.grg-notification__content { display: flex; flex: 1; flex-direction: column; gap: var(--space-250); min-width: 0; }
+.grg-notification__text { display: flex; flex-direction: column; gap: var(--space-050); }
+.grg-notification__title { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-100); padding: var(--space-050) 0; }
+.grg-notification__label { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-notification__sublabel { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+/* Description: two lines at most, then an ellipsis */
+.grg-notification__description {
+  display: -webkit-box;
+  overflow: hidden;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+.grg-notification__date { font: var(--typo-caption-xs-regular); color: var(--text-disabled-400); }
+.grg-notification__buttons { display: flex; flex-wrap: wrap; gap: var(--space-300); padding: var(--space-200) 0; }
+/* Badge: the new dot, md-24 */
+.grg-notification__new { display: flex; flex: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-feed__skeleton { animation: none; }
+}
