@@ -277,3 +277,12 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Usage Guidelines, Progress bar | `755:10138` |
 | Component set `Circular progress bar` (Size × Percentage, 20 variants; Number) | `659:4751` |
 | Usage Guidelines, Circular progress bar | `756:12357` |
+
+## Radio
+
+| What | Node |
+|---|---|
+| Page ❖ Radio | `136:11302` |
+| Component set `Radio` (State × Selected × Size × Destructive, 24 variants) | `136:11127` |
+| Component set `Radio label` (Flip × Selected × Details; Sublabel, Description, Link button) | `136:11176` |
+| Usage Guidelines (anatomy, sizes, label, states) | `775:68269` |
