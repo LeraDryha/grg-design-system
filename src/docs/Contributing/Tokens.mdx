@@ -56,5 +56,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Input Otp examples | *Didn’t receive the code? Click to resend* is available straight away | The examples count down 30 seconds (*Resend in 0:30*) before the resend button appears, so people wait for the first code. To be added to Figma |
 | Featured icon / Neutral, Filled = Off | The tile uses `bg-base-0`; every other type uses `surface-floating` | `surface-floating` for all, so the tile matches the Modal surface in the dark theme |
 | Sidebar navigation / Collapsed | The collapsed sidebar is 76px wide, but its 40px rows with 20px sides and its 56px cards with 12px sides need 80px | 80px |
+| Topbar navigation / Toolbar item, Active | The active page keeps Body-md/Medium in the bar, while the active Sidebar item is Semibold | Semibold, as in the sidebar |
+| Topbar navigation / Exchange, Desktop | 130px sides at 1440px, without a variable | The content centred in 1180px (1440 − 2 × 130), at least 24px from the edges |
 | Feature cards / Primary, Support | The border uses the palette colour `gold/600`, not a variable | `primary-gold-base`, the card's own gold |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |

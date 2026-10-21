@@ -45,8 +45,9 @@ export type DropdownMenuProps = {
   'aria-label': string;
   /** Width of the menu; the Figma examples use 240 or 320 */
   width?: number;
-  /** Where the menu opens: under the trigger (start or end edge), or to its right, level with its top or its bottom */
-  align?: 'start' | 'end' | 'right-start' | 'right-end';
+  /** Where the menu opens: under the trigger (start or end edge), to its right (level with its top or its bottom),
+   *  or above it */
+  align?: 'start' | 'end' | 'right-start' | 'right-end' | 'top-start';
   className?: string;
 };
 
@@ -120,21 +121,22 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
       };
     });
 
-  /* To the right of the trigger (a collapsed sidebar, the account card at its bottom): placed on the screen, so a
-     scrolling sidebar doesn't cut it off. PrimeReact first places it under the trigger, so this runs after. */
-  const placeAside = (trigger: Element) => {
-    if (!align.startsWith('right')) return;
+  /* Beside the trigger (a collapsed sidebar, the account card at its bottom) or above it (the account card in a
+     mobile menu): placed on the screen, so a scrolling sidebar doesn't cut it off. PrimeReact first places it under
+     the trigger, so this runs after. The origin is measured, so it also works inside a transformed box. */
+  const placeOnScreen = (trigger: Element) => {
+    if (align === 'start' || align === 'end') return;
     requestAnimationFrame(() => requestAnimationFrame(() => {
       const element = menu.current?.getElement();
       if (!element) return;
+      Object.assign(element.style, { position: 'fixed', left: '0px', top: '0px', bottom: 'auto' });
+      const origin = element.getBoundingClientRect();
       const rect = trigger.getBoundingClientRect();
       const gap = parseFloat(getComputedStyle(element).getPropertyValue('--space-200'));
-      Object.assign(element.style, {
-        position: 'fixed',
-        left: `${rect.right + gap}px`,
-        top: align === 'right-start' ? `${rect.top}px` : 'auto',
-        bottom: align === 'right-end' ? `${window.innerHeight - rect.bottom}px` : 'auto',
-      });
+      const height = element.offsetHeight;
+      const top = align === 'right-start' ? rect.top : align === 'right-end' ? rect.bottom - height : rect.top - gap - height;
+      const left = align === 'top-start' ? rect.left : rect.right + gap;
+      Object.assign(element.style, { left: `${left - origin.left}px`, top: `${top - origin.top}px` });
     }));
   };
 
@@ -172,7 +174,7 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
         onClick: event => {
           const trigger = event.currentTarget;
           menu.current?.toggle(event);
-          placeAside(trigger);
+          placeOnScreen(trigger);
         },
         'aria-haspopup': 'menu',
         'aria-expanded': open,

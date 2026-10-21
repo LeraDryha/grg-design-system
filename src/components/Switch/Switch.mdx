@@ -1,0 +1,110 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SwitchStories from './Switch.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SwitchStories} />
+
+# Switch
+
+<ComponentHeader
+  figma="265-13609"
+  guidelines="696-43527"
+  designTab
+  builtOn="PrimeReact InputSwitch"
+  related={[
+    { label: 'Checkbox', href: '?path=/docs/components-checkbox--docs', relation: 'See also' },
+    { label: 'Topbar Navigation', href: '?path=/docs/components-topbar-navigation--docs', relation: 'See also' },
+  ]}
+/>
+
+Turns one setting on or off at once, without a Save button. `SwitchLabel` adds its label, a description and a link; `ThemeSwitch` is the switch for the dark theme.
+
+<Canvas of={SwitchStories.Playground} />
+<Controls of={SwitchStories.Playground} include={['size', 'disabled']} />
+
+```tsx
+<SwitchLabel flip label="Weekly report" description="A summary of payments and payouts." checked={on} onChange={setOn} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A setting that takes effect at once: notifications, the dark theme, two-step sign-in',
+    'Settings lists, with the text first and the switch on the right (Flip)',
+  ]}
+  donts={[
+    'A choice that waits for Save or Submit, or accepting terms: use Checkbox',
+    'Choosing between more than two options: use Radio or Segment control',
+    'An action such as "Delete": use Button',
+  ]}
+/>
+
+## Examples
+
+### Notification settings
+
+<Canvas of={SwitchStories.NotificationSettings} />
+
+The text first and the switch on the right (Flip). The whole label turns it on and off, Space too; screen readers hear the description with it.
+
+### Dark theme
+
+<Canvas of={SwitchStories.DarkTheme} />
+
+Figma Switch mode: a sun on the knob for the light theme, a moon for the dark one. Screen readers hear *Dark theme, on / off*. The same switch is in the [Topbar Navigation](?path=/docs/components-topbar-navigation--docs) menu.
+
+### Unavailable
+
+<Canvas of={SwitchStories.Unavailable} />
+
+Disabled, with the reason in the description.
+
+## Design decisions
+
+- **A real switch.** PrimeReact InputSwitch keeps a native checkbox with the `switch` role: Space toggles it and forms receive it. PrimeReact also marks its wrapper as a checkbox, which would be a second control for screen readers; the wrapper is only a box here.
+- **Switch label** has the same layout and rules as Checkbox Label, at sm-16 as in Figma.
+- **Switch mode** keeps its track grey in both positions, as in Figma: the icon says which theme is on.
+- **Focus** uses the system blue ring.
+
+## States and sizes
+
+<Canvas of={SwitchStories.States} />
+
+md-24 on its own, sm-16 next to a label. Off is grey, On black with the knob in the surface colour; hover and press darken or lighten the track.
+
+## With label
+
+<Canvas of={SwitchStories.WithLabel} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the switch |
+| Space | Turns it on or off |
+
+- Screen readers hear the label, *switch*, *on* or *off*, then the description.
+- A switch without a visible label needs `aria-label`.
+- Known contrast from Figma: the disabled track and text are light (as in every disabled control).
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Switch · Enabled', prop: 'checked', values: 'Off → false, On → true' },
+    { figma: 'Switch · Size', prop: 'size', values: 'md-24, sm-16 → md, sm' },
+    { figma: 'Switch · State = Disabled', prop: 'disabled', values: 'boolean' },
+    { figma: 'Switch · State = Hovered, Active, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Switch mode · Mode', prop: 'ThemeSwitch theme', values: 'Light, Dark → light, dark' },
+    { figma: 'Switch label · Label, Sublabel, Description, Link button', prop: 'SwitchLabel label, sublabel, description, link', values: 'text; { label, href }' },
+    { figma: 'Switch label · Flip', prop: 'SwitchLabel flip', values: 'on → true' },
+    { figma: 'Switch label · Details = Disabled', prop: 'SwitchLabel disabled', values: 'boolean' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SwitchStories} />

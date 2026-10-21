@@ -10,17 +10,18 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   figma="765-2532"
   guidelines="771-56482"
   designTab
-  builtOn="PrimeReact Sidebar (drawer), TieredMenu and Tooltip"
+  builtOn="PrimeReact TieredMenu and Tooltip"
   related={[
     { label: 'Tooltip', href: '?path=/docs/components-tooltip--docs' },
     { label: 'Feature Card', href: '?path=/docs/components-feature-card--docs' },
     { label: 'Api Icon', href: '?path=/docs/components-api-icon--docs' },
     { label: 'Dropdown Menu', href: '?path=/docs/components-dropdown-menu--docs' },
     { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+    { label: 'Topbar Navigation', href: '?path=/docs/components-topbar-navigation--docs', relation: 'See also' },
   ]}
 />
 
-The app's main navigation on the left: the company, the pages in groups, an optional feature card and the account. It collapses to icons on smaller screens and becomes a drawer on phones.
+The app's main navigation on the left: the company, the pages in groups, an optional feature card and the account. It collapses to icons on small laptops; on tablets and phones the pages move into the [Topbar Navigation](?path=/docs/components-topbar-navigation--docs) menu.
 
 <Canvas of={SidebarStories.Playground} />
 <Controls of={SidebarStories.Playground} include={['current', 'layout']} />
@@ -96,22 +97,19 @@ Icons only. Hovering or focusing an icon shows its name in a tooltip; screen rea
 
 The Left badge is an [Api Icon](?path=/docs/components-api-icon--docs): the method is part of the link's name (*POST Create an invoice*).
 
-### On a phone
+### On tablets and phones
 
-<Canvas of={SidebarStories.OnAPhone} />
-
-Under 768px the sidebar is a drawer. The product's menu button opens it; Close, Escape, a tap outside or a chosen page closes it, and focus goes back to the menu button. While it is open, Tab stays inside and the page behind doesn't scroll.
+Under 1024px the sidebar hides, as the Figma Tablet and Mobile top bars show: the menu button of [Topbar Navigation](?path=/docs/components-topbar-navigation--docs) opens the same pages, with the company, the theme, the language and the account, under the bar.
 
 ## Design decisions
 
 What the code adds to the Figma file, and why:
 
-- **Built from plain links.** Pages are links and groups are buttons that open them, so screen readers announce site navigation and links open in a new tab as usual. PrimeReact PanelMenu would read as a tree. PrimeReact still gives the menus (TieredMenu), the tooltips and the drawer (Sidebar).
-- **Width follows the screen** (`layout="auto"`): the full 272px sidebar from 1280px, icons only (80px) from 768px, a drawer below. `layout` sets one of them; `useSidebarLayout()` tells the product when to show its menu button.
+- **Built from plain links.** Pages are links and groups are buttons that open them, so screen readers announce site navigation and links open in a new tab as usual. PrimeReact PanelMenu would read as a tree. PrimeReact still gives the menus (TieredMenu) and the tooltips.
+- **Width follows the screen** (`layout="auto"`): the full 272px sidebar from 1280px, icons only (80px) from 1024px, hidden below, where the top bar's menu takes over. `layout` sets one of them.
 - **Collapsed is 80px**, not Figma's 76px: the 40px rows with 20px on each side and the 56px cards need it (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
 - **The current page inside a closed group.** The group's row takes the Active look, so people still see where they are, the common practice in admin apps; open, only the page itself is Active.
 - **Collapsed extras.** Names in tooltips, groups in a menu beside the icon, badges as a dot: none of them are drawn in Figma.
-- **The drawer** is the expanded sidebar with a close button on top. The mobile menu from the Figma examples (Theme, language, Help) comes with Header navigation.
 - **Long names** end with an ellipsis on one line.
 - **Focus** uses the system blue ring, not Figma's light grey (see Contributing/Tokens).
 
@@ -138,12 +136,11 @@ Expand 272px and Collapsed 80px, the same pages. From top to bottom: Sidebar hea
 | Enter | Opens a page; on a group, opens or closes it |
 | Space | Opens or closes a group; opens a card's menu |
 | Arrow keys, Escape | Move in an open menu and close it |
-| Escape | Closes a tooltip, a menu or the drawer |
+| Escape | Closes a tooltip or a menu |
 
 - The pages are a `nav` named *Main* (`aria-label`), with a list per group named by its title.
 - The current page has `aria-current="page"`; a group button has `aria-expanded`.
 - Collapsed rows keep their name (and badge) as text for screen readers; the tooltip only shows it.
-- The drawer is a modal dialog: focus starts on Close, stays inside and returns to the menu button.
 
 ## Figma and code
 
@@ -158,8 +155,9 @@ The Figma frames are in the **Design** tab of every story.
     { figma: 'Sidebar items · Arrow, Level = Child', prop: 'items', values: 'second-level pages' },
     { figma: 'Sidebar items · Right badge', prop: 'badge', values: 'text' },
     { figma: 'Sidebar items · Left badge', prop: 'apiMethod', values: 'post, get, delete, patch, put' },
-    { figma: 'Sidebar items · Icon only, Expand / Collapsed', prop: 'layout', values: 'auto, expanded, collapsed, drawer' },
+    { figma: 'Sidebar items · Icon only, Expand / Collapsed', prop: 'layout', values: 'auto, expanded, collapsed, hidden' },
     { figma: 'Content divider text', prop: 'sections[].title', values: 'text' },
+    { figma: 'Content (rows that aren\'t pages)', prop: 'contentEnd', values: 'Theme, language in the Topbar menu' },
     { figma: 'Sidebar header · Header card', prop: 'header', values: '<SidebarHeaderCard name logo menu />' },
     { figma: 'Feature cards', prop: 'featureCard', values: '<FeatureCard />' },
     { figma: 'Sidebar footer · User profile card', prop: 'footer', values: '<SidebarProfileCard name email photo menu />' },

@@ -2,10 +2,9 @@ import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type MouseEvent } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
-  SidebarHeaderCard, SidebarNavigation, SidebarNavigationItem, SidebarProfileCard, useSidebarLayout,
+  SidebarHeaderCard, SidebarNavigation, SidebarNavigationItem, SidebarProfileCard,
   type SidebarItem, type SidebarNavigationProps, type SidebarSection,
 } from './SidebarNavigation';
-import { ActionButton } from '../ActionButton/ActionButton';
 import { FeatureCard } from '../FeatureCard/FeatureCard';
 import type { DropdownMenuEntry } from '../DropdownMenu/DropdownMenu';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
@@ -62,7 +61,7 @@ const header = <SidebarHeaderCard name="Northwind Trading" menu={companies} />;
 const footer = <SidebarProfileCard name="Guadalupe Schimmel" email="g.schimmel99@gmail.com" menu={account} />;
 const gift = <FeatureCard color="black" title="Claim your gift!" description="Find it on Benefits page." href="#benefits" />;
 
-/** A screen-high box, so the sidebar has its height on docs pages; a transformed box also holds the drawer */
+/** A screen-high box, so the sidebar has its height on docs pages; a transformed box also holds menus placed on the screen */
 const screen = (height = 720, width?: number): Decorator => Story => (
   <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', display: 'flex', width, maxWidth: '100%', height, margin: '0 auto', background: 'var(--surface-base)' }}>
     <Story />
@@ -99,7 +98,7 @@ const meta = {
   },
   args: { sections, current: 'dashboard', layout: 'expanded', header, footer, featureCard: gift },
   argTypes: {
-    layout: { control: 'inline-radio', options: ['auto', 'expanded', 'collapsed', 'drawer'] },
+    layout: { control: 'inline-radio', options: ['auto', 'expanded', 'collapsed', 'hidden'] },
     header: { control: false },
     footer: { control: false },
     featureCard: { control: false },
@@ -238,39 +237,6 @@ export const ApiReference: Story = {
   render: args => <Demo {...args} />,
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('link', { name: 'POST Create an invoice' })).toHaveAttribute('aria-current', 'page');
-  },
-};
-
-/** On a phone the sidebar is a drawer: the menu button opens it over the page, and choosing a page, Close,
- *  Escape or a tap outside closes it. Focus goes back to the menu button. */
-export const OnAPhone: Story = {
-  name: 'On a phone',
-  decorators: [screen(720, 375)],
-  args: { layout: 'drawer' },
-  render: function OnAPhone(args) {
-    const [open, setOpen] = useState(false);
-    const resolved = useSidebarLayout(args.layout);
-    return (
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'var(--space-300) var(--space-400)', borderBottom: '1px solid var(--stroke-soft-200)' }}>
-          <span style={{ font: 'var(--typo-body-md-semibold)' }}>Northwind Trading</span>
-          {resolved === 'drawer' && (
-            <ActionButton icon="menu-line-horizontal" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(true)} />
-          )}
-        </div>
-        <Demo {...args} drawerOpen={open} onDrawerClose={() => setOpen(false)} />
-      </div>
-    );
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const menuButton = canvas.getByRole('button', { name: 'Menu' });
-    await userEvent.click(menuButton);
-    const drawer = await canvas.findByRole('dialog', { name: 'Main' });
-    await waitFor(() => expect(within(drawer).getByRole('button', { name: 'Close menu' })).toHaveFocus());
-    await userEvent.click(within(drawer).getByRole('link', { name: 'Invoices' }));
-    await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
-    await waitFor(() => expect(menuButton).toHaveFocus());
   },
 };
 
