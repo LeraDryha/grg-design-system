@@ -93,7 +93,7 @@ const preview: Preview = {
         method: 'alphabetical',
         order: [
           'Getting Started', ['About'],
-          'Foundations', ['Colors', 'Typography', 'Spacing', 'Corner Radius', 'Elevation', 'Icons', ['Base icons', 'Social icons', 'Coin icons', 'Payment method icons', 'Country icons', 'File format icons']],
+          'Foundations', ['Colors', 'Typography', 'Spacing', 'Corner Radius', 'Elevation', 'Icons', ['Base icons', 'Social icons', 'Coin icons', 'Payment method icons', 'Country icons', 'File format icons', 'Transaction icons']],
           'Components',
           'Contributing', ['Tokens'],
         ],

@@ -9,7 +9,7 @@ import componentFrame from '../../assets/design/transaction-icon/transaction-ico
 const types: TransactionType[] = ['deposit', 'withdrawal', 'payment', 'exchange'];
 
 const meta = {
-  title: 'Components/Transaction Icon',
+  title: 'Foundations/Icons/Transaction icons',
   // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
   tags: ['ready'],
   component: TransactionIcon,
