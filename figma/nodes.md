@@ -156,3 +156,15 @@ Code follows the actual bound component styles: Semibold, md 8px / sm 6px corner
 | Usage guidelines (anatomy, types, states, options) | `451:26692` |
 | Guidelines: combining and placing items (gaps, padding, 9 rows, search over 10, skeleton, empty) | `451:28784` |
 | Examples (currency select, actions with submenus, account menus) | `459:33170` |
+
+## Input Otp
+
+| What | Node |
+|---|---|
+| Page ❖ Input OTP | `1447:19661` |
+| Component `OTP Input` (six cells + Hint text; Hint text boolean) | `1447:19647` |
+| Component set `OTP cells` (State × Type, 15 variants) | `1447:17544` |
+| Usage guidelines (anatomy, states) | `2112:17729` |
+| Examples (Confirm your email in a Modal: typing, verifying) | `2112:17806` |
+
+The OTP cells frame carries the File Upload description by mistake. The resend countdown in the examples is not in Figma (Contributing/Tokens).

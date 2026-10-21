@@ -1,0 +1,154 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as InputOtpStories from './InputOtp.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={InputOtpStories} />
+
+# Input Otp
+
+<ComponentHeader
+  figma="1447-19647"
+  guidelines="2112-17729"
+  designTab
+  builtOn="PrimeReact InputOtp"
+  related={[
+    { label: 'Form Field', href: '?path=/docs/components-form-field--docs' },
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+  ]}
+/>
+
+A row of cells for a one-time code from an email, a message or an authenticator app: one character per cell.
+People type it, paste it into any cell, or take it from the phone's keyboard suggestion.
+
+<Canvas of={InputOtpStories.Playground} />
+<Controls of={InputOtpStories.Playground} include={['label', 'length', 'characters', 'hint', 'error', 'disabled', 'loading']} />
+
+```tsx
+<InputOtp label="Verification code" characters="digits" onComplete={checkCode} error={wrong ? 'The code is incorrect.' : ''} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A short code the product sent: email or phone confirmation, sign-in, a payment confirmation',
+    'A code from an authenticator app or a backup code with letters and symbols',
+    'A short PIN of 4 to 8 characters',
+  ]}
+  donts={[
+    'Passwords and anything longer than 8 characters: use Input with a reveal button',
+    'Numbers people make up or edit often, such as an amount or a phone number: use Input',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once.
+
+### Confirm your email
+
+<Canvas of={InputOtpStories.ConfirmYourEmail} />
+
+The Figma example. Focus moves to the next cell after each character; the code is checked as soon as the last cell is filled, without a button.
+The resend button appears after a 30-second countdown, so people wait for the first email before asking for another one.
+In Figma this is a Modal; here it is a plain card until Modal is built.
+
+### Wrong code
+
+<Canvas of={InputOtpStories.WrongCode} />
+
+The whole row turns red and the error replaces the hint; screen readers read it with every cell. Focus comes back to the last cell. The first change clears the error and a full code is checked again.
+
+### Verifying
+
+<Canvas of={InputOtpStories.Verifying} />
+
+While the product checks the code, the cells lock, a spinner turns under them and *Verifying code* is announced. Focus stays where it was, so people can carry on as soon as the check ends.
+
+### Paste a code
+
+<Canvas of={InputOtpStories.PasteACode} />
+
+A code pasted into any cell fills the row from the start. Spaces go, and so do hyphens when the code would not fit with them (*123-456* in six cells). A character typed into a filled cell replaces it; Delete clears a cell.
+
+### Code from a message
+
+<Canvas of={InputOtpStories.CodeFromAMessage} />
+
+On iPhone and Android the keyboard offers the code from a new message or email. One tap puts it into the first cell, and the component spreads it over all of them.
+
+### Letters and symbols
+
+<Canvas of={InputOtpStories.LettersAndSymbols} />
+
+`characters="any"` (the default) takes digits, letters and symbols: backup codes, codes from partners. `characters="digits"` takes numbers only and opens the number keyboard on phones.
+
+### Unavailable
+
+<Canvas of={InputOtpStories.Unavailable} />
+
+`disabled` when the code can't be entered right now, with a hint that says why.
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **States are behaviour, not props.** Hovered and Active (Figma Type = Cursor) follow the pointer and focus; the caret is the browser's own, blinking in the active cell. Error, Disabled and Loading are props of the whole row.
+- **Any characters by default.** The Figma cells show digits as an example; codes may hold letters and symbols too.
+- **Paste and autofill.** PrimeReact keeps one character too many from a paste, refuses *123 456* and lets the phone offer no code. The component fixes all three.
+- **A name for the row and every cell.** Figma has no label over the cells: `label` names the row for screen readers only, since the heading above it names it on screen. Each cell is *Digit 2 of 6* or *Character 2 of 6*.
+- **Checked when filled.** `onComplete` hands over the whole code; `loading` locks the cells while it is checked (the spinner from the Figma example).
+- **Resend countdown.** Figma shows *Click to resend* straight away. The examples count down first (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **Focus ring for the keyboard only.** Tab shows the blue ring on the cell; a click or tap shows the dark Active border without it.
+- **One size, fixed cells.** 48 × 60, as in Figma: six cells take 328px and fit a 360px phone screen. The cells don't stretch.
+- **Figma file notes, nothing changed there.** The OTP cells frame carries the File Upload description; the cursor glyph has no text style; Disabled + Cursor can't happen (a disabled cell takes no focus).
+
+## States
+
+<Canvas of={InputOtpStories.States} />
+
+- **Default:** empty cells with a light border; characters in Title-lg Semibold.
+- **Error:** every cell red, the error message in place of the hint.
+- **Disabled:** grey border and characters; nothing can be typed.
+- **Loading:** looks disabled while the code is checked, with a spinner in place of the hint.
+
+## Lengths
+
+<Canvas of={InputOtpStories.Lengths} />
+
+4 cells for a PIN, 6 for most codes (as in Figma), 8 for backup codes.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the next cell, then out of the row; the blue ring shows |
+| Any character | Fills the cell and moves to the next one |
+| Backspace | Clears the cell and steps back; in an empty cell, only steps back |
+| Delete | Clears the cell |
+| ← → | Move between cells without changing anything |
+| Ctrl / ⌘ + V | Pastes a code into the whole row |
+
+- The row is a group named by `label`; the hint and the error are connected to the row and to every cell with `aria-describedby`. An error sets `aria-invalid` on the cells.
+- While the code is checked the row is `aria-busy`, the cells are read-only and `aria-disabled`, and *Verifying code* is announced.
+- Colours follow Figma. The Disabled hint grey (`text-disabled-400`) is below 4.5:1, as in Input.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'OTP cells · State', prop: '(behaviour) · error · disabled · loading', values: 'Hovered and Active follow the pointer and focus; Error → error; Disabled → disabled' },
+    { figma: 'OTP cells · Type', prop: 'value / defaultValue', values: 'Filled with a character, Empty without; Cursor is the focused cell' },
+    { figma: 'Row (six cells)', prop: 'length', values: '4 to 8; 6 by default' },
+    { figma: '(digits in the cells)', prop: 'characters', values: 'any (default), digits' },
+    { figma: 'Hint text', prop: 'hint · hintIcon', values: 'text · boolean; an error replaces the hint' },
+    { figma: '(no label)', prop: 'label', values: 'name for screen readers, not shown' },
+    { figma: '(spinner in the Examples)', prop: 'loading · loadingLabel', values: 'boolean · announced text' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={InputOtpStories} />
