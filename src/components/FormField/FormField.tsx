@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { Icon } from '../Icon/Icon';
+import { Icon, type IconName } from '../Icon/Icon';
 import { FieldInfo } from './FieldInfo';
 import './FormField.css';
 
@@ -57,13 +57,15 @@ export type HintTextProps = {
   state?: Exclude<FieldPartState, 'active'>;
   /** Warning icon before the text (Figma Icon) */
   icon?: boolean;
+  /** Another Base icon in the icon's place, such as `information-circle-filled` in Modal footer Info */
+  iconName?: IconName;
 };
 
 /** Figma "Hint text": a short help or error message under the control. */
-export function HintText({ children, id, state = 'default', icon = true }: HintTextProps) {
+export function HintText({ children, id, state = 'default', icon = true, iconName = 'warning-error' }: HintTextProps) {
   return (
     <p className="grg-hint" id={id} data-state={state}>
-      {icon && <Icon name="warning-error" size={16} />}
+      {icon && <Icon name={iconName} size={16} />}
       <span>{children}</span>
     </p>
   );

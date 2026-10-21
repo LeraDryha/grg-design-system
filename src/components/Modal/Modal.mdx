@@ -1,0 +1,186 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ModalStories from './Modal.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ModalStories} />
+
+# Modal
+
+<ComponentHeader
+  figma="479-2119"
+  guidelines="479-26153"
+  designTab
+  builtOn="PrimeReact Dialog"
+  related={[
+    { label: 'Featured Icon', href: '?path=/docs/components-featured-icon--docs' },
+    { label: 'Stepper Dot', href: '?path=/docs/components-stepper-dot--docs' },
+    { label: 'Button', href: '?path=/docs/components-button--docs' },
+  ]}
+/>
+
+A window over the page for one short task or decision: confirm, choose, enter a code. The page behind waits under a dark overlay until the modal is closed.
+It is built from a **header** (status icon, title, description, back and close), the **content**, and a **footer** with the actions. On phones it becomes a bottom sheet.
+
+<Canvas of={ModalStories.Playground} />
+<Controls of={ModalStories.Playground} include={['title', 'description', 'align', 'status', 'size', 'height', 'footerType', 'destructive', 'layout', 'dismissableMask']} />
+
+```tsx
+<Modal
+  visible={open}
+  onHide={() => setOpen(false)}
+  title="Delete invoice?"
+  description="You won’t be able to undo this."
+  status="error"
+  destructive
+  footerType="fill"
+  primaryAction={{ label: 'Delete', onClick: remove }}
+  secondaryAction={{ label: 'Cancel', onClick: () => setOpen(false) }}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A decision that needs an answer before going on: confirm, delete, leave without saving',
+    'A short form or step that belongs to the current page: share, rename, enter a code',
+    'A short sequence, such as a first-time tour, with Stepper Dot in the footer',
+  ]}
+  donts={[
+    'A result that needs no answer: use Alert (toast) or Banner',
+    'Long forms or pages people return to: give them their own page',
+    'Help next to a field: use the info button of the field label',
+    'A modal opened from another modal',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab, so a broken behaviour shows up at once. Each opens with its button; the overlay covers the example only.
+
+### Blog post published
+
+<Canvas of={ModalStories.BlogPostPublished} />
+
+A status icon, the result and two full-width buttons (footer Fill). Screen readers hear the title and the description as the modal opens. Focus starts on the main action, Escape closes, and focus goes back to the button that opened the modal.
+
+### Delete invoice
+
+<Canvas of={ModalStories.DeleteInvoice} />
+
+`destructive` turns the main action red, for what can't be undone: delete data, block a card, close an account. Focus starts on **Cancel**, the safe way out. Tab stays inside the modal.
+
+### Select user
+
+<Canvas of={ModalStories.SelectUser} />
+
+A form in the content. Fields with floating labels get 40px between them and 20px above the first one, as in "Combining and Placing Modal Items"; the modal adds it on its own. Focus starts in the first field.
+
+### Check your email
+
+<Canvas of={ModalStories.CheckYourEmail} />
+
+The Figma example with [Input Otp](?path=/docs/components-input-otp--docs): a back arrow (Center aligned only), a Neutral featured icon with `mail`, the code, then Verify. Focus starts in the first cell.
+
+### Welcome tour
+
+<Canvas of={ModalStories.WelcomeTour} />
+
+Steps in one modal: the footer Stepper type with [Stepper Dot](?path=/docs/components-stepper-dot--docs), the back arrow from the second step, Skip to leave. The title changes with the step and is read out. The picture stands in for the product screenshot in Figma.
+
+### Terms of service
+
+<Canvas of={ModalStories.TermsOfService} />
+
+`height="full"` keeps 40px above and below. The header and the actions stay; the text scrolls, and takes focus so the keyboard can scroll it.
+
+### What's new
+
+<Canvas of={ModalStories.WhatsNew} />
+
+Something to read, nothing to lose: `dismissableMask` lets a click on the overlay close it. The footer Link button type adds a link on the left.
+
+### On a phone
+
+<Canvas of={ModalStories.OnAPhone} />
+
+Under 480px the modal is a bottom sheet: the width of the screen, rounded on top, sliding up from the bottom. Every button is full width with the main one on top; the checkbox goes under them. Try any example with the **Mobile 375** viewport in the toolbar.
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **One component, parts inside.** Figma builds a modal from Modal header and Modal footer by hand. Here the props set both, and `ModalHeader`, `ModalFooter` and `ModalPanel` are exported for anything unusual.
+- **Spacing is automatic.** Figma asks the designer to switch the header's Padding bottom on with content and to add 20px above a first field. The modal does it from what is inside: on desktop 24px under the header when there is content, on mobile only when the content starts with a field.
+- **Bottom sheet under 480px.** The Figma Mobile size, decided by the screen (`layout="auto"`); `layout` forces either one.
+- **Focus.** It starts in the first field, otherwise on the safe action (Cancel when destructive, the main action otherwise), stays inside while the modal is open and goes back to the opening button when it closes. PrimeReact would focus its own close button.
+- **Closing.** Close and Escape always; a click on the overlay only with `dismissableMask`, so nothing typed is lost by a stray click. The page behind doesn't scroll.
+- **Overlay.** Figma draws #0A0A0A at 60% with an 8px blur, not as a variable; it is the `--overlay` token here (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)), the same in both themes.
+- **Back arrow on Center aligned only**, as in Figma: in the other types it would sit on the status icon.
+- **Not draggable, not resizable**, though PrimeReact Dialog is by default.
+- **Motion.** A short fade and scale; the sheet slides up. Reduced motion keeps the fade only.
+
+## Header types
+
+<Canvas of={ModalStories.HeaderTypes} />
+
+- **Center aligned:** confirmations and results; the only type with the back arrow.
+- **Left aligned:** forms and settings, where the content is left aligned too.
+- **Horizontal left aligned:** the icon next to the title, for long content (Full height).
+
+The status icon is a [Featured Icon](?path=/docs/components-featured-icon--docs): Success, Info, Warning, Error, or Neutral and Primary with any Base icon.
+
+## Footer types
+
+<Canvas of={ModalStories.FooterTypes} />
+
+- **Stretch:** two equal buttons side by side. **Fill:** full-width buttons, the main one on top (sm-440 modals).
+- **Basic:** buttons on the right (md and lg modals).
+- **Button, Link button, Stepper, Info, Checkbox:** Basic with one more item on the left, passed as `footerExtra`: a Text button, a Link, a Stepper Dot, a Hint text, a Checkbox label.
+- **Destructive:** the main action in red (shown on Basic above).
+
+<Canvas of={ModalStories.MobileFooters} />
+
+On mobile every type is one column with the main action on top. The stepper goes above the buttons, the other items below.
+
+## Sizes
+
+<Canvas of={ModalStories.Sizes} />
+
+sm-440 for confirmations and short forms, md-600 for forms with more fields and for tours, lg-880 for tables and previews. On phones the sheet takes the screen's width (xs-343 in Figma).
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab / Shift + Tab | Moves between the controls of the modal only |
+| Escape | Closes the modal; focus goes back to what opened it |
+| Enter / Space | Activates the focused button |
+
+- The modal is a `dialog` with `aria-modal`, named by its title and described by its description.
+- Back and Close are named *Back* and *Close* (`backLabel`, `closeLabel`).
+- The page behind is inert for the keyboard and doesn't scroll while the modal is open.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Modal header · Type', prop: 'align', values: 'Center aligned, Left aligned, Horizontal left aligned → center, left, horizontal' },
+    { figma: 'Modal header · Size, Modal footer · Size', prop: 'layout', values: 'auto (Mobile under 480px), desktop, mobile' },
+    { figma: 'Status', prop: 'status · statusIcon', values: 'Featured icon type · Base icon' },
+    { figma: 'Modal title · Modal description', prop: 'title · description', values: 'text' },
+    { figma: 'Arrow · Close', prop: 'onBack · closable', values: 'function · boolean' },
+    { figma: 'Padding bottom', prop: '(automatic)', values: 'from the content, as the guidelines say' },
+    { figma: 'Modal footer · Type', prop: 'footerType · footerExtra', values: 'stretch, fill, basic, button, link, stepper, info, checkbox · the item on the left' },
+    { figma: 'Modal footer · Destructive', prop: 'destructive', values: 'boolean' },
+    { figma: 'Buttons', prop: 'primaryAction · secondaryAction', values: '{ label, onClick, disabled, loading, form }' },
+    { figma: 'Width (guidelines)', prop: 'size', values: 'sm-440, md-600, lg-880 → sm, md, lg' },
+    { figma: 'Height (guidelines)', prop: 'height', values: 'Default, Full height → auto, full' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={ModalStories} />

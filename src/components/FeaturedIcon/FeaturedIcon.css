@@ -1,0 +1,31 @@
+/* Featured icon. Every value is a token; Figma layer names in the comments. */
+
+.grg-featured-icon {
+  /* Type = Success by default */
+  --fi-tint: var(--success-muted-50);
+  --fi-border: var(--success-soft-400);
+  --fi-icon: var(--success-subtle-500);
+  --fi-bg: var(--fi-tint);
+  --fi-stroke: transparent;
+
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  /* Size lg-48: 8px around a 32px icon. Figma strokes sit inside: the 1px border is part of the padding */
+  padding: calc(var(--space-200) - 1px);
+  border: 1px solid var(--fi-stroke);
+  border-radius: var(--radius-md-10);
+  background: var(--fi-bg);
+  color: var(--fi-icon);
+}
+.grg-featured-icon[data-size='sm'] { padding: calc(var(--space-150) - 1px); border-radius: var(--radius-sm-8); }
+
+/* Filled = Off: the tile takes the surface it sits on, the colour moves to the border */
+.grg-featured-icon:not([data-filled]) { --fi-bg: var(--surface-floating); --fi-stroke: var(--fi-border); }
+
+.grg-featured-icon[data-type='info'] { --fi-tint: var(--info-muted-50); --fi-border: var(--info-soft-400); --fi-icon: var(--info-subtle-500); }
+.grg-featured-icon[data-type='warning'] { --fi-tint: var(--warning-muted-50); --fi-border: var(--warning-soft-400); --fi-icon: var(--warning-subtle-500); }
+.grg-featured-icon[data-type='error'] { --fi-tint: var(--error-muted-50); --fi-border: var(--error-soft-400); --fi-icon: var(--error-subtle-500); }
+.grg-featured-icon[data-type='neutral'] { --fi-tint: var(--bg-weak-100); --fi-border: var(--stroke-soft-200); --fi-icon: var(--icon-base-500); }
+.grg-featured-icon[data-type='primary'] { --fi-tint: var(--primary-gold-muted-50); --fi-border: var(--primary-gold-subtle-400); --fi-icon: var(--primary-gold-base); }

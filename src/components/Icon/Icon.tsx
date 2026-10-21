@@ -24,8 +24,8 @@ export const icons = Object.fromEntries(
 
 export type IconProps = {
   name: IconName;
-  /** Size in px. The guidelines use 12, 16, 20 and 24, matched to the component and text size. */
-  size?: 12 | 16 | 20 | 24;
+  /** Size in px. The guidelines use 12, 16, 20 and 24, matched to the component and text size; Featured icon lg-48 draws 32. */
+  size?: 12 | 16 | 20 | 24 | 32;
   className?: string;
 };
 

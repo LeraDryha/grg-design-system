@@ -1,0 +1,207 @@
+/* Modal. Every value is a token; Figma layer names in the comments.
+   Spacing follows "Modal – Guidelines": header and footer paddings, 32px content sides on desktop, 16px on mobile. */
+
+/* ---- Overlay (PrimeReact Dialog mask) ---- */
+.grg-modal-mask {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  /* Full height leaves 40px above and below; the sides keep 16px on small screens */
+  padding: var(--space-1000) var(--space-400);
+  background: var(--overlay);
+  backdrop-filter: blur(var(--blur-sm));
+}
+.grg-modal-mask[data-sheet] {
+  align-items: flex-end;
+  padding: var(--space-1000) 0 0;
+}
+
+/* The page behind doesn't scroll: PrimeReact puts this class on <body> but, unstyled, brings no rule for it */
+body.p-overflow-hidden { overflow: hidden; }
+
+/* The dialog element PrimeReact moves focus within */
+.grg-modal-dialog {
+  display: flex;
+  max-width: 100%;
+  max-height: 100%;
+  outline: none;
+}
+.grg-modal-mask[data-sheet] .grg-modal-dialog { width: 100%; }
+.grg-modal-dialog:has(> .grg-modal[data-height='full']) { height: 100%; }
+
+/* PrimeReact's focus trap edges: kept in the tab order, never seen */
+.grg-modal-dialog [data-p-hidden-focusable] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+/* Opening and closing (the transition classes PrimeReact sets when unstyled): a short fade and scale, a slide up for the sheet */
+.grg-modal-dialog.enter { opacity: 0; transform: scale(0.96); }
+.grg-modal-dialog.enter-active,
+.grg-modal-dialog.exit { opacity: 1; transform: none; transition: opacity 150ms ease-out, transform 150ms ease-out; }
+.grg-modal-dialog.exit-active { opacity: 0; transform: scale(0.96); transition: opacity 150ms ease-in, transform 150ms ease-in; }
+.grg-modal-mask[data-sheet] .grg-modal-dialog.enter,
+.grg-modal-mask[data-sheet] .grg-modal-dialog.exit-active { opacity: 1; transform: translateY(100%); }
+.grg-modal-mask[data-sheet] .grg-modal-dialog.enter-active { transform: none; }
+.grg-modal-mask[data-sheet] .grg-modal-dialog:is(.enter-active, .exit-active) { transition: transform 300ms ease-out; }
+
+/* ---- Modal: the floating surface ---- */
+.grg-modal {
+  /* Width sm-440 */
+  --modal-width: calc(var(--space-5000) * 2 + var(--space-1000));
+  --modal-side: var(--space-800);
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  width: var(--modal-width);
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-xl-16);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-md);
+}
+/* md-600, lg-880 */
+.grg-modal[data-size='md'] { --modal-width: calc(var(--space-5000) * 3); }
+.grg-modal[data-size='lg'] { --modal-width: calc(var(--space-5000) * 4 + var(--space-2000)); }
+.grg-modal[data-height='full'] { height: 100%; }
+/* Mobile: a bottom sheet the width of the screen, rounded on top */
+.grg-modal[data-layout='mobile'] {
+  --modal-side: var(--space-400);
+  width: 100%;
+  border-radius: var(--radius-xl-16) var(--radius-xl-16) 0 0;
+}
+
+/* Content: between the header and the footer, scrolls when the modal is taller than the screen */
+.grg-modal__content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+  padding: 0 var(--modal-side);
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-regular);
+}
+.grg-modal__content:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+/* Fields with floating labels: 40px between them, and 20px above the first for its label */
+.grg-modal__content:has(> .grg-field, > form > .grg-field) { gap: var(--space-1000); }
+.grg-modal__content > form { display: flex; flex-direction: column; gap: var(--space-1000); }
+.grg-modal__content:has(> .grg-field:first-child, > form:first-child > .grg-field:first-child) { padding-top: var(--space-500); }
+/* Mobile content: 20px above and below */
+.grg-modal[data-layout='mobile'] .grg-modal__content { padding-block: var(--space-500); }
+
+/* Without a footer the surface still ends with the footer's space */
+.grg-modal__end { flex: none; height: var(--modal-side); }
+
+/* ---- Modal header ---- */
+.grg-modal-header {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-600);
+  /* Desktop: 32px top and sides */
+  padding: var(--space-800) var(--space-800) 0;
+  text-align: center;
+}
+.grg-modal-header[data-align='left'] { align-items: flex-start; gap: var(--space-400); text-align: left; }
+.grg-modal-header[data-align='horizontal'] { flex-direction: row; align-items: center; gap: var(--space-400); text-align: left; }
+.grg-modal-header[data-size='mobile'] { padding: var(--space-600) var(--space-400) 0; }
+
+/* Padding bottom: on desktop 24px between the header and the content */
+.grg-modal:has(> .grg-modal__content) > .grg-modal-header[data-size='desktop'] { padding-bottom: var(--space-600); }
+/* On mobile only when the content starts with a field with a floating label */
+.grg-modal:has(> .grg-modal__content > .grg-field:first-child, > .grg-modal__content > form:first-child > .grg-field:first-child) > .grg-modal-header[data-size='mobile'] { padding-bottom: var(--space-600); }
+
+.grg-modal-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  min-width: 0;
+}
+.grg-modal-header[data-align='horizontal'] .grg-modal-header__text { flex: 1; }
+.grg-modal-header__title {
+  margin: 0;
+  font: var(--typo-title-md-semibold);
+  letter-spacing: var(--typo-title-md-semibold-tracking);
+  color: var(--text-strong-1000);
+}
+.grg-modal-header__description {
+  margin: 0;
+  font: var(--typo-body-md-regular);
+  color: var(--text-subtle-700);
+}
+
+/* Arrow and Close: 16px from the corners */
+.grg-modal-header__back,
+.grg-modal-header__close {
+  position: absolute;
+  top: var(--space-400);
+}
+.grg-modal-header__back { left: var(--space-400); }
+.grg-modal-header__close { right: var(--space-400); }
+
+/* ---- Modal footer ---- */
+.grg-modal-footer {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+  padding: var(--space-800);
+}
+.grg-modal-footer__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+  margin-left: auto;
+}
+.grg-modal-footer__extra { display: flex; align-items: center; min-width: 0; }
+/* Info and Checkbox take the free space on the left */
+.grg-modal-footer:is([data-type='info'], [data-type='checkbox']) .grg-modal-footer__extra { flex: 1; }
+
+/* Stretch: two equal buttons side by side */
+.grg-modal-footer[data-type='stretch'] .grg-modal-footer__actions { flex: 1; margin-left: 0; }
+.grg-modal-footer[data-type='stretch'] .grg-modal-footer__actions > * { flex: 1; }
+/* Fill: full-width buttons, the main one on top */
+.grg-modal-footer[data-type='fill'] .grg-modal-footer__actions {
+  flex: 1;
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: 0;
+}
+
+/* Mobile: everything full width, one under the other; 16px above, 32px below */
+.grg-modal-footer[data-size='mobile'] {
+  flex-direction: column;
+  align-items: stretch;
+  padding: var(--space-400) var(--space-400) var(--space-800);
+}
+.grg-modal-footer[data-size='mobile'] .grg-modal-footer__actions {
+  flex-direction: column;
+  align-items: stretch;
+  margin-left: 0;
+}
+.grg-modal-footer[data-size='mobile'] .grg-modal-footer__extra { order: 1; justify-content: center; }
+.grg-modal-footer[data-size='mobile'][data-type='checkbox'] .grg-modal-footer__extra { justify-content: flex-start; }
+.grg-modal-footer[data-size='mobile'][data-type='button'] .grg-modal-footer__extra > * { flex: 1; }
+/* Stepper sits above the buttons; Stepper, Info and Checkbox keep 24px from them */
+.grg-modal-footer[data-size='mobile'][data-type='stepper'] .grg-modal-footer__extra { order: -1; }
+.grg-modal-footer[data-size='mobile']:is([data-type='stepper'], [data-type='info'], [data-type='checkbox']) { gap: var(--space-600); }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-modal-dialog.enter-active,
+  .grg-modal-dialog.exit,
+  .grg-modal-dialog.exit-active,
+  .grg-modal-mask[data-sheet] .grg-modal-dialog.enter-active,
+  .grg-modal-mask[data-sheet] .grg-modal-dialog.exit-active { transition: opacity 150ms ease; transform: none; }
+}

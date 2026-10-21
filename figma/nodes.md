@@ -168,3 +168,19 @@ Code follows the actual bound component styles: Semibold, md 8px / sm 6px corner
 | Examples (Confirm your email in a Modal: typing, verifying) | `2112:17806` |
 
 The OTP cells frame carries the File Upload description by mistake. The resend countdown in the examples is not in Figma (Contributing/Tokens).
+
+## Modal
+
+| What | Node |
+|---|---|
+| Page ❖ Modal | `324:17319` |
+| Component set `Modal header` (Size × Type, 6 variants; Status, Arrow, Close, Title, Description, Padding bottom) | `479:2119` |
+| Component set `Modal footer` (Type × Destructive × Size, 32 variants) | `329:13837` |
+| Modal – Guidelines (combining items, desktop and mobile) | `483:31840` |
+| Usage guidelines (anatomy, widths, heights, footer variants, destructive) | `479:26153` |
+| Modal items (header, footer, paddings) | `481:10068` |
+| Examples (code check, integrations, onboarding, mobile convert) | `483:32231` |
+| Component set `Stepper dot` (Size × Active, 8 variants), on the same page | `326:6369` |
+| Component set `Featured icon` (Type × Size × Filled, 36 variants), page Misc icons `693:1673` | `329:14075` |
+
+The overlay (#0A0A0A 60%, Blur/sm) has no variable; it is `--overlay` in `src/styles/system.css`.
