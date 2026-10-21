@@ -1,0 +1,107 @@
+/* Tab menu. Every value is a token; Figma layer names in the comments. */
+
+/* The tab row, anything at its end, and the open tab under them. PrimeReact's wrapper adds no box. */
+.grg-tab-menu {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 'bar end' 'panels panels';
+  min-width: 0;
+}
+.grg-tab-menu__view { display: contents; }
+.grg-tab-menu__bar { grid-area: bar; position: relative; min-width: 0; }
+.grg-tab-menu__end { grid-area: end; display: flex; align-items: center; }
+.grg-tab-menu__panels { grid-area: panels; min-width: 0; }
+.grg-tab-menu__panel:empty { display: none; }
+
+.grg-tab-menu__nav {
+  position: relative;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grg-tab-menu__item { display: flex; }
+
+/* ---- Tab menu horizontal: 24px apart, 6px above and below, a 1px line under the row ---- */
+.grg-tab-menu[data-orientation='horizontal'] :is(.grg-tab-menu__bar, .grg-tab-menu__end) { border-bottom: 1px solid var(--stroke-soft-200); }
+.grg-tab-menu[data-orientation='horizontal'] .grg-tab-menu__nav { gap: var(--space-600); padding: var(--space-150) 0; }
+.grg-tab-menu[data-orientation='horizontal'][data-icon-only] .grg-tab-menu__nav { gap: var(--space-400); }
+
+/* Tab menu horizontal item: icon, label and badge 6px apart */
+.grg-tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--space-150);
+  border-radius: var(--radius-xs-6);
+  color: var(--text-soft-500);
+  font: var(--typo-body-md-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+}
+.grg-tab__icon,
+.grg-tab__arrow { flex: none; color: var(--icon-base-500); }
+/* Hovered and Active (selected): the strongest text and icon */
+.grg-tab:hover,
+.grg-tab[aria-selected='true'] { color: var(--text-strong-1000); }
+.grg-tab:hover .grg-tab__icon,
+.grg-tab[aria-selected='true'] .grg-tab__icon { color: var(--icon-strong-1000); }
+.grg-tab[aria-selected='true'] .grg-tab__arrow { color: var(--icon-subtle-700); }
+/* Disabled */
+.grg-tab[aria-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+.grg-tab[aria-disabled='true'] :is(.grg-tab__icon, .grg-tab__arrow) { color: var(--icon-disabled-400); }
+/* Focused: the system ring, keyboard only */
+.grg-tab:focus-visible { box-shadow: var(--focus-ring); }
+
+/* Selection indicator: a 2px gold line under the selected tab, 4px below it, on the row's line */
+.grg-tab-menu[data-orientation='horizontal'] .grg-tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: calc(-1 * var(--space-150) - 1px);
+  left: 0;
+  height: var(--space-050);
+  background: var(--primary-gold-base);
+}
+/* PrimeReact's ink bar measures the tab; the line above is drawn by the tab itself */
+.grg-tab-menu__ink { display: none; }
+
+/* ---- Tab menu vertical: 40px tabs, 2px apart, the content beside them ---- */
+.grg-tab-menu[data-orientation='vertical'] {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas: 'title .' 'bar panels' 'end .';
+  align-items: start;
+  column-gap: var(--space-800);
+}
+.grg-tab-menu[data-orientation='vertical'] .grg-tab-menu__nav { flex-direction: column; gap: var(--space-050); }
+.grg-tab-menu[data-orientation='vertical'] .grg-tab-menu__item,
+.grg-tab-menu[data-orientation='vertical'] .grg-tab { width: 100%; }
+.grg-tab-menu[data-orientation='vertical'] .grg-tab {
+  box-sizing: border-box;
+  min-width: calc(var(--space-5000) + var(--space-1000));
+  padding: var(--space-250) var(--space-200);
+  border-radius: var(--radius-md-10);
+}
+.grg-tab-menu[data-orientation='vertical'][data-icon-only] .grg-tab { min-width: 0; }
+.grg-tab-menu[data-orientation='vertical'] .grg-tab__label { flex: 1; }
+/* Selection indicator: a 2px gold bar on the left edge, 20px tall */
+.grg-tab-menu[data-orientation='vertical'] .grg-tab[aria-selected='true']::after {
+  content: '';
+  position: absolute;
+  top: var(--space-250);
+  bottom: var(--space-250);
+  left: 0;
+  width: var(--space-050);
+  background: var(--primary-gold-base);
+}
+/* Content divider text */
+.grg-tab-menu__title {
+  grid-area: title;
+  margin: 0;
+  padding: var(--space-200) var(--space-200) var(--space-050);
+  font: var(--typo-caption-sm-regular);
+  color: var(--text-soft-500);
+  text-transform: uppercase;
+}

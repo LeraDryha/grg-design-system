@@ -233,3 +233,26 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Switch mode` (Mode × Size, 4 variants) | `265:15133` |
 | Component set `Switch label` (Flip × Selected × Details, 8 variants; Sublabel, Description, Link button) | `696:43421` |
 | Usage Guidelines (anatomy, sizes, label, states) | `696:43527` |
+
+## Notification Feed
+
+| What | Node |
+|---|---|
+| Page ❖ Notification feed | `696:16756` |
+| Component set `Notification feed` (State, 2 variants; Sublabel, Description, Date, New, Buttons) | `1870:9294` |
+| Component set `Notifications misc items` (Header, Tan menu, Footer, Empty) | `2161:16786` |
+| Usage Guidelines (anatomy, states, new, description) | `2177:45755` |
+| Notification feed – Usage Guidelines (popover, combining, empty, skeleton) | `2177:47320` |
+| Examples (the feed from the top bar, light and dark) | `2184:14008` |
+| Component set `Transaction type icon` (Size, 3 variants), page Misc icons | `1788:3852` |
+
+## Tab Menu
+
+| What | Node |
+|---|---|
+| Page ❖ Tab Menu | `574:20271` |
+| Component set `Tab menu horizontal` (Quantity 02–06) | `574:32575` |
+| Component set `Tab menu vertical` (Quantity 02–09; Content divider) | `574:32759` |
+| Component set `Tab menu horizontal item` (State; Icon, Text, Label, Badge) | `574:32525` |
+| Component set `Tab menu vertical item` (State; Icon, Arrow, Text, Label, Badge, Transaction icon) | `574:32666` |
+| Usage Guidelines (anatomy, layouts, states, behaviour) | `646:32013` |

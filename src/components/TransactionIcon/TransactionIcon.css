@@ -1,0 +1,17 @@
+/* Transaction type icon. Every value is a token; Figma layer names in the comments. */
+
+/* md-24: a 16px icon, 4px around, 6px corners */
+.grg-transaction-icon {
+  box-sizing: border-box;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  padding: var(--space-100);
+  border-radius: var(--radius-xs-6);
+  background: var(--ti-color);
+  color: var(--icon-on-accent);
+}
+/* sm-20: 2px around, 4px corners */
+.grg-transaction-icon[data-size='sm'] { padding: var(--space-050); border-radius: var(--radius-xxs-4); }
+/* lg-48: a 32px icon, 8px around, 10px corners */
+.grg-transaction-icon[data-size='lg'] { padding: var(--space-200); border-radius: var(--radius-md-10); }

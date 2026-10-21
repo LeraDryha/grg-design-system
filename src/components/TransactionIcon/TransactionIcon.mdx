@@ -1,0 +1,81 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TIStories from './TransactionIcon.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TIStories} />
+
+# Transaction Icon
+
+<ComponentHeader
+  figma="1788-3852"
+  designTab
+  related={[
+    { label: 'Notification Feed', href: '?path=/docs/components-notification-feed--docs', relation: 'See also' },
+    { label: 'Featured Icon', href: '?path=/docs/components-featured-icon--docs', relation: 'See also' },
+  ]}
+/>
+
+The kind of a transaction: a white icon on a colour tile, in lists, tables, tabs and notifications.
+
+<Canvas of={TIStories.Playground} />
+<Controls of={TIStories.Playground} include={['type', 'size', 'icon', 'color']} />
+
+```tsx
+<TransactionIcon type="withdrawal" size="sm" />
+```
+
+## When to use
+
+<DoDont
+  dos={['Rows of transactions, notifications about them, and tabs that filter them']}
+  donts={[
+    'Statuses (paid, failed): use Status Badge',
+    'The subject of a modal or an empty state: use Featured Icon',
+  ]}
+/>
+
+## Examples
+
+### In a transaction list
+
+<Canvas of={TIStories.InATransactionList} />
+
+The type is written next to it, so the icon is decorative.
+
+### Another kind
+
+<Canvas of={TIStories.AnotherKind} />
+
+Any Base icon on any Additional colour; `label` names it when nothing next to it does.
+
+## Design decisions
+
+- **Four kinds** from the Figma examples: Deposit (blue, arrow down), Withdrawal (orange, arrow up), Payment (indigo, bill), Exchange (green). Figma sets the colour and the icon on each instance.
+- **Decorative by default**; `label` makes it an image with a name.
+
+## Types and sizes
+
+<Canvas of={TIStories.TypesAndSizes} />
+
+sm-20 in tables and tabs, md-24 in notifications, lg-48 on a transaction's own page.
+
+## Accessibility
+
+- Hidden from screen readers unless `label` is given.
+- The colour is never the only cue: the icon and the text next to it say the kind.
+
+## Figma and code
+
+The Figma frame is in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: 'sm-20, md-24, lg-48 → sm, md, lg' },
+    { figma: 'Fill (per instance)', prop: 'type · color', values: 'deposit, withdrawal, payment, exchange · Additional colour' },
+    { figma: 'Icon (per instance)', prop: 'icon', values: 'Base icon name' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TIStories} />

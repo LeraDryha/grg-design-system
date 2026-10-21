@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, useSyncExternalStore, type MouseEvent, type ReactNode } from 'react';
+import { Fragment, useEffect, useId, useRef, useState, useSyncExternalStore, type MouseEvent, type ReactNode } from 'react';
 import { Avatar } from '../Avatar/Avatar';
 import { Badge } from '../Badge/Badge';
 import { DropdownMenu, type DropdownMenuEntry } from '../DropdownMenu/DropdownMenu';
@@ -37,6 +37,9 @@ export type TopbarAction = {
   badge?: string;
   /** Stays in the bar on tablets and phones (Notifications); the others move into the menu */
   inBar?: boolean;
+  /** Its own element in the bar instead of the plain button, such as a NotificationFeed with a TopbarButton as its
+   *  trigger */
+  element?: ReactNode;
 };
 
 export type TopbarNavigationProps = {
@@ -73,7 +76,16 @@ export type TopbarNavigationProps = {
   className?: string;
 };
 
-function ToolbarButton({ action, onClick, pressed }: { action: TopbarAction; onClick?: () => void; pressed?: boolean }) {
+export type TopbarButtonProps = {
+  action: Pick<TopbarAction, 'label' | 'icon' | 'href' | 'onClick' | 'badge'>;
+  onClick?: (event: MouseEvent<HTMLElement>) => void;
+  pressed?: boolean;
+  /** More attributes for the button, such as the ones a NotificationFeed trigger gives */
+  buttonProps?: Record<string, unknown>;
+};
+
+/** Figma Toolbar item button: a 40px icon button of the top bar, with its name in a tooltip and an optional dot */
+export function TopbarButton({ action, onClick, pressed, buttonProps }: TopbarButtonProps) {
   const name = action.badge ? `${action.label}, ${action.badge}` : action.label;
   const content = (
     <>
@@ -82,10 +94,11 @@ function ToolbarButton({ action, onClick, pressed }: { action: TopbarAction; onC
     </>
   );
   return (
-    <Tooltip title={action.label} side="bottom" purpose="repeat">
+    // No tooltip over the panel the button has opened
+    <Tooltip title={action.label} side="bottom" purpose="repeat" disabled={buttonProps?.['aria-expanded'] === true}>
       {action.href
         ? <a className="grg-topbar-button" href={action.href} aria-label={name} onClick={onClick}>{content}</a>
-        : <button type="button" className="grg-topbar-button" aria-label={name} aria-pressed={pressed} onClick={onClick ?? action.onClick}>{content}</button>}
+        : <button type="button" className="grg-topbar-button" aria-label={name} aria-pressed={pressed} onClick={onClick ?? action.onClick} {...buttonProps}>{content}</button>}
     </Tooltip>
   );
 }
@@ -201,8 +214,8 @@ export function TopbarNavigation({
         <div className="grg-topbar__end">
           {languageSelect}
           <div className="grg-topbar__actions">
-            {themeAction && <ToolbarButton action={themeAction} pressed={theme === 'dark'} onClick={() => onThemeChange?.(theme === 'dark' ? 'light' : 'dark')} />}
-            {actions.map(action => <ToolbarButton key={action.id} action={action} />)}
+            {themeAction && <TopbarButton action={themeAction} pressed={theme === 'dark'} onClick={() => onThemeChange?.(theme === 'dark' ? 'light' : 'dark')} />}
+            {actions.map(action => <Fragment key={action.id}>{action.element ?? <TopbarButton action={action} />}</Fragment>)}
           </div>
           {avatar}
         </div>
@@ -240,7 +253,7 @@ export function TopbarNavigation({
       <header className={`grg-topbar ${className}`} data-type={type} data-size={size}>
         <span className="grg-topbar__logo">{logo}</span>
         <div className="grg-topbar__actions">
-          {!menuOpen && actions.filter(action => action.inBar).map(action => <ToolbarButton key={action.id} action={action} />)}
+          {!menuOpen && actions.filter(action => action.inBar).map(action => <Fragment key={action.id}>{action.element ?? <TopbarButton action={action} />}</Fragment>)}
           <button
             ref={menuButton}
             type="button"

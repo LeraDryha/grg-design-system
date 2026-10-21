@@ -1,0 +1,116 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TabStories from './TabMenu.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TabStories} />
+
+# Tab Menu
+
+<ComponentHeader
+  figma="574-32575"
+  guidelines="646-32013"
+  designTab
+  builtOn="PrimeReact TabView"
+  related={[
+    { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+    { label: 'Transaction Icon', href: '?path=/docs/components-transaction-icon--docs' },
+    { label: 'Tooltip', href: '?path=/docs/components-tooltip--docs' },
+  ]}
+/>
+
+Switches between views of the same place: All and Unread, the parts of a form, sections of a settings page. Horizontal with a gold underline, or vertical with a gold bar.
+
+<Canvas of={TabStories.Playground} />
+<Controls of={TabStories.Playground} include={['orientation', 'iconOnly', 'arrow', 'title']} />
+
+```tsx
+<TabMenu items={[{ id: 'all', label: 'All' }, { id: 'unread', label: 'Unread', badge: 3 }]} value={tab} onChange={setTab}>
+  {item => <List filter={item.id} />}
+</TabMenu>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Two to six views of the same content or place, one at a time',
+    'Vertical: the sections of a settings page, with a title',
+  ]}
+  donts={[
+    'Pages of the app: use Sidebar or Topbar Navigation',
+    'Choosing a value in a form: use Segment control or Radio',
+    'Steps that must go in order: use a stepper',
+  ]}
+/>
+
+## Examples
+
+### Sections of a form
+
+<Canvas of={TabStories.SectionsOfAForm} />
+
+Click a tab, or move with ← / → and open with Enter or Space; the open tab shows its part.
+
+### With counts
+
+<Canvas of={TabStories.WithCounts} />
+
+Figma Badge after the label, a disabled tab, and an action at the end of the row (`end`).
+
+### Settings sections
+
+<Canvas of={TabStories.SettingsSections} />
+
+Vertical, with a title, icons, a Transaction Icon and arrows. ↑ / ↓ move between the tabs.
+
+### Icons only
+
+<Canvas of={TabStories.IconsOnly} />
+
+As the guidelines say, an icon-only tab shows its label in a tooltip; screen readers hear the label too.
+
+## Design decisions
+
+- **PrimeReact TabView** gives the tab and panel roles and the keys; the tabs are the Figma items. PrimeReact moves with ← / → only, so vertical tabs also move with ↑ / ↓.
+- **The open tab** shows the strongest text and icon and the gold line (horizontal, under it) or bar (vertical, on the left); hover takes the strong text only.
+- **Focus** uses the system blue ring.
+
+## Layouts
+
+<Canvas of={TabStories.Layouts} />
+
+- **Horizontal**: 24px apart, a line under the row. Icons only: 16px apart.
+- **Vertical**: 40px tabs, 2px apart, with an optional title, badge, arrow or Transaction Icon.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the open tab, then into its content |
+| ← / → (↑ / ↓ vertical) | Moves between tabs |
+| Home / End | First and last tab |
+| Enter / Space | Opens the tab with focus |
+
+- A `tablist` named by its title or `aria-label`, tabs with `aria-selected`, and the content as a `tabpanel`.
+- Known contrast from Figma: a disabled tab (`text-disabled-400`) is under 4.5:1.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Tab menu horizontal / vertical', prop: 'orientation', values: 'horizontal, vertical' },
+    { figma: 'Quantity', prop: 'items', values: '2 to 9 tabs' },
+    { figma: 'Item · Label, Icon, Badge', prop: 'items[].label, icon, badge', values: 'text, Base icon name, number' },
+    { figma: 'Item · Text = off', prop: 'iconOnly', values: 'boolean' },
+    { figma: 'Item · State = Active, Disabled', prop: 'value, items[].disabled', values: 'the open tab; boolean' },
+    { figma: 'Item · State = Hovered, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Vertical item · Arrow, Transaction icon', prop: 'arrow, items[].transaction', values: 'boolean; deposit, withdrawal, payment, exchange' },
+    { figma: 'Vertical · Content divider', prop: 'title', values: 'text' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TabStories} />
