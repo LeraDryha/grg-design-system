@@ -1,0 +1,63 @@
+/* Search. Every value is a token; Figma layer names in the comments. Style Outstroke only (Gray is optional in Figma). */
+
+/* The field and the hint, 2px apart */
+.grg-search { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
+
+/* field: md-40, 10px around, 8px between the icon, the text and the button */
+.grg-search__box {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  height: var(--space-1000);
+  padding: calc(var(--space-250) - 1px);
+  border: 1px solid var(--stroke-base-300);
+  border-radius: var(--radius-md-10);
+  background: transparent;
+  cursor: text;
+}
+/* lg-44: 12px around */
+.grg-search[data-size='lg'] .grg-search__box { height: calc(var(--space-1000) + var(--space-100)); padding: calc(var(--space-300) - 1px); }
+/* sm-32: 6px above and below, 8px on the sides, 6px between, 8px corners */
+.grg-search[data-size='sm'] .grg-search__box {
+  gap: var(--space-150);
+  height: var(--space-800);
+  padding: calc(var(--space-150) - 1px) calc(var(--space-200) - 1px);
+  border-radius: var(--radius-sm-8);
+}
+
+/* State = Hovered */
+.grg-search__box:not([data-disabled]):hover { border-color: var(--stroke-strong-500); background: var(--bg-weak-100); }
+/* State = Active: typing */
+.grg-search__box:not([data-disabled]):focus-within { border-color: var(--stroke-stronger-900); background: transparent; }
+/* Focused from the keyboard: the system ring */
+.grg-search__box:not([data-disabled]):has(.grg-search__control[data-keyboard-navigation]:focus-visible) { box-shadow: var(--focus-ring); }
+/* State = Disabled */
+.grg-search__box[data-disabled] { border-color: var(--stroke-disabled); background: var(--bg-muted-50); cursor: default; }
+
+.grg-search__icon { flex: none; color: var(--icon-base-500); }
+.grg-search__box[data-disabled] .grg-search__icon { color: var(--icon-disabled-400); }
+
+/* Label: the placeholder in text-soft-500, typed text in text-strong-1000 */
+.grg-search__control {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+  appearance: none;
+}
+.grg-search__control::placeholder { color: var(--text-soft-500); opacity: 1; }
+.grg-search__control:disabled { color: var(--text-disabled-400); }
+.grg-search__control:disabled::placeholder { color: var(--text-disabled-400); }
+/* The browser's own clear button: ours stands in for it */
+.grg-search__control::-webkit-search-cancel-button { display: none; }
+
+.grg-search__clear,
+.grg-search__loading { flex: none; }
+/* The loading ring takes the 20px icon slot */
+.grg-search__box .grg-progress-circle.grg-search__loading { --pc-size: var(--space-500); }

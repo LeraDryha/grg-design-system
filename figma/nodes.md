@@ -286,3 +286,12 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Radio` (State × Selected × Size × Destructive, 24 variants) | `136:11127` |
 | Component set `Radio label` (Flip × Selected × Details; Sublabel, Description, Link button) | `136:11176` |
 | Usage Guidelines (anatomy, sizes, label, states) | `775:68269` |
+
+## Search
+
+| What | Node |
+|---|---|
+| Page ❖ Search | `166:11922` |
+| Component set `Search` (State × Style × Size × Filled; Hint text, Left icon, Right icon, Cursor) | `163:9131` |
+| Usage Guidelines (anatomy, sizes, style, state, spacing) | `779:31852` |
+| Examples (empty) | `780:55707` |
