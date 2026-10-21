@@ -27,15 +27,6 @@
   background: var(--primary-base-1000);
 }
 
-.grg-sr-only {
-  position: absolute !important;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .grg-stepper-dot__dot { transition: none; }
 }

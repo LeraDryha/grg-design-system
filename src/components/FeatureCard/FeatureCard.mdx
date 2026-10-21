@@ -1,0 +1,90 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FeatureCardStories from './FeatureCard.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={FeatureCardStories} />
+
+# Feature Card
+
+<ComponentHeader
+  figma="769-16436"
+  designTab
+  related={[
+    { label: 'Featured Icon', href: '?path=/docs/components-featured-icon--docs' },
+    { label: 'Sidebar Navigation', href: '?path=/docs/components-sidebar-navigation--docs', relation: 'See also' },
+  ]}
+/>
+
+A small card that brings one thing to attention: an offer at the bottom of a sidebar, or a way to get help.
+
+<Canvas of={FeatureCardStories.Playground} />
+<Controls of={FeatureCardStories.Playground} include={['type', 'color', 'title', 'description', 'icon']} />
+
+```tsx
+<FeatureCard color="black" title="Claim your gift!" description="Find it on Benefits page." href="/benefits" />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'One offer or new feature in a Sidebar Navigation',
+    'A way to reach support that people can close',
+  ]}
+  donts={[
+    'More than one at a time: they compete for attention',
+    'Messages about the system or an account: use Banner or Alert',
+    'Something people must do: use a Modal or the page itself',
+  ]}
+/>
+
+## Examples
+
+### Claim a gift
+
+<Canvas of={FeatureCardStories.ClaimAGift} />
+
+Type Left icon: the whole card is one link, named by its title and line.
+
+### Need support?
+
+<Canvas of={FeatureCardStories.NeedSupport} />
+
+Type Support: the close button hides the card. The product decides whether it comes back.
+
+## Design decisions
+
+- **Black turns light in the dark theme**, so it still stands out on the dark sidebar.
+- **Primary keeps its gold and dark text in both themes**: white text on gold would be about 2:1.
+- **The Primary Support border** is the card's own gold (`primary-gold-base`); Figma uses a palette colour (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **No PrimeReact base**: a link, a button or a plain block.
+
+## Colors
+
+<Canvas of={FeatureCardStories.Colors} />
+
+- **White** and **Gray** for calm screens, **Black** to stand out, **Primary** for the brand's own offers.
+- **Left icon**: a Neutral [Featured Icon](?path=/docs/components-featured-icon--docs) (sm-32) and a line. **Support**: an icon before the title, two lines and a close button.
+
+## Accessibility
+
+- Left icon is a single link (or a button with `onClick` only); its name is the title and the line.
+- The close button is named *Close* (`closeLabel`).
+
+## Figma and code
+
+The Figma frame is in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Left icon, Support → left-icon, support' },
+    { figma: 'Color', prop: 'color', values: 'White, Gray, Black, Primary → white, gray, black, primary' },
+    { figma: 'Title, description', prop: 'title, description', values: 'text' },
+    { figma: 'Featured icon · Icon, support icon', prop: 'icon', values: 'Base icon name' },
+    { figma: 'Action button (close)', prop: 'onClose', values: 'function' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={FeatureCardStories} />

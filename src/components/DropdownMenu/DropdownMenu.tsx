@@ -1,4 +1,4 @@
-import { cloneElement, useId, useRef, useState, type MouseEvent, type ReactElement, type ReactNode } from 'react';
+import { cloneElement, useId, useRef, useState, type MouseEvent, type ReactElement, type ReactNode, type SyntheticEvent } from 'react';
 import type { MenuItemOptions } from 'primereact/menuitem';
 import { TieredMenu } from 'primereact/tieredmenu';
 import type { MenuItem } from 'primereact/menuitem';
@@ -11,7 +11,8 @@ import './DropdownMenu.css';
 /** A row that does something: picture, label, description, badge; with `items` it opens a submenu */
 export type DropdownMenuAction = DropdownMenuItemContent & {
   kind?: 'item';
-  onSelect?: () => void;
+  /** Chosen. With `href`, a single-page app calls `event.preventDefault()` and routes itself */
+  onSelect?: (event: SyntheticEvent) => void;
   /** Goes to a page instead */
   href?: string;
   /** A submenu (Figma Arrow) */
@@ -44,8 +45,8 @@ export type DropdownMenuProps = {
   'aria-label': string;
   /** Width of the menu; the Figma examples use 240 or 320 */
   width?: number;
-  /** Where the menu opens under the trigger */
-  align?: 'start' | 'end';
+  /** Where the menu opens: under the trigger (start or end edge), or to its right, level with its top or its bottom */
+  align?: 'start' | 'end' | 'right-start' | 'right-end';
   className?: string;
 };
 
@@ -106,18 +107,36 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
       }
       if (entry.kind === 'header') {
         const { kind: _kind, ...content } = entry;
-        return { label: entry.label, disabled: true, className: 'grg-dropdown-menu__header', template: () => <DropdownMenuItem {...content} /> };
+        return { label: entry.label, disabled: true, className: 'grg-dropdown-menu__header', template: () => <span className="grg-dropdown-menu__header-row"><DropdownMenuItem {...content} /></span> };
       }
       const { kind: _kind, onSelect, href, items: sub, selected, ...content } = entry;
       return {
         label: entry.label,
         url: href,
         disabled: entry.disabled,
-        command: onSelect,
+        command: onSelect ? ({ originalEvent }) => onSelect(originalEvent) : undefined,
         items: sub ? toModel(sub) : undefined,
         template: inAction(<DropdownMenuItem {...content} selected={selected} arrow={!!sub} />),
       };
     });
+
+  /* To the right of the trigger (a collapsed sidebar, the account card at its bottom): placed on the screen, so a
+     scrolling sidebar doesn't cut it off. PrimeReact first places it under the trigger, so this runs after. */
+  const placeAside = (trigger: Element) => {
+    if (!align.startsWith('right')) return;
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      const element = menu.current?.getElement();
+      if (!element) return;
+      const rect = trigger.getBoundingClientRect();
+      const gap = parseFloat(getComputedStyle(element).getPropertyValue('--space-200'));
+      Object.assign(element.style, {
+        position: 'fixed',
+        left: `${rect.right + gap}px`,
+        top: align === 'right-start' ? `${rect.top}px` : 'auto',
+        bottom: align === 'right-end' ? `${window.innerHeight - rect.bottom}px` : 'auto',
+      });
+    }));
+  };
 
   const style = width ? { width } : undefined;
   const tiered = (
@@ -150,7 +169,11 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
   return (
     <div className={`grg-dropdown-menu-host ${className}`} data-align={align}>
       {trigger?.({
-        onClick: event => menu.current?.toggle(event),
+        onClick: event => {
+          const trigger = event.currentTarget;
+          menu.current?.toggle(event);
+          placeAside(trigger);
+        },
         'aria-haspopup': 'menu',
         'aria-expanded': open,
         'aria-controls': `${id}-menu`,

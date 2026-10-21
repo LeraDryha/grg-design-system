@@ -1,0 +1,228 @@
+/* Sidebar navigation. Every value is a token; Figma layer names in the comments.
+   Layout from "Sidebar layout architecture – Guidelines": Sidebar › Sidebar header, Content › Navigation,
+   Feature cards, Sidebar footer. */
+
+/* ---- Sidebar (root layout): 20px between blocks ---- */
+.grg-sidebar {
+  /* Expand: 272px */
+  --sidebar-width: calc(var(--space-5000) + var(--space-1600) + var(--space-200));
+
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-500);
+  flex: none;
+  width: var(--sidebar-width);
+  height: 100%;
+  background: var(--surface-canvas);
+}
+/* Collapsed: 80px, a 40px row with 20px on each side */
+.grg-sidebar[data-layout='collapsed'] { --sidebar-width: var(--space-2000); }
+/* Without a header or a footer the sidebar keeps 24px at that end (Figma Default) */
+.grg-sidebar:not(:has(> .grg-sidebar__header, > .grg-sidebar__bar)) { padding-top: var(--space-600); }
+.grg-sidebar:not(:has(> .grg-sidebar__footer)) { padding-bottom: var(--space-600); }
+
+/* A single row for documentation (SidebarNavigationItem) */
+.grg-sidebar[data-row] { width: 100%; height: auto; padding: 0; background: transparent; }
+.grg-sidebar[data-layout='collapsed'][data-row] { width: auto; }
+
+/* Sidebar header and footer: 12px around the card, 10px to the divider */
+.grg-sidebar__header,
+.grg-sidebar__footer {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: var(--space-250);
+  padding: var(--space-300);
+}
+.grg-sidebar__header { padding-bottom: 0; }
+.grg-sidebar__footer { padding-top: 0; }
+/* Content divider line: 1px, 8px in from the card's edges */
+.grg-sidebar__divider {
+  height: 1px;
+  margin: var(--space-050) var(--space-200);
+  border: 0;
+  background: var(--stroke-soft-200);
+}
+
+/* Content (navigation wrapper layout): 20px sides, the blocks 20px apart; it scrolls when the pages don't fit.
+   6px more above and below, taken back with the margin, so the focus ring of the first and last rows isn't cut. */
+.grg-sidebar__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--space-500);
+  min-height: 0;
+  margin-block: calc(-1 * var(--space-150));
+  padding: var(--space-150) var(--space-500);
+  overflow-y: auto;
+}
+/* Navigation (base layout): rows 4px apart */
+.grg-sidebar__section,
+.grg-sidebar__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-100);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.grg-sidebar__list[hidden] { display: none; }
+/* Content divider text: the group title */
+.grg-sidebar__section-title {
+  margin: 0;
+  padding: var(--space-200) var(--space-200) var(--space-050);
+  overflow: hidden;
+  font: var(--typo-caption-sm-regular);
+  color: var(--text-soft-500);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.grg-sidebar[data-layout='collapsed'] .grg-sidebar__section-title { padding-inline: 0; text-align: center; text-overflow: clip; }
+
+/* Feature cards sit in the Sidebar layout, as wide as the rows */
+.grg-sidebar__feature { flex: none; padding: 0 var(--space-500); }
+
+/* ---- Sidebar items ---- */
+.grg-sidebar-item {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-250) var(--space-300);
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-medium);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+/* Level = Child: the text lines up with the parent's text */
+.grg-sidebar-item[data-level='2'] { padding-left: var(--space-1000); }
+/* State = Hovered */
+.grg-sidebar-item:hover { background: var(--bg-weak-100); }
+/* State = Active: the current page */
+.grg-sidebar-item[data-active] {
+  background: var(--bg-weak-100);
+  color: var(--primary-base-1000);
+  font: var(--typo-body-md-semibold);
+}
+/* State = Focused: keyboard only, in the system blue */
+.grg-sidebar-item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+.grg-sidebar-item__icon,
+.grg-sidebar-item__arrow { flex: none; color: var(--icon-base-500); }
+.grg-sidebar-item[data-active] :is(.grg-sidebar-item__icon, .grg-sidebar-item__arrow) { color: var(--primary-base-1000); }
+/* Arrow: down when closed, up when open */
+.grg-sidebar-item__arrow { transition: transform 150ms ease; }
+.grg-sidebar-item[aria-expanded='true'] .grg-sidebar-item__arrow { transform: rotate(180deg); }
+
+.grg-sidebar-item__text {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--space-200);
+  min-width: 0;
+}
+.grg-sidebar-item__label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Icon only = On: a 40px square */
+.grg-sidebar[data-layout='collapsed'] .grg-sidebar-item {
+  justify-content: center;
+  width: var(--space-1000);
+  padding: var(--space-250);
+}
+.grg-sidebar-item__initial {
+  width: var(--space-500);
+  font: var(--typo-body-sm-semibold);
+  text-align: center;
+}
+/* The Right badge, when collapsed: a dot on the icon */
+.grg-sidebar-item__dot {
+  position: absolute;
+  top: var(--space-150);
+  right: var(--space-150);
+  width: var(--space-150);
+  height: var(--space-150);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--info-base-600);
+  box-shadow: 0 0 0 var(--space-050) var(--surface-canvas);
+}
+
+/* Dropdown menus from a row or a card fill the row */
+.grg-sidebar__menu-host { display: block; }
+
+/* ---- Header card and User profile card ---- */
+.grg-sidebar-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-300);
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--text-strong-1000);
+  font: inherit;
+  text-align: left;
+}
+button.grg-sidebar-card { cursor: pointer; }
+button.grg-sidebar-card:hover { background: var(--bg-weak-100); }
+button.grg-sidebar-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-sidebar[data-layout='collapsed'] .grg-sidebar-card { justify-content: center; }
+
+.grg-sidebar-card__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-sidebar-card__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font: var(--typo-body-md-semibold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grg-sidebar-card__email {
+  overflow: hidden;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.grg-sidebar-card__icon { flex: none; color: var(--icon-base-500); }
+
+/* ---- Drawer (PrimeReact Sidebar) ---- */
+.grg-sidebar-mask {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  background: var(--overlay);
+}
+.grg-sidebar-drawer { display: flex; height: 100%; max-width: 100%; outline: none; }
+.grg-sidebar-drawer .grg-sidebar { box-shadow: var(--shadow-lg); }
+/* The close button at the top, 12px in */
+.grg-sidebar__bar { display: flex; flex: none; justify-content: flex-end; padding: var(--space-300) var(--space-300) 0; }
+
+/* The page behind doesn't scroll: PrimeReact puts this class on <body> but, unstyled, brings no rule for it */
+body.p-overflow-hidden { overflow: hidden; }
+
+/* Sliding in from the left (the transition classes PrimeReact sets when unstyled) */
+.grg-sidebar-drawer.enter { transform: translateX(-100%); }
+.grg-sidebar-drawer.enter-active { transform: none; transition: transform 300ms ease-out; }
+.grg-sidebar-drawer.exit-active { transform: translateX(-100%); transition: transform 300ms ease-in; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-sidebar-item__arrow,
+  .grg-sidebar-drawer.enter-active,
+  .grg-sidebar-drawer.exit-active { transition: none; }
+}

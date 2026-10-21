@@ -1,0 +1,78 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ApiIconStories from './ApiIcon.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ApiIconStories} />
+
+# Api Icon
+
+<ComponentHeader
+  figma="1356-29600"
+  designTab
+  related={[{ label: 'Sidebar Navigation', href: '?path=/docs/components-sidebar-navigation--docs', relation: 'See also' }]}
+/>
+
+The HTTP method of an API endpoint: a small coloured tile with an arrow, and the method name when there is room.
+
+<Canvas of={ApiIconStories.Playground} />
+<Controls of={ApiIconStories.Playground} include={['method', 'text', 'active']} />
+
+```tsx
+<ApiIcon method="get" text />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Endpoints in an API reference: the sidebar (Left badge), lists and tables',
+  ]}
+  donts={[
+    'Statuses or categories: use Badge or Status Badge',
+  ]}
+/>
+
+## Examples
+
+### Endpoints
+
+<Canvas of={ApiIconStories.Endpoints} />
+
+The method in colour and as text, then the path.
+
+### Icon only
+
+<Canvas of={ApiIconStories.IconOnly} />
+
+Where there is no room for the text, the tile keeps the method as its name for screen readers.
+
+## Design decisions
+
+- **One colour per kind of change**: Post Info, Get Success, Delete Error, Patch and Put Warning, as in Figma.
+- **Active** is the deeper tint for the selected endpoint, such as the current page in a sidebar.
+- **No PrimeReact base**: a picture, not a control.
+
+## Types
+
+<Canvas of={ApiIconStories.Types} />
+
+## Accessibility
+
+- With text, screen readers read the method; without it, the tile is an image named by the method (*PATCH*). `decorative` hides it when the method is written next to it.
+- Known contrast from Figma: the Patch and Put text is about 3:1, and every Active text 2.8–4.2:1, under the 4.5:1 for small text. The tests list it as a known issue.
+
+## Figma and code
+
+The Figma frame is in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'method', values: 'Post, Get, Delete, Patch, Put → post, get, delete, patch, put' },
+    { figma: 'Text', prop: 'text', values: 'On → true, Off → false' },
+    { figma: 'State', prop: 'active', values: 'Default → false, Active → true' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={ApiIconStories} />

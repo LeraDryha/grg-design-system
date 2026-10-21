@@ -1,0 +1,171 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SidebarStories from './SidebarNavigation.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SidebarStories} />
+
+# Sidebar Navigation
+
+<ComponentHeader
+  figma="765-2532"
+  guidelines="771-56482"
+  designTab
+  builtOn="PrimeReact Sidebar (drawer), TieredMenu and Tooltip"
+  related={[
+    { label: 'Tooltip', href: '?path=/docs/components-tooltip--docs' },
+    { label: 'Feature Card', href: '?path=/docs/components-feature-card--docs' },
+    { label: 'Api Icon', href: '?path=/docs/components-api-icon--docs' },
+    { label: 'Dropdown Menu', href: '?path=/docs/components-dropdown-menu--docs' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+  ]}
+/>
+
+The app's main navigation on the left: the company, the pages in groups, an optional feature card and the account. It collapses to icons on smaller screens and becomes a drawer on phones.
+
+<Canvas of={SidebarStories.Playground} />
+<Controls of={SidebarStories.Playground} include={['current', 'layout']} />
+
+```tsx
+<SidebarNavigation
+  sections={[{ title: 'Main', items: [{ id: 'dashboard', label: 'Dashboard', href: '/dashboard', icon: 'grid-02' }] }]}
+  current={page}
+  header={<SidebarHeaderCard name="Northwind Trading" menu={companies} />}
+  footer={<SidebarProfileCard name="Guadalupe Schimmel" email="g.schimmel99@gmail.com" menu={account} />}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'The main navigation of an app with five or more sections, always on screen',
+    'Pages in two levels at most: a group and its pages',
+    'An API reference, with the method of each endpoint (Left badge)',
+  ]}
+  donts={[
+    'Two or three sections: use a top bar (Header navigation) or Tabs',
+    'Navigation inside one page: use Tabs or anchors',
+    'Actions such as "Create invoice": put them on the page, not between the pages',
+    'A third level: give the group its own page with Tabs',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story; its steps also run as a test in the **Interactions** tab.
+
+### Single level
+
+<Canvas of={SidebarStories.SingleLevel} />
+
+A flat list. The current page has `aria-current="page"`; choosing a page moves it.
+
+### With group titles
+
+<Canvas of={SidebarStories.WithGroupTitles} />
+
+Titles such as MAIN and OTHER group the pages; screen readers hear each list by its title.
+
+### Multi-level
+
+<Canvas of={SidebarStories.MultiLevel} />
+
+A row with an arrow is a button that opens and closes its pages; it doesn't go anywhere itself. Several groups can be open. The group of the current page opens on its own, and while it is closed its row shows that the current page is inside.
+
+### Without icons
+
+<Canvas of={SidebarStories.WithoutIcons} />
+
+Icons are optional on first-level rows. A collapsed sidebar needs them: without one, the first letter stands in.
+
+### Company and account
+
+<Canvas of={SidebarStories.CompanyAndAccount} />
+
+The company card opens the list of companies under it; the account card opens the account menu beside it, upwards. The feature card sits above the account.
+
+### Collapsed
+
+<Canvas of={SidebarStories.Collapsed} />
+
+Icons only. Hovering or focusing an icon shows its name in a tooltip; screen readers hear the name from the link itself. A group opens its pages in a menu beside it, and a badge becomes a dot (*Mass payouts, New*). The feature card is hidden.
+
+### API reference
+
+<Canvas of={SidebarStories.ApiReference} />
+
+The Left badge is an [Api Icon](?path=/docs/components-api-icon--docs): the method is part of the link's name (*POST Create an invoice*).
+
+### On a phone
+
+<Canvas of={SidebarStories.OnAPhone} />
+
+Under 768px the sidebar is a drawer. The product's menu button opens it; Close, Escape, a tap outside or a chosen page closes it, and focus goes back to the menu button. While it is open, Tab stays inside and the page behind doesn't scroll.
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **Built from plain links.** Pages are links and groups are buttons that open them, so screen readers announce site navigation and links open in a new tab as usual. PrimeReact PanelMenu would read as a tree. PrimeReact still gives the menus (TieredMenu), the tooltips and the drawer (Sidebar).
+- **Width follows the screen** (`layout="auto"`): the full 272px sidebar from 1280px, icons only (80px) from 768px, a drawer below. `layout` sets one of them; `useSidebarLayout()` tells the product when to show its menu button.
+- **Collapsed is 80px**, not Figma's 76px: the 40px rows with 20px on each side and the 56px cards need it (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **The current page inside a closed group.** The group's row takes the Active look, so people still see where they are, the common practice in admin apps; open, only the page itself is Active.
+- **Collapsed extras.** Names in tooltips, groups in a menu beside the icon, badges as a dot: none of them are drawn in Figma.
+- **The drawer** is the expanded sidebar with a close button on top. The mobile menu from the Figma examples (Theme, language, Help) comes with Header navigation.
+- **Long names** end with an ellipsis on one line.
+- **Focus** uses the system blue ring, not Figma's light grey (see Contributing/Tokens).
+
+## Rows
+
+<Canvas of={SidebarStories.Items} />
+
+- **Default** and **Active** (the current page: dark semibold text on a grey tile). Hover is the same grey tile.
+- **With icon**: first-level rows only. **With arrow**: a group. **Second level**: its pages, indented to the parent's text.
+- **Right badge**: a short label or count ([Badge](?path=/docs/components-badge--docs), Light, sm). **Left badge**: the API method.
+- **Collapsed**: a 40px square; a badge becomes a dot.
+
+## Widths
+
+<Canvas of={SidebarStories.Widths} />
+
+Expand 272px and Collapsed 80px, the same pages. From top to bottom: Sidebar header (optional), Content, Feature cards (optional, expanded only), Sidebar footer (optional), 20px apart.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab / Shift + Tab | Moves between the pages, the groups and the cards |
+| Enter | Opens a page; on a group, opens or closes it |
+| Space | Opens or closes a group; opens a card's menu |
+| Arrow keys, Escape | Move in an open menu and close it |
+| Escape | Closes a tooltip, a menu or the drawer |
+
+- The pages are a `nav` named *Main* (`aria-label`), with a list per group named by its title.
+- The current page has `aria-current="page"`; a group button has `aria-expanded`.
+- Collapsed rows keep their name (and badge) as text for screen readers; the tooltip only shows it.
+- The drawer is a modal dialog: focus starts on Close, stays inside and returns to the menu button.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Sidebar items · Edit text', prop: 'sections[].items[].label', values: 'text' },
+    { figma: 'Sidebar items · State = Active', prop: 'current', values: 'the id of the current page' },
+    { figma: 'Sidebar items · State = Hovered, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Sidebar items · Leading icon', prop: 'icon', values: 'Base icon name' },
+    { figma: 'Sidebar items · Arrow, Level = Child', prop: 'items', values: 'second-level pages' },
+    { figma: 'Sidebar items · Right badge', prop: 'badge', values: 'text' },
+    { figma: 'Sidebar items · Left badge', prop: 'apiMethod', values: 'post, get, delete, patch, put' },
+    { figma: 'Sidebar items · Icon only, Expand / Collapsed', prop: 'layout', values: 'auto, expanded, collapsed, drawer' },
+    { figma: 'Content divider text', prop: 'sections[].title', values: 'text' },
+    { figma: 'Sidebar header · Header card', prop: 'header', values: '<SidebarHeaderCard name logo menu />' },
+    { figma: 'Feature cards', prop: 'featureCard', values: '<FeatureCard />' },
+    { figma: 'Sidebar footer · User profile card', prop: 'footer', values: '<SidebarProfileCard name email photo menu />' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SidebarStories} />

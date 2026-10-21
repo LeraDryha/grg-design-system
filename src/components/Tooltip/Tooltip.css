@@ -1,0 +1,69 @@
+/* Tooltip. Every value is a token; Figma layer names in the comments. */
+
+/* The wrapper adds no box: the control lays out as if it were alone */
+.grg-tooltip-anchor { display: contents; }
+
+/* PrimeReact's tooltip element: placed by PrimeReact; its padding is the gap to the control.
+   PrimeReact expects the padding on both ends of the axis the tooltip opens along. */
+.grg-tooltip {
+  position: absolute;
+  padding: var(--space-250) 0;
+  pointer-events: auto;
+}
+.grg-tooltip:is([data-side='left'], [data-side='right']) { padding: 0 var(--space-250); }
+
+/* PrimeReact's own arrow is replaced by the tip on the body */
+.grg-tooltip__arrow { display: none; }
+
+/* Background: Figma Color White */
+.grg-tooltip__body {
+  --tooltip-bg: var(--surface-floating);
+
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-200);
+  box-sizing: border-box;
+  width: max-content;
+  /* Figma Details = On: 301px wide, for two lines of text */
+  max-width: calc(var(--space-5000) + var(--space-2400));
+  padding: var(--space-200) var(--space-300);
+  border-radius: var(--radius-xs-6);
+  background: var(--tooltip-bg);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-sm-regular);
+}
+/* Figma Color Black (Inverted) */
+.grg-tooltip[data-color='black'] .grg-tooltip__body { --tooltip-bg: var(--bg-base-1000); color: var(--text-inverce); }
+/* Details = On: a title over a description, 12px around */
+.grg-tooltip[data-details] .grg-tooltip__body { padding: var(--space-300); border-radius: var(--radius-lg-12); }
+
+.grg-tooltip__icon { flex: none; color: var(--icon-base-500); }
+.grg-tooltip__text { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-tooltip[data-details] .grg-tooltip__title { font: var(--typo-body-sm-medium); }
+.grg-tooltip__description { color: var(--text-subtle-700); }
+.grg-tooltip[data-color='black'] .grg-tooltip__description { color: var(--text-disabled-400); }
+
+/* Tip: a square turned 45°, half of it outside the edge facing the control (Figma Notch, 15 × 6) */
+.grg-tooltip__body::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: var(--space-250);
+  height: var(--space-250);
+  background: var(--tooltip-bg);
+  transform: rotate(45deg);
+}
+/* Above the control: the tip on the bottom edge (Figma Side = Bottom) */
+.grg-tooltip[data-side='top'] .grg-tooltip__body::before { bottom: calc(var(--space-250) / -2); }
+.grg-tooltip[data-side='bottom'] .grg-tooltip__body::before { top: calc(var(--space-250) / -2); }
+.grg-tooltip:is([data-side='top'], [data-side='bottom']) .grg-tooltip__body::before { left: calc(50% - var(--space-250) / 2); }
+.grg-tooltip:is([data-side='top'], [data-side='bottom'])[data-align='start'] .grg-tooltip__body::before { left: var(--space-300); }
+.grg-tooltip:is([data-side='top'], [data-side='bottom'])[data-align='end'] .grg-tooltip__body::before { left: auto; right: var(--space-300); }
+.grg-tooltip[data-side='left'] .grg-tooltip__body::before { right: calc(var(--space-250) / -2); }
+.grg-tooltip[data-side='right'] .grg-tooltip__body::before { left: calc(var(--space-250) / -2); }
+.grg-tooltip:is([data-side='left'], [data-side='right']) .grg-tooltip__body::before { top: calc(50% - var(--space-250) / 2); }
+.grg-tooltip:is([data-side='left'], [data-side='right'])[data-align='start'] .grg-tooltip__body::before { top: var(--space-250); }
+.grg-tooltip:is([data-side='left'], [data-side='right'])[data-align='end'] .grg-tooltip__body::before { top: auto; bottom: var(--space-250); }

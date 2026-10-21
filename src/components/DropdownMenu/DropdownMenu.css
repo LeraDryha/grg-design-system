@@ -28,11 +28,13 @@
 }
 .grg-dropdown-menu__item[data-p-highlight='true'] > .grg-dropdown-menu__submenu { display: flex; }
 
+/* Rows are told apart by what they hold: unstyled PrimeReact drops a model item's className from its <li> */
+
 /* Content divider line: 1px stroke-soft-200 with 2px above and below */
 .grg-dropdown-menu__divider { height: 1px; margin-block: var(--space-050); background: var(--stroke-soft-200); }
 
 /* Content divider text: a small title over a group */
-.grg-dropdown-menu__section { cursor: default; }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__section-text) { cursor: default; }
 .grg-dropdown-menu__section-text {
   padding: var(--space-200) var(--space-200) var(--space-050);
   font: var(--typo-caption-sm-regular);
@@ -41,10 +43,10 @@
 }
 
 /* Header: who the menu belongs to; normal colours, not a control */
-.grg-dropdown-menu__header > .grg-dropdown-menu__content { cursor: default; }
-.grg-dropdown-menu__header .grg-menu-item[data-disabled] { color: var(--text-strong-1000); }
-.grg-dropdown-menu__header .grg-menu-item[data-disabled] .grg-menu-item__description { color: var(--text-soft-500); }
-.grg-dropdown-menu__header .grg-menu-item[data-disabled] .grg-option-picture { opacity: 1; }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__header-row) > .grg-dropdown-menu__content { cursor: default; }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__header-row) .grg-menu-item[data-disabled] { color: var(--text-strong-1000); }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__header-row) .grg-menu-item[data-disabled] .grg-menu-item__description { color: var(--text-soft-500); }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__header-row) .grg-menu-item[data-disabled] .grg-option-picture { opacity: 1; }
 
 /* Caption: a note with a text button (Figma: 10px top and bottom, 8px on the sides) */
 .grg-dropdown-menu__caption-row {
@@ -59,7 +61,7 @@
 .grg-dropdown-menu__caption-row .grg-button { pointer-events: none; }
 
 /* Button: a full-width outline button (Figma: Button Text sm-32 in a 4px / 8px frame; the examples draw it outlined) */
-.grg-dropdown-menu__button > .grg-dropdown-menu__content:where(:hover) { background: transparent; }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__button-face) > .grg-dropdown-menu__content:where(:hover) { background: transparent; }
 .grg-dropdown-menu__button-face {
   display: flex;
   flex: 1;
@@ -73,10 +75,11 @@
   font: var(--typo-body-md-semibold);
   color: var(--text-strong-1000);
 }
-.grg-dropdown-menu__button > .grg-dropdown-menu__content:where(:hover) .grg-dropdown-menu__button-face { background: var(--bg-weak-100); }
-.grg-dropdown-menu__button[data-p-visited='true'] > .grg-dropdown-menu__content { background: transparent; }
-.grg-dropdown-menu__button[data-p-visited='true'] .grg-dropdown-menu__button-face { box-shadow: var(--focus-ring); }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__button-face) > .grg-dropdown-menu__content:where(:hover) .grg-dropdown-menu__button-face { background: var(--bg-weak-100); }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__button-face)[data-p-visited='true'] > .grg-dropdown-menu__content { background: transparent; }
+.grg-dropdown-menu__item:has(.grg-dropdown-menu__button-face)[data-p-visited='true'] .grg-dropdown-menu__button-face { box-shadow: var(--focus-ring); }
 
 /* Keyboard focus on the open menu: the row under the arrow keys gets the light fill above */
 /* The action link PrimeReact keeps around each row: it fills the row and looks like nothing itself */
 .grg-dropdown-menu__action { display: flex; flex: 1; min-width: 0; color: inherit; text-decoration: none; outline: none; }
+.grg-dropdown-menu__header-row { display: contents; }
