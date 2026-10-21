@@ -1,0 +1,111 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as PaginationStories from './Pagination.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={PaginationStories} />
+
+# Pagination
+
+<ComponentHeader
+  figma="630-37034"
+  guidelines="630-37035"
+  designTab
+  builtOn="PrimeReact Paginator"
+  related={[{ label: 'Compact Select', href: '?path=/docs/components-compact-select--docs' }]}
+/>
+
+Moves through a long list page by page: Previous and Next, First and Last, the page numbers, and in the group the results counter and the page size.
+
+<Canvas of={PaginationStories.Playground} />
+<Controls of={PaginationStories.Playground} include={['totalRecords', 'page', 'rows', 'type', 'layout']} />
+
+```tsx
+<Pagination type="group" totalRecords={320} page={page} rows={rows} onChange={({ page, rows }) => load(page, rows)} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Tables and lists that are too long for one screen, where people look for something by position',
+    'With the group under tables: the counter and the page size',
+  ]}
+  donts={[
+    'Feeds people scroll through: load more as they scroll, or a Load more button',
+    'A few items: show them all',
+    'Steps of a form: use a stepper',
+  ]}
+/>
+
+## Examples
+
+### Under a table
+
+<Canvas of={PaginationStories.UnderATable} />
+
+The counter, the pages and the page size (10, 20, 50 or 100). Changing the page size keeps the first row on screen; screen readers hear the new counter.
+
+### Moving through pages
+
+<Canvas of={PaginationStories.MovingThroughPages} />
+
+On the first page First and Previous are disabled, on the last page Next and Last, as the guidelines say.
+
+### One page
+
+<Canvas of={PaginationStories.OnePage} />
+
+### On a phone
+
+<Canvas of={PaginationStories.OnAPhone} />
+
+Under 480px First and Last are hidden and the counter and the page size go above the pages.
+
+## Design decisions
+
+- **The numbers follow the Figma truncation**: the first and the last page always, the current page with its neighbours, "…" for the rest; near the ends the first or last three pages. A gap of a single page shows that page instead of "…". PrimeReact Paginator gives the controls and their names, but shows a sliding window without the ends.
+- **First is on the outside**: `« ‹ … › »`, as most products and PrimeReact do; Figma draws `‹ «` (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **One page**: the pages disappear, as the guidelines say. The group keeps its counter and page size, so a larger page size can be changed back.
+- **"…" isn't a control**: it only shows that pages are hidden.
+- **The page size** is a Compact Select sm-32, 10 / 20 / 50 / 100 by default (`rowsOptions`).
+
+## Truncation
+
+<Canvas of={PaginationStories.Truncation} />
+
+## Types
+
+<Canvas of={PaginationStories.Types} />
+
+- **Default**: the arrows and the pages, for lists with their own counter.
+- **Pagination group**: the counter on the left, the pages, the page size on the right; under tables.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves through the arrows, the pages and the page size |
+| Enter / Space | Opens a page |
+
+- The pagination is a `nav` named *Pagination* (`aria-label`); the current page has `aria-current="page"`.
+- The arrows are named *First page*, *Previous page*, *Next page* and *Last page*; at the ends they are disabled.
+- The counter is read out when it changes.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Pagination · Type', prop: 'type', values: 'Default, Pagination group → default, group' },
+    { figma: 'Pagination cell · State = Selected', prop: 'page', values: 'the current page, from 1' },
+    { figma: 'Pagination cell · State = Disabled', prop: '(at the first and the last page)', values: '—' },
+    { figma: 'Pagination cell · State = Hovered, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Results counter', prop: 'totalRecords, rows', values: 'numbers' },
+    { figma: 'Page size selector (Compact select)', prop: 'rows, rowsOptions', values: '20; [10, 20, 50, 100]' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={PaginationStories} />

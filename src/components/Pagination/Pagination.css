@@ -1,0 +1,64 @@
+/* Pagination. Every value is a token; Figma layer names in the comments. */
+
+/* Pagination group: the counter, the pages and the page size, 40px apart */
+.grg-pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1000);
+  min-width: 0;
+}
+.grg-pagination[data-type='group'] { justify-content: space-between; }
+
+/* Type Default: the arrows and the pages, 8px apart */
+.grg-pagination__controls { display: flex; align-items: center; gap: var(--space-200); }
+.grg-pagination__pages { display: flex; align-items: center; gap: var(--space-100); }
+
+/* Pagination cell: 32px, Body-md/Regular */
+.grg-pagination__cell,
+.grg-pagination__gap {
+  display: inline-grid;
+  place-items: center;
+  box-sizing: border-box;
+  min-width: var(--space-800);
+  height: var(--space-800);
+  padding: 0 var(--space-100);
+  font: var(--typo-body-md-regular);
+  color: var(--text-soft-500);
+}
+.grg-pagination__cell {
+  margin: 0;
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  cursor: pointer;
+}
+/* State = Hovered */
+.grg-pagination__cell:hover { background: var(--bg-weak-100); }
+/* State = Selected: the current page */
+.grg-pagination__cell[aria-current='page'] { background: var(--bg-soft-200); color: var(--text-strong-1000); cursor: default; }
+/* State = Focused */
+.grg-pagination__cell:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Navigation controls: Action button sm-20, grey */
+.grg-pagination__arrow {
+  display: inline-grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-fully-rounded);
+  background: transparent;
+  color: var(--icon-base-500);
+  cursor: pointer;
+}
+.grg-pagination__arrow:hover { color: var(--icon-subtle-700); }
+.grg-pagination__arrow:active { color: var(--icon-strong-1000); }
+.grg-pagination__arrow:disabled { color: var(--icon-disabled-400); cursor: default; }
+.grg-pagination__arrow:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* Results counter */
+.grg-pagination__counter { margin: 0; font: var(--typo-body-md-regular); color: var(--text-soft-500); white-space: nowrap; }
+
+/* Phones: the counter and the page size on a row above the pages */
+.grg-pagination[data-phone] { flex-wrap: wrap; justify-content: space-between; row-gap: var(--space-300); column-gap: var(--space-400); }
+.grg-pagination[data-phone] .grg-pagination__controls { order: 1; flex-basis: 100%; justify-content: center; }
