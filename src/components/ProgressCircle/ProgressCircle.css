@@ -1,0 +1,52 @@
+/* Circular progress bar. Every value is a token; Figma layer names in the comments. */
+
+/* md-48 */
+.grg-progress-circle {
+  --pc-size: var(--space-1200);
+
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--pc-size);
+  height: var(--pc-size);
+}
+.grg-progress-circle[data-size='lg'] { --pc-size: var(--space-1600); }
+.grg-progress-circle[data-size='sm'] { --pc-size: var(--space-800); }
+.grg-progress-circle[data-size='xs'] { --pc-size: var(--space-600); }
+
+.grg-progress-circle__svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+/* Track and Fill: from the top, clockwise */
+.grg-progress-circle__track { fill: none; stroke: var(--bg-soft-200); }
+.grg-progress-circle__fill {
+  fill: none;
+  stroke: var(--primary-base-1000);
+  stroke-dasharray: var(--pc-length);
+  stroke-dashoffset: var(--pc-offset);
+  transition: stroke-dashoffset 300ms ease;
+}
+
+/* Label: lg Body-md/Medium, md Body-sm/Medium, sm Caption-xs */
+.grg-progress-circle__value { position: relative; font: var(--typo-body-sm-medium); color: var(--text-strong-1000); font-variant-numeric: tabular-nums; }
+.grg-progress-circle[data-size='lg'] .grg-progress-circle__value { font: var(--typo-body-md-medium); }
+.grg-progress-circle[data-size='sm'] .grg-progress-circle__value { font: var(--typo-caption-xs-medium); }
+
+/* Unknown length (not in Figma): PrimeReact's spinner, a quarter of the ring turning on the track (the root's border) */
+.grg-progress-circle--turning {
+  --pc-stroke: var(--space-100);
+
+  box-sizing: border-box;
+  border: var(--pc-stroke) solid var(--bg-soft-200);
+  border-radius: var(--radius-fully-rounded);
+}
+.grg-progress-circle--turning[data-size='sm'] { --pc-stroke: calc(var(--space-050) * 1.5); }
+.grg-progress-circle--turning[data-size='xs'] { --pc-stroke: var(--space-050); }
+.grg-progress-circle--turning .grg-progress-circle__svg { inset: calc(-1 * var(--pc-stroke)); width: auto; height: auto; animation: grg-progress-turn 1s linear infinite; }
+/* A quarter of the 40-unit ring (its length is 125.7 units) */
+.grg-progress-circle--turning .grg-progress-circle__fill { stroke-dasharray: 31.4 94.3; stroke-dashoffset: 0; transition: none; }
+@keyframes grg-progress-turn { from { transform: rotate(-90deg); } to { transform: rotate(270deg); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-progress-circle__fill { transition: none; }
+  .grg-progress-circle--turning .grg-progress-circle__svg { animation-duration: 3s; }
+}

@@ -51,10 +51,6 @@
 .grg-file-card[data-status='failed'] .grg-file-card__status { color: var(--error-base-600); }
 
 /* Progress bar label (Figma: On right) */
-.grg-file-card__progress { display: flex; align-items: center; gap: var(--space-150); }
-.grg-file-card__bar { flex: 1; height: var(--space-100); overflow: hidden; border-radius: var(--radius-fully-rounded); background: var(--bg-soft-200); }
-.grg-file-card__bar-value { height: 100%; border-radius: inherit; background: var(--primary-base-1000); transition: width 200ms ease; }
-.grg-file-card__percent { font: var(--typo-body-sm-regular); color: var(--text-soft-500); font-variant-numeric: tabular-nums; }
 .grg-file-card__retry { justify-self: start; margin-left: calc(-1 * var(--space-300)); }
 .grg-file-card__action { flex: none; }
 
@@ -68,5 +64,5 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .grg-file-upload__zone, .grg-file-card__bar-value { transition: none; }
+  .grg-file-upload__zone { transition: none; }
 }
