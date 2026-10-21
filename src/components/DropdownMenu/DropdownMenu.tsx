@@ -107,7 +107,7 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
       }
       if (entry.kind === 'header') {
         const { kind: _kind, ...content } = entry;
-        return { label: entry.label, disabled: true, className: 'grg-dropdown-menu__header', template: () => <DropdownMenuItem {...content} /> };
+        return { label: entry.label, disabled: true, className: 'grg-dropdown-menu__header', template: () => <span className="grg-dropdown-menu__header-row"><DropdownMenuItem {...content} /></span> };
       }
       const { kind: _kind, onSelect, href, items: sub, selected, ...content } = entry;
       return {
