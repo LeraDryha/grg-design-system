@@ -256,3 +256,12 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Tab menu horizontal item` (State; Icon, Text, Label, Badge) | `574:32525` |
 | Component set `Tab menu vertical item` (State; Icon, Arrow, Text, Label, Badge, Transaction icon) | `574:32666` |
 | Usage Guidelines (anatomy, layouts, states, behaviour) | `646:32013` |
+
+## Pagination
+
+| What | Node |
+|---|---|
+| Page ❖ Pagination | `607:4800` |
+| Component set `Pagination` (Type: Default, Pagination group) | `630:37034` |
+| Component set `Pagination cell` (State, 5 variants) | `608:4909` |
+| Usage Guidelines (anatomy, states, types, single page, first and last, truncation) | `630:37035` |
