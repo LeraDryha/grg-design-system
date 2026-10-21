@@ -55,3 +55,7 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* Type Icon: the picture is a grey Base icon (Figma icon-base-500), not the text colour */
+.grg-inline-select__image.grg-option-picture--icon { color: var(--icon-base-500); }
+.grg-inline-select__root[data-p-disabled="true"] .grg-inline-select__image.grg-option-picture--icon { color: var(--icon-disabled-400); opacity: 1; }
