@@ -1,0 +1,104 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as FeaturedIconStories from './FeaturedIcon.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={FeaturedIconStories} />
+
+# Featured Icon
+
+<ComponentHeader
+  figma="329-14075"
+  designTab
+  related={[
+    { label: 'Base icons', href: '?path=/docs/foundations-icons-base-icons--docs' },
+    { label: 'Modal', href: '?path=/docs/components-modal--docs', relation: 'See also' },
+  ]}
+/>
+
+A Base icon on a rounded tile that sets the tone of a block: the status of a Modal, the subject of an empty state or a notice. It is a picture, not a button.
+
+<Canvas of={FeaturedIconStories.Playground} />
+<Controls of={FeaturedIconStories.Playground} include={['type', 'size', 'filled', 'icon', 'label']} />
+
+```tsx
+<FeaturedIcon type="error" size="md" />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'The status at the top of a Modal: Success, Info, Warning, Error',
+    'The subject of an empty state or an onboarding step, with Neutral or Primary and any Base icon',
+  ]}
+  donts={[
+    'Inside text or buttons: use the Base icon on its own',
+    'Something to click: use Action Button or Button',
+    'A short status label: use Badge',
+  ]}
+/>
+
+## Examples
+
+### Next to a title
+
+<Canvas of={FeaturedIconStories.NextToATitle} />
+
+The title already says what happened, so the icon is decorative and screen readers skip it.
+
+### On its own
+
+<Canvas of={FeaturedIconStories.OnItsOwn} />
+
+When nothing next to it says the status, `label` gives the icon a name.
+
+### A subject
+
+<Canvas of={FeaturedIconStories.ASubject} />
+
+Neutral and Primary show `mail` by default; `icon` takes any Base icon.
+
+## Design decisions
+
+- **One tile, any icon.** Each status brings its icon from Figma (check, information, warning, remove); `icon` replaces it.
+- **Decorative by default.** Most featured icons repeat a title; `label` makes one an image with a name.
+- **Filled = Off takes the surface it sits on** (`surface-floating`) with the coloured border. In Figma Neutral Off uses `bg-base-0`, the other types `surface-floating`; the code uses `surface-floating` for all, so they match on a modal in the dark theme (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **A 32px icon** for lg-48, as in Figma: Base icons gain a 32px size.
+
+## Types
+
+<Canvas of={FeaturedIconStories.Types} />
+
+- **Success, Info, Warning, Error:** the result or the risk of an action, in the status colours.
+- **Neutral:** a subject without a status, in grey.
+- **Primary:** a subject in the brand gold, for highlights and onboarding.
+
+Filled on is a soft colour tile; off a tile with a coloured border, for calmer screens.
+
+## Sizes
+
+<Canvas of={FeaturedIconStories.Sizes} />
+
+lg-48 in Modals, md-40 and sm-32 in cards, lists and empty states.
+
+## Accessibility
+
+- Decorative (`aria-hidden`) unless `label` is given; then it is an image with that name.
+- Colour is never the only cue: the icon shape and the text next to it carry the status too.
+
+## Figma and code
+
+The Figma frame is in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Type', prop: 'type', values: 'Success, Info, Warning, Error, Neutral, Primary → success … primary' },
+    { figma: 'Size', prop: 'size', values: 'lg-48, md-40, sm-32 → lg, md, sm' },
+    { figma: 'Filled', prop: 'filled', values: 'On → true, Off → false' },
+    { figma: 'Icon (instance)', prop: 'icon', values: 'Base icon name' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={FeaturedIconStories} />

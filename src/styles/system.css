@@ -6,4 +6,6 @@
   /* Keyboard focus: a 2px gap in the surface colour, then a 4px ring in the system blue.
      Figma draws the ring in primary-soft-200, which keyboard users can barely see (about 1.2:1). */
   --focus-ring: 0 0 0 var(--space-050) var(--surface-base), 0 0 0 var(--space-150) var(--info-base-600);
+  /* Modal overlay: Figma draws #0A0A0A at 60% (with Blur/sm) without a variable. The same dark in both themes. */
+  --overlay: color-mix(in srgb, var(--color-neutral-1000) 60%, transparent);
 }

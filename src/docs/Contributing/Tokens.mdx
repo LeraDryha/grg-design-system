@@ -35,6 +35,7 @@ Only the gold (light) and dark themes are part of this system. White-label palet
 | What | Figma | Storybook |
 |---|---|---|
 | Keyboard focus ring | 4px light grey ring (`primary-soft-200`), about 1.2:1 against the canvas | The same ring in the system blue (`--focus-ring`, Info blue), so keyboard users can see it |
+| Modal overlay | #0A0A0A at 60% with Blur/sm, drawn without a variable | `--overlay`: `neutral-1000` at 60%, with `--blur-sm`; the same in both themes |
 
 ## Known differences between Figma and code
 
@@ -51,4 +52,5 @@ Token differences and agreed implementation decisions. The table records how cod
 | Badge guidelines | The Sizes text lists 4px Text corners for md/sm and 11/16 text for xs; the component set uses 6px corners for md/sm and Caption-xs/Medium 10/12 for xs. The xs description is also labelled md-24 | Follows the component set: md/sm corners 6px, xs corners 4px, text 12/16 and 10/12 |
 | Button / Loading | Figma presents Loader and Disabled as separate visual states | Loading uses PrimeReact Button's native disabled behaviour: activation is blocked and Tab skips it. The loader keeps its accessible name and `aria-busy` |
 | Input Otp examples | *Didn’t receive the code? Click to resend* is available straight away | The examples count down 30 seconds (*Resend in 0:30*) before the resend button appears, so people wait for the first code. To be added to Figma |
+| Featured icon / Neutral, Filled = Off | The tile uses `bg-base-0`; every other type uses `surface-floating` | `surface-floating` for all, so the tile matches the Modal surface in the dark theme |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |

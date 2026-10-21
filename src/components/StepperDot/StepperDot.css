@@ -1,0 +1,41 @@
+/* Stepper dot. Every value is a token; Figma layer names in the comments. */
+
+/* Size sm-8px: 8px dots, 8px apart, the current step a 32px bar */
+.grg-stepper-dot {
+  --dot: var(--space-200);
+  --bar: var(--space-800);
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--dot);
+}
+/* Size xs-4px: 4px dots, 6px apart, a 16px bar */
+.grg-stepper-dot[data-size='xs'] { --dot: var(--space-100); --bar: var(--space-400); gap: var(--space-150); }
+
+/* Ellipse */
+.grg-stepper-dot__dot {
+  flex: none;
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-soft-200);
+  transition: width 200ms ease, background-color 200ms ease;
+}
+/* Rectangle: the current step */
+.grg-stepper-dot__dot[data-active] {
+  width: var(--bar);
+  background: var(--primary-base-1000);
+}
+
+.grg-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-stepper-dot__dot { transition: none; }
+}

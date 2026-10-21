@@ -1,0 +1,78 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as StepperDotStories from './StepperDot.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={StepperDotStories} />
+
+# Stepper Dot
+
+<ComponentHeader
+  figma="326-6369"
+  designTab
+  related={[{ label: 'Modal', href: '?path=/docs/components-modal--docs', relation: 'See also' }]}
+/>
+
+Dots that show where people are in a short sequence: the current step is a long bar. It only shows the step; buttons next to it move between steps.
+
+<Canvas of={StepperDotStories.Playground} />
+<Controls of={StepperDotStories.Playground} include={['steps', 'current', 'size']} />
+
+```tsx
+<StepperDot steps={4} current={step} />
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'A short tour or onboarding of up to 8 steps, in a Modal footer (Stepper type)',
+    'A carousel of cards, with the xs size',
+  ]}
+  donts={[
+    'Long forms where people need the names of the steps: use a stepper with labels',
+    'Navigation by clicking the dots: they are not buttons',
+    'Progress of a single task: use a progress bar',
+  ]}
+/>
+
+## Examples
+
+### Steps of a tour
+
+<Canvas of={StepperDotStories.StepsOfATour} />
+
+Back and Next change the step; the bar moves and screen readers hear *Step 3 of 4*.
+
+## Design decisions
+
+- **Any number of steps.** Figma draws four (Active 01–04); the code takes 2 to 8, the same dot and bar.
+- **Shows, doesn't navigate.** The dots are too small to tap (8px), so the buttons next to them move between steps.
+- **Read as text.** Screen readers hear *Step 2 of 4* (`label`), not the dots.
+- **No PrimeReact base.** PrimeReact's Stepper is a full step-by-step panel; this is a plain element.
+
+## Steps and sizes
+
+<Canvas of={StepperDotStories.Steps} />
+
+sm-8 in a Modal footer, xs-4 in compact places such as cards.
+
+## Accessibility
+
+- The dots are hidden from screen readers; a text says the step (*Step {current} of {steps}*).
+- Colour and length both mark the current step.
+
+## Figma and code
+
+The Figma frame is in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Size', prop: 'size', values: 'sm-8px, xs-4px → sm, xs' },
+    { figma: 'Active', prop: 'current', values: '01–04 → 1–4 (up to 8 with steps)' },
+    { figma: '(four dots)', prop: 'steps', values: '2 to 8; 4 by default' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={StepperDotStories} />
