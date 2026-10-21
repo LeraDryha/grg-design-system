@@ -1,0 +1,142 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TopbarStories from './TopbarNavigation.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TopbarStories} />
+
+# Topbar Navigation
+
+<ComponentHeader
+  figma="773-64348"
+  guidelines="775-64572"
+  designTab
+  builtOn="PrimeReact TieredMenu, Dropdown and Tooltip"
+  related={[
+    { label: 'Sidebar Navigation', href: '?path=/docs/components-sidebar-navigation--docs' },
+    { label: 'Switch', href: '?path=/docs/components-switch--docs' },
+    { label: 'Inline Select', href: '?path=/docs/components-inline-select--docs' },
+    { label: 'Dropdown Menu', href: '?path=/docs/components-dropdown-menu--docs' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+  ]}
+/>
+
+The bar at the top of an app: the logo, the pages or the company, the language, the theme, a few icon buttons and the account. On tablets and phones the pages, the settings and the account move into a menu under the bar.
+
+<Canvas of={TopbarStories.Playground} />
+<Controls of={TopbarStories.Playground} include={['type', 'layout', 'current']} />
+
+```tsx
+<TopbarNavigation
+  type="navigation"
+  logo={<a href="/">…</a>}
+  sections={[{ items: [{ id: 'dashboard', label: 'Dashboard', href: '/dashboard' }] }]}
+  current={page}
+  theme={theme}
+  onThemeChange={setTheme}
+  actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', badge: 'new', inBar: true }]}
+  account={{ name: 'Guadalupe Schimmel', email: 'g.schimmel99@gmail.com', menu: accountMenu }}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'The top of every app screen, with the same items on every page',
+    'Type navigation: up to five or six sections, without a sidebar',
+    'Type company: together with Sidebar Navigation, when the pages are many',
+  ]}
+  donts={[
+    'Actions of one page, such as "Create invoice": put them on the page',
+    'The marketing website: it has its own Header navigation in Figma',
+    'Many pages in the bar: use type company with Sidebar Navigation',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story; its steps also run as a test in the **Interactions** tab. The theme button and the language work in each example.
+
+### Pages in the bar
+
+<Canvas of={TopbarStories.PagesInTheBar} />
+
+Figma type Exchange. The current page has `aria-current="page"`; Other opens the rest in a menu and shows the current page when it is inside.
+
+### Company and sidebar
+
+<Canvas of={TopbarStories.CompanyAndSidebar} />
+
+Figma type Pay. The company card switches companies; the logo takes the sidebar's width, so the card stands over the content. Sidebar Navigation under it goes without its own header.
+
+### On a tablet
+
+<Canvas of={TopbarStories.OnATablet} />
+
+The logo, Notifications and the menu button. The menu opens under the bar with the company, the pages, Help, the Theme switch, the language and the account; the button turns into a cross. Escape closes it and focus goes back to the button; the page behind doesn't scroll.
+
+### On a phone
+
+<Canvas of={TopbarStories.OnAPhone} />
+
+Choosing a page closes the menu and shows the page.
+
+## Design decisions
+
+What the code adds to the Figma file, and why:
+
+- **Types are named by what they hold**: `navigation` (Figma Exchange) and `company` (Figma Pay), not by the products.
+- **The logo is the product's**: the GRX logos are not shown in this Storybook; the examples use a neutral one.
+- **Sizes follow the screen** (`layout="auto"`): Desktop from 1024px, Tablet 768–1023px, Mobile below. Sidebar Navigation hides under 1024px too, so the pages are in one place.
+- **The content of type navigation is centred in 1180px**, at least 24px from the edges: Figma draws 130px sides at 1440px, without a token.
+- **The active page is semibold**, as in Sidebar Navigation; Figma keeps it Medium in the bar (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **The mobile menu** comes from the Figma examples: under the bar, the full width. Help and Settings move into it under a line; Notifications (`inBar`) stays in the bar until the menu opens.
+- **The theme button** shows a moon in the light theme and a sun in the dark one; screen readers hear *Dark theme, pressed / not pressed*. In the menu it is the Theme switch.
+- **Icon buttons** have tooltips with their names; the red dot is read with the name (*Notifications, new*). The notification feed comes with its own component.
+- **Page icons** are off in the bar, as the Figma bars draw them (`itemIcons` turns them on); the mobile menu shows them, like the sidebar.
+- **The bar stays at the top** while the page scrolls.
+- **Built from plain links**, like Sidebar Navigation; PrimeReact gives the menus (TieredMenu), the language list (Dropdown, through Inline Select) and the tooltips.
+
+## Sizes
+
+<Canvas of={TopbarStories.Sizes} />
+
+- **Desktop**: everything in the bar. Type navigation: the logo and the pages on the left; type company: the logo and the company card.
+- **Tablet** (24px sides) and **Mobile** (16px sides): the logo, the buttons that stay (`inBar`) and the menu button.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab / Shift + Tab | Moves between the logo, the pages, the language, the buttons and the account |
+| Enter / Space | Opens a page, a menu or the language list |
+| Escape | Closes a menu, the language list or the mobile menu |
+
+- The bar is a `header`; the pages are a `nav` named *Main*.
+- The menu button has `aria-expanded` and names the menu it opens; the theme button has `aria-pressed`.
+- Icon buttons are named by their label, with the badge when there is one.
+
+## Figma and code
+
+The Figma frames of the parts are in the **Design** tab; the bars carry the GRX logos, which aren't shown.
+
+<PropsMapping
+  rows={[
+    { figma: 'Topbar navigation · Type', prop: 'type', values: 'Exchange, Pay → navigation, company' },
+    { figma: 'Topbar navigation · Size', prop: 'layout', values: 'auto, desktop, tablet, mobile' },
+    { figma: 'Logo horizontal', prop: 'logo', values: 'the product\'s logo' },
+    { figma: 'Header card', prop: 'company', values: '<SidebarHeaderCard />' },
+    { figma: 'Navigation menu · Toolbar item', prop: 'sections', values: 'pages; items open a menu (Arrow)' },
+    { figma: 'Toolbar item · State = Active', prop: 'current', values: 'the id of the current page' },
+    { figma: 'Toolbar item · Leading icon', prop: 'itemIcons, sections[].items[].icon', values: 'off in the bar by default, as in Figma; Base icon name' },
+    { figma: 'Toolbar item · Badge', prop: 'sections[].items[].badge', values: 'text' },
+    { figma: 'Inline select (Type Icon)', prop: 'language', values: '{ value, options, onChange }' },
+    { figma: 'Toolbar item button (moon)', prop: 'theme, onThemeChange', values: 'light, dark' },
+    { figma: 'Toolbar item buttons · Badge', prop: 'actions', values: '{ id, label, icon, href / onClick, badge, inBar }' },
+    { figma: 'Avatar', prop: 'account', values: '{ name, email, photo, menu }' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TopbarStories} />

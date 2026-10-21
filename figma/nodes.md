@@ -212,3 +212,24 @@ Collapsed: Figma draws 76px; the rows (40px + 20px sides) and the cards (56px + 
 | Usage Guidelines (anatomy, colours, styles) | `801:2750` |
 
 Figma Side names the edge with the tip; the code's `side` is where the tooltip opens (the opposite edge).
+
+## Topbar Navigation
+
+| What | Node |
+|---|---|
+| Component set `Topbar navigation` (Type × Size, 6 variants: Exchange, Pay × Desktop, Tablet, Mobile), page ❖ Navigation | `773:64348` |
+| Component set `Toolbar item` (State, 4 variants; Leading icon, Badge, Arrow) | `761:15379` |
+| Component set `Toolbar item button` (State, 4 variants; Badge) | `763:24356` |
+| Usage Guidelines (anatomy, sizes, types, toolbar items) | `775:64572` |
+
+The bars carry the GRX logos, so only the toolbar items are in the Design tab. The mobile menu comes from the Navigation Examples (`771:56684`).
+
+## Switch
+
+| What | Node |
+|---|---|
+| Page ❖ Switch | `265:12929` |
+| Component set `Switch` (State × Size × Enabled, 20 variants) | `265:13609` |
+| Component set `Switch mode` (Mode × Size, 4 variants) | `265:15133` |
+| Component set `Switch label` (Flip × Selected × Details, 8 variants; Sublabel, Description, Link button) | `696:43421` |
+| Usage Guidelines (anatomy, sizes, label, states) | `696:43527` |

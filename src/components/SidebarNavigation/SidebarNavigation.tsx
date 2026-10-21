@@ -1,9 +1,7 @@
 import {
-  createContext, useContext, useEffect, useId, useRef, useState, useSyncExternalStore,
-  type KeyboardEvent, type MouseEvent, type ReactElement, type SyntheticEvent, type ReactNode, type RefObject,
+  createContext, useContext, useEffect, useId, useState, useSyncExternalStore,
+  type MouseEvent, type ReactElement, type SyntheticEvent, type ReactNode,
 } from 'react';
-import { Sidebar as PrimeSidebar } from 'primereact/sidebar';
-import { ActionButton } from '../ActionButton/ActionButton';
 import { ApiIcon, type ApiMethod } from '../ApiIcon/ApiIcon';
 import { Avatar } from '../Avatar/Avatar';
 import { Badge } from '../Badge/Badge';
@@ -33,23 +31,29 @@ export type SidebarItem = {
 };
 
 /** A group of rows under an optional title (Figma Content divider text, such as MAIN) */
-export type SidebarSection = { title?: string; items: SidebarItem[] };
+export type SidebarSection = {
+  title?: string;
+  items: SidebarItem[];
+  /** A Content divider line above the group, as before Settings in the mobile menu */
+  divided?: boolean;
+};
 
-/** expanded 272px, collapsed 80px (icons only), drawer: hidden, slides in over the page. auto follows the screen */
-export type SidebarLayout = 'auto' | 'expanded' | 'collapsed' | 'drawer';
+/** expanded 272px, collapsed 80px (icons only), hidden (the Topbar Navigation menu shows the pages). auto follows the screen */
+export type SidebarLayout = 'auto' | 'expanded' | 'collapsed' | 'hidden';
 
-/* auto: a drawer on phones, icons only on tablets and small laptops, the full sidebar from 1280px */
-const DRAWER_QUERY = '(max-width: 767px)';
+/* auto: icons only on small laptops, hidden under 1024px where the top bar's menu button takes over (as the Figma
+   Tablet and Mobile top bars show), the full sidebar from 1280px */
+const HIDDEN_QUERY = '(max-width: 1023px)';
 const COLLAPSED_QUERY = '(max-width: 1279px)';
 const subscribe = (onChange: () => void) => {
-  const queries = [DRAWER_QUERY, COLLAPSED_QUERY].map(query => window.matchMedia(query));
+  const queries = [HIDDEN_QUERY, COLLAPSED_QUERY].map(query => window.matchMedia(query));
   queries.forEach(query => query.addEventListener('change', onChange));
   return () => queries.forEach(query => query.removeEventListener('change', onChange));
 };
 const screenLayout = () =>
-  window.matchMedia(DRAWER_QUERY).matches ? 'drawer' : window.matchMedia(COLLAPSED_QUERY).matches ? 'collapsed' : 'expanded';
+  window.matchMedia(HIDDEN_QUERY).matches ? 'hidden' : window.matchMedia(COLLAPSED_QUERY).matches ? 'collapsed' : 'expanded';
 
-/** The layout the sidebar has on this screen: the product shows its menu button when it is `drawer`. */
+/** The layout the sidebar has on this screen. */
 export function useSidebarLayout(layout: SidebarLayout = 'auto'): Exclude<SidebarLayout, 'auto'> {
   const fromScreen = useSyncExternalStore(subscribe, screenLayout, () => 'expanded' as const);
   return layout === 'auto' ? fromScreen : layout;
@@ -163,6 +167,7 @@ function Section({ section }: { section: SidebarSection }) {
   const titleId = useId();
   return (
     <div className="grg-sidebar__section">
+      {section.divided && <hr className="grg-sidebar__divider" />}
       {section.title && <p id={titleId} className="grg-sidebar__section-title">{section.title}</p>}
       <ul className="grg-sidebar__list" aria-labelledby={section.title ? titleId : undefined}>
         {section.items.map(item => <li key={item.id}><NavItem item={item} level={1} /></li>)}
@@ -178,9 +183,12 @@ type CardProps = {
   menu?: DropdownMenuEntry[];
   /** The menu's name for screen readers */
   menuLabel?: string;
+  /** Where the menu opens; by default under the company card and beside the account card. `above` for a card at the
+   *  bottom of a full-width menu, where there is no room beside it */
+  menuPlacement?: 'below' | 'beside' | 'above';
 };
 
-function Card({ kind, name, menu, menuLabel, children }: CardProps & { kind: 'header' | 'profile'; name: string; children: ReactNode }) {
+function Card({ kind, name, menu, menuLabel, menuPlacement, children }: CardProps & { kind: 'header' | 'profile'; name: string; children: ReactNode }) {
   const { collapsed } = useContext(SidebarContext);
   const face = (props: object) => (
     <Tooltip title={name} side="right" purpose="repeat" disabled={!collapsed}>
@@ -195,7 +203,11 @@ function Card({ kind, name, menu, menuLabel, children }: CardProps & { kind: 'he
       items={menu}
       aria-label={menuLabel ?? name}
       // The company list opens under the card (beside it when collapsed); the account menu beside the card, upwards
-      align={kind === 'profile' ? 'right-end' : collapsed ? 'right-start' : 'start'}
+      align={
+        menuPlacement === 'above' ? 'top-start'
+          : menuPlacement === 'below' ? 'start'
+            : kind === 'profile' ? 'right-end' : collapsed ? 'right-start' : 'start'
+      }
       width={240}
       className="grg-sidebar__menu-host"
       trigger={face}
@@ -211,10 +223,10 @@ export type SidebarHeaderCardProps = CardProps & {
   logo?: string;
 };
 
-export function SidebarHeaderCard({ name, logo, menu, menuLabel = 'Switch company' }: SidebarHeaderCardProps) {
+export function SidebarHeaderCard({ name, logo, menu, menuLabel = 'Switch company', menuPlacement }: SidebarHeaderCardProps) {
   const { collapsed } = useContext(SidebarContext);
   return (
-    <Card kind="header" name={name} menu={menu} menuLabel={menuLabel}>
+    <Card kind="header" name={name} menu={menu} menuLabel={menuLabel} menuPlacement={menuPlacement}>
       <Avatar size={32} src={logo} name={name} shape="company" decorative />
       <span className={collapsed ? 'grg-sr-only' : 'grg-sidebar-card__name'}>{name}</span>
       {menu && !collapsed && <Icon name="expand-up-down-line" size={20} className="grg-sidebar-card__icon" />}
@@ -230,10 +242,10 @@ export type SidebarProfileCardProps = CardProps & {
   photo?: string;
 };
 
-export function SidebarProfileCard({ name, email, photo, menu, menuLabel = 'Account' }: SidebarProfileCardProps) {
+export function SidebarProfileCard({ name, email, photo, menu, menuLabel = 'Account', menuPlacement }: SidebarProfileCardProps) {
   const { collapsed } = useContext(SidebarContext);
   return (
-    <Card kind="profile" name={name} menu={menu} menuLabel={menuLabel}>
+    <Card kind="profile" name={name} menu={menu} menuLabel={menuLabel} menuPlacement={menuPlacement}>
       <Avatar size={32} src={photo} name={name} decorative />
       <span className={collapsed ? 'grg-sr-only' : 'grg-sidebar-card__text'}>
         <span className="grg-sidebar-card__name">{name}</span>
@@ -255,48 +267,31 @@ export type SidebarNavigationProps = {
   onNavigate?: (item: SidebarItem, event?: MouseEvent<HTMLElement>) => void;
   /** Figma Sidebar header: a SidebarHeaderCard */
   header?: ReactNode;
+  /** Rows after the pages that aren't pages, such as the theme switch and the language in the mobile menu */
+  contentEnd?: ReactNode;
   /** Figma Feature cards: shown above the footer when expanded */
   featureCard?: ReactNode;
   /** Figma Sidebar footer: a SidebarProfileCard */
   footer?: ReactNode;
-  /** Figma Expand / Collapsed, and a drawer for phones; auto follows the screen */
+  /** Figma Expand / Collapsed; hidden under 1024px, where Topbar Navigation's menu shows the pages. auto follows the screen */
   layout?: SidebarLayout;
-  /** Drawer: whether it is open (the product's menu button opens it) */
-  drawerOpen?: boolean;
-  /** Drawer: close it (the close button, Escape, a click outside, a chosen page) */
-  onDrawerClose?: () => void;
-  closeLabel?: string;
   /** The name of the navigation for screen readers */
   'aria-label'?: string;
   className?: string;
 };
 
-const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 /**
  * The app's main navigation on the left: the company, the pages in groups, an optional feature card and the account.
- * It collapses to icons and becomes a drawer on small screens. A plain list of links and disclosure buttons, so
- * screen readers announce site navigation (PrimeReact PanelMenu reads as a tree); PrimeReact gives the menus
- * (TieredMenu, through Dropdown Menu), the tooltips and the drawer (Sidebar).
+ * It collapses to icons on small laptops and hides under 1024px, where the top bar's menu takes over. A plain list of
+ * links and disclosure buttons, so screen readers announce site navigation (PrimeReact PanelMenu reads as a tree);
+ * PrimeReact gives the menus (TieredMenu, through Dropdown Menu) and the tooltips.
  */
 export function SidebarNavigation({
-  sections, current, onNavigate, header, featureCard, footer, layout = 'auto', drawerOpen = false, onDrawerClose,
-  closeLabel = 'Close menu', 'aria-label': label = 'Main', className = '',
+  sections, current, onNavigate, header, contentEnd, featureCard, footer, layout = 'auto', 'aria-label': label = 'Main', className = '',
 }: SidebarNavigationProps) {
   const resolved = useSidebarLayout(layout);
   const groupOf = (id?: string) => sections.flatMap(section => section.items).find(item => item.items?.some(child => child.id === id))?.id;
   const [open, setOpen] = useState<Set<string>>(() => new Set([groupOf(current)].filter(Boolean) as string[]));
-  const opener = useRef<HTMLElement | null>(null);
-
-  // The drawer gives focus back to what opened it (the product's menu button) when it closes
-  useEffect(() => {
-    if (drawerOpen) {
-      opener.current = document.activeElement as HTMLElement | null;
-      return;
-    }
-    opener.current?.focus();
-    opener.current = null;
-  }, [drawerOpen]);
 
   // A page chosen elsewhere (a link in the content) opens its group
   useEffect(() => {
@@ -305,7 +300,9 @@ export function SidebarNavigation({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
 
-  const state = (collapsed: boolean): NavState => ({
+  if (resolved === 'hidden') return null;
+  const collapsed = resolved === 'collapsed';
+  const state: NavState = {
     collapsed,
     current,
     open,
@@ -314,30 +311,24 @@ export function SidebarNavigation({
       if (!next.delete(id)) next.add(id);
       return next;
     }),
-    navigate: (item, event) => {
-      onNavigate?.(item, event);
-      if (resolved === 'drawer') onDrawerClose?.();
-    },
-  });
+    navigate: (item, event) => onNavigate?.(item, event),
+  };
 
-  const panel = (collapsed: boolean, closeIconRef?: RefObject<HTMLButtonElement | null>) => (
-    <SidebarContext.Provider value={state(collapsed)}>
+  return (
+    <SidebarContext.Provider value={state}>
       <div className={`grg-sidebar ${className}`} data-layout={collapsed ? 'collapsed' : 'expanded'}>
-        {closeIconRef && (
-          <div className="grg-sidebar__bar">
-            {/* PrimeReact moves focus to its close button on open: this one takes its place */}
-            <ActionButton ref={closeIconRef} icon="remove" aria-label={closeLabel} onClick={onDrawerClose} />
-          </div>
-        )}
         {header && (
           <div className="grg-sidebar__header">
             {header}
             <hr className="grg-sidebar__divider" />
           </div>
         )}
-        <nav className="grg-sidebar__content" aria-label={label}>
-          {sections.map((section, index) => <Section key={section.title ?? index} section={section} />)}
-        </nav>
+        <div className="grg-sidebar__content">
+          <nav className="grg-sidebar__nav" aria-label={label}>
+            {sections.map((section, index) => <Section key={section.title ?? index} section={section} />)}
+          </nav>
+          {contentEnd}
+        </div>
         {featureCard && !collapsed && <div className="grg-sidebar__feature">{featureCard}</div>}
         {footer && (
           <div className="grg-sidebar__footer">
@@ -347,36 +338,5 @@ export function SidebarNavigation({
         )}
       </div>
     </SidebarContext.Provider>
-  );
-
-  if (resolved !== 'drawer') return panel(resolved === 'collapsed');
-
-  /* PrimeReact Sidebar is the drawer: the overlay, Escape and the slide. It is a modal here, so it gets the dialog
-     role and keeps Tab inside. */
-  const trapTab = (event: KeyboardEvent<HTMLElement>) => {
-    if (event.key !== 'Tab') return;
-    const focusable = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(element => !element.closest('[hidden]'));
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
-  };
-  return (
-    <PrimeSidebar
-      visible={drawerOpen}
-      onHide={() => onDrawerClose?.()}
-      position="left"
-      modal
-      blockScroll
-      dismissable
-      closeOnEscape
-      showCloseIcon
-      appendTo="self"
-      content={({ closeIconRef }) => panel(false, closeIconRef as RefObject<HTMLButtonElement | null>)}
-      pt={{
-        mask: { className: 'grg-sidebar-mask' },
-        root: { className: 'grg-sidebar-drawer', role: 'dialog', 'aria-modal': true, 'aria-label': label, onKeyDown: trapTab },
-      } as object}
-    />
   );
 }

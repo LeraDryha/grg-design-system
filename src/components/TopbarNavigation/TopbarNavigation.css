@@ -1,0 +1,149 @@
+/* Topbar navigation. Every value is a token; Figma layer names in the comments. */
+
+/* The bar: 64px, the base background, a 1px line under it; it stays at the top while the page scrolls */
+.grg-topbar {
+  /* 1180px: the Exchange Desktop content between its 130px sides at 1440 */
+  --topbar-content: calc(var(--space-5000) * 5 + var(--space-4000) + var(--space-500));
+
+  position: sticky;
+  top: 0;
+  /* Above the page that scrolls under it */
+  z-index: 1;
+  box-sizing: border-box;
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-600);
+  width: 100%;
+  height: var(--space-1600);
+  padding: var(--space-300) var(--space-600);
+  border-bottom: 1px solid var(--stroke-soft-200);
+  background: var(--bg-base-0);
+  color: var(--text-strong-1000);
+}
+/* Type navigation (Exchange), Desktop: the content centred in 1180px, at least 24px from the edges */
+.grg-topbar[data-type='navigation'][data-size='desktop'] {
+  padding-inline: max(var(--space-600), calc((100% - var(--topbar-content)) / 2));
+}
+/* Type company (Pay), Desktop: 4px above and below the 56px company card */
+.grg-topbar[data-type='company'][data-size='desktop'] { padding-block: var(--space-100); }
+/* Mobile: 16px sides */
+.grg-topbar[data-size='mobile'] { padding-inline: var(--space-400); }
+
+.grg-topbar__start { display: flex; flex: 1; align-items: center; gap: var(--space-1000); min-width: 0; }
+.grg-topbar[data-type='company'] .grg-topbar__start { gap: var(--space-600); }
+.grg-topbar__logo { display: flex; flex: none; align-items: center; }
+/* Type company: the logo takes the sidebar's width, so the company card stands over the content (248 + 24 = 272) */
+.grg-topbar[data-type='company'][data-size='desktop'] .grg-topbar__logo { width: calc(var(--space-5000) + var(--space-1200)); }
+/* Header card: 300px */
+.grg-topbar__company { flex: none; width: calc(var(--space-5000) + var(--space-2400) + var(--space-100)); }
+.grg-topbar__company .grg-sidebar__menu-host { width: 100%; }
+
+.grg-topbar__end { display: flex; flex: none; align-items: center; gap: var(--space-400); }
+.grg-topbar__actions { display: flex; align-items: center; gap: var(--space-100); }
+
+/* Navigation menu: Toolbar items 12px apart */
+.grg-topbar__nav { min-width: 0; }
+.grg-topbar__items { display: flex; align-items: center; gap: var(--space-300); margin: 0; padding: 0; list-style: none; }
+
+/* ---- Toolbar item ---- */
+.grg-topbar-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  margin: 0;
+  padding: var(--space-250) var(--space-300);
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.grg-topbar-item:hover,
+.grg-topbar-item[aria-expanded='true'] { background: var(--bg-weak-100); }
+/* State = Active: as in Sidebar items, dark semibold text (Figma keeps Medium here; aligned with the sidebar) */
+.grg-topbar-item[data-active] { background: var(--bg-weak-100); color: var(--primary-base-1000); font: var(--typo-body-md-semibold); }
+.grg-topbar-item:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-topbar-item__icon,
+.grg-topbar-item__arrow { flex: none; color: var(--icon-base-500); }
+.grg-topbar-item[data-active] :is(.grg-topbar-item__icon, .grg-topbar-item__arrow) { color: var(--primary-base-1000); }
+.grg-topbar-item__arrow { transition: transform 150ms ease; }
+.grg-topbar-item[aria-expanded='true'] .grg-topbar-item__arrow { transform: rotate(180deg); }
+
+/* ---- Toolbar item button: 40px, a 20px icon ---- */
+.grg-topbar-button {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  box-sizing: border-box;
+  width: var(--space-1000);
+  height: var(--space-1000);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm-8);
+  background: transparent;
+  color: var(--icon-base-500);
+  cursor: pointer;
+}
+.grg-topbar-button:hover { background: var(--bg-weak-100); }
+/* State = Active: pressed, or the theme / menu it stands for is on */
+.grg-topbar-button:active,
+.grg-topbar-button[aria-expanded='true'] { background: var(--bg-weak-100); color: var(--primary-base-1000); }
+.grg-topbar-button:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+/* Figma Badge: a red dot at the top right of the icon */
+.grg-topbar-button__badge { position: absolute; top: var(--space-100); right: var(--space-100); }
+
+/* Avatar: a round button */
+.grg-topbar-avatar {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-fully-rounded);
+  background: transparent;
+  cursor: pointer;
+}
+.grg-topbar-avatar:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---- The menu on tablets and phones: under the bar, the full width, the rest of the height ---- */
+.grg-topbar-menu {
+  position: fixed;
+  inset: var(--space-1600) 0 0;
+  z-index: 1;
+  display: flex;
+  overflow: hidden;
+  background: var(--surface-canvas);
+}
+.grg-topbar-menu[hidden] { display: none; }
+/* The sidebar inside takes the whole width; Content keeps 16px sides, the cards 4px (Figma mobile example) */
+.grg-topbar-menu .grg-sidebar { --sidebar-width: 100%; }
+.grg-topbar-menu .grg-sidebar__content { padding-inline: var(--space-400); }
+.grg-topbar-menu :is(.grg-sidebar__header, .grg-sidebar__footer) { padding-inline: var(--space-100); }
+.grg-topbar-menu .grg-sidebar__divider { margin-inline: var(--space-300); }
+.grg-topbar-menu .grg-sidebar__nav .grg-sidebar__divider { margin-inline: 0; }
+
+/* Theme and language: rows like the pages, not links */
+.grg-topbar-menu__extras { display: flex; flex-direction: column; gap: var(--space-100); }
+.grg-topbar-menu__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  padding: var(--space-200) var(--space-300);
+  color: var(--text-subtle-700);
+  font: var(--typo-body-md-medium);
+}
+.grg-topbar-menu__row-label { flex: 1; cursor: pointer; }
+.grg-topbar-menu__language { padding: var(--space-150) var(--space-300); }
+
+/* The page behind the open menu doesn't scroll */
+body.grg-scroll-lock { overflow: hidden; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-topbar-item__arrow { transition: none; }
+}

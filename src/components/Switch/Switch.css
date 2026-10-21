@@ -1,0 +1,87 @@
+/* Switch. Every value is a token; Figma layer names in the comments. */
+
+/* bg: the track. md-24: 40 × 24 */
+.grg-switch {
+  --sw-width: var(--space-1000);
+  --sw-height: var(--space-600);
+  --sw-track: var(--bg-subtle-300);
+  --sw-knob: var(--text-on-accent);
+
+  position: relative;
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--sw-width);
+  height: var(--sw-height);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--sw-track);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+}
+/* sm-16: 26 × 16 */
+.grg-switch[data-size='sm'] { --sw-width: calc(var(--space-500) + var(--space-150)); --sw-height: var(--space-400); }
+
+/* The native input covers the track: it takes the clicks and the keyboard, and stays invisible */
+.grg-switch__input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+/* toggle: the knob, 1px inside the track, with the xs shadow */
+.grg-switch__knob {
+  position: absolute;
+  top: calc(var(--space-050) / 2);
+  left: calc(var(--space-050) / 2);
+  width: calc(var(--sw-height) - var(--space-050));
+  height: calc(var(--sw-height) - var(--space-050));
+  border-radius: var(--radius-fully-rounded);
+  background: var(--sw-knob);
+  box-shadow: var(--shadow-xs);
+  transition: transform 120ms ease;
+}
+.grg-switch[data-checked] .grg-switch__knob { transform: translateX(calc(var(--sw-width) - var(--sw-height))); }
+
+/* Off: grey; lighter on hover, back while pressed */
+.grg-switch:hover { --sw-track: var(--bg-soft-200); }
+.grg-switch:active { --sw-track: var(--bg-subtle-300); }
+/* On: black track, the knob in the surface colour; lighter on hover, lighter still while pressed */
+.grg-switch[data-checked] { --sw-track: var(--primary-base-1000); --sw-knob: var(--bg-base-0); }
+.grg-switch[data-checked]:hover { --sw-track: var(--primary-darker-800); }
+.grg-switch[data-checked]:active { --sw-track: var(--primary-dark-700); }
+
+/* Disabled: a light track and a grey knob without a shadow, in both positions */
+.grg-switch[data-disabled],
+.grg-switch[data-disabled]:is(:hover, :active) { --sw-track: var(--bg-soft-200); --sw-knob: var(--bg-subtle-300); cursor: default; }
+.grg-switch[data-disabled] .grg-switch__knob { box-shadow: none; }
+
+/* Keyboard focus: the system ring (Figma draws a 4px primary-soft-200 frame) */
+.grg-switch:has(.grg-switch__input:focus-visible) { box-shadow: var(--focus-ring); }
+
+/* Switch mode: the same track, always grey; the knob carries a sun or a moon */
+.grg-theme-switch { position: relative; display: inline-flex; flex: none; }
+.grg-theme-switch .grg-switch,
+.grg-theme-switch .grg-switch:is(:hover, :active) { --sw-track: var(--bg-subtle-300); --sw-knob: var(--bg-base-0); }
+.grg-theme-switch__icon {
+  position: absolute;
+  top: var(--space-100);
+  left: var(--space-100);
+  color: var(--icon-base-500);
+  pointer-events: none;
+  transition: transform 120ms ease;
+}
+.grg-theme-switch[data-theme-mode='dark'] .grg-theme-switch__icon { color: var(--icon-subtle-700); transform: translateX(var(--space-400)); }
+/* sm-16: a 12px icon on the 14px knob (Figma 10px) */
+.grg-theme-switch[data-size='sm'] .grg-theme-switch__icon { top: var(--space-050); left: var(--space-050); }
+.grg-theme-switch[data-size='sm'][data-theme-mode='dark'] .grg-theme-switch__icon { transform: translateX(var(--space-250)); }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-switch,
+  .grg-switch__knob,
+  .grg-theme-switch__icon { transition: none; }
+}
