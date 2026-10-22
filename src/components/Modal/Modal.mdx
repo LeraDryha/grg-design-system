@@ -111,6 +111,7 @@ Under 480px the modal is a bottom sheet: the width of the screen, rounded on top
 What the code adds to the Figma file, and why:
 
 - **One component, parts inside.** Figma builds a modal from Modal header and Modal footer by hand. Here the props set both, and `ModalHeader`, `ModalFooter` and `ModalPanel` are exported for anything unusual.
+- **12px between the parts of the content.** Cards, boxes, rows and notes in the content are 12px apart, and fields with floating labels 40px; a screen designed with other gaps (such as 24px in a flow) still follows the modal. The parts sit straight in the content, without wrappers of their own.
 - **Spacing is automatic.** Figma asks the designer to switch the header's Padding bottom on with content and to add 20px above a first field. The modal does it from what is inside: on desktop 24px under the header when there is content, on mobile only when the content starts with a field.
 - **Bottom sheet under 480px.** The Figma Mobile size, decided by the screen (`layout="auto"`); `layout` forces either one.
 - **Focus.** It starts in the first field, otherwise on the safe action (Cancel when destructive, the main action otherwise), stays inside while the modal is open and goes back to the opening button when it closes. PrimeReact would focus its own close button.
