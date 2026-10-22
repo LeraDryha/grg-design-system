@@ -20,8 +20,8 @@
   padding: var(--space-500) var(--space-600) var(--space-600);
   overflow: auto;
 }
-/* Figma: one white surface for the page content, radius 16; its parts 32px above and below, 24px at the sides */
-.grg-ip-surface { display: flex; flex: 1 0 auto; flex-direction: column; border-radius: var(--radius-xl-16); background: var(--surface-base); }
+/* Figma: one white surface for the page content, radius 16, Elevation xs; its parts 32px above and below, 24px at the sides */
+.grg-ip-surface { display: flex; flex: 1 0 auto; flex-direction: column; border-radius: var(--radius-xl-16); background: var(--surface-base); box-shadow: var(--shadow-xs); }
 .grg-ip-surface__top { padding: var(--space-800) var(--space-600); }
 .grg-ip-surface__section { display: flex; flex-direction: column; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
 .grg-ip-surface__divider { margin: 0; border: 0; border-top: 1px solid var(--stroke-soft-200); }
