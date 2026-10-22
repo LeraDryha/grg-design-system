@@ -56,7 +56,10 @@ export const Walkthrough: Story = {
       await userEvent.type(search, 'bit');
       const panel = canvasElement.querySelector<HTMLElement>('.grg-modal .grg-dropdown')!;
       await waitFor(() => expect(Math.abs(panel.getBoundingClientRect().left - field.getBoundingClientRect().left)).toBeLessThan(2));
-      await expect(panel.getBoundingClientRect().top).toBeGreaterThan(field.getBoundingClientRect().bottom);
+      // Under the field, or over it when the screen has no room below: never on top of it
+      const list = panel.getBoundingClientRect();
+      const box = field.getBoundingClientRect();
+      await expect(list.top >= box.bottom || list.bottom <= box.top).toBe(true);
       await userEvent.keyboard('{Escape}');
     });
     await step('Too much, then 75% of the balance', async () => {
