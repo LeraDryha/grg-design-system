@@ -33,6 +33,8 @@
 .fdn-table--colors td { vertical-align: top; overflow-wrap: anywhere; }
 .fdn-description { font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
 .fdn-description p { margin: 0; }
+.fdn-description__note { margin-top: var(--space-100) !important; color: var(--text-soft-500); }
+.fdn-description__note strong { font-weight: var(--font-weight-semibold); color: var(--text-subtle-700); }
 .fdn-description ul { margin: var(--space-100) 0 0; padding-left: var(--space-400); color: var(--text-soft-500); }
 
 .fdn-muted {

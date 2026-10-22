@@ -55,11 +55,15 @@ export function SemanticColors({ group }: { group: string }) {
 /** The Figma description: the first line, then its uses as a list */
 function Description({ text }: { text?: string }) {
   if (!text) return null;
-  const [lead, ...uses] = text.split('\n').map(line => line.trim()).filter(Boolean);
+  const [lead, ...rest] = text.split('\n').map(line => line.trim()).filter(Boolean);
+  // A note on how to build the white-label mode is a note, not one of the uses
+  const notes = rest.filter(line => line.startsWith('White-label note:'));
+  const uses = rest.filter(line => !notes.includes(line));
   return (
     <div className="fdn-description">
       <p>{lead}</p>
       {uses.length > 0 && <ul>{uses.map(use => <li key={use}>{use}</li>)}</ul>}
+      {notes.map(note => <p key={note} className="fdn-description__note"><strong>White-label:</strong>{note.slice('White-label note:'.length)}</p>)}
     </div>
   );
 }

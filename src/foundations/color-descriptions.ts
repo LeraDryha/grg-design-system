@@ -1,14 +1,15 @@
-/* Colour descriptions from the Figma page Colors, the tables' Description column (669:1408), word for word.
-   Held back until Lera decides: the white-label notes of the gold colours (white-label isn't shown in this Storybook)
-   and the focus-ring use of error-light-200 and success-light-200 (the Storybook's focus ring is the system blue). */
+/* Colour descriptions from the Figma page Colors, the tables' Description column (669:1408).
+   Decided with Lera: the white-label notes stay (they explain how to build it; the white-label palettes themselves
+   are still not shown); error-light-200 and success-light-200 are reserved (Figma: the focus ring of destructive and
+   success buttons, but the Storybook's focus ring is the system blue); "Core error success color" lost its stray "error". */
 
 export const colorDescriptions: Record<string, string> = {
-  'primary-gold-strong-600': "Accent primary color used for brand emphasis and highlights.",
+  'primary-gold-strong-600': "Accent primary color used for brand emphasis and highlights.\nWhite-label note: in white-label mode, this color maps to primary-base and inherits its state logic.",
   // The table names it primary-gold-base-500; the variable is primary-gold-base
-  'primary-gold-base': "Accent primary color used for brand emphasis and highlights.",
-  'primary-gold-subtle-400': "Accent primary color used for brand emphasis and highlights.",
-  'primary-gold-soft-100': "Accent primary color used for brand emphasis and highlights.",
-  'primary-gold-muted-50': "Accent primary color used for brand emphasis and highlights.",
+  'primary-gold-base': "Accent primary color used for brand emphasis and highlights.\nWhite-label note: in white-label mode, this color maps to primary-base and inherits its state logic.",
+  'primary-gold-subtle-400': "Accent primary color used for brand emphasis and highlights.\nWhite-label note: in white-label mode, this color maps to primary-base and inherits its state logic.",
+  'primary-gold-soft-100': "Accent primary color used for brand emphasis and highlights.\nWhite-label note: in white-label mode, this color maps to primary-base and inherits its state logic.",
+  'primary-gold-muted-50': "Accent primary color used for brand emphasis and highlights.\nWhite-label note: in white-label mode, this color maps to primary-base and inherits its state logic.",
   'primary-dark-700': "Primary color variant used for active or pressed states.",
   'primary-darker-800': "Primary color variant used for hover states of primary elements.",
   'primary-base-1000': "Primary brand color used for the most important actions and controls.",
@@ -49,6 +50,7 @@ export const colorDescriptions: Record<string, string> = {
   'error-base-600': "Primary error color used for text and critical error states.\nFor error messages and validation text\nFor required field indicators (e.g. asterisk)\nFor error borders on inputs, selects, and upload areas",
   'error-subtle-500': "Core error accent color used for icons and visual indicators.\nFor error icons across the interface\nFor status icons in alerts and banners\nAs background and border for error badges\nAs hover state for primary destructive buttons\nFor error hint icons in inputs and selects",
   'error-soft-400': "Medium-emphasis error color used for strong visual feedback.\nAs active state background for primary destructive buttons\nAs border color for error alerts",
+  'error-light-200': "Light error color reserved for future use.",
   'error-lighter-100': "Low-emphasis error background used for secondary and interactive states.\nAs background for error badges\nAs active state for destructive text buttons\nAs active state for destructive outlined buttons\nAs hover and selected state for secondary destructive buttons",
   'error-muted-50': "Lowest-emphasis error background used for soft contextual highlighting.\nAs background for error alerts and banners\nFor secondary destructive buttons\nAs hover state for destructive text buttons\nAs hover state for destructive outlined buttons",
   'warning-stronger-800': "High-emphasis warning color reserved for future use.",
@@ -62,8 +64,9 @@ export const colorDescriptions: Record<string, string> = {
   'success-stronger-800': "Success color variant used for active states of success elements.",
   'success-strong-700': "Success color variant used for hover states of success elements.",
   'success-base-600': "Primary success color used for text and success states.",
-  'success-subtle-500': "Core error success color used for icons and visual indicators.\nFor success icons across the interface\nFor status icons in alerts and banners\nAs background and border for success badges\nAs hover state for primary success buttons",
+  'success-subtle-500': "Core success color used for icons and visual indicators.\nFor success icons across the interface\nFor status icons in alerts and banners\nAs background and border for success badges\nAs hover state for primary success buttons",
   'success-soft-400': "Medium-emphasis success color used for strong visual feedback.\nAs active state background for primary success buttons\nAs border color for success alerts",
+  'success-light-200': "Light success color reserved for future use.",
   'success-lighter-100': "Low-emphasis success background used for secondary and interactive states.\nAs background for success badges\nAs active state for success text buttons\nAs active state for success outlined buttons\nAs hover and selected state for secondary success buttons",
   'success-muted-50': "Lowest-emphasis success background used for soft contextual highlighting.\nAs background for success alerts and banners\nFor secondary success buttons\nAs hover state for success text buttons\nAs hover state for success outlined buttons",
   'info-stronger-800': "High-emphasis info color reserved for future use.",
