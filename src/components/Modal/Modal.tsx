@@ -219,7 +219,9 @@ export function Modal({
       appendTo={appendTo}
       position={mobile ? 'bottom' : 'center'}
       modal
-      blockScroll
+      // The page behind stops scrolling, unless the modal is kept inside its parent ('self', as on docs pages):
+      // there the page must still scroll past it
+      blockScroll={appendTo !== 'self'}
       closable
       // Escape is handled below: PrimeReact's own handler also closes the modal when Escape only meant to close a list in it
       closeOnEscape={false}
