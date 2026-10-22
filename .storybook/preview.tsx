@@ -48,8 +48,21 @@ const withPrime: Decorator = Story => (
   </PrimeReactProvider>
 );
 
+/**
+ * The Modal rule, checked after every story and its play steps: nothing in a modal's content is wider than the modal.
+ * The modal clips it (no sideways scrollbar ever reaches people), so this check is what catches it.
+ */
+const modalFits = () => {
+  for (const content of document.querySelectorAll<HTMLElement>('.grg-modal__content')) {
+    if (content.scrollWidth > content.clientWidth + 1) {
+      throw new Error(`A modal's content is ${content.scrollWidth - content.clientWidth}px wider than the modal ("${content.closest('[role="dialog"]')?.getAttribute('aria-label') ?? content.closest('.grg-modal')?.querySelector('h2')?.textContent ?? 'modal'}")`);
+    }
+  }
+};
+
 const preview: Preview = {
   decorators: [withPrime, withTheme, withLocale],
+  afterEach: async () => modalFits(),
   globalTypes: {
     theme: {
       description: 'Theme',

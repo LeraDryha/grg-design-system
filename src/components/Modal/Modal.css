@@ -84,6 +84,8 @@ body.p-overflow-hidden { overflow: hidden; }
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  /* The content is never wider than the modal: nothing scrolls sideways (a story check catches what would) */
+  overflow-x: clip;
   display: flex;
   flex-direction: column;
   gap: var(--space-300);
@@ -92,6 +94,8 @@ body.p-overflow-hidden { overflow: hidden; }
   font: var(--typo-body-md-regular);
 }
 .grg-modal__content:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+/* Every part takes the content's width and can shrink to it */
+.grg-modal__content > * { min-width: 0; max-width: 100%; }
 /* Fields with floating labels: 40px between them, and 20px above the first for its label */
 .grg-modal__content:has(> .grg-field, > form > .grg-field) { gap: var(--space-1000); }
 .grg-modal__content > form { display: flex; flex-direction: column; gap: var(--space-1000); }
