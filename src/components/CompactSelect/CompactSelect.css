@@ -48,8 +48,8 @@
 
 /* The list opens 8px under the select */
 /* 8px from the field; PrimeReact sets top and left inline (above the field when there's no room below) */
-.grg-compact-select .grg-dropdown { margin-top: var(--space-200); min-width: var(--space-5000); }
-.grg-compact-select .grg-dropdown[style*='center bottom'] { margin-top: calc(-1 * var(--space-200)); }
+.grg-dropdown--compact { margin-top: var(--space-200); min-width: var(--space-5000); }
+.grg-dropdown--compact[style*='center bottom'] { margin-top: calc(-1 * var(--space-200)); }
 
 .grg-sr-only {
   position: absolute !important;

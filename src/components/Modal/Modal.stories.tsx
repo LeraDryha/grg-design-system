@@ -184,6 +184,15 @@ export const SelectUser: Story = {
   play: async ({ canvasElement }) => {
     const modal = await open(canvasElement, 'Share post');
     await waitFor(() => expect(within(modal).getByRole('combobox', { name: 'Select user' })).toHaveFocus());
+    // The list opens over the modal, whole: nothing covers or cuts off its last option, and it stays in the modal
+    await userEvent.click(modal.querySelectorAll<HTMLElement>('.grg-select__box')[1]);
+    const admin = await within(modal).findByRole('option', { name: 'Admin' });
+    await waitFor(() => {
+      const box = admin.getBoundingClientRect();
+      expect(document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2)?.closest('[role="option"]')).toBe(admin);
+    });
+    await userEvent.click(admin);
+    await waitFor(() => expect(modal.querySelectorAll('.grg-select__box')[1]).toHaveTextContent(/Admin/));
     await userEvent.click(within(modal).getByRole('button', { name: 'Share' }));
     await waitFor(() => expect(within(canvasElement).queryByRole('dialog')).toBeNull());
   },

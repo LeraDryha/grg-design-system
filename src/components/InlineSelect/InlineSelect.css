@@ -40,12 +40,12 @@
 
 /* The list (shared with Select) opens under the field, lined up with its left edge. PrimeReact sets top and left
    inline (above the field when there's no room below), so the offsets are margins. */
-.grg-inline-select .grg-dropdown {
+.grg-dropdown--inline {
   margin-top: var(--space-300);
   margin-left: calc(-1 * var(--space-250));
   min-width: var(--space-5000);
 }
-.grg-inline-select .grg-dropdown[style*='center bottom'] { margin-top: calc(-1 * var(--space-300)); }
+.grg-dropdown--inline[style*='center bottom'] { margin-top: calc(-1 * var(--space-300)); }
 
 .grg-sr-only {
   position: absolute !important;

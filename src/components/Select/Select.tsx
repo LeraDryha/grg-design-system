@@ -7,7 +7,7 @@ import { OverflowSummary } from './OverflowSummary';
 import { Icon, type IconName } from '../Icon/Icon';
 import { FormField } from '../FormField/FormField';
 import { EMPTY_ICON, OptionPicture, type OptionKind, type SelectOption } from './options';
-import { DropdownItem, DropdownSkeleton, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons } from './dropdown';
+import { DropdownItem, DropdownSkeleton, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons, useListLayer } from './dropdown';
 import { useDropdownCombobox } from './useDropdownCombobox';
 import './Select.css';
 
@@ -87,6 +87,7 @@ export function Select({
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<Dropdown>(null);
   const multiRef = useRef<MultiSelect>(null);
+  const layer = useListLayer(rootRef);
   // PrimeReact's own show(): it opens the list without scrolling the page to the field
   useEffect(() => {
     if (defaultOpen) (multiple ? multiRef : dropdownRef).current?.show();
@@ -175,8 +176,8 @@ export function Select({
               if (controlledValues === undefined) setLocalValues(ordered);
               onValuesChange?.(ordered);
             }}
-            onShow={() => setOpen(true)}
-            onHide={() => setOpen(false)}
+            onShow={() => { setOpen(true); layer.place(); }}
+            onHide={() => { setOpen(false); layer.release(); }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             selectedItemTemplate={(v: string | undefined) =>
@@ -216,7 +217,7 @@ export function Select({
               label: { className: 'grg-select__label' },
               hiddenInputWrapper: { className: 'grg-sr-only' },
               trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
-              panel: { className: 'grg-dropdown' },
+              panel: { className: 'grg-dropdown grg-dropdown--select' },
               // Without search the header would hold only the hidden close button and a divider
               header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
               filterContainer: { className: 'grg-dropdown__search' },
@@ -263,8 +264,8 @@ export function Select({
               if (controlled === undefined) setLocal(e.value);
               onChange?.(e.value);
             }}
-            onShow={() => setOpen(true)}
-            onHide={() => setOpen(false)}
+            onShow={() => { setOpen(true); layer.place(); }}
+            onHide={() => { setOpen(false); layer.release(); }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             valueTemplate={() => (
@@ -285,7 +286,7 @@ export function Select({
               select: { 'aria-hidden': true },
               hiddenSelectedMessage: { className: 'grg-sr-only' },
               trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
-              ...dropdownPanelPt(label),
+              ...dropdownPanelPt(label, 'select'),
             }}
           />
         )}
