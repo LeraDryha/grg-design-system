@@ -124,6 +124,11 @@ mkdirSync(new URL('src/tokens/', root), { recursive: true });
 writeFileSync(new URL('src/styles/tokens.css', root), css);
 
 // Data for the Foundations pages
+/** Each layer of an effect style as the Figma panel shows it: type, X, Y, blur, spread, colour and its opacity */
+const layersOf = name => (styles.effects.find(s => s.name === name)?.effects ?? []).map(e => ({
+  type: e.type === 'INNER_SHADOW' ? 'Inner shadow' : 'Drop shadow', x: e.x, y: e.y, blur: e.blur, spread: e.spread,
+  color: e.color.slice(0, 7), opacity: Math.round(parseInt(e.color.slice(7) || 'ff', 16) / 2.55),
+}));
 const resolve = (v, mode) => (v.startsWith('->') ? resolve(colors.find(c => c.name === v.slice(9))[mode], mode) : v);
 const data = {
   semantic: semantic.map(c => ({ figma: c.name, css: colorVar(c.name), light: c.light.replace('->Colors:', ''), dark: c.dark.replace('->Colors:', ''), lightHex: resolve(c.light, 'light'), darkHex: resolve(c.dark, 'dark') })),
@@ -131,7 +136,17 @@ const data = {
   space: variables.Spasing.map(l => l.split('|')).filter(([, t]) => t === 'F').map(([n, , v]) => ({ figma: `Spasing/${n}`, css: `--space-${n}`, px: +v })),
   radius: variables.Corner.map(l => l.split('|')).map(([n, , v]) => ({ figma: `Corner/${n}`, css: `--radius-${slug(n)}`, px: +v })),
   text: textStyles.map(({ css, ...t }) => ({ ...t, css: `--typo-${t.id}` })),
-  shadows: styles.effects.filter(s => s.name.startsWith('Elevation/Light')).map(s => ({ figma: s.name.replace('/Light', ''), css: `--shadow-${s.name.split('/')[2]}` })),
+  shadows: [
+    ...['xs', 'sm', 'md', 'lg', 'xl'].map(level => ({
+      figma: `Elevation/${level}`, css: `--shadow-${level}`,
+      light: layersOf(`Elevation/Light/${level}`), dark: layersOf(`Elevation/Dark/${level}`),
+    })),
+    ...['Left', 'Right'].map(side => ({
+      figma: `Table Shadow/${side}`, css: `--shadow-table-${slug(side)}`,
+      light: layersOf(`Table Shadow/${side}/Light`), dark: layersOf(`Table Shadow/${side}/Dark`),
+    })),
+  ],
+  blurs: styles.effects.filter(s => s.name.startsWith('Blur/Light')).map(s => ({ figma: s.name.replace('/Light', ''), css: `--blur-${s.name.split('/')[2]}`, px: s.effects[0].blur })),
 };
 writeFileSync(new URL('src/tokens/tokens.json', root), JSON.stringify(data, null, 1) + '\n');
 
