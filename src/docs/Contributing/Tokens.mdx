@@ -35,6 +35,7 @@ Only the gold (light) and dark themes are part of this system. White-label palet
 | What | Figma | Storybook |
 |---|---|---|
 | Keyboard focus ring | 4px light grey ring (`primary-soft-200`), about 1.2:1 against the canvas | The same ring in the system blue (`--focus-ring`, Info blue), so keyboard users can see it |
+| Focus ring after a mouse or touchpad press | Focused is drawn as its own state | The ring shows only after Tab or the arrow keys; a pointer press shows the Active state (`src/styles/input-modality.ts`, call `trackInputModality()` once when the app starts) |
 | Modal overlay | #0A0A0A at 60% with Blur/sm, drawn without a variable | `--overlay`: `neutral-1000` at 60%, with `--blur-sm`; the same in both themes |
 | Inverted parts | The Black feature card is drawn in the Dark mode inside the light theme | `.grg-theme-invert` gives a part the other theme: dark in the light theme, light in the dark one. The Black feature card uses it; the Black tooltip (`bg-base-1000`) swaps on its own |
 | A part that keeps the light theme | The Primary feature card has dark text on gold, which turns white (about 2:1) in the dark theme | `data-theme="light"` on the part: the generated `[data-theme='light']` block brings the light values back inside the dark theme |

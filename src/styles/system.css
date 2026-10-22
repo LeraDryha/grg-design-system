@@ -11,6 +11,13 @@
   --overlay: color-mix(in srgb, var(--color-neutral-1000) 60%, transparent);
 }
 
+/* The ring is for the keyboard only: after a mouse, touchpad or touch press it is off, and the control shows its
+   Active state instead (src/styles/input-modality.ts keeps data-input-modality on the root) */
+[data-input-modality='pointer'],
+[data-input-modality='pointer'] :is([data-theme], .grg-theme-invert) {
+  --focus-ring: 0 0 0 0 transparent;
+}
+
 /* Text for screen readers only, such as the step of a Stepper dot or the name of an icon-only link */
 .grg-sr-only {
   position: absolute !important;
