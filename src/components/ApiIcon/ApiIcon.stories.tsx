@@ -7,7 +7,7 @@ import componentFrame from '../../assets/design/api-icon/api-icon-component.png'
 const methods: ApiMethod[] = ['post', 'get', 'delete', 'patch', 'put'];
 
 const meta = {
-  title: 'Components/Api Icon',
+  title: 'Foundations/Icons/Api icons',
   // Status: ready, in-progress or draft. Shown in the page header; in-progress and draft also in the sidebar
   tags: ['ready'],
   component: ApiIcon,
