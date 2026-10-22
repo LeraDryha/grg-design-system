@@ -9,6 +9,7 @@ import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type Social
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import { colorDescriptions } from './color-descriptions';
+import { radiusUsage } from './radius-usage';
 import './Foundations.css';
 
 /* Blocks for the Foundations pages. The data comes from src/tokens/tokens.json, generated from Figma. */
@@ -158,17 +159,29 @@ export function SpacingScale() {
   );
 }
 
+/** The corner radii: a preview, the size and when to use each (the Figma docs table). */
 export function RadiusScale() {
   return (
-    <ul className="sb-unstyled fdn-tiles">
-      {tokens.radius.map(t => (
-        <li key={t.css}>
-          <span className="fdn-tile" style={{ borderRadius: `var(${t.css})` }} aria-hidden="true" />
-          <code>{t.css}</code>
-          <span className="fdn-muted">{t.px === 999 ? 'Fully rounded' : `${t.px}px`}</span>
-        </li>
-      ))}
-    </ul>
+    <table className="sb-unstyled fdn-table fdn-table--radius">
+      <thead>
+        <tr>
+          <th scope="col"><span className="grg-sr-only">Preview</span></th>
+          <th scope="col">Token</th>
+          <th scope="col">Size</th>
+          <th scope="col">Conditions of use</th>
+        </tr>
+      </thead>
+      <tbody>
+        {tokens.radius.map(t => (
+          <tr key={t.css}>
+            <td><span className="fdn-radius" style={{ borderRadius: `var(${t.css})` }} aria-hidden="true" /></td>
+            <td><code>{t.css}</code><span className="fdn-muted">{t.figma}</span></td>
+            <td className="fdn-nowrap">{t.px === 999 ? '999px (fully rounded)' : `${t.px}px`}</td>
+            <td>{radiusUsage[t.figma]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 

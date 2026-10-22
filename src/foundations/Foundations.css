@@ -210,3 +210,16 @@
 .fdn-color { display: inline-flex; align-items: center; gap: var(--space-200); }
 .fdn-color__chip { width: var(--space-400); height: var(--space-400); border-radius: var(--radius-xxs-4); box-shadow: inset 0 0 0 1px var(--stroke-soft-200); }
 @media (max-width: 720px) { .fdn-shadow { grid-template-columns: minmax(0, 1fr); } }
+
+/* Corner radius: a corner of a tile, then the token, its size and when to use it */
+.fdn-table--radius { table-layout: fixed; }
+.fdn-table--radius th:nth-child(1) { width: 12%; }
+.fdn-table--radius th:nth-child(2) { width: 26%; }
+.fdn-table--radius th:nth-child(3) { width: 16%; }
+.fdn-radius {
+  display: block;
+  width: var(--space-1400);
+  height: var(--space-1400);
+  border: 1px solid var(--stroke-base-300);
+  background: var(--bg-weak-100);
+}
