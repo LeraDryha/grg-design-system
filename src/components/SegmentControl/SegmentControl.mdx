@@ -1,0 +1,117 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SegmentStories from './SegmentControl.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SegmentStories} />
+
+# Segment Control
+
+<ComponentHeader
+  figma="204-21043"
+  guidelines="786-69807"
+  designTab
+  builtOn="PrimeReact SelectButton"
+  related={[
+    { label: 'Tab Menu', href: '?path=/docs/components-tab-menu--docs', relation: 'See also' },
+    { label: 'Radio', href: '?path=/docs/components-radio--docs', relation: 'See also' },
+  ]}
+/>
+
+Picks one of a few options in a row (Buy or Sell, a period, a filter), or switches between views of the same content.
+
+<Canvas of={SegmentStories.Playground} />
+<Controls of={SegmentStories.Playground} include={['role', 'fullWidth', 'iconOnly', 'disabled']} />
+
+```tsx
+<SegmentControl aria-label="Order side" fullWidth value={side} onChange={setSide}
+  segments={[{ value: 'buy', label: 'Buy', color: 'green' }, { value: 'sell', label: 'Sell', color: 'red' }]} />
+```
+
+## When to use
+
+<DoDont
+  dos={['Two to six short options where the choice applies at once', 'Switching between views of the same data']}
+  donts={[
+    'More options, or longer labels: use Tab Menu or Select',
+    'A choice in a form that waits for Submit: use Radio',
+    'Navigation between pages: use Sidebar or Topbar Navigation',
+  ]}
+/>
+
+## Examples
+
+### Buy or sell
+
+<Canvas of={SegmentStories.BuyOrSell} />
+
+Equal segments across the panel (`fullWidth`); the selected side turns green or red (Figma Active-green, Active-red).
+
+### Filter orders
+
+<Canvas of={SegmentStories.FilterOrders} />
+
+Each segment as wide as its label.
+
+### Invoice steps
+
+<Canvas of={SegmentStories.InvoiceSteps} />
+
+With `role="tabs"` the segments switch the content under them (Figma Content view), and screen readers hear tabs.
+
+### List or grid
+
+<Canvas of={SegmentStories.ListOrGrid} />
+
+Icons only; each one names its segment in a tooltip and for screen readers.
+
+### Narrow screen
+
+<Canvas of={SegmentStories.NarrowScreen} />
+
+Where the segments don't fit, the control keeps its width and scrolls sideways; labels are never cut.
+
+## Design decisions
+
+- **Two roles, one look**: `choice` (a set of options, like radios) and `tabs` (views of content, like Tab Menu).
+- **The keyboard**: Tab reaches the control in one step, the arrow keys move and choose, as people expect from radios and tabs. PrimeReact SelectButton only moves the focus with the arrows and doesn't answer Enter, so the control does it.
+- **One segment is always selected.**
+- **Width**: each segment as wide as its content, or equal segments across the container (`fullWidth`).
+- **Focus** uses the system blue ring.
+
+## Types
+
+<Canvas of={SegmentStories.Types} />
+
+Text only, text and icon, icon only; Buy and Sell colours; a disabled segment; up to six segments.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the selected segment, then out |
+| ← / → | Moves to the next segment and selects it |
+| Home / End | First and last segment |
+| Enter / Space | Selects the focused segment |
+
+- `choice`: a `radiogroup` of `radio`s with `aria-checked`; `tabs`: a `tablist` of `tab`s with `aria-selected`, and the content as a `tabpanel`.
+- Known contrast from Figma: an unselected label (`text-soft-500` on `bg-weak-100`) is 4.3:1, just under 4.5:1. `text-subtle-700`, the Hovered colour, would pass.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Quantity', prop: 'segments', values: '2 to 6' },
+    { figma: 'Text only, Text + icon, Icon only', prop: 'segments[].icon, iconOnly', values: 'Base icon name; boolean' },
+    { figma: 'Item · Edit text', prop: 'segments[].label', values: 'text' },
+    { figma: 'Item · State = Active-normal, Active-green, Active-red', prop: 'value, segments[].color', values: 'the selected value; green, red' },
+    { figma: 'Item · State = Disabled', prop: 'segments[].disabled, disabled', values: 'boolean' },
+    { figma: 'Item · State = Hovered', prop: '(pointer)', values: '—' },
+    { figma: 'Content view', prop: 'role="tabs", children', values: 'the content of the selected segment' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SegmentStories} />

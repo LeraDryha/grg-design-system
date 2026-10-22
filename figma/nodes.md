@@ -295,3 +295,13 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Search` (State × Style × Size × Filled; Hint text, Left icon, Right icon, Cursor) | `163:9131` |
 | Usage Guidelines (anatomy, sizes, style, state, spacing) | `779:31852` |
 | Examples (empty) | `780:55707` |
+
+## Segment Control
+
+| What | Node |
+|---|---|
+| Page ❖ Segment control | `204:20549` |
+| Component set `Segment control` (Quantity 02–06 × Text + icon / Text only / Icon only) | `204:21043` |
+| Component set `Segment control item` (State: Default, Hovered, Active-normal, Disabled, Active-red, Active-green) | `204:20934` |
+| Usage Guidelines (anatomy, states, types) | `786:69807` |
+| Examples (invoice steps, orders filter, Buy and Sell) | `790:5480` |

@@ -1,0 +1,63 @@
+/* Segment control. Every value is a token; Figma layer names in the comments. */
+
+/* Where the segments don't fit, the control keeps its width and scrolls sideways; labels are never cut.
+   6px more around, taken back with the margin, so the focus ring isn't cut by the scrolling box. */
+.grg-segment-control {
+  max-width: calc(100% + var(--space-150) * 2);
+  margin: calc(-1 * var(--space-150));
+  padding: var(--space-150);
+  overflow-x: auto;
+}
+
+/* Container: a grey track, 2px around the segments, 4px between them */
+.grg-segment-control__track {
+  display: flex;
+  gap: var(--space-100);
+  box-sizing: border-box;
+  width: max-content;
+  padding: var(--space-050);
+  border-radius: var(--radius-sm-8);
+  background: var(--bg-weak-100);
+}
+/* Full width: equal segments across the container */
+.grg-segment-control[data-full-width] .grg-segment-control__track { width: 100%; min-width: max-content; }
+.grg-segment-control[data-full-width] .grg-segment { flex: 1 1 0; }
+
+/* Segment control item: 32px, 6px above and below, 16px on the sides */
+.grg-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--space-800);
+  padding: var(--space-150) var(--space-400);
+  border-radius: var(--radius-xs-6);
+  color: var(--text-soft-500);
+  font: var(--typo-body-md-semibold);
+  white-space: nowrap;
+  cursor: pointer;
+  outline: none;
+}
+.grg-segment-control[data-icon-only] .grg-segment { padding-inline: var(--space-300); }
+.grg-segment__face { display: flex; align-items: center; gap: var(--space-150); }
+.grg-segment__icon { flex: none; color: var(--icon-base-500); }
+
+/* State = Hovered */
+.grg-segment:hover { color: var(--text-subtle-700); }
+.grg-segment:hover .grg-segment__icon { color: var(--icon-subtle-700); }
+/* State = Active-normal: a white tile with the xs shadow */
+.grg-segment[data-selected] { background: var(--surface-base); box-shadow: var(--shadow-xs); color: var(--text-strong-1000); cursor: default; }
+.grg-segment[data-selected] .grg-segment__icon { color: var(--icon-strong-1000); }
+/* Active-green and Active-red: the label and icon in the status colour */
+.grg-segment[data-selected][data-color='green'],
+.grg-segment[data-selected][data-color='green'] .grg-segment__icon { color: var(--success-base-600); }
+.grg-segment[data-selected][data-color='red'],
+.grg-segment[data-selected][data-color='red'] .grg-segment__icon { color: var(--error-base-600); }
+/* State = Disabled */
+.grg-segment[aria-disabled='true'] { color: var(--text-disabled-400); cursor: default; }
+.grg-segment[aria-disabled='true'] .grg-segment__icon { color: var(--icon-disabled-400); }
+/* Focused from the keyboard: the system ring, over the selected tile's shadow */
+.grg-segment:focus-visible { box-shadow: var(--focus-ring); }
+
+/* Content view under the segments (role tabs) */
+.grg-segment-control__view { display: flex; flex-direction: column; gap: var(--space-400); min-width: 0; }
