@@ -16,6 +16,8 @@ export type CompactSelectProps = {
   placeholder?: string;
   /** Figma Type: Default (short text, such as USD), Icon, Country (flag), Coin. Pictures show without text. */
   type?: 'default' | 'icon' | 'country' | 'coin';
+  /** The picture and the short label together, such as a coin and "ETH" (the Select field in the Figma Convert flow) */
+  withText?: boolean;
   /** Figma Size: lg-44, md-40, sm-32 */
   size?: 'lg' | 'md' | 'sm';
   /** The name screen readers announce, such as "Currency". There is no visible label. */
@@ -39,7 +41,7 @@ export type CompactSelectProps = {
  * a country, a coin. PrimeReact Dropdown (unstyled), with the same open list as Select.
  */
 export function CompactSelect({
-  options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'default', size = 'md', 'aria-label': label,
+  options, value: controlled, defaultValue, onChange, placeholder = 'Select', type = 'default', withText = false, size = 'md', 'aria-label': label,
   searchable = false, searchPlaceholder = 'Search', noResults = 'Nothing found',
   invalid, 'aria-describedby': describedBy, disabled, id: suppliedId, name, className = '',
 }: CompactSelectProps) {
@@ -92,7 +94,7 @@ export function CompactSelect({
           type === 'default' ? (
             <span className="grg-compact-select__text" data-placeholder={!selected || undefined}>{selected?.label ?? placeholder}</span>
           ) : selected ? (
-            <OptionPicture option={selected} />
+            withText ? <><OptionPicture option={selected} /><span className="grg-compact-select__text">{selected.label}</span></> : <OptionPicture option={selected} />
           ) : (
             <Icon name={EMPTY_ICON[type]} size={20} />
           )

@@ -18,6 +18,8 @@ export function trackInputModality(doc: Document = document) {
     set('keyboard');
   };
   const onPointerDown = () => set('pointer');
+  // Until a key is pressed nobody is navigating by keyboard: focus moved by the page itself (a modal opening) shows no ring
+  if (!root.dataset.inputModality) set('pointer');
   doc.addEventListener('keydown', onKeyDown, true);
   doc.addEventListener('pointerdown', onPointerDown, true);
   return () => {
