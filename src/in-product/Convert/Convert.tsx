@@ -48,7 +48,7 @@ function CurrencyInput({ side, asset, assets, text, onText, onAsset, error, over
       <div className="grg-ip-currency__row">
         <div className="grg-ip-currency__amount">
           {/* Figma: what leaves the balance has a minus, what arrives a plus */}
-          <span className="grg-ip-currency__field">
+          <span className="grg-ip-currency__field" data-long={shown.length > 13 || undefined}>
             {text && <span aria-hidden="true">{side === 'from' ? '−' : '+'}</span>}
             <input id={id} inputMode="decimal" autoComplete="off" placeholder="0" value={shown}
               onFocus={() => setFocused(true)} onBlur={() => setFocused(false)}

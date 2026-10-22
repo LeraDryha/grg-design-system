@@ -94,9 +94,9 @@
 
 /* ---- Convert ---- */
 /* Figma: the modal content of Convert is 24px apart */
-.grg-ip-flow { display: grid; gap: var(--space-600); }
+.grg-ip-flow { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-600); }
 /* Figma "Currency input": a grey box, 16px inside, radius 12; From / To and the balance over the amount and the coin */
-.grg-ip-pair { display: grid; gap: var(--space-100); }
+.grg-ip-pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-100); }
 /* A row of no height between the boxes (8px apart), holding the arrow on their seam */
 .grg-ip-pair__gap { position: relative; z-index: 1; height: 0; }
 .grg-ip-currency { display: grid; gap: var(--space-200); padding: var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
@@ -106,7 +106,9 @@
 .grg-ip-currency__amount { display: grid; flex: 1; min-width: 0; padding: var(--space-150) 0; }
 .grg-ip-currency__field { display: flex; align-items: baseline; font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
 .grg-ip-currency__field input {
+  /* No width of its own (an input is about 20 characters wide by default): it takes what the row leaves */
   flex: 1;
+  width: 0;
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -117,6 +119,8 @@
   font: inherit;
   caret-color: var(--primary-base-1000);
 }
+/* A long amount steps down a size so more of it stays in view */
+.grg-ip-currency__field[data-long] { font: var(--typo-title-md-semibold); }
 .grg-ip-currency__field input::placeholder { color: var(--text-strong-1000); }
 .grg-ip-currency__field input:focus { outline: none; }
 .grg-ip-currency[data-keyboard-navigation] .grg-ip-currency__field:has(:focus-visible) { box-shadow: var(--focus-ring); border-radius: var(--radius-xxs-4); }

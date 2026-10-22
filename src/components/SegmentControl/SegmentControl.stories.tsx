@@ -91,7 +91,7 @@ export const FilterOrders: Story = {
     const [status, setStatus] = useState('all');
     const shown = orders.filter(([state]) => status === 'all' || state.toLowerCase() === status);
     return (
-      <div style={{ ...panel, display: 'grid', gap: 'var(--space-400)' }}>
+      <div style={{ ...panel, width: 'calc(var(--space-5000) * 2)', display: 'grid', gap: 'var(--space-400)' }}>
         <SegmentControl
           aria-label="Orders"
           value={status}
