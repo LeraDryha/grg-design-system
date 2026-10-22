@@ -1,0 +1,84 @@
+/* Interaction Card. Every value is a token; Figma layer names in the comments. */
+
+/* ---- Card: 16px all round, 12px between parts, radius 12, bg-weak-100; Hovered bg-soft-200 ---- */
+.grg-interaction-card {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: var(--space-300);
+  width: 100%;
+  margin: 0;
+  padding: var(--space-400);
+  border: 0;
+  border-radius: var(--radius-lg-12);
+  background: var(--bg-weak-100);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-medium);
+  text-align: start;
+  text-decoration: none;
+  transition: background-color 120ms ease;
+}
+.grg-interaction-card:not([data-static], [data-disabled]) { cursor: pointer; }
+.grg-interaction-card:not([data-static], [data-disabled]):hover { background: var(--bg-soft-200); }
+.grg-interaction-card:not([data-static], [data-disabled]):active { background: var(--bg-subtle-300); }
+.grg-interaction-card:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-interaction-card__leading { display: flex; flex: none; }
+.grg-interaction-card__icon { color: var(--icon-strong-1000); }
+/* text block: the title row (title, badge) and the description, 2px apart */
+.grg-interaction-card__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-interaction-card__top { display: flex; align-items: center; gap: var(--space-150); min-width: 0; }
+.grg-interaction-card__title { min-width: 0; overflow: hidden; font: var(--typo-body-md-medium); text-overflow: ellipsis; white-space: nowrap; }
+.grg-interaction-card__description { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+/* Currency: the name on the left, the amount on the right */
+.grg-interaction-card__row { display: flex; flex: 1; align-items: center; justify-content: space-between; gap: var(--space-150); min-width: 0; }
+.grg-interaction-card__amount { flex: none; font: var(--typo-body-md-medium); }
+.grg-interaction-card__chevron { flex: none; color: var(--icon-base-500); }
+/* Not in Figma: Disabled, the grey of other disabled controls */
+.grg-interaction-card[data-disabled] { cursor: default; }
+.grg-interaction-card[data-disabled] :is(.grg-interaction-card__title, .grg-interaction-card__amount, .grg-interaction-card__description) { color: var(--text-disabled-400); }
+.grg-interaction-card[data-disabled] :is(.grg-interaction-card__icon, .grg-interaction-card__chevron) { color: var(--icon-disabled-400); }
+.grg-interaction-card[data-disabled] .grg-interaction-card__leading { opacity: 0.5; }
+
+/* ---- Interaction card (tile): 200 × 200, 24px padding, 16px between parts, radius 16, a 1px stroke ---- */
+.grg-interaction-tile {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-400);
+  width: var(--space-5000);
+  min-height: var(--space-5000);
+  margin: 0;
+  padding: var(--space-600);
+  border: 1px solid var(--stroke-base-300);
+  border-radius: var(--radius-xl-16);
+  background: var(--surface-base);
+  color: var(--text-strong-1000);
+  text-align: center;
+  text-decoration: none;
+  transition: border-color 120ms ease;
+}
+.grg-interaction-tile:not([data-static], [data-disabled]) { cursor: pointer; }
+/* State = Hovered, Active (the chosen one) */
+.grg-interaction-tile:not([data-static], [data-disabled]):hover { border-color: var(--stroke-strong-500); }
+.grg-interaction-tile[data-selected] { border-color: var(--stroke-stronger-900); }
+.grg-interaction-tile:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-interaction-tile__text { display: flex; flex-direction: column; gap: var(--space-100); max-width: 100%; }
+.grg-interaction-tile__title { overflow: hidden; font: var(--typo-body-lg-semibold); text-overflow: ellipsis; white-space: nowrap; }
+.grg-interaction-tile__subtitle { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+/* Filled Off: the Secondary xlg-56 icon-only Button, drawn */
+.grg-interaction-tile__plus {
+  display: grid;
+  place-items: center;
+  width: var(--space-1400);
+  height: var(--space-1400);
+  border-radius: var(--radius-lg-12);
+  background: var(--primary-weak-100);
+  color: var(--primary-base-1000);
+  transition: background-color 120ms ease;
+}
+.grg-interaction-tile:not([data-disabled]):hover .grg-interaction-tile__plus { background: var(--primary-soft-200); }
+.grg-interaction-tile[data-disabled] { cursor: default; border-color: var(--stroke-disabled); }
+.grg-interaction-tile[data-disabled] :is(.grg-interaction-tile__title, .grg-interaction-tile__subtitle) { color: var(--text-disabled-400); }
+.grg-interaction-tile[data-disabled] :is(.grg-avatar, .grg-interaction-tile__plus) { opacity: 0.5; }

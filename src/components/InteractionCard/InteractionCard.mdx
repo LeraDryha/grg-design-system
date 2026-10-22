@@ -1,0 +1,116 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as CardStories from './InteractionCard.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={CardStories} />
+
+# Interaction Card
+
+<ComponentHeader
+  figma="1458-5033"
+  guidelines="1450-3359"
+  designTab
+  builtOn="PrimeReact Button"
+  related={[
+    { label: 'Featured Icon', href: '?path=/docs/components-featured-icon--docs' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs' },
+    { label: 'Radio', href: '?path=/docs/components-radio--docs', relation: 'See also' },
+    { label: 'Feature Card', href: '?path=/docs/components-feature-card--docs', relation: 'See also' },
+  ]}
+/>
+
+A card that is one big target: a withdrawal method, a currency or a company to choose.
+
+<Canvas of={CardStories.Playground} />
+<Controls of={CardStories.Playground} include={['type', 'title', 'description', 'disabled']} />
+
+```tsx
+<InteractionCard title="SEPA Transfer" description="Fee 0%" leading={<PaymentIcon method="sepa" size={32} />} onClick={next} />
+```
+
+## When to use
+
+<DoDont
+  dos={['A short list of options, each leading to its next step', 'Picking a currency with its balance in view', 'Switching between companies, with a tile to create one']}
+  donts={['A choice that is confirmed later with a button: use Radio', 'Long lists or tables of records: use Table', 'Promoting a feature: use Feature Card']}
+/>
+
+## Examples
+
+### Choose a withdrawal method
+
+<Canvas of={CardStories.ChooseAWithdrawalMethod} />
+
+From the Withdraw flow. Each card leads on; the chevron says so. A method that is out of use stays in the list, greyed, and its description says why.
+
+### Choose a currency
+
+<Canvas of={CardStories.ChooseACurrency} />
+
+Figma Currency: the coin and its name on the left, the balance on the right.
+
+### Balances
+
+<Canvas of={CardStories.Balances} />
+
+With no action the card is a plain row: no hover, no chevron, no Tab stop.
+
+### Choose a company
+
+<Canvas of={CardStories.ChooseACompany} />
+
+Figma Interaction card: the current company is outlined black (Active); the last tile creates a new one.
+
+## Design decisions
+
+- **The whole card is one button or link.** Figma draws the chevron as an Action Button; in code it is a picture, because a button can't sit inside another.
+- **The chevron shows only when the card leads on.** Currency cards have none in Figma, so they never get one.
+- **Unavailable** isn't in Figma: the grey of other disabled controls; say why in the description.
+- **Any picture** can replace the icon (`leading`), such as a payment method logo.
+- **The plus on the create tile** is drawn like the Secondary icon-only Button, for the same reason as the chevron.
+- **Focus** is the system blue ring.
+
+## Types
+
+<Canvas of={CardStories.Types} />
+
+Icon (a Featured icon) for actions and methods; Base Icon for quieter lists; Currency for coins and balances.
+
+## Tiles
+
+<Canvas of={CardStories.Tiles} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves between the cards that do something |
+| Enter / Space | Opens or chooses the card |
+
+- A card is named by everything on it: title, badge and description (*Visa, Mastercard Fee 1.50 EUR + 1.5%*).
+- A chosen tile says so (`aria-pressed`).
+- The description (`text-soft-500` on `bg-weak-100`) is 4.3:1 in Figma, a little under 4.5:1.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Card · Type', prop: 'type', values: 'icon, base-icon, currency' },
+    { figma: 'Card title here! / Currency', prop: 'title', values: 'text' },
+    { figma: 'Card description here!', prop: 'description', values: 'text' },
+    { figma: 'Badge', prop: 'badge', values: '{ label, color }' },
+    { figma: 'Featured icon / Base icon / Coin', prop: 'icon, coin, leading', values: 'a Base icon, a coin, any picture' },
+    { figma: 'Amount', prop: 'amount', values: 'text' },
+    { figma: 'Action button (chevron)', prop: 'onClick, href', values: 'shown when the card leads on' },
+    { figma: 'State · Hovered', prop: '(pointer)', values: '—' },
+    { figma: 'Interaction card · Filled', prop: 'InteractionTile filled', values: 'boolean' },
+    { figma: 'Interaction card · State Active', prop: 'InteractionTile selected', values: 'boolean' },
+    { figma: 'Title, Subtitles, Badge', prop: 'InteractionTile title, subtitle, badge', values: '—' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={CardStories} />
