@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { AccordionKeyValue } from '../../components/Accordion/AccordionKeyValue';
 import { Button } from '../../components/Button/Button';
 import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
@@ -116,6 +116,73 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
 
   const outside = step === 'processing' || step === 'progress';
 
+  type View = { title: string; description?: string; back?: () => void; action?: { label: string; disabled?: boolean; onClick: () => void }; content: ReactNode };
+  const views: Partial<Record<Step, View>> = {
+    method: {
+      title: `Withdraw ${asset.code}`,
+      description: 'Select withdrawal method',
+      content: methods(asset.code).map(item => (
+        <InteractionCard key={item.id} type="icon" icon="wallet" title={item.title} description={item.feeText}
+          onClick={() => { setMethodId(item.id); setStep('amount'); }} />
+      )),
+    },
+    amount: {
+      title: `Withdraw ${asset.code} to ${method.title}`,
+      description: `${format(asset.amount, asset.digits)} ${asset.code} available`,
+      back: () => setStep('method'),
+      action: { label: 'Continue', disabled: !ready, onClick: () => setStep('summary') },
+      content: <>
+        <AmountField value={amount} onChange={setAmount} code={asset.code} fee={method.fee} error={error} />
+        <div className="grg-ip-presets">
+          <Button variant="secondary" size="xs" onClick={() => setAmount(String(+largest.toFixed(asset.digits)))}>MAX</Button>
+        </div>
+        {/* Figma: the limit card, moved here from the popover beside the modal */}
+        <div className="grg-ip-limits" data-invalid={value > LIMITS.max || undefined}>
+          <AccordionKeyValue rows={[{ key: 'Maximum', value: `${format(LIMITS.max)} ${asset.code}` }]} />
+        </div>
+        <div className="grg-ip-box">
+          <AccordionKeyValue rows={[{ key: 'Recipient', value: method.title }, { key: 'Total amount', value: `${format(ready ? total : 0)} ${asset.code}` }]} />
+        </div>
+        <div className="grg-ip-comment">
+          <div className="grg-ip-comment__head">
+            <span>Comment</span>
+            <Button variant="text" size="sm" leftIcon={comment ? 'edit' : 'plus'} onClick={() => { setDraft(comment); setStep('comment'); }}>{comment ? 'Edit' : 'Add'}</Button>
+          </div>
+          {comment && <p className="grg-ip-comment__text">{comment}</p>}
+        </div>
+      </>,
+    },
+    comment: {
+      title: 'Comment',
+      back: () => setStep('amount'),
+      action: { label: 'Save', onClick: () => { setComment(draft.trim()); setStep('amount'); } },
+      content: <TextArea label="Comment" value={draft} onValueChange={setDraft} counter maxLength={1000} />,
+    },
+    summary: {
+      title: 'Withdrawal amount',
+      back: () => setStep('amount'),
+      action: { label: 'Continue', onClick: () => setStep(saveRecipient ? 'requisite' : 'processing') },
+      content: <>
+        <p className="grg-ip-amount__total">{format(value)} {asset.code}</p>
+        <div className="grg-ip-box">
+          <AccordionKeyValue rows={[{ key: 'Fee', value: `${format(method.fee)} ${asset.code}` }, { key: 'Total amount', value: `${format(total)} ${asset.code}` }]} />
+        </div>
+        <div className="grg-ip-box grg-ip-box--row">
+          <FeaturedIcon type="primary" size="sm" filled={false} icon="user" />
+          <span className="grg-ip-box__label" aria-hidden="true">Save recipient</span>
+          <Switch aria-label="Save recipient" checked={saveRecipient} onChange={setSaveRecipient} />
+        </div>
+      </>,
+    },
+    requisite: {
+      title: 'Save Requisite',
+      back: () => setStep('summary'),
+      action: { label: 'Continue', disabled: !recipientName.trim(), onClick: () => setStep('processing') },
+      content: <Input label="Recipient name" required size="lg" value={recipientName} onValueChange={setRecipientName} />,
+    },
+  };
+  const view = step && !outside ? views[step] : undefined;
+
   return (
     <>
       <AppFrame centred={outside}>
@@ -150,59 +217,11 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
       )}
       </AppFrame>
 
-      <Modal appendTo="self" visible={step === 'method'} onHide={close} title={`Withdraw ${asset.code}`} description="Select withdrawal method">
-        <div className="grg-ip-stack">
-          {methods(asset.code).map(item => (
-            <InteractionCard key={item.id} type="icon" icon="wallet" title={item.title} description={item.feeText}
-              onClick={() => { setMethodId(item.id); setStep('amount'); }} />
-          ))}
-        </div>
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'amount'} onHide={close} onBack={() => setStep('method')}
-        title={`Withdraw ${asset.code} to ${method.title}`} description={`${format(asset.amount, asset.digits)} ${asset.code} available`}
-        footerType="fill" primaryAction={{ label: 'Continue', disabled: !ready, onClick: () => setStep('summary') }}>
-        <AmountField value={amount} onChange={setAmount} code={asset.code} fee={method.fee} error={error} />
-        <div className="grg-ip-presets">
-          <Button variant="secondary" size="xs" onClick={() => setAmount(String(+largest.toFixed(asset.digits)))}>MAX</Button>
-        </div>
-        {/* Figma: the limit card, moved here from the popover beside the modal */}
-        <div className="grg-ip-limits" data-invalid={value > LIMITS.max || undefined}>
-          <AccordionKeyValue rows={[{ key: 'Maximum', value: `${format(LIMITS.max)} ${asset.code}` }]} />
-        </div>
-        <div className="grg-ip-box">
-          <AccordionKeyValue rows={[{ key: 'Recipient', value: method.title }, { key: 'Total amount', value: `${format(ready ? total : 0)} ${asset.code}` }]} />
-        </div>
-        <div className="grg-ip-comment">
-          <div className="grg-ip-comment__head">
-            <span>Comment</span>
-            <Button variant="text" size="sm" leftIcon={comment ? 'edit' : 'plus'} onClick={() => { setDraft(comment); setStep('comment'); }}>{comment ? 'Edit' : 'Add'}</Button>
-          </div>
-          {comment && <p className="grg-ip-comment__text">{comment}</p>}
-        </div>
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'comment'} onHide={close} onBack={() => setStep('amount')} title="Comment"
-        footerType="fill" primaryAction={{ label: 'Save', onClick: () => { setComment(draft.trim()); setStep('amount'); } }}>
-        <TextArea label="Comment" value={draft} onValueChange={setDraft} counter maxLength={1000} />
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'summary'} onHide={close} onBack={() => setStep('amount')} title="Withdrawal amount"
-        footerType="fill" primaryAction={{ label: 'Continue', onClick: () => setStep(saveRecipient ? 'requisite' : 'processing') }}>
-        <p className="grg-ip-amount__total">{format(value)} {asset.code}</p>
-        <div className="grg-ip-box">
-          <AccordionKeyValue rows={[{ key: 'Fee', value: `${format(method.fee)} ${asset.code}` }, { key: 'Total amount', value: `${format(total)} ${asset.code}` }]} />
-        </div>
-        <div className="grg-ip-box grg-ip-box--row">
-          <FeaturedIcon type="primary" size="sm" filled={false} icon="user" />
-          <span className="grg-ip-box__label" aria-hidden="true">Save recipient</span>
-          <Switch aria-label="Save recipient" checked={saveRecipient} onChange={setSaveRecipient} />
-        </div>
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'requisite'} onHide={close} onBack={() => setStep('summary')} title="Save Requisite"
-        footerType="fill" primaryAction={{ label: 'Continue', disabled: !recipientName.trim(), onClick: () => setStep('processing') }}>
-        <Input label="Recipient name" required size="lg" value={recipientName} onValueChange={setRecipientName} />
+      {/* One modal for the whole withdrawal (Modal: "steps in one modal", never a modal from a modal): the title,
+          the back arrow, the content and the action change with the step */}
+      <Modal appendTo="self" visible={!!view} onHide={close} title={view?.title ?? ''} description={view?.description}
+        onBack={view?.back} footerType="fill" primaryAction={view?.action}>
+        {view?.content}
       </Modal>
     </>
   );
