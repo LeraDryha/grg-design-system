@@ -49,6 +49,16 @@ export const Walkthrough: Story = {
       await userEvent.click(canvas.getByRole('button', { name: 'Convert ETH' }));
     });
     const dialog = within(await canvas.findByRole('dialog', { name: 'Convert' }));
+    await step('The coin list stays under its field while searching', async () => {
+      const field = canvasElement.querySelector<HTMLElement>('.grg-modal .grg-compact-select__box')!;
+      await userEvent.click(field);
+      const search = await dialog.findByRole('textbox', { name: /Search/ });
+      await userEvent.type(search, 'bit');
+      const panel = canvasElement.querySelector<HTMLElement>('.grg-modal .grg-dropdown')!;
+      await waitFor(() => expect(Math.abs(panel.getBoundingClientRect().left - field.getBoundingClientRect().left)).toBeLessThan(2));
+      await expect(panel.getBoundingClientRect().top).toBeGreaterThan(field.getBoundingClientRect().bottom);
+      await userEvent.keyboard('{Escape}');
+    });
     await step('Too much, then 75% of the balance', async () => {
       await userEvent.type(dialog.getByRole('textbox', { name: 'From, ETH' }), '50000');
       await expect(dialog.getByText('Over balance')).toBeInTheDocument();

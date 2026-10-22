@@ -56,6 +56,7 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
     const minWidth = parseFloat(before.minWidth) || 0;
     panel.setAttribute('data-layer', 'top');
     let busy = false;
+    const placed = { top: '', left: '' };
     const update = () => {
       if (busy) return;
       busy = true;
@@ -72,13 +73,17 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
       const origin = panel.getBoundingClientRect();
       panel.style.top = `${top - origin.top}px`;
       panel.style.left = `${Math.max(gap, left) - origin.left}px`;
+      placed.top = panel.style.top;
+      placed.left = panel.style.left;
       busy = false;
     };
     update();
     const observer = new ResizeObserver(update);
     observer.observe(panel);
     // PrimeReact positions the list itself (next to the field) as it opens and filters: put it back over the modal
-    const restyled = new MutationObserver(() => { if (panel.style.position !== 'fixed') update(); });
+    const restyled = new MutationObserver(() => {
+      if (panel.style.position !== 'fixed' || panel.style.top !== placed.top || panel.style.left !== placed.left) update();
+    });
     restyled.observe(panel, { attributes: true, attributeFilter: ['style'] });
     window.addEventListener('resize', update);
     document.addEventListener('scroll', update, true);
