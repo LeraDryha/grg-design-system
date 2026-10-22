@@ -203,30 +203,38 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
           <SidebarNavigation layout="expanded" sections={pages} current="assets" onNavigate={navigate} />
           <main className="grg-ip-page">
             <h1 className="grg-ip-page__title">Assets</h1>
-            <div className="grg-ip-balances">
-              <div>
-                <p className="grg-ip-balances__key">Estimated balance</p>
-                <p className="grg-ip-balances__value"><span>{money(estimated)}</span> EUR</p>
+            {/* Figma: the page content on one white surface; the balances above a line; the filter and the table under it */}
+            <div className="grg-ip-surface">
+              <div className="grg-ip-surface__top">
+                <div className="grg-ip-balances">
+                  <div>
+                    <p className="grg-ip-balances__key">Estimated balance</p>
+                    <p className="grg-ip-balances__value"><span>{money(estimated)}</span> EUR</p>
+                  </div>
+                  <div>
+                    <p className="grg-ip-balances__key">
+                      Withdrawal in progress
+                      <Tooltip title="Sent, not yet confirmed by the network" side="top">
+                        <span className="grg-ip-info" tabIndex={0} aria-label="About withdrawals in progress"><Icon name="information-circle" size={16} /></span>
+                      </Tooltip>
+                    </p>
+                    <p className="grg-ip-balances__small">{money(inProgress)} EUR</p>
+                  </div>
+                </div>
               </div>
-              <div>
-                <p className="grg-ip-balances__key">
-                  Withdrawal in progress
-                  <Tooltip title="Sent, not yet confirmed by the network" side="top">
-                    <span className="grg-ip-info" tabIndex={0} aria-label="About withdrawals in progress"><Icon name="information-circle" size={16} /></span>
-                  </Tooltip>
-                </p>
-                <p className="grg-ip-balances__small">{money(inProgress)} EUR</p>
+              <hr className="grg-ip-surface__divider" />
+              <div className="grg-ip-surface__section">
+                <CheckboxLabel label="Hide small balances (less 1 EUR)" checked={hideSmall} onChange={setHideSmall} />
+                <Table aria-label="Assets" rows={rows} rowKey={row => row.id} rowLabel={row => row.name} columns={columns}
+                  actions={row => (
+                    <>
+                      <Button variant="text" size="xs">Convert</Button>
+                      <Button variant="text" size="xs">Deposit</Button>
+                      <Button variant="text" size="xs" disabled={row.amount === 0} onClick={() => start(row.id)} aria-label={`Withdraw ${row.code}`}>Withdraw</Button>
+                    </>
+                  )} />
               </div>
             </div>
-            <CheckboxLabel label="Hide small balances (less 1 EUR)" checked={hideSmall} onChange={setHideSmall} />
-            <Table aria-label="Assets" rows={rows} rowKey={row => row.id} rowLabel={row => row.name} columns={columns}
-              actions={row => (
-                <>
-                  <Button variant="text" size="xs">Convert</Button>
-                  <Button variant="text" size="xs">Deposit</Button>
-                  <Button variant="text" size="xs" disabled={row.amount === 0} onClick={() => start(row.id)} aria-label={`Withdraw ${row.code}`}>Withdraw</Button>
-                </>
-              )} />
           </main>
         </div>
       )}

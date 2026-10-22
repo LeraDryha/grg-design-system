@@ -15,12 +15,17 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: var(--space-600);
+  gap: var(--space-500);
   min-width: 0;
-  padding: var(--space-500) var(--space-600);
+  padding: var(--space-500) var(--space-600) var(--space-600);
   overflow: auto;
 }
-.grg-ip-page__title { margin: 0; font: var(--typo-title-lg-semibold); }
+/* Figma: one white surface for the page content, radius 16; its parts 32px above and below, 24px at the sides */
+.grg-ip-surface { display: flex; flex: 1 0 auto; flex-direction: column; border-radius: var(--radius-xl-16); background: var(--surface-base); }
+.grg-ip-surface__top { padding: var(--space-800) var(--space-600); }
+.grg-ip-surface__section { display: flex; flex-direction: column; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
+.grg-ip-surface__divider { margin: 0; border: 0; border-top: 1px solid var(--stroke-soft-200); }
+.grg-ip-page__title { margin: 0; padding: var(--space-050) 0; font: var(--typo-title-lg-semibold); }
 .grg-ip-centre { display: grid; flex: 1; place-items: center; padding: var(--space-600); overflow: auto; }
 
 /* A neutral logo: the company's own logos are not shown */
@@ -36,7 +41,9 @@
 }
 
 /* ---- Assets: the balances over the table ---- */
-.grg-ip-balances { display: flex; flex-wrap: wrap; gap: var(--space-1000); }
+.grg-ip-balances { display: flex; flex-wrap: wrap; gap: var(--space-600); }
+/* A line between the two balances, as in Figma */
+.grg-ip-balances > * + * { padding-left: var(--space-600); border-left: 1px solid var(--stroke-soft-200); }
 .grg-ip-balances p { margin: 0; }
 .grg-ip-balances__key { display: flex; align-items: center; gap: var(--space-100); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
 .grg-ip-balances__value { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
