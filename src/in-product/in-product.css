@@ -70,6 +70,9 @@
 .grg-ip-amount__note { margin: 0; font: var(--typo-body-lg-regular); color: var(--text-soft-500); text-align: center; }
 .grg-ip-amount[data-invalid] :is(.grg-ip-amount__input, .grg-ip-amount__code, .grg-ip-amount__note) { color: var(--error-base-600); }
 .grg-ip-amount__total { margin: 0; padding: var(--space-1000) 0; text-align: center; }
+/* Figma: the limit card, a gold 1px stroke, radius 8, 16px inside; red when the amount goes over it */
+.grg-ip-limits { padding: var(--space-400); border: 1px solid var(--primary-gold-base); border-radius: var(--radius-sm-8); }
+.grg-ip-limits[data-invalid] { border-color: var(--error-base-600); }
 .grg-ip-presets { display: flex; justify-content: center; gap: var(--space-200); }
 .grg-ip-spinner { display: flex; justify-content: center; }
 /* Payment processing: 32px above the spinner, as the Featured icon of a status header */

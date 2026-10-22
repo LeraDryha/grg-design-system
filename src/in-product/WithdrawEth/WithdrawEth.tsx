@@ -36,8 +36,8 @@ const methods = (code: string) => [
   { id: 'test', title: 'Test', fee: 0, feeText: 'Fee 0%' },
   { id: 'wallet', title: `${code} Wallet`, fee: 0.0005, feeText: `Fee 0.0005 ${code}` },
 ];
-/** The limits that sat in a popover beside the modal in Figma; here they live under the amount */
-const LIMITS = { min: 0.001, max: 99999999.9 };
+/** The limit that sat in a popover beside the modal in Figma, now a card in the modal */
+const LIMITS = { max: 99999999.9 };
 
 const pages: SidebarSection[] = [{
   items: [
@@ -63,7 +63,7 @@ const logo = (
 
 type Step = 'method' | 'amount' | 'comment' | 'summary' | 'requisite' | 'processing' | 'progress';
 
-/** The big amount: typed straight into the middle of the modal, the coin after it, the fee and limits under it. */
+/** The big amount: typed straight into the middle of the modal, the coin after it, the fee (or what is wrong) under it. */
 function AmountField({ value, onChange, code, fee, error }: { value: string; onChange: (value: string) => void; code: string; fee: number; error?: string }) {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -92,7 +92,7 @@ function AmountField({ value, onChange, code, fee, error }: { value: string; onC
         <span className="grg-ip-amount__code">{code}</span>
       </label>
       <p id={`${id}-note`} className="grg-ip-amount__note" aria-live="polite">
-        {error ?? `Fee ${format(fee)} ${code} · Limits ${format(LIMITS.min)}–${format(LIMITS.max)} ${code}`}
+        {error ?? `Fee ${format(fee)} ${code}`}
       </p>
     </div>
   );
@@ -126,9 +126,8 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
   const total = value + method.fee;
   const largest = Math.max(0, Math.min(asset.amount - method.fee, LIMITS.max));
   const error = !amount || value === 0 ? undefined
+    : value > LIMITS.max ? `More than the maximum, ${format(LIMITS.max)} ${asset.code}`
     : total > asset.amount ? `Not enough ${asset.code}: ${format(asset.amount, asset.digits)} available`
-    : value > LIMITS.max ? `Maximum ${format(LIMITS.max)} ${asset.code}`
-    : value < LIMITS.min ? `Minimum ${format(LIMITS.min)} ${asset.code}`
     : undefined;
   const ready = value > 0 && !error;
 
@@ -158,9 +157,10 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
   const rows = useMemo(() => assets.filter(item => !hideSmall || item.amount * item.rate >= 1), [assets, hideSmall]);
   const estimated = assets.reduce((sum, item) => sum + item.amount * item.rate, 0);
   const columns: TableColumn<Asset>[] = [
-    { id: 'asset', header: 'Asset', sortValue: row => row.name, cell: row => <TableText priority="leading" orientation="horizontal" title={row.name} description={row.code} leading={<CoinIcon name={row.coin} size={24} />} /> },
-    { id: 'amount', header: 'Amount', sortValue: row => row.amount, cell: row => <TableText title={format(row.amount, row.digits)} /> },
-    { id: 'eur', header: 'Equivalent amount', sortValue: row => row.amount * row.rate, cell: row => <TableText title={`${money(row.amount * row.rate)} EUR`} /> },
+    // Fixed shares: the columns keep their width when rows are hidden or sorted
+    { id: 'asset', header: 'Asset', width: '32%', sortValue: row => row.name, cell: row => <TableText priority="leading" orientation="horizontal" title={row.name} description={row.code} leading={<CoinIcon name={row.coin} size={24} />} /> },
+    { id: 'amount', header: 'Amount', width: '24%', sortValue: row => row.amount, cell: row => <TableText title={format(row.amount, row.digits)} /> },
+    { id: 'eur', header: 'Equivalent amount', width: '24%', sortValue: row => row.amount * row.rate, cell: row => <TableText title={`${money(row.amount * row.rate)} EUR`} /> },
   ];
 
   const navigate = (_item: SidebarItem, event?: MouseEvent<HTMLElement>) => event?.preventDefault();
@@ -246,6 +246,10 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
         <AmountField value={amount} onChange={setAmount} code={asset.code} fee={method.fee} error={error} />
         <div className="grg-ip-presets">
           <Button variant="secondary" size="xs" onClick={() => setAmount(String(+largest.toFixed(asset.digits)))}>MAX</Button>
+        </div>
+        {/* Figma: the limit card, moved here from the popover beside the modal */}
+        <div className="grg-ip-limits" data-invalid={value > LIMITS.max || undefined}>
+          <AccordionKeyValue rows={[{ key: 'Maximum', value: `${format(LIMITS.max)} ${asset.code}` }]} />
         </div>
         <div className="grg-ip-box">
           <AccordionKeyValue rows={[{ key: 'Recipient', value: method.title }, { key: 'Total amount', value: `${format(ready ? total : 0)} ${asset.code}` }]} />

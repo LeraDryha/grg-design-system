@@ -4,18 +4,18 @@ import { WithdrawEthFlow } from './WithdrawEth';
 import assetsFrame from '../../assets/design/in-product/withdraw-eth/0-assets.png';
 import methodFrame from '../../assets/design/in-product/withdraw-eth/1-method.png';
 import amountFrame from '../../assets/design/in-product/withdraw-eth/2-amount.png';
+import amountLimitFrame from '../../assets/design/in-product/withdraw-eth/2b-amount-limit.png';
 import commentFrame from '../../assets/design/in-product/withdraw-eth/3-comment.png';
 import summaryFrame from '../../assets/design/in-product/withdraw-eth/4-summary.png';
 import requisiteFrame from '../../assets/design/in-product/withdraw-eth/5-requisite.png';
 import processingFrame from '../../assets/design/in-product/withdraw-eth/6-processing.png';
 import progressFrame from '../../assets/design/in-product/withdraw-eth/7-in-progress.png';
 
-/** A desktop screen: the transformed box keeps the modals inside it; a narrow docs page scrolls it sideways */
-const screen: Decorator = Story => (
-  <div style={{ overflowX: 'auto', maxWidth: '100%' }}>
-    <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', minWidth: 1280, height: 800 }}>
-      <Story />
-    </div>
+/** A desktop screen; the transformed box keeps the modals inside it. On its own (full screen) it fills the window;
+ *  on the docs page it is a 720px window into the app */
+const screen: Decorator = (Story, { viewMode }) => (
+  <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', width: '100%', minWidth: 960, height: viewMode === 'docs' ? 720 : '100vh' }}>
+    <Story />
   </div>
 );
 
@@ -31,6 +31,7 @@ const meta = {
       { name: '0 · Assets', type: 'image', url: assetsFrame },
       { name: '1 · Withdrawal method', type: 'image', url: methodFrame },
       { name: '2 · Amount', type: 'image', url: amountFrame },
+      { name: '2 · Amount, the limit in the modal', type: 'image', url: amountLimitFrame },
       { name: '3 · Comment', type: 'image', url: commentFrame },
       { name: '4 · Withdrawal amount', type: 'image', url: summaryFrame },
       { name: '5 · Save requisite', type: 'image', url: requisiteFrame },
@@ -43,10 +44,17 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The whole flow: Withdraw on the Ethereum row, a method, the amount, a comment, the summary, the recipient, and
+/** The flow to try: Withdraw on the Ethereum row, a method, the amount, a comment, the summary, the recipient, and
  *  the payment on its way; the balance goes down at the end. */
-export const TheFlow: Story = {
-  name: 'The flow',
+export const LiveFlow: Story = {
+  name: 'Live flow',
+  // Known Figma contrast: the card descriptions (text-soft-500 on bg-weak-100) are 4.3:1
+  parameters: { a11y: { test: 'todo' } },
+};
+
+/** The same flow walked through by the test (not in the sidebar, so the live flow opens untouched) */
+export const Walkthrough: Story = {
+  tags: ['!dev', '!autodocs'],
   // Known Figma contrast: the card descriptions (text-soft-500 on bg-weak-100) are 4.3:1
   parameters: { a11y: { test: 'todo' } },
   play: async ({ canvasElement, step }) => {

@@ -3,6 +3,7 @@ import * as WithdrawStories from './WithdrawEth.stories';
 import assetsFrame from '../../assets/design/in-product/withdraw-eth/0-assets.png';
 import methodFrame from '../../assets/design/in-product/withdraw-eth/1-method.png';
 import amountFrame from '../../assets/design/in-product/withdraw-eth/2-amount.png';
+import amountLimitFrame from '../../assets/design/in-product/withdraw-eth/2b-amount-limit.png';
 import commentFrame from '../../assets/design/in-product/withdraw-eth/3-comment.png';
 import summaryFrame from '../../assets/design/in-product/withdraw-eth/4-summary.png';
 import requisiteFrame from '../../assets/design/in-product/withdraw-eth/5-requisite.png';
@@ -15,7 +16,9 @@ import progressFrame from '../../assets/design/in-product/withdraw-eth/7-in-prog
 
 A business sends crypto out of its account: from the Assets page to a payment on its way. I designed this flow in Figma for a crypto payments platform; here it is rebuilt from the design system's components, and it works.
 
-<Canvas of={WithdrawStories.TheFlow} />
+<a href="iframe.html?viewMode=story&id=in-product-withdraw-eth--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={WithdrawStories.LiveFlow} />
 
 **Try it:** press **Withdraw** on the Ethereum row, choose **Test**, type an amount (or press **MAX**), add a comment, switch on **Save recipient** and follow it to the end. The Ethereum balance goes down when you are done. Only Withdraw is wired up; the rest of the page is still.
 
@@ -36,7 +39,7 @@ A business sends crypto out of its account: from the Assets page to a payment on
 
 <Canvas of={WithdrawStories.OverTheLimit} />
 
-- **Limits moved into the modal.** In Figma the fee, minimum and maximum sat in a popover beside the modal: easy to miss, with no room for it on a phone, and screen readers wouldn't connect it to the amount. Now they are the note under the amount, and when the amount is out of bounds, the numbers turn red and the note says why (*Not enough ETH*, *Maximum …*). Continue waits until the amount works.
+- **The limit moved into the modal.** The maximum first sat in a popover beside the modal: easy to miss, with no room for it on a phone, and screen readers wouldn't connect it to the amount. It is now a card in the modal, under MAX (the Figma frame was updated too). When the amount goes over the maximum or the balance, the numbers and the card turn red and the note under the amount says why; Continue waits until the amount works.
 - **The amount takes digits and one point**; a comma counts as the point.
 - **Every step is reachable by keyboard**: the modals keep focus inside, Escape closes them, and focus returns to the Withdraw button.
 
@@ -46,7 +49,7 @@ The frames this page was built from (also in the **Design** tab).
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
   {[
-    [assetsFrame, '0 · Assets'], [methodFrame, '1 · Withdrawal method'], [amountFrame, '2 · Amount, with the limits popover'],
+    [assetsFrame, '0 · Assets'], [methodFrame, '1 · Withdrawal method'], [amountFrame, '2 · Amount, first with the limit in a popover'], [amountLimitFrame, '2 · Amount, the limit moved into the modal'],
     [commentFrame, '3 · Comment'], [summaryFrame, '4 · Withdrawal amount'], [requisiteFrame, '5 · Save requisite'],
     [processingFrame, '6 · Payment processing'], [progressFrame, '7 · Transaction in progress'],
   ].map(([src, caption]) => (
