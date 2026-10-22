@@ -52,9 +52,10 @@ function MessageItem({ options, kind, close }: { options: MessageOptions; kind: 
   const { duration, onClose, ...alert } = options;
   const [held, setHeld] = useState({ pointer: false, focus: false });
   const done = () => { onClose?.(); close(); };
+  const goesByItself = !!duration && !alert.actionLabel;
   useEffect(() => {
     // Only a Toast that asks nothing goes by itself: never one with an action, never a Notification
-    if (kind !== 'toast' || !duration || alert.actionLabel || held.pointer || held.focus) return;
+    if (kind !== 'toast' || !goesByItself || held.pointer || held.focus) return;
     const timer = window.setTimeout(done, duration);
     return () => window.clearTimeout(timer);
   });
@@ -63,7 +64,8 @@ function MessageItem({ options, kind, close }: { options: MessageOptions; kind: 
       onMouseEnter={() => setHeld(h => ({ ...h, pointer: true }))} onMouseLeave={() => setHeld(h => ({ ...h, pointer: false }))}
       onFocus={() => setHeld(h => ({ ...h, focus: true }))}
       onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setHeld(h => ({ ...h, focus: false })); }}>
-      <Alert {...alert} elevated size={kind === 'toast' ? 'xs' : 'sm'} closable onClose={done} />
+      {/* A Toast that goes by itself has no Close: there is nothing to wait for */}
+      <Alert {...alert} elevated size={kind === 'toast' ? 'xs' : 'sm'} closable={!(kind === 'toast' && goesByItself)} onClose={done} />
     </div>
   );
 }

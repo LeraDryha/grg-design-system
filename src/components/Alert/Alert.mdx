@@ -66,7 +66,7 @@ Notifications appear in the bottom right corner: payments, updates. They stay un
 
 <Canvas of={AlertStories.ToastsAtTheBottom} />
 
-Toasts give brief feedback in a compact size, at the bottom in the middle, stacked. One that asks nothing (*Changes saved*, *Copied*) can go by itself after a few seconds; one with an action (*Undo*) stays until it is used or closed. On a phone, Notifications and Toasts take the width of the screen at the bottom.
+Toasts give brief feedback in a compact size, at the bottom in the middle, stacked. One that asks nothing (*Changes saved*, *Copied*) goes by itself after a few seconds and has no Close; one with an action (*Undo*) stays until it is used or closed. On a phone, Notifications and Toasts take the width of the screen at the bottom.
 
 ### Undo a change
 
@@ -97,7 +97,7 @@ What the code adds to the Figma file, and why:
 - **One component for three names.** Alert, Notification and Toast share one body; only `elevated` changes.
 - **Where floating messages appear**, as in the Figma examples: `MessagesProvider` puts Notifications in the bottom right corner and Toasts at the bottom in the middle, 24px from the edges, stacked 8px apart; on a phone (under 480px) both go to the bottom, the width of the screen less 16px each side. `useMessages()` shows them from anywhere.
 - **Announced by urgency.** Errors use `role="alert"`; other statuses use `role="status"`. Set `role` yourself for a non-urgent error or an urgent warning.
-- **Closing.** An Alert and a Notification close only with their Close button. A Toast that asks nothing (*Copied*, *Changes saved*) may go by itself (`duration`); it waits while the pointer or the keyboard focus is on it. A Toast with an action never goes by itself.
+- **Closing.** An Alert and a Notification close only with their Close button. A Toast that asks nothing (*Copied*, *Changes saved*) may go by itself (`duration`), without a Close button; it waits while the pointer or the keyboard focus is on it. A Toast with an action never goes by itself.
 - **Status is not colour alone.** Each status has its own icon shape, and screen readers hear a status word first (*Error*, *Success*); change it with `statusLabel`.
 - **A description means sm-20.** Figma has descriptions only in sm-20, so adding one selects that size.
 - **Corner radii from the component set:** 10px without a description, 12px with one. The guidelines text lists 8px; see Contributing/Tokens.

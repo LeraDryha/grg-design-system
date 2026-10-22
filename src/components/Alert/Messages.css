@@ -9,6 +9,8 @@
   max-width: calc(100% - var(--space-600) * 2);
   pointer-events: none;
 }
+/* PrimeReact wraps the messages in one more element: that is where they stack, 8px apart */
+.grg-messages > div { display: flex; flex-direction: column; align-items: inherit; gap: var(--space-200); }
 .grg-messages__item { pointer-events: auto; }
 /* PrimeReact positions the area inline; the system's offsets win */
 .grg-messages[data-kind='notification'] {
