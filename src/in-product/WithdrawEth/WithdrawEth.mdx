@@ -1,0 +1,64 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as WithdrawStories from './WithdrawEth.stories';
+import assetsFrame from '../../assets/design/in-product/withdraw-eth/0-assets.png';
+import methodFrame from '../../assets/design/in-product/withdraw-eth/1-method.png';
+import amountFrame from '../../assets/design/in-product/withdraw-eth/2-amount.png';
+import commentFrame from '../../assets/design/in-product/withdraw-eth/3-comment.png';
+import summaryFrame from '../../assets/design/in-product/withdraw-eth/4-summary.png';
+import requisiteFrame from '../../assets/design/in-product/withdraw-eth/5-requisite.png';
+import processingFrame from '../../assets/design/in-product/withdraw-eth/6-processing.png';
+import progressFrame from '../../assets/design/in-product/withdraw-eth/7-in-progress.png';
+
+<Meta of={WithdrawStories} />
+
+# Withdraw ETH
+
+A business sends crypto out of its account: from the Assets page to a payment on its way. I designed this flow in Figma for a crypto payments platform; here it is rebuilt from the design system's components, and it works.
+
+<Canvas of={WithdrawStories.TheFlow} />
+
+**Try it:** press **Withdraw** on the Ethereum row, choose **Test**, type an amount (or press **MAX**), add a comment, switch on **Save recipient** and follow it to the end. The Ethereum balance goes down when you are done. Only Withdraw is wired up; the rest of the page is still.
+
+## What the flow has to get right
+
+- **No surprises about money.** The fee and the total are on screen before anything is sent, and once more on the last check.
+- **Few questions, one at a time.** Method, amount, check, send: each step asks one thing, and the back arrow returns without losing what was typed.
+- **Next time is faster.** A recipient can be saved at the end, when the person has seen everything about the payment.
+
+## Design decisions
+
+- **The amount is the hero.** It is typed large in the middle of the modal, with the coin beside it. **MAX** fills in the most that can be sent once the fee is taken off.
+- **Methods are cards, not a dropdown.** Each shows its fee, so the choice and its cost are read together, in one tap.
+- **The comment is optional and folded away.** *Add* opens it in its own step; back on the amount it shows in full with *Edit*.
+- **Two endings.** *Payment processing* while the provider takes the payment, then *Transaction in progress*, honest that the network can take time.
+
+## Decided while building it
+
+<Canvas of={WithdrawStories.OverTheLimit} />
+
+- **Limits moved into the modal.** In Figma the fee, minimum and maximum sat in a popover beside the modal: easy to miss, with no room for it on a phone, and screen readers wouldn't connect it to the amount. Now they are the note under the amount, and when the amount is out of bounds, the numbers turn red and the note says why (*Not enough ETH*, *Maximum …*). Continue waits until the amount works.
+- **The amount takes digits and one point**; a comma counts as the point.
+- **Every step is reachable by keyboard**: the modals keep focus inside, Escape closes them, and focus returns to the Withdraw button.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab).
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {[
+    [assetsFrame, '0 · Assets'], [methodFrame, '1 · Withdrawal method'], [amountFrame, '2 · Amount, with the limits popover'],
+    [commentFrame, '3 · Comment'], [summaryFrame, '4 · Withdrawal amount'], [requisiteFrame, '5 · Save requisite'],
+    [processingFrame, '6 · Payment processing'], [progressFrame, '7 · Transaction in progress'],
+  ].map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Table](?path=/docs/components-table--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Modal](?path=/docs/components-modal--docs) · [Interaction Card](?path=/docs/components-interaction-card--docs) · [Button](?path=/docs/components-button--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Text Area](?path=/docs/components-text-area--docs) · [Switch](?path=/docs/components-switch--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Input](?path=/docs/components-input--docs) · [Progress Circle](?path=/docs/components-progress-circle--docs)
+
+The only new piece is the large amount field, which lives with this flow.

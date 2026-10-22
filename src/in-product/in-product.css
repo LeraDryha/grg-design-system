@@ -1,0 +1,83 @@
+/* In product: the app frame and the few pieces of a flow that aren't components. Every value is a token. */
+
+/* ---- App frame: the bar on top, the sidebar and the page under it ---- */
+.grg-ip-app {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--surface-canvas);
+  color: var(--text-strong-1000);
+}
+.grg-ip-body { display: flex; flex: 1; min-height: 0; }
+.grg-ip-page {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-600);
+  min-width: 0;
+  padding: var(--space-500) var(--space-600);
+  overflow: auto;
+}
+.grg-ip-page__title { margin: 0; font: var(--typo-title-lg-semibold); }
+.grg-ip-centre { display: grid; flex: 1; place-items: center; padding: var(--space-600); overflow: auto; }
+
+/* A neutral logo: the company's own logos are not shown */
+.grg-ip-logo { display: flex; align-items: center; gap: var(--space-200); color: var(--text-strong-1000); font: var(--typo-title-sm-bold); text-decoration: none; }
+.grg-ip-logo__mark {
+  display: grid;
+  place-items: center;
+  width: var(--space-800);
+  height: var(--space-800);
+  border-radius: var(--radius-sm-8);
+  background: var(--primary-base-1000);
+  color: var(--text-inverce);
+}
+
+/* ---- Assets: the balances over the table ---- */
+.grg-ip-balances { display: flex; flex-wrap: wrap; gap: var(--space-1000); }
+.grg-ip-balances p { margin: 0; }
+.grg-ip-balances__key { display: flex; align-items: center; gap: var(--space-100); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-balances__value { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-ip-balances__value span { font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-balances__small { font: var(--typo-body-md-medium); }
+.grg-ip-info { display: inline-flex; border-radius: var(--radius-fully-rounded); color: var(--icon-base-500); }
+.grg-ip-info:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---- Modal pieces ---- */
+.grg-ip-stack { display: grid; gap: var(--space-200); }
+/* Figma "Confirmation Exchange": 40px above and below, the amount 32px, the note under it */
+.grg-ip-amount { display: grid; justify-items: center; gap: var(--space-200); padding: var(--space-1000) 0 var(--space-400); }
+.grg-ip-amount__field { color: var(--text-strong-1000); display: inline-flex; align-items: baseline; gap: var(--space-200); max-width: 100%; cursor: text; }
+.grg-ip-amount__input,
+.grg-ip-amount__code,
+.grg-ip-amount__total { font: var(--font-weight-medium) var(--font-size-32)/var(--font-line-height-36) var(--font-family-body); }
+.grg-ip-amount__input {
+  max-width: calc(var(--space-5000) + var(--space-2000));
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xxs-4);
+  background: transparent;
+  color: var(--text-strong-1000);
+  text-align: end;
+  caret-color: var(--primary-base-1000);
+}
+.grg-ip-amount__input::placeholder { color: var(--text-strong-1000); }
+.grg-ip-amount__input:focus { outline: none; }
+.grg-ip-amount[data-keyboard-navigation] .grg-ip-amount__field:has(:focus-visible) { box-shadow: var(--focus-ring); border-radius: var(--radius-sm-8); }
+.grg-ip-amount__note { margin: 0; font: var(--typo-body-lg-regular); color: var(--text-soft-500); text-align: center; }
+.grg-ip-amount[data-invalid] :is(.grg-ip-amount__input, .grg-ip-amount__code, .grg-ip-amount__note) { color: var(--error-base-600); }
+.grg-ip-amount__total { margin: 0; padding: var(--space-1000) 0; text-align: center; }
+.grg-ip-presets { display: flex; justify-content: center; gap: var(--space-200); }
+.grg-ip-spinner { display: flex; justify-content: center; }
+/* Payment processing: 32px above the spinner, as the Featured icon of a status header */
+.grg-ip-processing .grg-ip-spinner { padding-top: var(--space-800); }
+/* Figma "Card": the grey box round a Key-value or a row with a switch */
+.grg-ip-box { padding: var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
+.grg-ip-box--row { display: flex; align-items: center; gap: var(--space-300); }
+.grg-ip-box__label { flex: 1; font: var(--typo-body-md-medium); }
+.grg-ip-comment { display: grid; gap: var(--space-200); }
+.grg-ip-comment__head { display: flex; align-items: center; justify-content: space-between; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-ip-comment__text { margin: 0; font: var(--typo-body-md-regular); color: var(--text-strong-1000); overflow-wrap: anywhere; }
