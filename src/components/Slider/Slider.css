@@ -1,0 +1,92 @@
+/* Slider. Every value is a token; Figma layer names in the comments. */
+
+/* Title & details over the slider row, 6px apart */
+.grg-slider { display: flex; flex-direction: column; gap: var(--space-150); min-width: 0; }
+.grg-slider__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-100); }
+.grg-slider__title { display: flex; flex-wrap: wrap; gap: var(--space-050); min-width: 0; }
+.grg-slider__label { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-slider__sublabel { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-slider__value { flex: none; font: var(--typo-body-sm-regular); color: var(--text-soft-500); font-variant-numeric: tabular-nums; }
+
+/* Slider row: 16px tall; − and + at the ends, 12px away */
+.grg-slider__row { display: flex; align-items: center; gap: var(--space-300); }
+.grg-slider__track-box { position: relative; flex: 1; min-width: 0; height: var(--space-400); }
+
+/* background: the 4px track; the fill on it */
+.grg-slider__track {
+  position: absolute;
+  top: calc(50% - var(--space-100) / 2);
+  right: 0;
+  left: 0;
+  height: var(--space-100);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-soft-200);
+  cursor: pointer;
+}
+.grg-slider__fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary-base-1000);
+}
+
+/* Control handle: 16px, a 4px ring around the base colour, the xs shadow. Always black (the grey Default of Figma
+   would hardly show; see Contributing/Tokens) */
+.grg-slider__handle {
+  position: absolute;
+  top: 50%;
+  box-sizing: border-box;
+  width: var(--space-400);
+  height: var(--space-400);
+  margin: calc(var(--space-400) / -2) 0 0 calc(var(--space-400) / -2);
+  border: var(--space-100) solid var(--primary-base-1000);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-base-0);
+  box-shadow: var(--shadow-xs);
+  cursor: grab;
+  touch-action: none;
+  outline: none;
+}
+.grg-slider__handle:active { cursor: grabbing; }
+/* A 24px area to press, larger than the 16px handle (WCAG 2.2 target size) */
+.grg-slider__handle::before { content: ''; position: absolute; inset: calc(var(--space-100) * -1 - var(--space-050)); border-radius: inherit; }
+/* Focused from the keyboard: the system ring */
+.grg-slider__handle:focus-visible { box-shadow: var(--focus-ring); }
+
+/* The value with the handle: under it (Text) or above it (Tooltip) */
+.grg-slider__bubble {
+  position: absolute;
+  transform: translateX(-50%);
+  font: var(--typo-body-md-regular);
+  color: var(--text-subtle-700);
+  white-space: nowrap;
+  pointer-events: none;
+  font-variant-numeric: tabular-nums;
+}
+.grg-slider[data-handle-value='text'] .grg-slider__bubble { top: calc(100% + var(--space-100)); }
+.grg-slider[data-handle-value='text'] .grg-slider__row { margin-bottom: var(--space-600); }
+/* Tooltip: the White tooltip over the handle, 8px above it, shown while it is hovered, focused or dragged */
+.grg-slider[data-handle-value='tooltip'] .grg-slider__bubble {
+  bottom: calc(100% + var(--space-200));
+  padding: var(--space-200) var(--space-300);
+  border-radius: var(--radius-xs-6);
+  background: var(--surface-floating);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-sm-regular);
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.grg-slider[data-handle-value='tooltip']:has([data-handle='0']:is(:hover, :focus-visible, :active)) .grg-slider__bubble[data-index='0'],
+.grg-slider[data-handle-value='tooltip']:has([data-handle='1']:is(:hover, :focus-visible, :active)) .grg-slider__bubble[data-index='1'] { opacity: 1; }
+
+/* Disabled (not in Figma): the grey of other disabled fields */
+.grg-slider[data-disabled] :is(.grg-slider__label, .grg-slider__sublabel, .grg-slider__value) { color: var(--text-disabled-400); }
+.grg-slider[data-disabled] .grg-slider__track { cursor: default; }
+.grg-slider[data-disabled] .grg-slider__fill { background: var(--stroke-disabled); }
+.grg-slider[data-disabled] .grg-slider__handle { border-color: var(--stroke-disabled); box-shadow: none; cursor: default; }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-slider__bubble { transition: none; }
+}

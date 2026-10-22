@@ -305,3 +305,14 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Segment control item` (State: Default, Hovered, Active-normal, Disabled, Active-red, Active-green) | `204:20934` |
 | Usage Guidelines (anatomy, states, types) | `786:69807` |
 | Examples (invoice steps, orders filter, Buy and Sell) | `790:5480` |
+
+## Slider
+
+| What | Node |
+|---|---|
+| Page ❖ Slider | `696:24314` |
+| Component set `Slider` (Percentage 0–100%; Label, Sublabel, Value, Details) | `738:27965` |
+| Component set `Range slider` (Left range × Right range) | `738:28938` |
+| Component set `Control handle` (State × Tooltip × Text) | `738:6802` |
+| Usage Guidelines (anatomy, states, label, type, percentages, range) | `747:8144` |
+| Examples (Upload logo: zoom with − and +) | `747:8246` |

@@ -1,0 +1,103 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SliderStories from './Slider.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SliderStories} />
+
+# Slider
+
+<ComponentHeader
+  figma="738-27965"
+  guidelines="747-8144"
+  designTab
+  builtOn="PrimeReact Slider"
+  related={[
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+    { label: 'Tooltip', href: '?path=/docs/components-tooltip--docs', relation: 'See also' },
+  ]}
+/>
+
+Picks a number, or a range, by dragging along a track: an amount, a price range, a zoom.
+
+<Canvas of={SliderStories.Playground} />
+<Controls of={SliderStories.Playground} include={['min', 'max', 'step', 'label', 'sublabel', 'showValue', 'handleValue', 'steppers', 'disabled']} />
+
+```tsx
+<Slider label="Amount" min={0} max={10000} step={100} value={amount} onChange={setAmount} format={v => `${v} USDT`} />
+```
+
+## When to use
+
+<DoDont
+  dos={['A value where the rough position matters more than the exact number: a zoom, a share, a price range', 'A range between two limits, with Range slider']}
+  donts={['An exact amount people type: use Input', 'A few named options: use Segment Control or Radio']}
+/>
+
+## Examples
+
+### Withdrawal amount
+
+<Canvas of={SliderStories.WithdrawalAmount} />
+
+The value top right, in USDT (`format`). ← / → move by a step, PageUp / PageDown by ten, Home / End to the ends.
+
+### Price range
+
+<Canvas of={SliderStories.PriceRange} />
+
+Two handles that can't pass each other; each shows its value in a tooltip while it is hovered, focused or dragged, and has its own name: *Minimum*, *Maximum*.
+
+### Zoom a photo
+
+<Canvas of={SliderStories.ZoomAPhoto} />
+
+The Figma example: − and + at the ends move by one step (`steppers`). The photo crop window itself comes later with the Modal leftovers.
+
+### Unavailable
+
+<Canvas of={SliderStories.Unavailable} />
+
+## Design decisions
+
+- **Any limits and step.** Figma shows 0–100% in steps of 25% as an example.
+- **The handle is always black.** Figma's grey Default handle at 0 would hardly show on white (about 1.3:1) (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **The value top right** is the current value, both values for a range.
+- **The tooltip** shows only while a handle is hovered, focused or dragged, so it doesn't cover the label.
+- **A 24px area to press** around the 16px handle (WCAG 2.2 target size).
+- **Disabled** isn't in Figma: the grey of other disabled fields.
+- **Screen readers** hear the real value and its text (*2,500 USDT*); PrimeReact gives the position in percent, so the slider sets it.
+
+## Handle value
+
+<Canvas of={SliderStories.HandleValue} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| ← / → (↓ / ↑) | One step |
+| PageUp / PageDown | Ten steps |
+| Home / End | The minimum and the maximum |
+
+- Each handle is a `slider` named by the label (and *Minimum* / *Maximum* in a range), with the value and its text.
+- The sublabel describes the slider; − and + are named *Less* and *More*.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Slider · Percentage', prop: 'value, min, max, step', values: 'any numbers' },
+    { figma: 'Range slider · Left range, Right range', prop: 'value', values: '[low, high]' },
+    { figma: 'Label, Label text, Sublabel', prop: 'label, sublabel', values: 'text' },
+    { figma: 'Value, Value text', prop: 'showValue, format', values: 'boolean; a function' },
+    { figma: 'Control handle · Text, Tooltip', prop: 'handleValue', values: 'none, text, tooltip' },
+    { figma: 'Control handle · State', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Example · − and +', prop: 'steppers', values: 'boolean' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={SliderStories} />
