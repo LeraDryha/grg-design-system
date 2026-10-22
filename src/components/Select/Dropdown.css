@@ -6,6 +6,8 @@
   z-index: 20;
   box-sizing: border-box;
   min-width: 100%;
+  /* The smallest width a field gives its list, also over a modal (where 100% would be the screen) */
+  --list-min-width: 0;
   padding: var(--space-200);
   border-radius: var(--radius-lg-12);
   background: var(--surface-floating);
@@ -111,5 +113,9 @@
 .grg-dropdown [hidden],
 .grg-select__box [hidden] { display: none !important; }
 
-/* Inside a modal (useListLayer): drawn over the modal, fixed to the screen; the offsets are set inline */
-.grg-dropdown[data-layer='top'] { position: fixed; z-index: 30; margin: 0; }
+/* Inside a modal (useListLayer): drawn over the modal, fixed to the screen; the offsets are set inline. Fixed from the
+   first moment (PrimeReact writes position: absolute inline), so the list never sits in the modal's content */
+.grg-modal-dialog .grg-dropdown { position: fixed !important; z-index: 30; }
+.grg-dropdown[data-layer='top'] { margin: 0; }
+/* Invisible (still focusable) for the two frames it takes to settle over the modal */
+.grg-modal-dialog .grg-dropdown:not([data-placed]) { opacity: 0; }

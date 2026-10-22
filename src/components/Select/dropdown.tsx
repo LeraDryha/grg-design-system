@@ -43,17 +43,32 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
   useLayoutEffect(() => setInModal(!!root.current?.closest('.grg-modal-dialog')), [root]);
   const stop = useRef<() => void>(undefined);
   useEffect(() => () => stop.current?.(), []);
+  /* Place the list the moment it is added, before the screen is drawn: placing it once PrimeReact says it is shown
+     (after its opening transition) let it sit in the modal's content first, and the content jumped. */
+  useEffect(() => {
+    const host = root.current;
+    if (!inModal || !host) return;
+    const watch = new MutationObserver(() => {
+      const panel = host.querySelector<HTMLElement>('.grg-dropdown');
+      if (panel && !panel.hasAttribute('data-layer')) place();
+      if (!panel) stop.current?.();
+    });
+    watch.observe(host, { childList: true, subtree: true });
+    return () => watch.disconnect();
+  });
 
   const place = () => {
-    stop.current?.();
     const host = root.current;
     const panel = host?.querySelector<HTMLElement>('.grg-dropdown');
     if (!inModal || !host || !panel) return;
-    // The offsets and the smallest width the field gives its list, read before the list leaves the flow
+    // Already over the modal (placed as it was added): nothing to do when PrimeReact reports it shown
+    if (panel.hasAttribute('data-layer') && stop.current) return;
+    stop.current?.();
+    // The offsets and the smallest width each field gives its list (its class: --list-min-width)
     const before = getComputedStyle(panel);
     const gap = Math.abs(parseFloat(before.marginTop)) || 0;
     const shift = parseFloat(before.marginLeft) || 0;
-    const minWidth = parseFloat(before.minWidth) || 0;
+    const minWidth = parseFloat(before.getPropertyValue('--list-min-width')) || 0;
     panel.setAttribute('data-layer', 'top');
     let busy = false;
     const placed = { top: '', left: '' };
@@ -78,6 +93,9 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
       busy = false;
     };
     update();
+    // PrimeReact still moves the list during its first frames: it shows once it has settled in its place
+    panel.removeAttribute('data-placed');
+    requestAnimationFrame(() => requestAnimationFrame(() => { update(); panel.setAttribute('data-placed', ''); }));
     const observer = new ResizeObserver(update);
     observer.observe(panel);
     // PrimeReact positions the list itself (next to the field) as it opens and filters: put it back over the modal

@@ -72,7 +72,7 @@
 .grg-filter[data-disabled] .grg-filter__chevron { color: var(--icon-disabled-400); }
 
 /* The list opens 8px under the filter; PrimeReact sets top and left inline (above it when there's no room below) */
-.grg-dropdown--filter { margin-top: var(--space-200); min-width: var(--space-5000); }
+.grg-dropdown--filter { --list-min-width: var(--space-5000); margin-top: var(--space-200); min-width: var(--space-5000); }
 .grg-dropdown--filter[style*='center bottom'] { margin-top: calc(-1 * var(--space-200)); }
 .grg-filter__overlay { position: absolute; z-index: 20; top: calc(100% + var(--space-200)); left: 0; }
 
