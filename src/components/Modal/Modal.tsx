@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Button } from '../Button/Button';
@@ -203,6 +203,19 @@ export function Modal({
   const descriptionId = panel.description ? `${id}-description` : undefined;
   const rootRef = useRef<HTMLDivElement | null>(null);
 
+  /* Escape closes the modal, wherever focus is (even after a click on the overlay), unless a list or menu inside it is
+     open: then it closes only that. PrimeReact's own Escape closed both. */
+  useEffect(() => {
+    if (!visible) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape' || event.defaultPrevented) return;
+      if (rootRef.current?.querySelector('[data-open], [role="combobox"][aria-expanded="true"], [aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]')) return;
+      onHide();
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [visible, onHide]);
+
   function focusFirst() {
     const root = rootRef.current;
     if (!root || root.contains(document.activeElement)) return;
@@ -234,16 +247,7 @@ export function Modal({
       aria-describedby={descriptionId ?? ''}
       pt={{
         mask: { className: 'grg-modal-mask', 'data-sheet': mobile || undefined } as never,
-        root: {
-          className: 'grg-modal-dialog',
-          // Escape closes the modal, unless a list or menu inside it is open: then it closes only that
-          onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
-            if (event.key !== 'Escape' || event.defaultPrevented) return;
-            if (event.currentTarget.querySelector('[data-open], [role="combobox"][aria-expanded="true"], [aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]')) return;
-            event.stopPropagation();
-            onHide();
-          },
-        } as never,
+        root: { className: 'grg-modal-dialog' },
       }}
       content={({ hide }) => (
         <ModalPanel
