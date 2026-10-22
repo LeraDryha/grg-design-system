@@ -1,0 +1,65 @@
+/* Multi-value Input. Every value is a token; Figma layer names in the comments. */
+
+.grg-multi-value__frame {
+  /* Size: md-40 by default (8px above and below, 10px at the sides) */
+  --mv-pad-y: var(--space-200);
+  --mv-pad-x: var(--space-250);
+  --mv-height: var(--space-1000);
+  --mv-radius: var(--radius-md-10);
+  --mv-border: var(--stroke-base-300);
+  --mv-bg: transparent;
+  position: relative;
+  min-width: 0;
+}
+.grg-multi-value__frame[data-size='lg'] { --mv-pad-y: var(--space-250); --mv-pad-x: var(--space-300); --mv-height: calc(var(--space-1000) + var(--space-100)); }
+.grg-multi-value__frame[data-size='sm'] { --mv-pad-y: var(--space-150); --mv-pad-x: var(--space-200); --mv-height: var(--space-800); --mv-radius: var(--radius-sm-8); }
+/* field: chips wrap onto rows 8px apart; Figma strokes sit inside, so the 1px border is part of the padding */
+.grg-multi-value__list {
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-200);
+  width: 100%;
+  min-height: var(--mv-height);
+  margin: 0;
+  padding: calc(var(--mv-pad-y) - 1px) calc(var(--mv-pad-x) - 1px);
+  list-style: none;
+  border: 1px solid var(--mv-border);
+  border-radius: var(--mv-radius);
+  background: var(--mv-bg);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+/* State = Hovered, Active (as Input) */
+.grg-multi-value__frame:not([data-disabled]):hover { --mv-bg: var(--bg-weak-100); --mv-border: var(--stroke-strong-500); }
+.grg-multi-value__frame[data-focused]:not([data-disabled]) { --mv-bg: transparent; --mv-border: var(--stroke-stronger-900); }
+.grg-multi-value__frame[data-keyboard-navigation]:not([data-disabled]):has(:focus-visible) .grg-multi-value__list { box-shadow: var(--focus-ring); }
+.grg-multi-value__list:focus { outline: none; }
+/* State = Error, Disabled */
+.grg-multi-value__frame[data-invalid] { --mv-border: var(--error-base-600); }
+.grg-multi-value__frame[data-disabled] { --mv-bg: var(--bg-weak-100); --mv-border: var(--stroke-disabled); }
+.grg-multi-value__frame[data-disabled] .grg-multi-value__list { color: var(--text-disabled-400); }
+.grg-multi-value__frame[data-disabled] .grg-chip { --chip-text: var(--text-disabled-400); }
+/* A chip under the pointer darkens, as in the Figma Hovered field */
+.grg-multi-value__frame:not([data-disabled]) .grg-multi-value__token:hover { --chip-bg: var(--bg-soft-200); }
+.grg-multi-value__token[hidden] { display: none; }
+.grg-multi-value__token[data-p-focused='true'] { --chip-bg: var(--bg-subtle-300); --chip-text: var(--text-strong-1000); }
+.grg-multi-value__remove { display: inline-flex; align-items: center; flex: none; color: var(--icon-base-500); cursor: pointer; }
+.grg-multi-value__remove:hover { color: var(--icon-subtle-700); }
+.grg-multi-value__entry { display: flex; align-items: center; flex: 1; gap: var(--space-200); min-width: min-content; }
+.grg-multi-value__input { box-sizing: border-box; width: 0; min-width: var(--space-2000); height: var(--space-600); flex: 1; margin: 0; padding: 0; border: 0; outline: none; background: transparent; color: inherit; font: inherit; }
+.grg-multi-value__input::placeholder { color: var(--text-soft-500); }
+.grg-multi-value__frame[data-disabled] .grg-multi-value__input::placeholder { color: var(--text-disabled-400); }
+.grg-multi-value__frame[data-collapsed] .grg-multi-value__input { display: none; }
+.grg-multi-value__frame[data-collapsed] .grg-multi-value__entry { flex: none; }
+.grg-multi-value__more { flex: none; box-sizing: border-box; display: inline-flex; align-items: center; min-height: var(--space-600); margin: 0; padding: 0; border: 0; border-radius: var(--radius-xxs-4); background: transparent; color: var(--text-subtle-700); font: var(--typo-body-sm-medium); white-space: nowrap; cursor: pointer; }
+.grg-multi-value__more:hover { color: var(--text-strong-1000); text-decoration: underline; }
+.grg-multi-value__more:focus-visible { outline: none; }
+.grg-multi-value__frame[data-keyboard-navigation] .grg-multi-value__more:focus-visible { box-shadow: var(--focus-ring); }
+.grg-multi-value__more:disabled { color: var(--text-disabled-400); cursor: default; }
+/* This inert copy measures every label without exposing or mounting hidden interactive controls. */
+.grg-multi-value__measure { position: absolute; inset: 0 0 auto; display: flex; flex-wrap: wrap; gap: var(--space-200); box-sizing: border-box; padding: var(--mv-pad-y) var(--mv-pad-x); visibility: hidden; pointer-events: none; }
+/* sm-32: the typing line is as tall as its sm-20 chips */
+.grg-multi-value__frame[data-size='sm'] :is(.grg-multi-value__input, .grg-multi-value__more) { height: var(--space-500); min-height: var(--space-500); }

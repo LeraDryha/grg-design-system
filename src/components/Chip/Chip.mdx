@@ -1,0 +1,132 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as ChipStories from './Chip.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={ChipStories} />
+
+# Chips
+
+<ComponentHeader
+  figma="2041-4064"
+  guidelines="2058-19411"
+  designTab
+  builtOn="PrimeReact Chip, Button and ToggleButton"
+  related={[
+    { label: 'Multi-value Input', href: '?path=/docs/components-multi-value-input--docs', relation: 'See also' },
+    { label: 'Segment Control', href: '?path=/docs/components-segment-control--docs', relation: 'See also' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs', relation: 'See also' },
+    { label: 'Avatar', href: '?path=/docs/components-avatar--docs' },
+  ]}
+/>
+
+Small pieces that filter a list, suggest a value, offer a quick action or hold an entered value.
+
+<Canvas of={ChipStories.Playground} />
+<Controls of={ChipStories.Playground} include={['label', 'variant', 'size', 'type', 'icon', 'removable', 'selectable', 'disabled']} />
+
+```tsx
+<Chip label="BTC" selectable selected={chosen} onSelectedChange={setChosen} />
+```
+
+## When to use
+
+<DoDont
+  dos={['Filter: narrow a list by currency, status or type', 'Suggestion: fill a field with a likely value, such as 25% of the balance', 'Assist: a quick secondary action that starts with a verb', 'Input: values someone entered, each removable (in a field, Multi-value Input)']}
+  donts={['The main action of a page or form: use Button', 'A status next to content: use Badge', 'A joined choice between a few views: use Segment Control', 'Long text: keep a chip to a word or two']}
+/>
+
+## Examples
+
+### Filter by currency
+
+<Canvas of={ChipStories.FilterByCurrency} />
+
+Figma Filter chips: any number can be chosen; a chosen chip is darker and gets a check.
+
+### Search transactions
+
+<Canvas of={ChipStories.SearchTransactions} />
+
+The Figma pairing of filters with a search field.
+
+### Convert presets
+
+<Canvas of={ChipStories.ConvertPresets} />
+
+Figma Suggestion chips: a share of the balance fills the amount. The one in use is marked until the amount is typed by hand; pressing it again clears it.
+
+### Receipt actions
+
+<Canvas of={ChipStories.ReceiptActions} />
+
+Figma Assist chips: the label says what happens and changes when it is done (*Add to calendar* → *Added to calendar*).
+
+### Removable values
+
+<Canvas of={ChipStories.RemovableValues} />
+
+Figma Input chips on their own. In a form field, use [Multi-value Input](?path=/docs/components-multi-value-input--docs).
+
+### Unavailable
+
+<Canvas of={ChipStories.Unavailable} />
+
+## Design decisions
+
+- **One component, four roles.** Figma draws Assist, Filter, Input and Suggestion chips alike; the code gives each its behaviour: a button (`onClick`), a check box (`selectable`), a value with a remove button (`removable`), or a plain value.
+- **A chosen chip gets a check**, as in the Figma Filter chips, so the choice doesn't rest on colour alone.
+- **Remove is its own button** next to the label, never a button inside a button; Backspace and Delete on it remove the chip too.
+- **Hover, pressed and focus** come from the pointer and the keyboard. Focus is the system blue ring, shown only for the keyboard.
+
+## Types
+
+<Canvas of={ChipStories.Types} />
+
+Text for most chips; a leading icon when it helps recognise the action; an avatar for people.
+
+## Styles
+
+<Canvas of={ChipStories.Styles} />
+
+Filled on plain backgrounds; Outlined where chips sit on a grey surface or next to fields. Chosen: Filled darkens, Outlined turns soft gold.
+
+## Sizes
+
+<Canvas of={ChipStories.Sizes} />
+
+md-24 by default and in md and lg fields, sm-20 in sm fields and dense filters, xs-16 inside tables and cards.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to each chip that does something, then to its remove button |
+| Space | Chooses or clears a filter |
+| Enter / Space | Runs an assist or suggestion chip |
+| Enter, Space, Backspace, Delete on × | Removes the chip |
+
+- Filters are check boxes named by their label; their group is named (*Currencies*).
+- Remove buttons are named *Remove* + the label. Icons and avatars are decorative.
+- A chip that only shows a value isn't a Tab stop.
+- Disabled text is under 4.5:1, as in every disabled control in Figma.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Style', prop: 'variant', values: 'filled, outlined' },
+    { figma: 'Size', prop: 'size', values: 'md, sm, xs' },
+    { figma: 'Type', prop: 'type, icon, avatar', values: 'text, icon, avatar' },
+    { figma: 'Remove', prop: 'removable, onRemove', values: 'boolean' },
+    { figma: 'State · Active (filter)', prop: 'selectable, selected, onSelectedChange', values: 'boolean' },
+    { figma: 'State · Disabled', prop: 'disabled', values: 'boolean' },
+    { figma: 'State · Hovered, Focused', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Assist, Suggestion', prop: 'onClick', values: 'a function' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={ChipStories} />

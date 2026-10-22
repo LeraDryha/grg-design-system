@@ -1,0 +1,59 @@
+/* Figma Chips (2041:4064). An inset stroke preserves the same dimensions as Filled. */
+.grg-chip-scope { display: inline-flex; min-width: 0; max-width: 100%; vertical-align: middle; }
+.grg-chip {
+  --chip-height: var(--space-600);
+  --chip-start: var(--space-200);
+  --chip-end: var(--space-200);
+  --chip-radius: var(--radius-xs-6);
+  --chip-bg: var(--bg-weak-100);
+  --chip-stroke: transparent;
+  --chip-text: var(--text-subtle-700);
+  --chip-icon: var(--icon-base-500);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  height: var(--chip-height);
+  padding: 0 var(--chip-end) 0 var(--chip-start);
+  gap: var(--space-050);
+  border: 0;
+  border-radius: var(--chip-radius);
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  font: var(--typo-body-sm-medium);
+  letter-spacing: var(--typo-body-sm-medium-tracking);
+  vertical-align: middle;
+}
+.grg-chip::before { content: ''; position: absolute; inset: 0; border: 1px solid var(--chip-stroke); border-radius: inherit; pointer-events: none; }
+.grg-chip[data-size='sm'] { --chip-height: var(--space-500); --chip-start: var(--space-150); --chip-end: var(--space-150); }
+.grg-chip[data-size='xs'] { --chip-height: var(--space-400); --chip-start: var(--space-100); --chip-end: var(--space-100); --chip-radius: var(--radius-xxs-4); font: var(--typo-caption-xs-medium); letter-spacing: var(--typo-caption-xs-medium-tracking); }
+.grg-chip[data-removable] { --chip-end: var(--space-100); }
+.grg-chip[data-size='sm'][data-removable] { --chip-end: var(--space-050); }
+.grg-chip[data-size='xs'][data-removable] { --chip-end: 0; }
+.grg-chip[data-type='avatar'] { --chip-start: var(--space-100); }
+.grg-chip[data-type='avatar']:is([data-size='sm'], [data-size='xs']) { --chip-start: var(--space-050); }
+.grg-chip .grg-chip__avatar { --av-size: var(--space-400); }
+.grg-chip[data-size='xs'] .grg-chip__avatar { --av-size: var(--space-300); }
+.grg-chip__main, .grg-chip__toggle-content { display: inline-flex; align-items: center; gap: var(--space-100); min-width: 0; }
+.grg-chip__main { position: relative; flex: 1; padding: 0; margin: 0; border: 0; border-radius: inherit; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-align: start; }
+.grg-chip__main:is(button, .grg-chip__toggle) { cursor: pointer; }
+.grg-chip__main:is(button, .grg-chip__toggle)::before { content: ''; position: absolute; inset: 50% calc(-1 * var(--chip-end)) auto calc(-1 * var(--chip-start)); min-height: var(--space-600); height: var(--chip-height); translate: 0 -50%; }
+.grg-chip__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.grg-chip__icon { color: var(--chip-icon); flex: none; }
+.grg-chip__checkbox { position: absolute; inset: 50% calc(-1 * var(--chip-end)) auto calc(-1 * var(--chip-start)); width: calc(100% + var(--chip-start) + var(--chip-end)); height: max(var(--chip-height), var(--space-600)); margin: 0; translate: 0 -50%; opacity: 0; z-index: 1; cursor: inherit; }
+.grg-chip__toggle-content { pointer-events: none; }
+.grg-chip[data-variant='outlined'] { --chip-bg: transparent; --chip-stroke: var(--stroke-base-300); }
+.grg-chip:where([data-interactive]:hover):not([data-disabled]) { --chip-bg: var(--bg-soft-200); }
+.grg-chip[data-variant='outlined']:where([data-interactive]:hover):not([data-disabled]) { --chip-bg: transparent; --chip-stroke: var(--stroke-strong-500); }
+.grg-chip:where([data-selected], :has(.grg-chip__main:active)):not([data-disabled]) { --chip-bg: var(--bg-subtle-300); --chip-text: var(--text-strong-1000); --chip-icon: var(--icon-strong-1000); }
+.grg-chip[data-variant='outlined']:where([data-selected], :has(.grg-chip__main:active)):not([data-disabled]) { --chip-bg: var(--primary-gold-soft-100); --chip-stroke: transparent; }
+.grg-chip-scope[data-keyboard-navigation] .grg-chip:not([data-disabled]):has(:focus-visible) { box-shadow: var(--focus-ring); }
+.grg-chip__main:focus-visible { outline: none; }
+.grg-chip .grg-chip__remove:focus-visible { box-shadow: none; }
+.grg-chip[data-disabled] { --chip-text: var(--text-disabled-400); --chip-icon: var(--icon-disabled-400); }
+.grg-chip[data-variant='outlined'][data-disabled] { --chip-stroke: var(--stroke-disabled); }
+.grg-chip[data-disabled] .grg-chip__main { cursor: default; }
+.grg-chip[data-disabled] .grg-chip__avatar { opacity: 0.5; }
