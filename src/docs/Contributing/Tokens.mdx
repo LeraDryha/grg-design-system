@@ -60,7 +60,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Topbar navigation / Exchange, Desktop | 130px sides at 1440px, without a variable | The content centred in 1180px (1440 − 2 × 130), at least 24px from the edges |
 | Notification feed / Header and Footer | The title reads *Notification* and the footer *View all notification* | *Notifications* and *View all notifications* |
 | Pagination / Navigation controls | Previous comes before First (`‹ «`) and Next before Last (`› »`) | First and Last on the outside, `« ‹ … › »`, as is usual. To be fixed in Figma |
-| Progress bar, Circular progress bar / Unknown length | No state for a task whose length isn't known | Added: the bar runs a piece of the fill along the track, the ring turns a quarter of itself (PrimeReact ProgressBar and ProgressSpinner). To be added to Figma |
+| Progress bar, Circular progress bar / Unknown length | No state for a task whose length isn't known | Added: the bar runs a piece of the fill along the track, the ring turns a quarter of itself (the bar on PrimeReact ProgressBar; the ring drawn in the code, as PrimeReact ProgressSpinner lets the arc drift off the track). To be added to Figma |
 | Circular progress bar guidelines / lg-64 | The label style is written *Body-mb/Medium* | Body-md/Medium, as in the component set |
 | Search / Style = Gray | Marked optional, to be reconsidered or deprecated | Not built: Outstroke only |
 | Search / Loading | No state while results load | The xs Progress Circle in place of the clear button |
