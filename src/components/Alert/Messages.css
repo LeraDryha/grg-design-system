@@ -1,0 +1,49 @@
+/* Notification and Toast areas. Every value is a token. */
+
+/* An area: fixed to the screen (or to the docs example), stacked 8px apart, only the messages take clicks */
+.grg-messages {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  max-width: calc(100% - var(--space-600) * 2);
+  pointer-events: none;
+}
+.grg-messages__item { pointer-events: auto; }
+/* PrimeReact positions the area inline; the system's offsets win */
+.grg-messages[data-kind='notification'] {
+  top: auto !important;
+  right: var(--space-600) !important;
+  bottom: var(--space-600) !important;
+  left: auto !important;
+  align-items: flex-end;
+  width: calc(var(--space-5000) * 2);
+}
+.grg-messages[data-kind='toast'] {
+  top: auto !important;
+  right: auto !important;
+  bottom: var(--space-600) !important;
+  left: 50% !important;
+  align-items: center;
+  translate: -50% 0;
+}
+/* Phone: both at the bottom, the width of the screen less 16px each side */
+.grg-messages[data-phone] {
+  right: var(--space-400) !important;
+  bottom: var(--space-400) !important;
+  left: var(--space-400) !important;
+  align-items: stretch;
+  width: auto;
+  max-width: none;
+  translate: none;
+}
+.grg-messages__item .grg-alert { width: 100%; box-sizing: border-box; }
+
+/* Coming and going: a short rise and fade */
+.grg-messages__item.enter { opacity: 0; translate: 0 var(--space-200); }
+.grg-messages__item.enter-active { opacity: 1; translate: 0 0; transition: opacity 200ms ease-out, translate 200ms ease-out; }
+.grg-messages__item.exit { opacity: 1; }
+.grg-messages__item.exit-active { opacity: 0; transition: opacity 150ms ease-in; }
+@media (prefers-reduced-motion: reduce) {
+  .grg-messages__item:is(.enter-active, .exit-active) { translate: none; transition: opacity 150ms ease; }
+}

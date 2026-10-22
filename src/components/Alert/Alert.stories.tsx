@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useArgs } from 'storybook/preview-api';
-import { useState } from 'react';
+import { useState, type CSSProperties, type ReactNode } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { Alert, alertStatuses, type AlertProps } from './Alert';
+import { MessagesProvider, useMessages } from './Messages';
 import { Button } from '../Button/Button';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/alert/alert-component.png';
@@ -119,6 +120,101 @@ export const LongContent: Story = {
   name: 'Long content',
   args: { size: 'sm', title: 'Your transfer is taking longer than expected', description: 'We are checking the transfer with the receiving bank. You can continue working and check its status later.', actionLabel: 'View transfer' },
   render: (args: AlertProps) => <div style={width}><Alert {...args} /></div>,
+};
+
+/* ---- On a page (Figma Examples 419:15467): where each kind appears ---- */
+
+const block = (height: string, extra: CSSProperties = {}): CSSProperties => ({ height, borderRadius: 'var(--radius-lg-12)', background: 'var(--surface-base)', ...extra });
+
+/** A page in grey blocks, as in the Figma examples. The frame is a small screen: the messages show inside it */
+function PageMock({ top, actions, messages = false }: { top?: ReactNode; actions?: ReactNode; messages?: boolean }) {
+  const content = (
+    <>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-300)' }}>
+        <span style={block('var(--space-1000)', { width: 'var(--space-1000)', borderRadius: 'var(--radius-fully-rounded)' })} />
+        <span style={block('var(--space-300)', { width: 'var(--space-2000)' })} />
+        <span style={{ flex: 1 }} />
+        {actions}
+      </div>
+      {top}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 'var(--space-400)' }}>
+        {[0, 1, 2].map(i => <span key={i} style={block('var(--space-2000)')} />)}
+      </div>
+      {[0, 1, 2].map(i => <span key={i} style={block('var(--space-1000)')} />)}
+    </>
+  );
+  return (
+    <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', height: 'calc(var(--space-5000) * 2 + var(--space-2000))', padding: 'var(--space-600)', borderRadius: 'var(--radius-xl-16)', border: '1px solid var(--stroke-soft-200)', background: 'var(--surface-canvas)', display: 'grid', gap: 'var(--space-400)', alignContent: 'start', boxSizing: 'border-box' }}>
+      {messages ? <MessagesProvider appendTo="self">{content}</MessagesProvider> : content}
+    </div>
+  );
+}
+
+/** Figma Alerts: a persistent message at the top of the content, until it is closed. */
+export const AlertOnAPage: Story = {
+  name: 'Alert on a page',
+  render: () => (
+    <PageMock top={
+      // On a page the Alert takes the width of the content (the component is 360px wide by default)
+      <Alert style={{ width: '100%' }} status="success" size="sm" title="Your fee per invoice payment reduced to 1.5%"
+        description="Enjoy reduced fee for the first three months after registration, as you joined with the referral program" />
+    } />
+  ),
+};
+
+/** Figma Notification: in the bottom right corner; it stays until it is closed. */
+export const NotificationInTheCorner: Story = {
+  name: 'Notification in the corner',
+  render: function NotificationInTheCorner() {
+    function Actions() {
+      const { notify } = useMessages();
+      return (
+        <div style={{ display: 'flex', gap: 'var(--space-200)' }}>
+          <Button size="sm" variant="secondary" onClick={() => notify({ status: 'success', title: 'Payment received', actionLabel: 'See transaction', actionHref: '#transaction' })}>Receive a payment</Button>
+          <Button size="sm" variant="secondary" onClick={() => notify({ status: 'error', filled: true, title: 'Database connection failure', description: 'We’re encountering issues with connecting to our system’s database at the moment.', actionLabel: 'Learn more', actionHref: '#status' })}>Lose the database</Button>
+        </div>
+      );
+    }
+    return <PageMock messages actions={<Actions />} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Receive a payment' }));
+    const area = await canvas.findByRole('region', { name: 'Notifications' });
+    await waitFor(() => expect(within(area).getByText('Payment received')).toBeVisible());
+    await userEvent.click(within(area).getByRole('button', { name: 'Close message' }));
+    await waitFor(() => expect(within(area).queryByText('Payment received')).toBeNull());
+  },
+};
+
+/** Figma Toast: compact, at the bottom in the middle, several stacked. "Changes saved" and "Copied" disappear by
+ *  themselves after 4 seconds (not while the pointer or focus is on them); "Invoice deleted" waits for Undo or Close. */
+export const ToastsAtTheBottom: Story = {
+  name: 'Toasts at the bottom',
+  render: function ToastsAtTheBottom() {
+    function Actions() {
+      const { toast } = useMessages();
+      return (
+        <div style={{ display: 'flex', gap: 'var(--space-200)' }}>
+          <Button size="sm" variant="secondary" onClick={() => toast({ status: 'success', title: 'Changes saved', duration: 4000 })}>Save</Button>
+          <Button size="sm" variant="secondary" onClick={() => toast({ status: 'success', title: 'Copied', duration: 4000 })}>Copy</Button>
+          <Button size="sm" variant="secondary" onClick={() => toast({ status: 'success', title: 'Invoice deleted', actionLabel: 'Undo', onAction: () => undefined })}>Delete</Button>
+        </div>
+      );
+    }
+    return <PageMock messages actions={<Actions />} />;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Save' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Delete' }));
+    const area = await canvas.findByRole('region', { name: 'Toasts' });
+    await waitFor(() => expect(within(area).getByText('Changes saved')).toBeVisible());
+    await waitFor(() => expect(within(area).getByText('Invoice deleted')).toBeVisible());
+    // The one that asks nothing goes by itself; the one with Undo stays
+    await waitFor(() => expect(within(area).queryByText('Changes saved')).toBeNull(), { timeout: 6000 });
+    await expect(within(area).getByText('Invoice deleted')).toBeVisible();
+  },
 };
 
 /* ---- Overview ---- */

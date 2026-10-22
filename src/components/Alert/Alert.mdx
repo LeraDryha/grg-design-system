@@ -10,7 +10,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   figma="149-19579"
   guidelines="403-29662"
   designTab
-  builtOn="PrimeReact Message"
+  builtOn="PrimeReact Message; PrimeReact Toast for where floating messages appear"
   related={[
     { label: 'Link', href: '?path=/docs/components-link--docs', relation: 'Uses' },
     { label: 'Action Button', href: '?path=/docs/components-action-button--docs', relation: 'Uses' },
@@ -24,6 +24,11 @@ A message about what happened and what to do next. One shared component for inli
 
 ```tsx
 <Alert status="success" title="Invoice deleted" actionLabel="Undo" onAction={undo} elevated />
+
+// Floating messages: MessagesProvider once around the app, then from anywhere
+const { notify, toast } = useMessages();
+notify({ status: 'success', title: 'Payment received', actionLabel: 'See transaction', actionHref: '/transactions/42' });
+toast({ status: 'success', title: 'Changes saved', duration: 4000 });
 ```
 
 ## When to use
@@ -45,6 +50,24 @@ A message about what happened and what to do next. One shared component for inli
 
 Every example is a live story. Its steps also run as a test in the **Interactions** tab.
 
+### Alert on a page
+
+<Canvas of={AlertStories.AlertOnAPage} />
+
+Alerts stay: an important message at the top of the content, noticed and dealt with, until it is closed. On a page it takes the width of the content.
+
+### Notification in the corner
+
+<Canvas of={AlertStories.NotificationInTheCorner} />
+
+Notifications appear in the bottom right corner: payments, updates. They stay until they are closed. Press both buttons to see them stack.
+
+### Toasts at the bottom
+
+<Canvas of={AlertStories.ToastsAtTheBottom} />
+
+Toasts give brief feedback in a compact size, at the bottom in the middle, stacked. One that asks nothing (*Changes saved*, *Copied*) can go by itself after a few seconds; one with an action (*Undo*) stays until it is used or closed. On a phone, Notifications and Toasts take the width of the screen at the bottom.
+
 ### Undo a change
 
 <Canvas of={AlertStories.UndoAChange} />
@@ -61,7 +84,7 @@ An inline Alert next to the content it concerns. Errors are announced at once (`
 
 <Canvas of={AlertStories.DismissANotice} />
 
-Close hides the message and calls `onClose`. With `actionHref`, the action is a Link with the browser's normal navigation. Messages stay until dismissed: there is no timer.
+Close hides the message and calls `onClose`. With `actionHref`, the action is a Link with the browser's normal navigation.
 
 ### Long content
 
@@ -71,9 +94,10 @@ Close hides the message and calls `onClose`. With `actionHref`, the action is a 
 
 What the code adds to the Figma file, and why:
 
-- **One component for three names.** Alert, Notification and Toast share one body; only `elevated` changes. The product decides where floating messages appear and how they queue.
+- **One component for three names.** Alert, Notification and Toast share one body; only `elevated` changes.
+- **Where floating messages appear**, as in the Figma examples: `MessagesProvider` puts Notifications in the bottom right corner and Toasts at the bottom in the middle, 24px from the edges, stacked 8px apart; on a phone (under 480px) both go to the bottom, the width of the screen less 16px each side. `useMessages()` shows them from anywhere.
 - **Announced by urgency.** Errors use `role="alert"`; other statuses use `role="status"`. Set `role` yourself for a non-urgent error or an urgent warning.
-- **No automatic dismissal.** A message never disappears while someone is reading it or using its action.
+- **Closing.** An Alert and a Notification close only with their Close button. A Toast that asks nothing (*Copied*, *Changes saved*) may go by itself (`duration`); it waits while the pointer or the keyboard focus is on it. A Toast with an action never goes by itself.
 - **Status is not colour alone.** Each status has its own icon shape, and screen readers hear a status word first (*Error*, *Success*); change it with `statusLabel`.
 - **A description means sm-20.** Figma has descriptions only in sm-20, so adding one selects that size.
 - **Corner radii from the component set:** 10px without a description, 12px with one. The guidelines text lists 8px; see Contributing/Tokens.
