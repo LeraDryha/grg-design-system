@@ -121,6 +121,7 @@ export const Types: Story = {
       <Variant caption="Icon"><CompactSelect {...args} type="icon" options={samplePayments} defaultValue="rent" aria-label="Payment type" /></Variant>
       <Variant caption="Country"><CompactSelect {...args} type="country" options={sampleCountries} defaultValue="BG" aria-label="Country" /></Variant>
       <Variant caption="Coin"><CompactSelect {...args} type="coin" options={sampleCoins} defaultValue="BTC" aria-label="Coin" /></Variant>
+      <Variant caption="Coin, withText"><CompactSelect {...args} type="coin" withText options={sampleCoins.map(o => ({ ...o, label: o.value, listLabel: o.label }))} defaultValue="BTC" aria-label="Coin" /></Variant>
     </Showcase>
   ),
 };

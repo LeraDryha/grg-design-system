@@ -1,0 +1,70 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as ConvertStories from './Convert.stories';
+import convertFrame from '../../assets/design/in-product/convert/1-convert.png';
+import overFrame from '../../assets/design/in-product/convert/2-over-balance.png';
+import marketFrame from '../../assets/design/in-product/convert/3-market.png';
+import presetFrame from '../../assets/design/in-product/convert/4-preset.png';
+import receiveFrame from '../../assets/design/in-product/convert/5-you-receive.png';
+import confirmFrame from '../../assets/design/in-product/convert/6-confirmation.png';
+import successFrame from '../../assets/design/in-product/convert/7-success.png';
+import failedFrame from '../../assets/design/in-product/convert/8-failed.png';
+
+<Meta of={ConvertStories} />
+
+# Convert
+
+A business swaps one asset for another: ether for euros, euros for a stablecoin. I designed this flow in Figma for a crypto payments platform; here it is rebuilt from the design system's components, and it works.
+
+<a href="iframe.html?viewMode=story&id=in-product-convert--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={ConvertStories.LiveFlow} />
+
+**Try it:** press **Convert** on the Ethereum row. Type what you spend in **From**, or exactly what you want to receive in **To**; or press **75%**. Change either coin in its select. Confirm, and both balances change in the table.
+
+## What the flow has to get right
+
+- **Both sides at once.** What leaves, what arrives and at what rate are on screen before anything is pressed.
+- **Type the number you know.** Some people know what they want to spend, others exactly what they need to receive; either field takes the amount and the other follows.
+- **No dead ends.** Every error says what is wrong and what is available, and the button waits until the amount works.
+
+## Design decisions
+
+- **Two linked boxes.** From sits over To with an arrow between them; a minus and a plus show what leaves the balance and what arrives.
+- **The balance warns first.** When the amount is more than the balance, the balance in the box turns red and *Over balance* appears under the amount.
+- **Shares of the balance.** 25%, 50%, 75% and MAX fill From in one press; the chosen one is checked until the amount is typed by hand.
+- **The market has a say.** When the market can't take the whole amount, the modal says so and how much it can take.
+- **A confirmation step.** It repeats the amount, the rate and the fee, and the button repeats the amount: *Convert ~ 0.62 ETH*.
+- **Two endings.** *Order successfully submitted*, or *Oops, the transaction failed* with a support code to copy and a way to the support team.
+
+## Decided while building it
+
+<Canvas of={ConvertStories.NotEnoughOnTheMarket} />
+
+- **The limits moved into the modal.** Fee, minimum and maximum sat in a popover beside the modal, as in Withdraw; they are now a card above the Convert button, red when the amount is outside them.
+- **Coins from a dropdown, not a separate window.** The first design opened *You receive*, a window with a search and a list of coins. The select now opens the system's dropdown list with a search, in place: one step less, and the amounts stay in view. Choosing the coin of the other side swaps the two.
+- **Test data.** Only ETH to USDC is limited by the market (1.45866 ETH), to show that message. *Contact the support team* has no page behind it in this demo.
+
+<Canvas of={ConvertStories.WhenItFails} />
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab).
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {[
+    [convertFrame, '1 · Convert, with the limits in a popover'], [overFrame, '2 · Over balance'], [marketFrame, '3 · Not enough on the market'],
+    [presetFrame, '4 · 75% of the balance'], [receiveFrame, '5 · You receive, replaced by the dropdown'], [confirmFrame, '6 · Confirmation'],
+    [successFrame, '7 · Order submitted'], [failedFrame, '8 · The transaction failed'],
+  ].map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Table](?path=/docs/components-table--docs) · [Modal](?path=/docs/components-modal--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Chips](?path=/docs/components-chips--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Input](?path=/docs/components-input--docs) (Hint text) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs)
+
+The only new piece is the currency box with its large amount, which lives with this flow.

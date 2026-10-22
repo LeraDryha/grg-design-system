@@ -91,3 +91,56 @@
 .grg-ip-comment { display: grid; gap: var(--space-200); }
 .grg-ip-comment__head { display: flex; align-items: center; justify-content: space-between; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
 .grg-ip-comment__text { margin: 0; font: var(--typo-body-md-regular); color: var(--text-strong-1000); overflow-wrap: anywhere; }
+
+/* ---- Convert ---- */
+/* Figma: the modal content of Convert is 24px apart */
+.grg-ip-flow { display: grid; gap: var(--space-600); }
+/* Figma "Currency input": a grey box, 16px inside, radius 12; From / To and the balance over the amount and the coin */
+.grg-ip-pair { display: grid; gap: var(--space-100); }
+/* A row of no height between the boxes (8px apart), holding the arrow on their seam */
+.grg-ip-pair__gap { position: relative; z-index: 1; height: 0; }
+.grg-ip-currency { display: grid; gap: var(--space-200); padding: var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
+.grg-ip-currency__top { display: flex; justify-content: space-between; gap: var(--space-200); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-currency__top [data-over] { color: var(--error-base-600); }
+.grg-ip-currency__row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-300); }
+.grg-ip-currency__amount { display: grid; flex: 1; min-width: 0; padding: var(--space-150) 0; }
+.grg-ip-currency__field { display: flex; align-items: baseline; font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-currency__field input {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xxs-4);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  caret-color: var(--primary-base-1000);
+}
+.grg-ip-currency__field input::placeholder { color: var(--text-strong-1000); }
+.grg-ip-currency__field input:focus { outline: none; }
+.grg-ip-currency[data-keyboard-navigation] .grg-ip-currency__field:has(:focus-visible) { box-shadow: var(--focus-ring); border-radius: var(--radius-xxs-4); }
+/* Figma: a 32px grey circle on the line between the boxes, cut out of them by a ring in the modal's colour */
+.grg-ip-pair__arrow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: var(--space-800);
+  height: var(--space-800);
+  border-radius: var(--radius-fully-rounded);
+  background: var(--bg-weak-100);
+  box-shadow: 0 0 0 var(--space-100) var(--surface-floating);
+  color: var(--icon-strong-1000);
+  translate: -50% -50%;
+}
+.grg-ip-chips { display: flex; flex-wrap: wrap; gap: var(--space-200); }
+/* Confirmation: 40px above and below, the amount large */
+.grg-ip-receipt { display: grid; justify-items: center; gap: var(--space-200); padding: var(--space-1000) 0; text-align: center; }
+.grg-ip-receipt p { margin: 0; }
+.grg-ip-receipt__lead { font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-receipt__amount { font: var(--typo-heading-h4); color: var(--text-strong-1000); }
+.grg-ip-receipt__gets { font: var(--typo-body-lg-regular); color: var(--text-soft-500); }
+.grg-ip-box__key { flex: 1; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-ip-box__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }

@@ -39,7 +39,7 @@
 /* Keep the keyboard ring while focus is in the control or its search panel, including when open. */
 .grg-compact-select[data-keyboard-navigation]:not([data-disabled]):has(:focus-visible) .grg-compact-select__box { box-shadow: var(--focus-ring); }
 
-.grg-compact-select__value { display: flex; align-items: center; }
+.grg-compact-select__value { display: flex; align-items: center; gap: var(--space-200); }
 .grg-compact-select__value > .grg-icon { color: var(--icon-base-500); }
 .grg-compact-select__trigger { display: inline-grid; color: var(--icon-base-500); }
 .grg-compact-select[data-open] .grg-compact-select__trigger { color: var(--icon-strong-1000); }

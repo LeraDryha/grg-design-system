@@ -1,6 +1,7 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { WithdrawEthFlow } from './WithdrawEth';
+import { screen } from '../shared/screen';
 import assetsFrame from '../../assets/design/in-product/withdraw-eth/0-assets.png';
 import methodFrame from '../../assets/design/in-product/withdraw-eth/1-method.png';
 import amountFrame from '../../assets/design/in-product/withdraw-eth/2-amount.png';
@@ -10,14 +11,6 @@ import summaryFrame from '../../assets/design/in-product/withdraw-eth/4-summary.
 import requisiteFrame from '../../assets/design/in-product/withdraw-eth/5-requisite.png';
 import processingFrame from '../../assets/design/in-product/withdraw-eth/6-processing.png';
 import progressFrame from '../../assets/design/in-product/withdraw-eth/7-in-progress.png';
-
-/** A desktop screen; the transformed box keeps the modals inside it. On its own (full screen) it fills the window;
- *  on the docs page it is a 720px window into the app */
-const screen: Decorator = (Story, { viewMode }) => (
-  <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', width: '100%', minWidth: 960, height: viewMode === 'docs' ? 720 : '100vh' }}>
-    <Story />
-  </div>
-);
 
 const meta = {
   title: 'In product/Withdraw ETH',

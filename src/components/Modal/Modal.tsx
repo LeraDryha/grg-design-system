@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react';
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Button } from '../Button/Button';
@@ -221,7 +221,8 @@ export function Modal({
       modal
       blockScroll
       closable
-      closeOnEscape
+      // Escape is handled below: PrimeReact's own handler also closes the modal when Escape only meant to close a list in it
+      closeOnEscape={false}
       dismissableMask={dismissableMask}
       draggable={false}
       resizable={false}
@@ -231,7 +232,16 @@ export function Modal({
       aria-describedby={descriptionId ?? ''}
       pt={{
         mask: { className: 'grg-modal-mask', 'data-sheet': mobile || undefined } as never,
-        root: { className: 'grg-modal-dialog' },
+        root: {
+          className: 'grg-modal-dialog',
+          // Escape closes the modal, unless a list or menu inside it is open: then it closes only that
+          onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
+            if (event.key !== 'Escape' || event.defaultPrevented) return;
+            if (event.currentTarget.querySelector('[data-open], [role="combobox"][aria-expanded="true"], [aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]')) return;
+            event.stopPropagation();
+            onHide();
+          },
+        } as never,
       }}
       content={({ hide }) => (
         <ModalPanel
