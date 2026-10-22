@@ -6,6 +6,10 @@ import '../src/styles/fonts.css';
 import '../src/styles/tokens.css';
 import '../src/styles/system.css';
 import '../src/styles/base.css';
+import { trackInputModality } from '../src/styles/input-modality';
+
+// Focus rings for the keyboard only, in every story and docs page
+trackInputModality();
 
 type Theme = 'light' | 'dark';
 
