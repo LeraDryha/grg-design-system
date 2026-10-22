@@ -74,5 +74,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Chips / Roles | Assist, Filter, Input and Suggestion look alike | Each role behaves as its control: a button, a check box, a value with a remove button |
 | Interaction Card / Disabled | No disabled state | Grey text and icons, as other disabled controls; the description says why |
 | Interaction Card / Chevron, plus | An Action Button and an icon-only Button inside the card | Drawn as pictures: the whole card is the button |
+| Notification & Toast / Closing | Both can be closed or disappear automatically | A Notification closes only with Close; a Toast goes by itself only when it asks nothing (Copied, Changes saved), and waits while hovered or focused |
+| Notification & Toast / Phone | No mobile placement | Under 480px both at the bottom, the width of the screen less 16px each side |
 | Feature cards / Primary, Support | The border uses the palette colour `gold/600`, not a variable | `primary-gold-base`, the card's own gold |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |

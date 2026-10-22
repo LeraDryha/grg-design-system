@@ -59,7 +59,7 @@ const STATUS_LABEL: Record<AlertStatus, string> = { warning: 'Warning', error: '
  * PrimeReact Message (unstyled), composed with the system's Base icons, Link and Action Button.
  * Message has no dismissal or action slot. Its content template supplies those parts, and root
  * passthrough corrects its fixed alert/polite combination so the live region matches urgency.
- * Placement, queuing and timers belong to the product; this shared message never auto-dismisses.
+ * The message itself never goes by itself: placement, stacking and a Toast's timer are MessagesProvider's.
  */
 export function Alert({
   title,
