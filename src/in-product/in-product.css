@@ -53,7 +53,6 @@
 .grg-ip-info:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
 /* ---- Modal pieces ---- */
-.grg-ip-stack { display: grid; gap: var(--space-200); }
 /* Figma "Confirmation Exchange": 40px above and below, the amount 32px, the note under it */
 .grg-ip-amount { display: grid; justify-items: center; gap: var(--space-200); padding: var(--space-1000) 0 var(--space-400); }
 .grg-ip-amount__field { color: var(--text-strong-1000); display: inline-flex; align-items: baseline; gap: var(--space-200); max-width: 100%; cursor: text; }
@@ -93,8 +92,6 @@
 .grg-ip-comment__text { margin: 0; font: var(--typo-body-md-regular); color: var(--text-strong-1000); overflow-wrap: anywhere; }
 
 /* ---- Convert ---- */
-/* Figma: the modal content of Convert is 24px apart */
-.grg-ip-flow { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-600); }
 /* Figma "Currency input": a grey box, 16px inside, radius 12; From / To and the balance over the amount and the coin */
 .grg-ip-pair { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-100); }
 /* A row of no height between the boxes (8px apart), holding the arrow on their seam */

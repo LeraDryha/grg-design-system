@@ -41,6 +41,7 @@
 /* The list (shared with Select) opens under the field, lined up with its left edge. PrimeReact sets top and left
    inline (above the field when there's no room below), so the offsets are margins. */
 .grg-dropdown--inline {
+  --list-min-width: var(--space-5000);
   margin-top: var(--space-300);
   margin-left: calc(-1 * var(--space-250));
   min-width: var(--space-5000);

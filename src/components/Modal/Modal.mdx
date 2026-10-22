@@ -115,6 +115,7 @@ What the code adds to the Figma file, and why:
 - **Bottom sheet under 480px.** The Figma Mobile size, decided by the screen (`layout="auto"`); `layout` forces either one.
 - **Focus.** It starts in the first field, otherwise on the safe action (Cancel when destructive, the main action otherwise), stays inside while the modal is open and goes back to the opening button when it closes. PrimeReact would focus its own close button.
 - **Closing.** Close and Escape always; a click on the overlay only with `dismissableMask`, so nothing typed is lost by a stray click. The page behind doesn't scroll.
+- **Never wider than the modal.** Every part of the content takes its width and can shrink to it, and nothing scrolls sideways. After every story a check fails if anything in a modal's content is wider than the modal.
 - **Lists open over the modal.** A Select (or Compact Select, Inline Select, Filter) in the content opens its list over the modal instead of inside its scrolling content, where it was cut off; *Select user* shows it.
 - **Overlay.** Figma draws #0A0A0A at 60% with an 8px blur, not as a variable; it is the `--overlay` token here (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)), the same in both themes.
 - **Back arrow on Center aligned only**, as in Figma: in the other types it would sit on the status icon.

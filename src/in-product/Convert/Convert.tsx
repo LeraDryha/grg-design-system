@@ -1,11 +1,11 @@
-import { useId, useRef, useState } from 'react';
+import { useId, useRef, useState, type ReactNode } from 'react';
 import { AccordionKeyValue } from '../../components/Accordion/AccordionKeyValue';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Button } from '../../components/Button/Button';
 import { Chip } from '../../components/Chip/Chip';
 import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { HintText } from '../../components/FormField/FormField';
-import { Icon } from '../../components/Icon/Icon';
+import { Icon, type IconName } from '../../components/Icon/Icon';
 import { Modal } from '../../components/Modal/Modal';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { AppFrame, AssetsPage, format, money, startAssets, type Asset } from '../shared/AssetsApp';
@@ -132,15 +132,15 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
   const close = () => setStep(null);
   const amount = `${format(fromValue, from.digits)} ${from.code}`;
 
-  return (
-    <>
-      <AppFrame>
-        <AssetsPage assets={assets} inProgress={688621.79} onAction={{ convert: start }} />
-      </AppFrame>
-
-      <Modal appendTo="self" visible={step === 'amounts'} onHide={close} title="Convert"
-        footerType="fill" primaryAction={{ label: 'Convert', disabled: !ready, onClick: () => setStep('confirm') }}>
-        <div className="grg-ip-flow">
+  type View = {
+    title: string; description?: string; status?: 'success' | 'error'; statusIcon?: IconName; closable?: boolean; back?: () => void;
+    action: { label: string; disabled?: boolean; onClick: () => void }; content?: ReactNode;
+  };
+  const views: Record<Step, View> = {
+    amounts: {
+      title: 'Convert',
+      action: { label: 'Convert', disabled: !ready, onClick: () => setStep('confirm') },
+      content: <>
         <AccordionKeyValue rows={[{ key: 'Rate', value: `1 ${from.code} = ${format(rate, to.digits)} ${to.code}` }]} />
         <div className="grg-ip-pair">
           <CurrencyInput side="from" asset={from} assets={assets} text={fromText} onText={value => type('from', value)} onAsset={id => choose('from', id)}
@@ -162,11 +162,13 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
             { key: 'Maximum', value: `${money(LIMITS.max)} EUR` },
           ]} />
         </div>
-        </div>
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'confirm'} onHide={close} onBack={() => setStep('amounts')} title="Confirmation"
-        footerType="fill" primaryAction={{ label: `Convert ~ ${amount}`, onClick: submit }}>
+      </>,
+    },
+    confirm: {
+      title: 'Confirmation',
+      back: () => setStep('amounts'),
+      action: { label: `Convert ~ ${amount}`, onClick: submit },
+      content: <>
         <div className="grg-ip-receipt">
           <p className="grg-ip-receipt__lead">You're converting</p>
           <p className="grg-ip-receipt__amount">~ {amount}</p>
@@ -179,15 +181,19 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
             { key: 'Total amount', value: amount },
           ]} />
         </div>
-      </Modal>
-
-      <Modal appendTo="self" visible={step === 'done'} onHide={close} closable={false} status="success" statusIcon="check-circle-filled"
-        title="Order successfully submitted" description="We have sent you an email with transaction details"
-        footerType="fill" primaryAction={{ label: 'Done', onClick: close }} />
-
-      <Modal appendTo="self" visible={step === 'failed'} onHide={close} closable={false} status="error" statusIcon="remove-circle-filled"
-        title="Oops, the transaction failed" description="Please check your balance and limits. After that try again. If the error occurs again, please contact the support team."
-        footerType="fill" primaryAction={{ label: 'Done', onClick: close }}>
+      </>,
+    },
+    done: {
+      title: 'Order successfully submitted', description: 'We have sent you an email with transaction details',
+      status: 'success', statusIcon: 'check-circle-filled', closable: false,
+      action: { label: 'Done', onClick: close },
+    },
+    failed: {
+      title: 'Oops, the transaction failed',
+      description: 'Please check your balance and limits. After that try again. If the error occurs again, please contact the support team.',
+      status: 'error', statusIcon: 'remove-circle-filled', closable: false,
+      action: { label: 'Done', onClick: close },
+      content: <>
         <div className="grg-ip-box grg-ip-box--row">
           <span className="grg-ip-box__key">Support code</span>
           <span className="grg-ip-box__value">8876kjhgt789</span>
@@ -196,6 +202,23 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
         </div>
         {/* No support page in this flow: the button stays, as in Figma, without a destination */}
         <Button variant="text" size="md" leftIcon="send" justified>Contact the support team</Button>
+      </>,
+    },
+  };
+  const view = step ? views[step] : undefined;
+
+  return (
+    <>
+      <AppFrame>
+        <AssetsPage assets={assets} inProgress={688621.79} onAction={{ convert: start }} />
+      </AppFrame>
+
+      {/* One modal for the whole conversion (Modal: "steps in one modal", never a modal from a modal): the header,
+          the content and the action change with the step */}
+      <Modal appendTo="self" visible={!!view} onHide={close} title={view?.title ?? ''} description={view?.description}
+        status={view?.status} statusIcon={view?.statusIcon} closable={view?.closable ?? true} onBack={view?.back}
+        footerType="fill" primaryAction={view?.action}>
+        {view?.content}
       </Modal>
     </>
   );
