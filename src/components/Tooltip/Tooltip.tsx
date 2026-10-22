@@ -10,7 +10,9 @@ export type TooltipSide = 'top' | 'bottom' | 'left' | 'right';
 
 export type TooltipProps = {
   /** The control the tooltip belongs to: one element that takes focus, such as a button or a link */
-  children: ReactElement;
+  children?: ReactElement;
+  /** Or a control already on the page, when it can't be wrapped (such as a segment another component renders) */
+  target?: HTMLElement | null;
   /** Figma Edit title: the short text, or the title above a description */
   title: string;
   /** Figma Description (Details = On): one or two lines under the title */
@@ -45,15 +47,16 @@ const ALIGN: Record<TooltipSide, Record<'start' | 'end', { my: string; at: strin
  * readers, so the text reaches them through the control itself (`purpose`).
  */
 export function Tooltip({
-  children, title, description, icon, color = 'white', side = 'top', align = 'center', purpose = 'description', disabled = false,
+  children, target: givenTarget, title, description, icon, color = 'white', side = 'top', align = 'center', purpose = 'description',
+  disabled = false,
 }: TooltipProps) {
   const id = useId();
   const anchor = useRef<HTMLSpanElement>(null);
   const [target, setTarget] = useState<HTMLElement | null>(null);
   const theme = useOverlayTheme(anchor);
 
-  // The control is the child: the tooltip opens on its own hover and focus, which don't bubble to a wrapper
-  useEffect(() => setTarget((anchor.current?.firstElementChild as HTMLElement | null) ?? null), [children]);
+  // The control is the child (or the given target): the tooltip opens on its own hover and focus, which don't bubble
+  useEffect(() => setTarget(givenTarget ?? (anchor.current?.firstElementChild as HTMLElement | null) ?? null), [children, givenTarget]);
 
   useEffect(() => {
     if (!target || disabled) return;
