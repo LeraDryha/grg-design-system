@@ -1,0 +1,144 @@
+import { Meta, Canvas, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as TableStories from './Table.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={TableStories} />
+
+# Table
+
+<ComponentHeader
+  figma="1556-11439"
+  guidelines="1559-41052"
+  designTab
+  builtOn="PrimeReact DataTable"
+  related={[
+    { label: 'Pagination', href: '?path=/docs/components-pagination--docs', relation: 'See also' },
+    { label: 'Segment Control', href: '?path=/docs/components-segment-control--docs', relation: 'See also' },
+    { label: 'Checkbox', href: '?path=/docs/components-checkbox--docs', relation: 'Uses' },
+    { label: 'Badge', href: '?path=/docs/components-badge--docs', relation: 'Uses' },
+  ]}
+/>
+
+Rows of data to compare and act on: assets, orders, transactions, members. Columns sort, rows can be selected and opened, and every cell is a system component.
+
+<Canvas of={TableStories.Playground} />
+
+```tsx
+<Table
+  aria-label="Assets"
+  rows={assets}
+  rowKey={row => row.id}
+  columns={[
+    { id: 'asset', header: 'Asset', sortValue: row => row.name, cell: row => <TableText priority="leading" title={row.name} description={row.code} /> },
+    { id: 'amount', header: 'Amount', sortValue: row => row.amount, cell: row => <TableText title={row.amount} /> },
+  ]}
+  actions={row => <Button variant="text" size="xs">Withdraw</Button>}
+/>
+```
+
+## When to use
+
+<DoDont
+  dos={['Many records with the same fields, to compare and sort', 'Lists people act on row by row: open, edit, select several']}
+  donts={['A few items with a picture each: use cards', 'One record’s details: use a list of label and value', 'A layout grid: tables are for data only']}
+/>
+
+## Examples
+
+### Assets
+
+<Canvas of={TableStories.Assets} />
+
+The Figma example. Press a header to sort: ascending, descending, then back to the original order.
+
+### Orders
+
+<Canvas of={TableStories.Orders} />
+
+A Segment Control filters the rows, Pagination splits them into pages. A press anywhere on a row opens its details; the chevron says the row opens, and buttons and switches inside the row still do their own thing.
+
+### Select rows
+
+<Canvas of={TableStories.SelectRows} />
+
+A checkbox column first, select-all in the header (a dash while some rows are selected).
+
+### Wide table
+
+<Canvas of={TableStories.WideTable} />
+
+When the columns don't fit, the table scrolls sideways. The checkboxes and the first column stay on the left, the actions on the right; a shadow appears on them while content hides underneath, and the arrows in the header scroll by one view.
+
+### View only
+
+<Canvas of={TableStories.ViewOnly} />
+
+### Row pages
+
+<Canvas of={TableStories.RowPages} />
+
+### Sticky header
+
+<Canvas of={TableStories.StickyHeader} />
+
+### Long text
+
+<Canvas of={TableStories.LongText} />
+
+### Empty and loading
+
+<Canvas of={TableStories.Empty} />
+<Canvas of={TableStories.Loading} />
+
+## Design decisions
+
+- **Three kinds of rows.** A table to read has no row press and no chevron. When a row has details, the whole row opens them and a chevron ends the row (`onRowOpen`); when it has its own page, the row and the chevron are a link (`rowHref`). A single link inside a cell, such as an ID, is a Link.
+- **Sorting** cycles ascending → descending → original order, one column at a time, as Carbon and Material do. The icon shows both arrows while unsorted, one while sorted; screen readers hear the order.
+- **Sticky columns.** The selection and the first column stick to the left, the actions (or the chevron) to the right, with the Figma table shadows while something hides under them.
+- **Scroll arrows** are for the mouse; the keyboard and screen readers scroll the table itself, which takes focus.
+- **Long text** ends with "…" and shows in full in a tooltip, only when it is actually cut.
+- **Hover** is `bg-muted-50` on the whole row.
+- **Loading** isn't in Figma: grey placeholder rows (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **Phones** scroll the table sideways; the columns never shrink into "…" headers. When the stuck columns would cover more than half the table, only the left ones stay and the actions scroll with the rest.
+
+## Cell types
+
+<Canvas of={TableStories.CellTypes} />
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab | Moves to the table (to scroll it), the headers that sort, then the controls in the rows |
+| Enter / Space on a header | Sorts by that column |
+| ← / → on the table | Scrolls it sideways |
+
+- A real table: screen readers read the header of each cell, and `aria-sort` on the sorted column.
+- Checkboxes are named after the row (*Select Rudy Kozey*), the chevron too (*Open Rudy Kozey*).
+- Loading sets `aria-busy`.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Table header cell · Title', prop: 'columns[].header', values: 'text' },
+    { figma: 'Table header cell · Sort', prop: 'columns[].sortValue', values: 'a function' },
+    { figma: 'Table header cell · Actions (info)', prop: 'columns[].info', values: 'text' },
+    { figma: 'Table row cell · Type', prop: 'columns[].cell', values: 'any component' },
+    { figma: 'Table row cell · Size', prop: 'size', values: 'md, lg' },
+    { figma: 'Table row cell · State', prop: '(pointer)', values: '—' },
+    { figma: 'Checkbox', prop: 'selected, onSelectionChange', values: 'row keys' },
+    { figma: 'Actions', prop: 'actions', values: 'a function' },
+    { figma: 'Cell text · Priority', prop: 'TableText priority', values: 'leading, regular, passive' },
+    { figma: 'Cell text · Orientation', prop: 'TableText orientation', values: 'vertical, horizontal' },
+    { figma: 'Cell text · Badge, Description', prop: 'TableText badge, description', values: '—' },
+    { figma: 'Table scroll indicator', prop: '(scrolling)', values: '—' },
+    { figma: 'Empty', prop: 'empty', values: 'title, subtitle' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={TableStories} />
