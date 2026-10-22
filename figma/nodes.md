@@ -329,3 +329,22 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Usage Guidelines (anatomy, sizes, cells) | `1559:41052` |
 | Usage Guidelines (combining items, scroll) | `1559:70411` |
 | Examples (Assets, Orders, Empty) | `1560:31309` |
+
+## Chips
+
+| What | Node |
+|---|---|
+| Page ❖ Chips | `2041:1303` |
+| Component set `Сhips` (State × Size md-24 / sm-20 / xs-16 × Remove × Type × Style, 180 variants; the name starts with a Cyrillic С) | `2041:4064` |
+| Usage Guidelines (anatomy, sizes, types, styles, states, spacing) | `2058:19411` |
+| Usage Guidelines (Assist, Filter, Input, Suggestion chips) | `2058:19498` |
+
+## Multi-value Input
+
+| What | Node |
+|---|---|
+| Page ❖ Multi-value Input | `2052:14670` |
+| Component set `Multi-value Input` (State × Size lg-44 / md-40 / sm-32 × Filled; Top, Bottom, Key: Value, Value) | `2053:1782` |
+| Usage Guidelines (anatomy, sizes, states, floating label, spacing) | `2080:30093` |
+| Usage Guidelines (input chips: three rows, +N more, Show less) | `2084:5350` |
+| Examples (Add new: a coin and its availability) | `2084:7875` |

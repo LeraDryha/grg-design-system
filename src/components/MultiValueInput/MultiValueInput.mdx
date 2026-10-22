@@ -1,0 +1,126 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as MultiValueStories from './MultiValueInput.stories';
+import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBlocks';
+
+<Meta of={MultiValueStories} />
+
+# Multi-value Input
+
+<ComponentHeader
+  figma="2053-1782"
+  guidelines="2080-30093"
+  designTab
+  builtOn="PrimeReact Chips"
+  related={[
+    { label: 'Chips', href: '?path=/docs/components-chips--docs' },
+    { label: 'Input', href: '?path=/docs/components-input--docs', relation: 'See also' },
+    { label: 'Select', href: '?path=/docs/components-select--docs', relation: 'See also' },
+  ]}
+/>
+
+Several values in one field: each one becomes a chip that can be removed.
+
+<Canvas of={MultiValueStories.Playground} />
+<Controls of={MultiValueStories.Playground} include={['label', 'size', 'hint', 'error', 'disabled', 'readOnly', 'collapsedRows']} />
+
+```tsx
+<MultiValueInput label="Availability" value={ids} onChange={setIds} />
+```
+
+## When to use
+
+<DoDont
+  dos={['Free values that belong together: IDs, emails, tags', 'A long list that should stay compact, with a way to see it all']}
+  donts={['One value: use Input', 'Choosing from a known list: use Select (multiple)', 'Filters outside a field: use Chips']}
+/>
+
+## Examples
+
+### Add a coin
+
+<Canvas of={MultiValueStories.AddACoin} />
+
+The Figma example. Type a value and press Enter (or a comma); Backspace in the empty field removes the last one.
+
+### Paste a list
+
+<Canvas of={MultiValueStories.PasteAList} />
+
+A pasted list separated by commas becomes several values at once. A value already in the field isn't added twice.
+
+### Many values
+
+<Canvas of={MultiValueStories.ManyValues} />
+
+Figma Input chips: at most three rows. The rest folds under **+N more**, which shows them all; **Show less** at the end folds them back. Folding never changes the values themselves.
+
+### Unknown provider
+
+<Canvas of={MultiValueStories.UnknownProvider} />
+
+The application checks the values and says which one is wrong.
+
+### Unavailable and read only
+
+<Canvas of={MultiValueStories.UnavailableAndReadOnly} />
+
+Unavailable can't be changed or reached with Tab. Read only can be read and expanded, not changed.
+
+## Design decisions
+
+- **Enter or a comma** adds a value, and a pasted list splits on commas: the usual way for ID and email fields.
+- **No duplicates** by default (`allowDuplicate` allows them).
+- **Adding a value unfolds the field**, so the new chip and the typing line stay in view.
+- **The three-row limit** is measured live: the number in *+N more* follows the field width.
+- **A chip under the pointer darkens**, as in the Figma Hovered field.
+- **Read only** isn't in Figma: values that can be read and expanded but not changed.
+- **Focus** is the system blue ring, for the keyboard only; a click shows the Active black stroke.
+
+## Sizes
+
+<Canvas of={MultiValueStories.Sizes} />
+
+lg-44 and md-40 hold md-24 chips; sm-32 holds sm-20 chips. Rows are 8px apart.
+
+## Top and bottom
+
+<Canvas of={MultiValueStories.TopAndBottom} />
+
+The same label row and hint row as Input: required mark, optional text, info and key-value pairs.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Enter or , | Adds the typed value |
+| Backspace (empty field) | Removes the last value |
+| ← / → | Moves through the values |
+| Backspace on a value | Removes it and returns to typing |
+| Tab | Moves to the field, then to *+N more* / *Show less* |
+
+- The field is named by its label and described by the hint or the error.
+- *+N more* / *Show less* is a button with `aria-expanded`; folded values are hidden from screen readers too, and moving into them unfolds the field.
+- Disabled text is under 4.5:1, as in every disabled control in Figma.
+
+## Figma and code
+
+The Figma frames are in the **Design** tab of every story.
+
+<PropsMapping
+  rows={[
+    { figma: 'Chips', prop: 'value, defaultValue, onChange', values: 'a list of strings' },
+    { figma: 'Size', prop: 'size', values: 'lg, md, sm' },
+    { figma: 'Label, Required asterisk, Additional text, Info button', prop: 'label, required, optional, info', values: '—' },
+    { figma: 'Top Key Value, Bottom Key Value', prop: 'topKey, topValue, bottomValue', values: 'text' },
+    { figma: 'Hint text', prop: 'hint', values: 'text' },
+    { figma: 'State · Error', prop: 'error', values: 'text' },
+    { figma: 'State · Disabled', prop: 'disabled', values: 'boolean' },
+    { figma: 'State · Hovered, Active', prop: '(pointer, keyboard)', values: '—' },
+    { figma: 'Filled', prop: '(values present)', values: '—' },
+    { figma: 'Three rows, +2 more, Show less', prop: 'collapsedRows, moreLabel, lessLabel', values: '3; functions' },
+  ]}
+/>
+
+## Props
+
+<ArgTypes of={MultiValueStories} />
