@@ -1,5 +1,5 @@
 import { Meta } from '@storybook/addon-docs/blocks';
-import { ShadowScale, Themed } from '../Foundations';
+import { BlurScale, ShadowScale, Themed } from '../Foundations';
 
 <Meta title="Foundations/Elevation" />
 
@@ -8,8 +8,25 @@ import { ShadowScale, Themed } from '../Foundations';
 Five shadow levels. The dark theme has its own recipe: deeper shadows and a thin light inner edge,
 so surfaces still separate on a dark canvas. Components use the same token in both themes.
 
+Each shadow is listed layer by layer, as in the Figma effect panel: X and Y position, blur and spread in px, the colour
+and its opacity. The values come from the Figma effect styles.
+
 ## Light
-<Themed theme="light"><ShadowScale /></Themed>
+<Themed theme="light"><ShadowScale theme="light" /></Themed>
 
 ## Dark
-<Themed theme="dark"><ShadowScale /></Themed>
+<Themed theme="dark"><ShadowScale theme="dark" /></Themed>
+
+## Table shadows
+
+On the columns that stay in place while a table scrolls sideways (see [Table](?path=/docs/components-table--docs)).
+
+### Light
+<Themed theme="light"><ShadowScale group="table" theme="light" /></Themed>
+
+### Dark
+<Themed theme="dark"><ShadowScale group="table" theme="dark" /></Themed>
+
+## Background blur
+
+<BlurScale />

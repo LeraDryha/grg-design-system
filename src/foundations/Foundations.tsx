@@ -9,6 +9,7 @@ import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type Social
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import { colorDescriptions } from './color-descriptions';
+import { radiusUsage } from './radius-usage';
 import './Foundations.css';
 
 /* Blocks for the Foundations pages. The data comes from src/tokens/tokens.json, generated from Figma. */
@@ -158,32 +159,94 @@ export function SpacingScale() {
   );
 }
 
+/** The corner radii: a preview, the size and when to use each (the Figma docs table). */
 export function RadiusScale() {
   return (
-    <ul className="sb-unstyled fdn-tiles">
-      {tokens.radius.map(t => (
-        <li key={t.css}>
-          <span className="fdn-tile" style={{ borderRadius: `var(${t.css})` }} aria-hidden="true" />
-          <code>{t.css}</code>
-          <span className="fdn-muted">{t.px === 999 ? 'Fully rounded' : `${t.px}px`}</span>
-        </li>
-      ))}
-    </ul>
+    <table className="sb-unstyled fdn-table fdn-table--radius">
+      <thead>
+        <tr>
+          <th scope="col"><span className="grg-sr-only">Preview</span></th>
+          <th scope="col">Token</th>
+          <th scope="col">Size</th>
+          <th scope="col">Conditions of use</th>
+        </tr>
+      </thead>
+      <tbody>
+        {tokens.radius.map(t => (
+          <tr key={t.css}>
+            <td><span className="fdn-radius" style={{ borderRadius: `var(${t.css})` }} aria-hidden="true" /></td>
+            <td><code>{t.css}</code><span className="fdn-muted">{t.figma}</span></td>
+            <td className="fdn-nowrap">{t.px === 999 ? '999px (fully rounded)' : `${t.px}px`}</td>
+            <td>{radiusUsage[t.figma]}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
 /** Shadows take their value from the theme: the dark theme has its own recipe with a light inner edge. */
-export function ShadowScale() {
+/** Every shadow with its layers, as the Figma effect panel lists them: type, position, blur, spread, colour, opacity.
+ *  `group` picks the elevation levels or the table shadows; `theme` the recipe (the dark one has its own). */
+export function ShadowScale({ group = 'elevation', theme = 'light' }: { group?: 'elevation' | 'table'; theme?: 'light' | 'dark' }) {
+  const shadows = tokens.shadows.filter(t => (group === 'table') === t.css.startsWith('--shadow-table'));
   return (
-    <ul className="sb-unstyled fdn-tiles">
-      {tokens.shadows.map(t => (
-        <li key={t.css}>
-          <span className="fdn-tile fdn-tile--raised" style={{ boxShadow: `var(${t.css})` }} aria-hidden="true" />
-          <code>{t.css}</code>
-          <span className="fdn-muted">{t.figma}</span>
-        </li>
+    <div className="fdn-shadows">
+      {shadows.map(t => (
+        <section key={t.css} className="fdn-shadow">
+          <div className="fdn-shadow__preview">
+            <span className="fdn-tile fdn-tile--raised" style={{ boxShadow: `var(${t.css})` }} aria-hidden="true" />
+            <code>{t.css}</code>
+            <span className="fdn-muted">{t.figma}</span>
+          </div>
+          <table className="sb-unstyled fdn-table fdn-table--layers">
+            <thead>
+              <tr>
+                <th scope="col">Layer</th>
+                <th scope="col">X</th>
+                <th scope="col">Y</th>
+                <th scope="col">Blur</th>
+                <th scope="col">Spread</th>
+                <th scope="col">Color</th>
+                <th scope="col">Opacity</th>
+              </tr>
+            </thead>
+            <tbody>
+              {t[theme].map((layer, index) => (
+                <tr key={index}>
+                  <td>{layer.type}</td>
+                  <td>{layer.x}</td>
+                  <td>{layer.y}</td>
+                  <td>{layer.blur}</td>
+                  <td>{layer.spread}</td>
+                  <td><span className="fdn-color"><span className="fdn-color__chip" style={{ background: layer.color }} aria-hidden="true" />{layer.color}</span></td>
+                  <td>{layer.opacity}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
       ))}
-    </ul>
+    </div>
+  );
+}
+
+/** Background blurs: the overlay of a modal uses Blur/sm */
+export function BlurScale() {
+  return (
+    <table className="sb-unstyled fdn-table">
+      <thead>
+        <tr><th scope="col">Token</th><th scope="col">Background blur</th></tr>
+      </thead>
+      <tbody>
+        {tokens.blurs.map(t => (
+          <tr key={t.css}>
+            <td><code>{t.css}</code><span className="fdn-muted">{t.figma}</span></td>
+            <td>{t.px}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 

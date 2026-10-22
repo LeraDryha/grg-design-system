@@ -196,3 +196,30 @@
 }
 /* the counter sits on the input's centre line */
 .fdn-icons__search > .fdn-muted { display: flex; align-items: center; height: var(--space-1000); }
+
+/* Elevation: a preview on the left, its layers on the right */
+.fdn-shadows { display: grid; gap: var(--space-1000); color: var(--text-strong-1000); }
+.fdn-shadow { display: grid; grid-template-columns: calc(var(--space-5000) - var(--space-1000)) minmax(0, 1fr); gap: var(--space-800); align-items: start; }
+.fdn-shadow__preview code { display: block; font: var(--typo-code-sm-medium); color: var(--text-strong-1000); }
+.fdn-table--layers { table-layout: fixed; }
+.fdn-table--layers th:nth-child(1) { width: 24%; }
+.fdn-table--layers th:nth-child(n + 2):nth-child(-n + 5) { width: 10%; }
+.fdn-table--layers th:nth-child(6) { width: 22%; }
+.fdn-table--layers th:nth-child(7) { width: 14%; }
+.fdn-table--layers td { font-variant-numeric: tabular-nums; }
+.fdn-color { display: inline-flex; align-items: center; gap: var(--space-200); }
+.fdn-color__chip { width: var(--space-400); height: var(--space-400); border-radius: var(--radius-xxs-4); box-shadow: inset 0 0 0 1px var(--stroke-soft-200); }
+@media (max-width: 720px) { .fdn-shadow { grid-template-columns: minmax(0, 1fr); } }
+
+/* Corner radius: a corner of a tile, then the token, its size and when to use it */
+.fdn-table--radius { table-layout: fixed; }
+.fdn-table--radius th:nth-child(1) { width: 12%; }
+.fdn-table--radius th:nth-child(2) { width: 26%; }
+.fdn-table--radius th:nth-child(3) { width: 16%; }
+.fdn-radius {
+  display: block;
+  width: var(--space-1400);
+  height: var(--space-1400);
+  border: 1px solid var(--stroke-base-300);
+  background: var(--bg-weak-100);
+}
