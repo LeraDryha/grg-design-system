@@ -64,5 +64,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Circular progress bar guidelines / lg-64 | The label style is written *Body-mb/Medium* | Body-md/Medium, as in the component set |
 | Search / Style = Gray | Marked optional, to be reconsidered or deprecated | Not built: Outstroke only |
 | Search / Loading | No state while results load | The xs Progress Circle in place of the clear button |
+| Slider / Control handle, Default | The handle is light grey (`stroke-soft-200`) at 0 and black from the first step | Always black: the grey handle hardly shows on white (about 1.3:1) |
+| Slider / Disabled | No disabled state | Grey track fill and handle ring (`stroke-disabled`), grey texts, as other disabled fields |
 | Feature cards / Primary, Support | The border uses the palette colour `gold/600`, not a variable | `primary-gold-base`, the card's own gold |
 | Social Button / Disabled | No dedicated Disabled variant in Figma | Native disabled behaviour, with `text-disabled-400`, `icon-disabled-400` and `stroke-disabled` in both themes |
