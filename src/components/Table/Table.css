@@ -1,0 +1,194 @@
+/* Table. Every value is a token; Figma layer names in the comments. */
+
+.grg-table {
+  --table-bg: var(--surface-base);
+  /* The widest a cell's text gets before it ends with "…" */
+  --table-text-max: calc(var(--space-5000) + var(--space-1000));
+
+  position: relative;
+  min-width: 0;
+}
+.grg-table__view { min-width: 0; }
+
+/* The table scrolls sideways (and down, with a height) inside its place; the keyboard can scroll it too */
+.grg-table__wrapper { overflow: auto; overscroll-behavior-x: contain; max-height: var(--table-max-height, none); }
+.grg-table__wrapper:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+
+.grg-table__table { width: 100%; border-collapse: separate; border-spacing: 0; }
+
+/* ---- Table header cell: 36px, 10px above and below, 16px sides; small capitals in text-soft-500 ---- */
+.grg-table__head {
+  box-sizing: border-box;
+  height: calc(var(--space-800) + var(--space-100));
+  padding: var(--space-250) var(--space-400);
+  border-bottom: 1px solid var(--stroke-soft-200);
+  background: var(--table-bg);
+  color: var(--text-soft-500);
+  font: var(--typo-caption-sm-regular);
+  text-align: left;
+  text-transform: uppercase;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.grg-table__head-content { display: flex; align-items: center; gap: var(--space-100); }
+.grg-table__head-label { display: inline-flex; align-items: center; gap: var(--space-200); }
+.grg-table__sort { display: flex; }
+/* The actions title sits over the buttons, on the right */
+.grg-table__head[data-actions] .grg-table__head-content { justify-content: flex-end; }
+.grg-table__head[aria-sort] { cursor: pointer; user-select: none; }
+.grg-table__head[aria-sort]:hover { color: var(--text-subtle-700); }
+.grg-table__head[aria-sort]:focus-visible { outline: none; box-shadow: inset var(--focus-ring); }
+/* Sorting icons: grey both ways while unsorted, black up or down while sorted */
+.grg-table__sort-icon { color: var(--icon-base-500); }
+.grg-table__head[aria-sort='ascending'] .grg-table__sort-icon,
+.grg-table__head[aria-sort='descending'] .grg-table__sort-icon { color: var(--icon-strong-1000); }
+/* The header stays at the top while a table with a height scrolls */
+.grg-table[data-sticky-header] .grg-table__head { position: sticky; top: 0; z-index: 2; }
+
+/* ---- Table row cell: md-56 (lg-64), 10px above and below, 16px sides, a line between rows ---- */
+.grg-table__cell {
+  box-sizing: border-box;
+  height: var(--space-1400);
+  padding: var(--space-250) var(--space-400);
+  border-bottom: 1px solid var(--stroke-soft-200);
+  background: var(--table-bg);
+  color: var(--text-strong-1000);
+  font: var(--typo-body-md-regular);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.grg-table[data-size='lg'] .grg-table__cell { height: var(--space-1600); }
+/* State = Hovered */
+.grg-table__row:hover > .grg-table__cell { background: var(--bg-muted-50); }
+.grg-table__row[data-opens] { cursor: pointer; }
+
+/* The selection and the chevron hug their content; the actions too, aligned to the right */
+.grg-table__head[data-select],
+.grg-table__cell[data-select] { width: var(--space-400); }
+.grg-table__head[data-chevron],
+.grg-table__cell[data-chevron],
+.grg-table__head[data-actions],
+.grg-table__cell[data-actions] { width: 0; text-align: right; }
+.grg-table__actions { display: flex; align-items: center; justify-content: flex-end; gap: var(--space-200); }
+/* Cell content as blocks, so the middle of the content is the middle of the row (no text baseline under it) */
+:is(.grg-table__head, .grg-table__cell)[data-select] > *,
+.grg-table__cell[data-chevron] > * { display: flex; }
+
+/* ---- Sticky columns: the selection and the first column on the left, the actions (or the chevron) on the right ---- */
+:is(.grg-table__head, .grg-table__cell)[data-sticky] { position: sticky; z-index: 1; }
+.grg-table[data-sticky-header] .grg-table__head[data-sticky] { z-index: 3; }
+:is(.grg-table__head, .grg-table__cell)[data-select] { left: 0; }
+:is(.grg-table__head, .grg-table__cell)[data-first] { left: 0; }
+/* After the 48px selection column (16 + 16px checkbox + 16) */
+.grg-table[data-selectable] :is(.grg-table__head, .grg-table__cell)[data-first] { left: calc(var(--space-400) * 3); }
+:is(.grg-table__head, .grg-table__cell)[data-sticky='end'] { right: 0; }
+/* Table shadow: on the stuck columns while content is hidden under them */
+.grg-table[data-scroll-left] :is(.grg-table__head, .grg-table__cell)[data-first] { box-shadow: var(--shadow-table-left); clip-path: inset(0 calc(-1 * var(--space-400)) 0 0); }
+.grg-table[data-scroll-right] :is(.grg-table__head, .grg-table__cell)[data-sticky='end'] { box-shadow: var(--shadow-table-right); clip-path: inset(0 0 0 calc(-1 * var(--space-400))); }
+/* Too narrow for both sides: the right columns scroll with the rest */
+.grg-table[data-crowded] :is(.grg-table__head, .grg-table__cell)[data-sticky='end'] { position: static; box-shadow: none; clip-path: none; }
+
+/* ---- Table scroll indicator: a 28px tab in the header row, flush against the columns stuck on that side, with
+   their shadow, so it reads as part of the column ---- */
+.grg-table__scroll {
+  position: absolute;
+  top: var(--space-100);
+  z-index: 4;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: calc(var(--space-600) + var(--space-100));
+  height: calc(var(--space-600) + var(--space-100));
+  margin: 0;
+  padding: var(--space-100);
+  border: 0;
+  background: var(--table-bg);
+  color: var(--icon-base-500);
+  cursor: pointer;
+}
+.grg-table__scroll[hidden] { display: none; }
+.grg-table__scroll:hover { color: var(--icon-subtle-700); }
+.grg-table__scroll:active { color: var(--icon-strong-1000); }
+/* The shadow falls away from the column, never over it */
+.grg-table__scroll[data-side='start'] {
+  left: var(--table-start-edge);
+  border-radius: 0 var(--radius-xs-6) var(--radius-xs-6) 0;
+  box-shadow: var(--shadow-table-left);
+  clip-path: inset(calc(-1 * var(--space-400)) calc(-1 * var(--space-400)) calc(-1 * var(--space-400)) 0);
+}
+.grg-table__scroll[data-side='end'] {
+  right: var(--table-end-edge);
+  border-radius: var(--radius-xs-6) 0 0 var(--radius-xs-6);
+  box-shadow: var(--shadow-table-right);
+  clip-path: inset(calc(-1 * var(--space-400)) 0 calc(-1 * var(--space-400)) calc(-1 * var(--space-400)));
+}
+
+/* The chevron of a row that opens */
+.grg-table__open {
+  display: inline-grid;
+  place-items: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-fully-rounded);
+  background: transparent;
+  color: var(--icon-base-500);
+  cursor: pointer;
+}
+.grg-table__open:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
+/* ---- Cell text ---- */
+.grg-table-text { display: flex; align-items: center; gap: var(--space-300); min-width: 0; max-width: 100%; vertical-align: middle; }
+.grg-table-text__leading { display: flex; flex: none; }
+.grg-table-text__body { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-table-text__top { display: flex; align-items: center; gap: var(--space-150); min-width: 0; }
+.grg-table-text__title {
+  display: block;
+  min-width: 0;
+  max-width: var(--table-text-max);
+  overflow: hidden;
+  font: var(--typo-body-md-regular);
+  color: var(--text-strong-1000);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Priority: Leading in medium weight, Passive softer */
+.grg-table-text[data-priority='leading'] .grg-table-text__title { font: var(--typo-body-md-medium); }
+.grg-table-text[data-priority='passive'] .grg-table-text__title { color: var(--text-subtle-700); }
+.grg-table-text__description {
+  max-width: var(--table-text-max);
+  overflow: hidden;
+  font: var(--typo-body-sm-regular);
+  color: var(--text-soft-500);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Empty and loading ---- */
+.grg-table__empty-row > td { border-bottom: 0; }
+.grg-table__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-100);
+  padding: var(--space-2400) 0;
+  text-align: center;
+  white-space: normal;
+}
+.grg-table__empty .grg-featured-icon { margin-bottom: var(--space-300); }
+.grg-table__empty-title { font: var(--typo-body-md-medium); color: var(--text-subtle-700); }
+.grg-table__empty-subtitle { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+
+.grg-table__skeleton {
+  width: 100%;
+  min-width: var(--space-1000);
+  height: var(--space-400);
+  border-radius: var(--radius-xs-6);
+  background: linear-gradient(90deg, var(--bg-weak-100) 25%, var(--bg-soft-200) 50%, var(--bg-weak-100) 75%) 0 0 / 200% 100%;
+  animation: grg-table-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes grg-table-shimmer { to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-table__skeleton { animation: none; }
+}

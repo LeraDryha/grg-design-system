@@ -316,3 +316,16 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Component set `Control handle` (State × Tooltip × Text) | `738:6802` |
 | Usage Guidelines (anatomy, states, label, type, percentages, range) | `747:8144` |
 | Examples (Upload logo: zoom with − and +) | `747:8246` |
+
+## Table
+
+| What | Node |
+|---|---|
+| Component set `Table header cell` (Type × Sort × Actions) | `1556:5408` |
+| Component set `Table row cell` (Type × Size md-56 / lg-64 × State) | `1556:11439` |
+| Component set `Cell text` (Priority × Orientation; Badge, Description) | `1556:11417` |
+| Component set `Sorting icons` | `1559:61007` |
+| Component set `Table scroll indicator` | `2203:15865` |
+| Usage Guidelines (anatomy, sizes, cells) | `1559:41052` |
+| Usage Guidelines (combining items, scroll) | `1559:70411` |
+| Examples (Assets, Orders, Empty) | `1560:31309` |
