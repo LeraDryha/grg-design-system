@@ -8,7 +8,7 @@ import { primeReactConfig } from '../../primereact-config';
 import { Icon } from '../Icon/Icon';
 import { Badge, type BadgeColor } from '../Badge/Badge';
 import { ActionButton } from '../ActionButton/ActionButton';
-import { DropdownItem, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons } from '../Select/dropdown';
+import { DropdownItem, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons, useListLayer } from '../Select/dropdown';
 import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import type { SelectOption } from '../Select/options';
 import { DatePickerPanel, type DatePickerValue } from '../DatePicker/DatePickerPanel';
@@ -72,6 +72,7 @@ export function Filter({
   const triggerRef = useRef<HTMLButtonElement>(null);
   const valueRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<Tooltip>(null);
+  const layer = useListLayer(rootRef);
   const themeProps = useOverlayTheme(rootRef);
   const [local, setLocal] = useState<FilterValue>(defaultValue);
   const value = controlled === undefined ? local : controlled;
@@ -153,7 +154,7 @@ export function Filter({
   );
 
   const panelPt = {
-    ...dropdownPanelPt(label),
+    ...dropdownPanelPt(label, 'filter'),
     header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
   };
 
@@ -197,8 +198,8 @@ export function Filter({
           emptyMessage={noResults}
           {...searchIcons}
           onChange={e => set(e.value)}
-          onShow={() => setOpen(true)}
-          onHide={() => setOpen(false)}
+          onShow={() => { setOpen(true); layer.place(); }}
+          onHide={() => { setOpen(false); layer.release(); }}
           valueTemplate={() => content}
           itemTemplate={({ status: _status, ...o }: FilterOption) => <DropdownItem option={o} selected={o.value === single?.value} />}
           dropdownIcon={<Icon name="direction-down" size={20} />}
@@ -241,8 +242,8 @@ export function Filter({
               const current = asArray(value);
               set([...current.filter(v => next.includes(v)), ...next.filter(v => !current.includes(v))]);
             }}
-            onShow={() => setOpen(true)}
-            onHide={() => setOpen(false)}
+            onShow={() => { setOpen(true); layer.place(); }}
+            onHide={() => { setOpen(false); layer.release(); }}
             // Called once per chosen option: the first call draws the whole filter
             selectedItemTemplate={(v: string | undefined) => (v === undefined || v === asArray(value)[0] ? content : null)}
             itemTemplate={({ status: _status, ...o }: FilterOption) => <DropdownItem option={o} selected={asArray(value).includes(o.value)} multiple />}
@@ -253,7 +254,7 @@ export function Filter({
               label: { className: 'grg-filter__label-wrap' },
               hiddenInputWrapper: { className: 'grg-sr-only' },
               trigger: { className: 'grg-filter__chevron', 'aria-hidden': true, hidden: applied !== 'none' },
-              panel: { className: 'grg-dropdown' },
+              panel: { className: 'grg-dropdown grg-dropdown--filter' },
               header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
               filterContainer: { className: 'grg-dropdown__search' },
               filterInput: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` },

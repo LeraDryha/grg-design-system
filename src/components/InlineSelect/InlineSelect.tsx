@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
 import { OptionPicture, type SelectOption } from '../Select/options';
-import { DropdownItem, LIST_HEIGHT, dropdownPanelPt, searchIcons } from '../Select/dropdown';
+import { DropdownItem, LIST_HEIGHT, dropdownPanelPt, searchIcons, useListLayer } from '../Select/dropdown';
 import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import './InlineSelect.css';
 
@@ -42,6 +42,7 @@ export function InlineSelect({
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const layer = useListLayer(rootRef);
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label);
   const [local, setLocal] = useState(defaultValue);
   const [open, setOpen] = useState(false);
@@ -78,8 +79,8 @@ export function InlineSelect({
           if (controlled === undefined) setLocal(e.value);
           onChange?.(e.value);
         }}
-        onShow={() => setOpen(true)}
-        onHide={() => setOpen(false)}
+        onShow={() => { setOpen(true); layer.place(); }}
+        onHide={() => { setOpen(false); layer.release(); }}
         valueTemplate={() =>
           selected ? (
             <span className="grg-inline-select__value">
@@ -97,7 +98,7 @@ export function InlineSelect({
           select: { 'aria-hidden': true },
           hiddenSelectedMessage: { className: 'grg-sr-only' },
           trigger: { className: 'grg-inline-select__trigger', 'aria-hidden': true },
-          ...dropdownPanelPt(label),
+          ...dropdownPanelPt(label, 'inline'),
         }}
       />
     </div>

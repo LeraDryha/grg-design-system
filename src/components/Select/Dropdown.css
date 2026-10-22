@@ -110,3 +110,6 @@
 /* Parts hidden through pass-through stay hidden even where PrimeReact's structural styles set a display */
 .grg-dropdown [hidden],
 .grg-select__box [hidden] { display: none !important; }
+
+/* Inside a modal (useListLayer): drawn over the modal, fixed to the screen; the offsets are set inline */
+.grg-dropdown[data-layer='top'] { position: fixed; z-index: 30; margin: 0; }
