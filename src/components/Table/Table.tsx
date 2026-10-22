@@ -124,7 +124,7 @@ export function Table<T>({
   const root = useRef<HTMLDivElement>(null);
   const [sort, setSort] = useState<SortState>({});
   const [scroll, setScroll] = useState({ left: false, right: false });
-  const [edges, setEdges] = useState({ start: 0, end: 0, crowded: false });
+  const [edges, setEdges] = useState({ start: 0, end: 0, head: 0, crowded: false });
   const selectable = !!onSelectionChange;
   const opens = !!(onRowOpen || rowHref);
 
@@ -156,7 +156,8 @@ export function Table<T>({
       const width = end?.offsetWidth ?? 0;
       // On a narrow screen the stuck columns would cover the rest: then only the left ones stay
       const crowded = start + width > box.width * 0.6;
-      setEdges({ start, end: crowded || !end ? 0 : box.right - end.getBoundingClientRect().left, crowded });
+      const head = wrapper.querySelector<HTMLElement>('thead')?.offsetHeight ?? 0;
+      setEdges({ start, end: crowded || !end ? 0 : box.right - end.getBoundingClientRect().left, head, crowded });
     };
     update();
     wrapper.addEventListener('scroll', update, { passive: true });
@@ -205,7 +206,7 @@ export function Table<T>({
       data-selectable={selectable || undefined}
       data-crowded={edges.crowded || undefined}
       data-sticky-header={maxHeight ? true : undefined}
-      style={{ '--table-start-edge': `${edges.start}px`, '--table-end-edge': `${edges.end}px`, '--table-max-height': maxHeight } as CSSProperties}
+      style={{ '--table-start-edge': `${edges.start}px`, '--table-end-edge': `${edges.end}px`, '--table-head-height': `${edges.head}px`, '--table-max-height': maxHeight } as CSSProperties}
     >
       <DataTable
         value={(loading ? placeholder : sorted) as never[]}
