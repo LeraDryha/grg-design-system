@@ -348,3 +348,14 @@ The bars carry the GRX logos, so only the toolbar items are in the Design tab. T
 | Usage Guidelines (anatomy, sizes, states, floating label, spacing) | `2080:30093` |
 | Usage Guidelines (input chips: three rows, +N more, Show less) | `2084:5350` |
 | Examples (Add new: a coin and its availability) | `2084:7875` |
+
+## Interaction Card
+
+| What | Node |
+|---|---|
+| Page Interaction card | `1234:4073` |
+| Component set `Card` (State Default / Hovered × Type Currency / Icon / Base Icon; Description, Badge) | `1458:5033` |
+| Component set `Interaction card` (State Default / Hovered / Active × Filled) | `1450:3359` |
+| Example: Withdraw UAH, the methods as cards (dark) | `1458:628` |
+
+No usage guidelines yet. The Withdraw flow that uses the cards is in the GRX Pay redesign file (`XDynk3v9BU5pStqaulzutE`, section Withdraw `63:58899`).
