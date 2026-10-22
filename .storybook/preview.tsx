@@ -99,6 +99,7 @@ const preview: Preview = {
           'Getting Started', ['About'],
           'Foundations', ['Colors', 'Typography', 'Spacing', 'Corner Radius', 'Elevation', 'Icons', ['Base icons', 'Social icons', 'Coin icons', 'Payment method icons', 'Country icons', 'File format icons', 'Transaction icons']],
           'Components',
+          'In product',
           'Contributing', ['Tokens'],
         ],
       },
