@@ -25,6 +25,18 @@
 }
 :is(.fdn-tiles, .fdn-palettes) { color: var(--text-strong-1000); font: var(--typo-body-md-regular); }
 
+/* Colour tables: the same column widths in every group, so the swatches line up down the page */
+.fdn-table--colors { table-layout: fixed; }
+.fdn-table--colors .fdn-col-token { width: 26%; }
+.fdn-table--colors .fdn-col-value { width: 19%; }
+.fdn-table--colors .fdn-col-description { width: 36%; }
+.fdn-table--colors td { vertical-align: top; overflow-wrap: anywhere; }
+.fdn-description { font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
+.fdn-description p { margin: 0; }
+.fdn-description__note { margin-top: var(--space-100) !important; color: var(--text-soft-500); }
+.fdn-description__note strong { font-weight: var(--font-weight-semibold); color: var(--text-subtle-700); }
+.fdn-description ul { margin: var(--space-100) 0 0; padding-left: var(--space-400); color: var(--text-soft-500); }
+
 .fdn-muted {
   display: block;
   font: var(--typo-body-sm-regular);

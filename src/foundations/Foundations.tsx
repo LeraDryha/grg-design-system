@@ -8,22 +8,31 @@ import { PaymentIcon, paymentMethods, type PaymentMethod } from '../components/P
 import { SocialIcon, grayPlatforms, platformLabels, socialPlatforms, type SocialPlatform } from '../components/SocialIcon/SocialIcon';
 import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
+import { colorDescriptions } from './color-descriptions';
 import './Foundations.css';
 
 /* Blocks for the Foundations pages. The data comes from src/tokens/tokens.json, generated from Figma. */
 
 const groupOf = (figma: string) => figma.split('/')[0];
 
-/** Semantic colours grouped as in Figma, each with its light and dark value. */
+/** Semantic colours grouped as in Figma, each with its light and dark value and what it is for. Every group's table
+ *  has the same columns, so the swatches line up from one group to the next. */
 export function SemanticColors({ group }: { group: string }) {
   const rows = tokens.semantic.filter(t => groupOf(t.figma) === group);
   return (
-    <table className="sb-unstyled fdn-table">
+    <table className="sb-unstyled fdn-table fdn-table--colors">
+      <colgroup>
+        <col className="fdn-col-token" />
+        <col className="fdn-col-value" />
+        <col className="fdn-col-value" />
+        <col className="fdn-col-description" />
+      </colgroup>
       <thead>
         <tr>
           <th scope="col">Token</th>
           <th scope="col">Light</th>
           <th scope="col">Dark</th>
+          <th scope="col">Description</th>
         </tr>
       </thead>
       <tbody>
@@ -35,10 +44,27 @@ export function SemanticColors({ group }: { group: string }) {
             </td>
             <td><Swatch hex={t.lightHex} label={t.light} /></td>
             <td><Swatch hex={t.darkHex} label={t.dark} /></td>
+            <td><Description text={colorDescriptions[t.css.replace(/^--/, '')]} /></td>
           </tr>
         ))}
       </tbody>
     </table>
+  );
+}
+
+/** The Figma description: the first line, then its uses as a list */
+function Description({ text }: { text?: string }) {
+  if (!text) return null;
+  const [lead, ...rest] = text.split('\n').map(line => line.trim()).filter(Boolean);
+  // A note on how to build the white-label mode is a note, not one of the uses
+  const notes = rest.filter(line => line.startsWith('White-label note:'));
+  const uses = rest.filter(line => !notes.includes(line));
+  return (
+    <div className="fdn-description">
+      <p>{lead}</p>
+      {uses.length > 0 && <ul>{uses.map(use => <li key={use}>{use}</li>)}</ul>}
+      {notes.map(note => <p key={note} className="fdn-description__note"><strong>White-label:</strong>{note.slice('White-label note:'.length)}</p>)}
+    </div>
   );
 }
 
