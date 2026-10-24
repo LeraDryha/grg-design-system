@@ -1,4 +1,5 @@
-import { useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type RefObject } from 'react';
+import { Children, cloneElement, useEffect, useLayoutEffect, useRef, useState, type HTMLAttributes, type KeyboardEvent, type MouseEvent, type ReactElement, type ReactNode, type RefObject } from 'react';
+import { FilterService } from 'primereact/api';
 import type { DropdownPassThroughOptions } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
 import { DropdownMenuItem } from '../DropdownMenu/DropdownMenuItem';
@@ -138,6 +139,71 @@ export function dropdownPanelPt(label: string, owner = 'select'): DropdownPassTh
     itemLabel: { className: 'grg-dropdown__item-wrap' },
     // Inside a listbox the message must be an option; it can't be chosen
     emptyMessage: { className: 'grg-dropdown__empty', role: 'option', 'aria-disabled': true, 'aria-selected': false } as object,
+  };
+}
+
+/** A list's search starts empty every time it opens; the cursor stays in the field, so people can scroll first. */
+export const searchBehaviour = { resetFilterOnHide: true, filterInputAutoFocus: false } as const;
+
+/** Select all comes with 4 options or more: for two or three, a row of its own is more than the choice itself. */
+export const SELECT_ALL_FROM = 4;
+
+// PrimeReact types these template options loosely (an element is typed as a DOM node); what it passes at runtime:
+type HeaderOptions = { filterElement: ReactNode };
+type FilterTemplateOptions = { element: ReactElement<{ children?: ReactNode }>; filterOptions: { reset: () => void } };
+
+/**
+ * The top of a multi-choice list (Select multiple, Filter multiple): the search row, then Select all, then the divider.
+ * PrimeReact MultiSelect has no clear icon in its search, and its Select all is a bare checkbox that loses its label
+ * next to a search and is never half-checked. Here Select all is a list row (Dropdown menu item with a checkbox) that
+ * chooses, or clears, the options the search shows; half-checked when some of them are chosen.
+ */
+export function useMultiListHeader({ options, values, onValues, withSearch, selectAllLabel = 'Select all' }: {
+  options: SelectOption[]; values: string[]; onValues: (next: string[]) => void; withSearch: boolean; selectAllLabel?: string;
+}) {
+  const [query, setQuery] = useState('');
+  const enabled = options.filter(o => !o.disabled);
+  const shown: SelectOption[] = query.trim() ? FilterService.filter(enabled, ['label', 'listLabel'], query.trim(), 'contains') : enabled;
+  const withSelectAll = options.length >= SELECT_ALL_FROM;
+  const chosen = shown.filter(o => values.includes(o.value)).length;
+  const all = shown.length > 0 && chosen === shown.length;
+  const toggle = () => onValues(all
+    ? values.filter(v => !shown.some(o => o.value === v))
+    : [...values, ...shown.map(o => o.value).filter(v => !values.includes(v))]);
+  return {
+    reset: () => setQuery(''),
+    props: {
+      ...searchBehaviour,
+      onFilter: (event: { filter: string }) => setQuery(event.filter),
+      filterTemplate: (options: object) => { const { element, filterOptions } = options as FilterTemplateOptions; return cloneElement(element, {
+        // PrimeReact sends Tab from its search back to the field; with Select all below, Tab goes there first
+        onKeyDownCapture: (event: KeyboardEvent<HTMLDivElement>) => {
+          const next = event.currentTarget.parentElement?.querySelector<HTMLElement>('.grg-dropdown__select-all');
+          if (event.key === 'Tab' && !event.shiftKey && next) { event.preventDefault(); event.stopPropagation(); next.focus(); }
+        },
+      } as object,
+        ...Children.toArray(element.props.children),
+        query && (
+          <span key="clear" className="grg-dropdown__search-clear" role="button" aria-label="Clear search"
+            onMouseDown={(event: MouseEvent) => event.preventDefault()}
+            onClick={() => { filterOptions.reset(); setQuery(''); }}>
+            <Icon name="remove" size={20} />
+          </span>
+        )); },
+      panelHeaderTemplate: (options: object) => { const { filterElement } = options as HeaderOptions; return (withSearch || withSelectAll) ? (
+        <div className="grg-dropdown__header">
+          {withSearch && filterElement}
+          {withSelectAll && shown.length > 0 && (
+            // A click keeps focus in the field or the search, as on the options
+            <button type="button" role="checkbox" aria-checked={all ? true : chosen ? 'mixed' : false}
+              className="grg-dropdown__option grg-dropdown__select-all"
+              onMouseDown={event => event.preventDefault()} onClick={toggle}>
+              <DropdownMenuItem label={selectAllLabel} multiple selected={all} indeterminate={!all && chosen > 0} />
+            </button>
+          )}
+        </div>
+      ) : null; },
+    },
   };
 }
 

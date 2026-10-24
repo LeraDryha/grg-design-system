@@ -53,7 +53,7 @@ Every example is a live story. Its steps also run as a test in the **Interaction
 
 <Canvas of={SelectStories.SearchALongList} />
 
-Countries are a long list, so a search row appears by itself. Typing *po* leaves Poland.
+Countries are a long list, so a search row appears by itself. Typing *po* leaves Poland. Opening the list leaves the cursor in the field, so people can scroll and look first; a click or Tab takes them to the search. Each time the list opens, the search starts empty.
 
 ### Choose with the keyboard
 
@@ -67,6 +67,16 @@ Tab to the field, ↓ opens the list, ↓ moves, Enter chooses. The blue focus r
 
 With `multiple`, every row gets a checkbox and the list stays open. The field lists the choices with commas and sums up
 the rest (*Payman, Stripe and 3 others*), updating as the field narrows.
+
+From 4 options, **Select all** heads the list, under the search: it chooses every option the search shows, or clears them
+when all are chosen, and is half-checked while only some are.
+
+### Clear an optional choice
+
+<Canvas of={SelectStories.ClearAnOptionalChoice} />
+
+An optional field can be emptied again: × appears once something is chosen. A required field has no ×, since it can't be
+left empty. Compact Select and Inline Select have no × either: they always hold a value.
 
 ### Required in a form
 
@@ -101,6 +111,13 @@ What the code adds to the Figma file, and why:
   Figma examples ask. When the list overflows, what they picked first stays visible. (PrimeReact would follow the list order.)
 - **Search from 11 options.** The Figma guidelines show 9 rows without scrolling and a search row once the list is longer
   than 10. The code applies it by itself; `searchable` overrides it.
+- **When a list gets a search.** PrimeReact leaves it to the product. The GRG rule, for every list (Select, Compact Select,
+  Inline Select, Filter): more than 10 options, search by itself; lists that come from data and grow (merchants,
+  counterparties, currencies), always, with `searchable`, even while short; short fixed lists (status, type), never.
+  Dropdown Menu holds actions and has no search: a list long enough to search is a choice, so it is a Select.
+- **The search starts empty and waits.** Closing the list clears it, and opening doesn't move the cursor into it.
+- **× in every search.** The multi-choice lists get it too (PrimeReact MultiSelect has none). It isn't a Tab stop: Escape
+  closes the list and clears the search, and the text can be deleted as usual.
 - **Searching doesn't move the list.** The clear icon's place in the search row is kept while it is empty, and the list keeps the width it opened with when shorter options remain. The same for Compact Select, Inline Select and Filter.
 - **Over a modal.** Inside a modal the open list is drawn over it, whole, and can reach past its edges; it stays in the modal's markup, so screen readers still reach the options of an `aria-modal` dialog. The same for Compact Select, Inline Select and Filter.
 - **One row for every list.** Select, Compact Select, Inline Select and Dropdown Menu share the Figma *Dropdown menu item*,
@@ -126,7 +143,9 @@ Only the paddings and corners change; the text stays the same size. The floating
 | ↑ ↓ | Moves through the options |
 | Enter | Chooses the option (in a multi-select, ticks it and keeps the list open) |
 | Escape | Closes the list and keeps focus on the field |
-| Typing | Filters the list when there is a search row |
+| Typing (in the field) | Moves to the option that starts with those letters |
+| Tab (list open) | Moves into the search, then to Select all |
+| Typing (in the search) | Filters the list |
 
 - The field is a combobox named by its label; the option under the arrow keys is announced.
 - The hint and the error are read with the field; an error also marks it as invalid.

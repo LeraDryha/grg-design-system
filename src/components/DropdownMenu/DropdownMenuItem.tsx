@@ -17,6 +17,8 @@ export type DropdownMenuItemProps = DropdownMenuItemContent & {
   selected?: boolean;
   /** Figma Checkbox = On: a multi-choice list, with a checkbox at the end */
   multiple?: boolean;
+  /** With multiple: a half-checked box, as on Select all when some options are chosen */
+  indeterminate?: boolean;
   /** Figma Arrow: the row opens a submenu */
   arrow?: boolean;
 };
@@ -25,7 +27,7 @@ export type DropdownMenuItemProps = DropdownMenuItemContent & {
  * The content of one dropdown row: picture, label and description, badge, and at the end a check, a checkbox
  * or an arrow. The list around it (Select, Dropdown Menu) gives the row its hover, focus and keyboard behaviour.
  */
-export function DropdownMenuItem({ label, description, badge, selected = false, multiple = false, arrow = false, disabled, ...picture }: DropdownMenuItemProps) {
+export function DropdownMenuItem({ label, description, badge, selected = false, multiple = false, indeterminate = false, arrow = false, disabled, ...picture }: DropdownMenuItemProps) {
   const hasPicture = !!(picture.icon || picture.country || picture.coin || picture.paymentMethod || picture.avatar || picture.social);
   const badgeProps = typeof badge === 'string' ? { label: badge } : badge;
   return (
@@ -46,7 +48,7 @@ export function DropdownMenuItem({ label, description, badge, selected = false, 
       )}
       {arrow && <Icon name="direction-right" size={24} className="grg-menu-item__arrow" />}
       {multiple ? (
-        <CheckboxMark checked={selected} size="md" disabled={disabled} className="grg-menu-item__checkbox" />
+        <CheckboxMark checked={selected} indeterminate={indeterminate} size="md" disabled={disabled} className="grg-menu-item__checkbox" />
       ) : (
         selected && <Icon name="check" size={24} className="grg-menu-item__check" />
       )}

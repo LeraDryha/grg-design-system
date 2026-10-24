@@ -79,9 +79,17 @@ export const SearchALongList: Story = {
     const canvas = within(canvasElement);
     await openTheList(canvasElement);
     const search = await canvas.findByRole('textbox', { name: /search/i });
+    // Opening doesn't move the cursor into the search: people may scroll first
+    await expect(search).not.toHaveFocus();
     await userEvent.type(search, 'po');
     await waitFor(() => expect(canvas.getAllByRole('option')).toHaveLength(1));
     await expect(canvas.getByRole('option', { name: /poland/i })).toBeVisible();
+    // Closed and opened again: the search starts empty, with the whole list
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(canvas.queryByRole('listbox')).toBeNull());
+    await openTheList(canvasElement);
+    await expect(await canvas.findByRole('textbox', { name: /search/i })).toHaveValue('');
+    await waitFor(() => expect(canvas.getAllByRole('option').length).toBeGreaterThan(1));
   },
 };
 
@@ -114,6 +122,28 @@ export const ChooseSeveral: Story = {
     await waitFor(() => expect(args.onValuesChange).toHaveBeenLastCalledWith(['payman', 'stripe', 'mastercard', 'crypto', 'visa', 'swift', 'adyen']));
     await expect(canvasElement.querySelector('.grg-overflow-summary__text')).toHaveTextContent(/^Payman, Stripe.* and \d others$/);
     await expect(canvas.getByRole('option', { name: /swift usd/i })).toHaveAttribute('aria-selected', 'true');
+    // Select all: half-checked while some are chosen; it chooses the rest, then clears them all
+    const all = canvas.getByRole('checkbox', { name: 'Select all' });
+    await expect(all).toHaveAttribute('aria-checked', 'mixed');
+    await userEvent.click(all);
+    await waitFor(() => expect(args.onValuesChange).toHaveBeenLastCalledWith(expect.arrayContaining(sampleProviders.map(o => o.value))));
+    await expect(all).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(all);
+    await waitFor(() => expect(args.onValuesChange).toHaveBeenLastCalledWith([]));
+  },
+};
+
+/** An optional choice can be emptied again with ×; a required field has no clear button. */
+export const ClearAnOptionalChoice: Story = {
+  name: 'Clear an optional choice',
+  decorators: [field],
+  args: { label: 'Preferred provider', options: sampleProviders, defaultValue: 'stripe', onChange: fn() },
+  play: async ({ args, canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear selection' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith(null);
+    await expect(canvas.queryByRole('listbox')).toBeNull();
+    await expect(canvas.queryByRole('button', { name: 'Clear selection' })).toBeNull();
   },
 };
 

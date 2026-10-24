@@ -73,6 +73,7 @@ Without a matching option it shows its empty state. It never substitutes the fir
 ## Design decisions
 
 - **No frame of its own.** It lives inside another field or a header; the chevron is an Action button (sm, grey), darker on hover, darkest while open.
+- **No clear button.** It always holds a value, which is changed, not emptied.
 - **The same list as Select.** Rows, search and keyboard are shared with Select, Compact Select and Dropdown Menu.
 - **Focus separate from open.** The blue ring marks keyboard focus whether or not the list is open; closing the list restores the resting chevron even if focus stays.
 

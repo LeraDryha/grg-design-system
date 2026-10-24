@@ -87,6 +87,18 @@ export const ChooseSeveral: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(canvas.getByRole('combobox')).toHaveAccessibleName('Merchant: 2 selected, Corefy, Crypto Proxy'));
     await expect(canvasElement.querySelector('.grg-filter')).toHaveAttribute('data-applied', 'multi');
+    // Search, then Select all: it takes the options found, and × clears the search
+    await openFilter(canvasElement);
+    await userEvent.type(await canvas.findByRole('searchbox', { name: /search/i }), 'kuna');
+    await waitFor(() => expect(canvas.getAllByRole('option')).toHaveLength(2));
+    await userEvent.click(canvas.getByRole('checkbox', { name: 'Select all' }));
+    await expect(args.onChange).toHaveBeenLastCalledWith(['corefy', 'crypto-proxy', 'kuna-otc', 'kuna-io']);
+    await userEvent.click(canvas.getByRole('button', { name: 'Clear search' }));
+    await waitFor(() => expect(canvas.getAllByRole('option').length).toBeGreaterThan(2));
+    // From the search, Tab reaches Select all
+    canvas.getByRole('searchbox', { name: /search/i }).focus();
+    await userEvent.tab();
+    await expect(canvas.getByRole('checkbox', { name: 'Select all' })).toHaveFocus();
   },
 };
 

@@ -2,7 +2,7 @@ import { useId, useRef, useState } from 'react';
 import { Dropdown } from 'primereact/dropdown';
 import { Icon } from '../Icon/Icon';
 import { EMPTY_ICON, OptionPicture, type SelectOption } from '../Select/options';
-import { DropdownItem, LIST_HEIGHT, dropdownPanelPt, searchIcons, useListLayer } from '../Select/dropdown';
+import { DropdownItem, LIST_HEIGHT, dropdownPanelPt, searchBehaviour, searchIcons, useListLayer } from '../Select/dropdown';
 import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import './CompactSelect.css';
 
@@ -85,6 +85,7 @@ export function CompactSelect({
         emptyFilterMessage={noResults}
         emptyMessage={noResults}
         {...searchIcons}
+        {...searchBehaviour}
         onChange={e => {
           if (controlled === undefined) setLocal(e.value);
           onChange?.(e.value);

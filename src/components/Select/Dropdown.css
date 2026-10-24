@@ -47,6 +47,20 @@
 }
 .grg-dropdown__search-input::placeholder { color: var(--text-soft-500); opacity: 1; }
 .grg-dropdown__search-clear { display: inline-grid; color: var(--icon-base-500); cursor: pointer; }
+
+/* Select all (multi-choice lists): a list row with a checkbox, under the search and above the divider */
+.grg-dropdown__select-all {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+}
+.grg-dropdown__select-all:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 /* The clear icon's place is kept while the search is empty, so the row and the list don't widen on the first letter */
 .grg-dropdown__search:not(:has(.grg-dropdown__search-clear))::after { content: ''; flex: none; width: var(--space-500); }
 
