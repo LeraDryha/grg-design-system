@@ -26,11 +26,12 @@ A compact, static label, count or dot that adds status or category information b
 ## When to use
 
 <DoDont dos={[
-  'Short status or category labels beside a title, list item or table value',
+  'A short label on one line, a word or two, beside a title, list item or table value',
   'A Numeric badge for a count, with context such as unread messages',
   'A Dot beside a written status, or with an accessible name when it stands alone',
 ]} donts={[
   'Actions, navigation or selectable filters: use Button, Link or a selection control',
+  'A long label: a badge is never more than one line. If the text can\'t be shortened, use another component: plain text, an Alert, or a Tooltip for the details',
   'A full message or an instruction that needs explanation: use Alert',
   'Relying on colour alone to distinguish statuses; pair colour with meaningful text',
   'The corner status mark on an Avatar: that uses the separate StatusBadge part',
@@ -58,12 +59,15 @@ A count is named by what it counts (`aria-label="12 unread messages"`), not just
 
 When the text next to it says the same, `decorative` hides the dot from screen readers. A standalone Dot needs a meaningful `label` or `aria-label`.
 
-### A long label
+### Overlay
 
-<Canvas of={BadgeStories.ALongLabel} />
+<Canvas of={BadgeStories.Overlay} />
+
+A count (Numeric, Filled) or a dot (Dot, Text style: no tile) on the top right corner of an icon or an icon button, its middle on the corner, with `OverlayBadge`. The button's name says the news (*Notifications, 3 unread*), so the badge is `decorative` and screen readers don't hear it twice. An Avatar has its own StatusBadge.
 
 ## Design decisions
 
+- **One line, always.** A Text badge never wraps; a label wider than its place ends with an ellipsis. Keep it to a word or two.
 - **Static, always.** Badge has no Tab stop, hover or click; Figma defines no interactive states. For actions or filters, use Button or a selection control.
 - **Colour is never the only cue.** Text badges carry a word; a Dot or a count gets a name or sits next to text.
 - **Sizes from the component set.** The guidelines list different Text corners and a different xs text style; the component set wins (see [Contributing/Tokens](/?path=/docs/contributing-tokens--docs)).
