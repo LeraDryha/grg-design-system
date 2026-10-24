@@ -21,7 +21,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 Several values in one field: each one becomes a chip that can be removed.
 
 <Canvas of={MultiValueStories.Playground} />
-<Controls of={MultiValueStories.Playground} include={['label', 'size', 'hint', 'error', 'disabled', 'readOnly', 'collapsedRows']} />
+<Controls of={MultiValueStories.Playground} include={['label', 'size', 'hint', 'error', 'disabled', 'readOnly', 'addOnBlur', 'collapsedRows']} />
 
 ```tsx
 <MultiValueInput label="Availability" value={ids} onChange={setIds} />
@@ -40,13 +40,25 @@ Several values in one field: each one becomes a chip that can be removed.
 
 <Canvas of={MultiValueStories.AddACoin} />
 
-The Figma example. Type a value and press Enter (or a comma); Backspace in the empty field removes the last one.
+The Figma example. Type a value and press Enter (or a comma); Backspace in the empty field removes the last one. Text left in the field without Enter becomes a value too, as soon as focus moves on, so nothing typed is lost.
 
 ### Paste a list
 
 <Canvas of={MultiValueStories.PasteAList} />
 
 A pasted list separated by commas becomes several values at once. A value already in the field isn't added twice.
+
+### Keep the owner
+
+<Canvas of={MultiValueStories.KeepTheOwner} />
+
+Some values can't be removed: the account owner always gets the report. A locked value has no remove icon, and Backspace passes over it.
+
+### Account numbers
+
+<Canvas of={MultiValueStories.AccountNumbers} />
+
+The field takes only the characters the product allows, here digits. Which characters, if any are filtered, depends on the product's requirements; checking whole values (format, a maximum count) stays with the product too, as in *Unknown provider*.
 
 ### Many values
 
@@ -70,6 +82,9 @@ Unavailable can't be changed or reached with Tab. Read only can be read and expa
 
 - **Enter or a comma** adds a value, and a pasted list splits on commas: the usual way for ID and email fields.
 - **No duplicates** by default (`allowDuplicate` allows them).
+- **Nothing typed is lost.** Text not yet added with Enter or a comma becomes a value when the field loses focus (`addOnBlur`, on by default).
+- **Locked values.** `removable` can lock some values, as PrimeReact Chips does; they show no remove icon.
+- **Allowed characters** come from the product: `keyfilter` takes PrimeReact KeyFilter presets or a pattern. Off by default.
 - **Adding a value unfolds the field**, so the new chip and the typing line stay in view.
 - **The three-row limit** is measured live: the number in *+N more* follows the field width.
 - **A chip under the pointer darkens**, as in the Figma Hovered field.
@@ -93,7 +108,8 @@ The same label row and hint row as Input: required mark, optional text, info and
 | Key | What it does |
 |---|---|
 | Enter or , | Adds the typed value |
-| Backspace (empty field) | Removes the last value |
+| Tab or a click elsewhere | Adds the typed value, then moves on |
+| Backspace (empty field) | Removes the last value, unless it is locked |
 | ← / → | Moves through the values |
 | Backspace on a value | Removes it and returns to typing |
 | Tab | Moves to the field, then to *+N more* / *Show less* |
@@ -117,6 +133,8 @@ The Figma frames are in the **Design** tab of every story.
     { figma: 'State · Disabled', prop: 'disabled', values: 'boolean' },
     { figma: 'State · Hovered, Active', prop: '(pointer, keyboard)', values: '—' },
     { figma: 'Filled', prop: '(values present)', values: '—' },
+    { figma: 'Remove (per chip)', prop: 'removable', values: 'true; or a function that locks some values' },
+    { figma: '—', prop: 'addOnBlur, keyfilter', values: 'true; PrimeReact KeyFilter (product requirements)' },
     { figma: 'Three rows, +2 more, Show less', prop: 'collapsedRows, moreLabel, lessLabel', values: '3; functions' },
   ]}
 />

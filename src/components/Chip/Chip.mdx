@@ -65,7 +65,7 @@ Figma Assist chips: the label says what happens and changes when it is done (*Ad
 
 <Canvas of={ChipStories.RemovableValues} />
 
-Figma Input chips on their own. In a form field, use [Multi-value Input](?path=/docs/components-multi-value-input--docs).
+Figma Input chips on their own. In a form field, use [Multi-value Input](?path=/docs/components-multi-value-input--docs). After a chip is removed, focus moves to the next chip's remove button, or the previous one after the last, so several can be removed in a row with the keyboard.
 
 ### Unavailable
 
@@ -76,6 +76,7 @@ Figma Input chips on their own. In a form field, use [Multi-value Input](?path=/
 - **One component, four roles.** Figma draws Assist, Filter, Input and Suggestion chips alike; the code gives each its behaviour: a button (`onClick`), a check box (`selectable`), a value with a remove button (`removable`), or a plain value.
 - **A chosen chip gets a check**, as in the Figma Filter chips, so the choice doesn't rest on colour alone.
 - **Remove is its own button** next to the label, never a button inside a button; Backspace and Delete on it remove the chip too.
+- **Focus doesn't fall back to the page.** PrimeReact Chip leaves focus nowhere after a removal; GRG moves it to the neighbouring chip in the same row. When the last chip in a row is removed, the product moves focus to the control that added the chips.
 - **Hover, pressed and focus** come from the pointer and the keyboard. Focus is the system blue ring, shown only for the keyboard.
 
 ## Types
@@ -107,6 +108,7 @@ md-24 by default and in md and lg fields, sm-20 in sm fields and dense filters, 
 
 - Filters are check boxes named by their label; their group is named (*Currencies*).
 - Remove buttons are named *Remove* + the label. Icons and avatars are decorative.
+- After a removal, focus goes to the next chip, or to the previous one when the last chip was removed.
 - A chip that only shows a value isn't a Tab stop.
 - Disabled text is under 4.5:1, as in every disabled control in Figma.
 

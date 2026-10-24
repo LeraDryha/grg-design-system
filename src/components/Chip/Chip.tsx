@@ -37,6 +37,24 @@ export type ChipProps = {
   className?: string;
 };
 
+const FOCUSABLE = 'button:not(:disabled), input:not(:disabled), [tabindex="0"]';
+
+/** The chips next to this one in the same row: the next first, then the previous. */
+function neighbours(scope: HTMLElement | null) {
+  const chips = Array.from(scope?.parentElement?.children ?? []).filter(el => el.classList.contains('grg-chip-scope'));
+  const index = chips.indexOf(scope!);
+  return [chips[index + 1], chips[index - 1]].filter(Boolean);
+}
+
+/** Its remove button first, so removing several in a row stays on one key. PrimeReact Chip leaves
+ * focus on the page. Looked up after the removal, because PrimeReact Chip renews its DOM on re-render. */
+function focusNeighbour(chips: Element[]) {
+  for (const chip of chips) {
+    const target = chip.querySelector<HTMLElement>('.grg-chip__remove:not(:disabled)') ?? chip.querySelector<HTMLElement>(FOCUSABLE);
+    if (target && chip.isConnected) { target.focus(); return; }
+  }
+}
+
 /** PrimeReact Chip for tokens, Button for actions and ToggleButton for filters.
  * Chip itself has no disabled or selection API; sibling actions avoid nesting interactive controls. */
 export function Chip({ label, variant = 'filled', size = 'md', type = 'text', icon = 'check', avatar,
@@ -58,7 +76,11 @@ export function Chip({ label, variant = 'filled', size = 'md', type = 'text', ic
     : selected ? <Icon name="check" size={12} className="grg-chip__icon" /> : null;
   const content = <>{lead}<span className="grg-chip__label">{label}</span></>;
   const remove = () => {
-    if (!disabled && onRemove?.() !== false) { chip.current?.setVisible(false); setVisible(false); }
+    if (disabled) return;
+    const next = neighbours(root.current);
+    if (onRemove?.() !== false) { chip.current?.setVisible(false); setVisible(false); }
+    // Whether the chip removed itself or the application did, focus moves on to a neighbouring chip
+    requestAnimationFrame(() => { if (!root.current?.isConnected) focusNeighbour(next); });
   };
   const body = <>
         {selectable ? <ToggleButton unstyled className="grg-chip__toggle" checked={selected} disabled={disabled}

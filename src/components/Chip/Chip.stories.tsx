@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState, type CSSProperties } from 'react';
-import { expect, userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { Chip } from './Chip';
 import { Input } from '../Input/Input';
 import { Search } from '../Search/Search';
@@ -166,6 +166,10 @@ export const RemovableValues: Story = {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole('button', { name: 'Remove Stripe' }));
     await expect(canvas.queryByText('Stripe')).toBeNull();
+    // Focus moves on to the next chip, or the previous one after the last
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Remove Crypto Processing' })).toHaveFocus());
+    await userEvent.keyboard('{Delete}');
+    await waitFor(() => expect(canvas.getByRole('button', { name: 'Remove Payman' })).toHaveFocus());
   },
 };
 

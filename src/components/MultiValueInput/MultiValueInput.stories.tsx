@@ -31,12 +31,14 @@ const meta = {
       { name: 'Input chips: three rows', type: 'image', url: overflowFrame },
     ],
   },
-  args: { label: 'Availability', size: 'md', hint: 'Press Enter or a comma to add a value', disabled: false, readOnly: false, allowDuplicate: false, collapsedRows: 3 },
+  args: { label: 'Availability', size: 'md', hint: 'Press Enter or a comma to add a value', disabled: false, readOnly: false, allowDuplicate: false, addOnBlur: true, collapsedRows: 3 },
   argTypes: {
     size: { control: 'inline-radio', options: ['lg', 'md', 'sm'] },
     value: { control: 'object' },
     defaultValue: { control: 'object' },
     moreLabel: { control: false },
+    removable: { control: false },
+    keyfilter: { control: false },
     collapsedRows: { control: { type: 'number', min: 1 } },
   },
   render: args => <div style={width}><MultiValueInput {...args} /></div>,
@@ -80,6 +82,10 @@ export const AddACoin: Story = {
     await expect(list.getByText('b34555b7')).toBeInTheDocument();
     await userEvent.keyboard('{Backspace}');
     await expect(list.queryByText('b34555b7')).toBeNull();
+    // Text left without Enter still becomes a value when focus moves on
+    await userEvent.type(field, 'c90259b2');
+    await userEvent.click(canvas.getByRole('textbox', { name: 'Name' }));
+    await expect(list.getByText('c90259b2')).toBeInTheDocument();
   },
 };
 
@@ -101,6 +107,43 @@ export const PasteAList: Story = {
     await userEvent.click(canvas.getByRole('textbox', { name: 'Recipients' }));
     await userEvent.paste('anna@example.com,ben@example.com,cleo@example.com');
     await waitFor(() => expect(canvas.getByRole('status')).toHaveTextContent('3 recipients'));
+  },
+};
+
+/** The account owner always gets the report: that value is locked, the others can be removed. */
+export const KeepTheOwner: Story = {
+  name: 'Keep the owner',
+  args: { label: 'Report recipients', hint: 'The account owner always gets the report' },
+  render: function KeepTheOwner(args) {
+    const [values, setValues] = useState(['owner@company.example', 'finance@company.example']);
+    return <div style={width}>
+      <MultiValueInput {...args} value={values} onChange={setValues} removable={value => value !== 'owner@company.example'} />
+    </div>;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const tokens = () => canvasElement.querySelectorAll('.grg-multi-value__list .grg-multi-value__token');
+    await expect(tokens()[0]).not.toHaveAttribute('data-removable');
+    await expect(tokens()[1]).toHaveAttribute('data-removable');
+    await userEvent.click(canvas.getByRole('textbox', { name: 'Report recipients' }));
+    await userEvent.keyboard('{Backspace}{Backspace}');
+    // The removable value goes; the locked one stays
+    await waitFor(() => expect(tokens()).toHaveLength(1));
+    await expect(tokens()[0]).toHaveTextContent('owner@company.example');
+  },
+};
+
+/** The product decides which characters a field takes: here account numbers, digits only. */
+export const AccountNumbers: Story = {
+  name: 'Account numbers',
+  args: { label: 'Account numbers', hint: 'Digits only', keyfilter: 'pint' },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const field = canvas.getByRole('textbox', { name: 'Account numbers' });
+    await userEvent.click(field);
+    await userEvent.type(field, '40a81-7{Enter}');
+    const list = within(canvasElement.querySelector<HTMLElement>('.grg-multi-value__list')!);
+    await expect(list.getByText('40817')).toBeInTheDocument();
   },
 };
 
