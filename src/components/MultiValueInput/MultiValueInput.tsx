@@ -1,6 +1,7 @@
 import { useId, useLayoutEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Chips as PrimeChips } from 'primereact/chips';
+import type { KeyFilterType } from 'primereact/keyfilter';
 import { Button as PrimeButton } from 'primereact/button';
 import { Icon } from '../Icon/Icon';
 import { FormField } from '../FormField/FormField';
@@ -34,6 +35,12 @@ export type MultiValueInputProps = {
   /** PrimeReact separator; Enter always commits a value. */
   separator?: string;
   allowDuplicate?: boolean;
+  /** Typed text not yet added with Enter or the separator becomes a value when the field loses focus. */
+  addOnBlur?: boolean;
+  /** PrimeReact KeyFilter: the characters that can be typed or pasted ('int', 'alphanum', a RegExp…). Set by the product's requirements. */
+  keyfilter?: KeyFilterType;
+  /** Which values can be removed: all by default; a function locks some, which then show no remove icon. */
+  removable?: boolean | ((value: string, index: number) => boolean);
   /** Figma guideline: at most three rows before +N more. */
   collapsedRows?: number;
   moreLabel?: (count: number) => string;
@@ -47,7 +54,7 @@ const moreText = (count: number) => `+${count} more`;
  * PrimeReact Chips supplies value entry, paste, removal and arrow-key navigation.
  * The measured overflow and expansion control implement the GRG three-row guideline. */
 export function MultiValueInput({ label, size = 'md', required, optional, topKey, topValue, bottomValue, value: controlled, defaultValue = EMPTY, onChange, placeholder,
-  hint, error, info, disabled = false, readOnly = false, separator = ',', allowDuplicate = false,
+  hint, error, info, disabled = false, readOnly = false, separator = ',', allowDuplicate = false, addOnBlur = true, keyfilter, removable = true,
   collapsedRows = 3, moreLabel = moreText, lessLabel = 'Show less', className = '',
 }: MultiValueInputProps) {
   const id = useId();
@@ -60,6 +67,8 @@ export function MultiValueInput({ label, size = 'md', required, optional, topKey
   const [focused, setFocused] = useState(false);
   const [visibleCount, setVisibleCount] = useState(defaultValue.length);
   const values = controlled ?? local;
+  const canRemove = (value: string, index: number) =>
+    !readOnly && !disabled && (typeof removable === 'function' ? removable(value, index) : removable);
   const overflowing = visibleCount < values.length;
   const collapsed = overflowing && !expanded;
   useKeyboardNavigation(root);
@@ -104,14 +113,16 @@ export function MultiValueInput({ label, size = 'md', required, optional, topKey
     measure();
     document.fonts.ready.then(measure);
     return () => { alive = false; observer.disconnect(); };
-  }, [values, collapsedRows, moreLabel, readOnly, disabled]);
+  }, [values, collapsedRows, moreLabel, readOnly, disabled, removable]);
 
   useLayoutEffect(() => {
     // Keep the complete value in PrimeReact; collapsing only affects presentation, never stored data.
+    // A locked value has no remove icon, so it takes the end padding of a plain chip.
     root.current?.querySelectorAll<HTMLElement>('.grg-multi-value__token').forEach((token, index) => {
       token.hidden = collapsed && index >= visibleCount;
+      token.toggleAttribute('data-removable', canRemove(values[index], index));
     });
-  }, [values, collapsed, visibleCount]);
+  });
 
   const toggle = () => {
     setExpanded(!expanded);
@@ -134,7 +145,8 @@ export function MultiValueInput({ label, size = 'md', required, optional, topKey
         if (readOnly && ['Backspace', 'Delete', 'Enter'].includes(event.key) && event.target === input.current) event.preventDefault();
       }}>
       <PrimeChips unstyled inputId={id} inputRef={input} value={values} disabled={disabled} readOnly={readOnly}
-        separator={separator} allowDuplicate={allowDuplicate} aria-label={label}
+        separator={separator} allowDuplicate={allowDuplicate} addOnBlur={addOnBlur} keyfilter={keyfilter}
+        removable={typeof removable === 'function' ? options => removable(options.value, options.index) : removable} aria-label={label}
         placeholder={values.length ? placeholder : placeholder ?? label}
         aria-describedby={hint || error ? `${id}-hint` : undefined} aria-invalid={!!error || undefined}
         onChange={event => {
@@ -157,7 +169,7 @@ export function MultiValueInput({ label, size = 'md', required, optional, topKey
           // PrimeReact 10 puts the textbox inside its listbox. An editable group permits
           // mixed controls and retains its supported aria-activedescendant navigation.
           container: { id: contentId, className: 'grg-multi-value__list', role: 'group', 'aria-orientation': undefined, 'aria-label': label, 'aria-describedby': hint || error ? `${id}-hint` : undefined },
-          token: { role: 'group', 'aria-selected': undefined, 'aria-setsize': undefined, 'aria-posinset': undefined, className: 'grg-multi-value__token grg-chip', 'data-size': chipSize, 'data-variant': 'filled', 'data-removable': !readOnly && !disabled || undefined, 'aria-disabled': disabled || undefined },
+          token: { role: 'group', 'aria-selected': undefined, 'aria-setsize': undefined, 'aria-posinset': undefined, className: 'grg-multi-value__token grg-chip', 'data-size': chipSize, 'data-variant': 'filled', 'aria-disabled': disabled || undefined },
           label: { className: 'grg-chip__label' },
           removeTokenIcon: { className: 'grg-multi-value__remove' },
           input: { className: 'grg-multi-value__input' },
@@ -167,8 +179,8 @@ export function MultiValueInput({ label, size = 'md', required, optional, topKey
         aria-expanded={expanded} aria-controls={contentId} disabled={disabled} onClick={event => { event.stopPropagation(); toggle(); }}
         onKeyDown={event => event.stopPropagation()}>{expanded ? lessLabel : moreLabel(values.length - visibleCount)}</PrimeButton>, inputSlot)}
       <div ref={mirror} className="grg-multi-value__measure" aria-hidden="true" inert>
-        {values.map((value, index) => <span key={index} data-measure-chip className="grg-chip" data-size={chipSize} data-removable={!readOnly && !disabled || undefined}>
-          <span className="grg-chip__label">{value}</span>{!readOnly && !disabled && <Icon name="remove" size={16} />}
+        {values.map((value, index) => <span key={index} data-measure-chip className="grg-chip" data-size={chipSize} data-removable={canRemove(value, index) || undefined}>
+          <span className="grg-chip__label">{value}</span>{canRemove(value, index) && <Icon name="remove" size={16} />}
         </span>)}
         <span data-measure-more className="grg-multi-value__more">{moreLabel(values.length)}</span>
       </div>
