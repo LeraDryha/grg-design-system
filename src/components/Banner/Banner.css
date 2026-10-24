@@ -1,5 +1,5 @@
 /* Figma Banner: 12px vertical and 48px horizontal padding; no stroke, corners or elevation.
-   The close control is independent of the centred content, 12px from the trailing edge. */
+   The close control is independent of the content, 12px from the trailing edge. */
 .grg-banner {
   --banner-fill: var(--warning-muted-50);
   --banner-icon: var(--warning-base-600);
@@ -28,32 +28,53 @@
 .grg-banner[data-filled] { background: var(--banner-fill); }
 .grg-banner[data-align='left'] { justify-content: flex-start; }
 
+/* One line: icon, title, description and action in a row, centred or at the 48px inset. */
 .grg-banner__content {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
   gap: var(--space-200);
   min-width: 0;
   max-width: 100%;
-  text-align: center;
+  white-space: nowrap;
 }
-.grg-banner[data-align='left'] .grg-banner__content { justify-content: flex-start; text-align: start; }
-
-.grg-banner__lead {
+.grg-banner[data-align='left'] .grg-banner__content { justify-content: flex-start; }
+/* The text's space between title and description is dropped in a flex row; the gap keeps 8px. */
+.grg-banner__text {
   display: flex;
   align-items: center;
   gap: var(--space-200);
   min-width: 0;
-  max-width: 100%;
+  margin: 0;
 }
-.grg-banner__status-icon { color: var(--banner-icon); }
+/* Measuring the natural one-line width (Banner.tsx), for one synchronous read. */
+.grg-banner[data-measuring] .grg-banner__content { flex: none; width: max-content; max-width: none; }
+
+/* Long text (Figma 3477:88894): always left-aligned whatever align says. Icon on the first line,
+   title and description in one paragraph, the action on its own row at the trailing edge,
+   Close 12px from the top and trailing edges. */
+.grg-banner[data-layout='stack']:not([data-measuring]) { justify-content: flex-start; }
+.grg-banner[data-layout='stack']:not([data-measuring]) .grg-banner__content {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  width: 100%;
+  white-space: normal;
+}
+.grg-banner[data-layout='stack']:not([data-measuring]) .grg-banner__text { display: block; }
+.grg-banner[data-layout='stack']:not([data-measuring]) .grg-banner__action { grid-column: 2; justify-self: end; }
+.grg-banner[data-layout='stack']:not([data-measuring]) .grg-banner__close { top: var(--space-300); translate: none; }
+
+.grg-banner__status-icon { flex: none; color: var(--banner-icon); }
 /* The Success icon is a flattened 16⅔px vector in Figma. Reuse the same Base icon and crop
    its empty 24px canvas, keeping its drawing and occupied width identical to the source. */
 .grg-banner[data-status='success'] .grg-banner__status-icon {
   width: calc(var(--space-500) * 5 / 6);
   height: calc(var(--space-500) * 5 / 6);
   mask-size: 120%;
+}
+.grg-banner[data-layout='stack'][data-status='success']:not([data-measuring]) .grg-banner__status-icon {
+  margin-block-start: calc(var(--space-500) / 12);
 }
 .grg-banner__title { min-width: 0; overflow-wrap: anywhere; }
 .grg-banner__description {

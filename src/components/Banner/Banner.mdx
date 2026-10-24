@@ -12,6 +12,8 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   { label: 'Alert', href: '/?path=/docs/components-alert--docs', relation: 'See also' },
 ]} />
 
+Banners are versatile visual components within our design system, carefully crafted to efficiently communicate essential information, notifications, or alerts to users. It's highlighting critical updates, delivering notifications, or guiding user actions. Highly editable and adaptable, our banners offer a wide array of options for customizing their status, style, and other attributes.
+
 A full-width message for a page-wide or service-wide notice, with an optional description, action and dismissal.
 
 <Canvas of={BannerStories.Playground} />
@@ -27,6 +29,7 @@ A full-width message for a page-wide or service-wide notice, with an optional de
   'A notice that applies across a page or service: maintenance, connection issues or account-wide information',
   'A short title, with supporting detail only when it helps people decide what to do',
   'One clearly named next step; optional dismissal when the information may be put aside',
+  'Long text: always left-aligned. Center only when the product context calls for it, and only for a message on one line',
 ]} donts={[
   'An error attached to one field: use the field’s error state and Hint text',
   'A message inside a small section or card: use Alert',
@@ -60,6 +63,8 @@ Close hides the banner and calls `onClose`. Keep essential information available
 
 <Canvas of={BannerStories.LongContent} />
 
+When the message doesn't fit one line, the banner switches to the long-text layout by itself, whatever `align` says: left-aligned, the icon on the first line, title and description in one paragraph, the action on its own row at the trailing edge and Close at the top. Centred text over several lines is hard to read, because every line starts in a new place. With room for one line again, the banner goes back.
+
 ## Design decisions
 
 What the code adds to the Figma file, and why:
@@ -68,6 +73,7 @@ What the code adds to the Figma file, and why:
 - **Not the banner landmark.** The ARIA `banner` role belongs to a site header, so the component doesn't use it.
 - **Announced by urgency.** Error defaults to `role="alert"`; the rest to `role="status"`. A hidden `statusLabel` says the status in words.
 - **No timer, no focus grab.** The banner doesn't disappear by itself or take focus when it appears. The page owns placement, stacking and focus after dismissal.
+- **Long text chooses its layout.** The banner measures whether the whole message fits one line at its current width and switches to the long-text layout when it doesn't, so the rule holds on any screen without the product predicting widths.
 - **Ghost is a solid surface.** Ghost uses `bg-base-0`, not a transparent fill, as in Figma.
 
 ## Statuses and alignment
@@ -79,7 +85,7 @@ Figma defines no hover, pressed or disabled state for the whole banner; its acti
 
 <Canvas of={BannerStories.Alignment} />
 
-**Center** aligns the content with the whole strip, regardless of Close. **Left** aligns it with the 48px inset.
+**Center** aligns the content with the whole strip, regardless of Close. **Left** aligns it with the 48px inset. **Long text** is always left-aligned, in either case.
 
 ## Accessibility
 
@@ -103,7 +109,7 @@ The Figma frames are in the **Design** tab of every story.
   { figma: 'Filled', prop: 'filled', values: 'On → true (Filled); Off → false (Ghost)' },
   { figma: 'Button', prop: 'actionLabel · actionHref · onAction', values: 'On → a label; Off → absent or empty. actionHref navigates; otherwise onAction performs a local action' },
   { figma: 'Remove', prop: 'closable · closeLabel · onClose', values: 'On, Off → true, false; the label names Close and the callback handles dismissal' },
-  { figma: 'Guidelines / Banner Alignment', prop: 'align', values: 'Center → center (default); Left-Center auto layout → left' },
+  { figma: 'Guidelines / Banner Alignment', prop: 'align', values: 'Center → center (default); Left-Center auto layout → left. Long text (3477:88894) applies automatically when the message needs more than one line' },
   { figma: '—', prop: 'open', values: 'controlled visibility; leave unset for self-managed dismissal' },
   { figma: '—', prop: 'role · statusLabel', values: 'announcement urgency and localisable status wording' },
 ]} />

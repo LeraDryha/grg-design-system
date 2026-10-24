@@ -7,6 +7,7 @@ import { Button } from '../Button/Button';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/banner/banner-component.png';
 import guidelinesFrame from '../../assets/design/banner/banner-guidelines.png';
+import longTextFrame from '../../assets/design/banner/banner-long-text.png';
 
 const meta = {
   title: 'Components/Banner',
@@ -21,6 +22,7 @@ const meta = {
     design: [
       { name: 'Component', type: 'image', url: componentFrame },
       { name: 'Guidelines', type: 'image', url: guidelinesFrame },
+      { name: 'Long text', type: 'image', url: longTextFrame },
     ],
   },
   args: { title: 'Banner title here!', description: 'Banner description here!', status: 'warning', filled: false, align: 'center', actionLabel: 'Link button', closable: true, closeLabel: 'Close banner' },
@@ -109,11 +111,35 @@ export const DismissANotice: Story = {
   },
 };
 
-/** Long text on a narrow page: the icon stays with the title; the rest wraps and Close keeps its place. */
+const LONG = { title: 'Scheduled maintenance on international transfers', description: 'Some transfers may take longer while we update the service. Your funds remain safe and you can continue using your account.', actionLabel: 'View maintenance details' };
+
+/** Text that doesn't fit one line: left-aligned, the icon on the first line, the action on its own row, Close at the top. */
 export const LongContent: Story = {
   name: 'Long content',
-  args: { title: 'Scheduled maintenance on international transfers', description: 'Some transfers may take longer while we update the service. Your funds remain safe and you can continue using your account.', actionLabel: 'View maintenance details', status: 'info', filled: true },
-  render: (args: BannerProps) => <div style={{ width: 'calc(var(--space-2000) * 4)', maxWidth: '100%' }}><Banner {...args} /></div>,
+  args: { ...LONG, status: 'info', filled: true, align: 'center' },
+  render: (args: BannerProps) => <div data-testid="frame" style={{ width: 'calc(var(--space-2000) * 9)', maxWidth: '100%' }}><Banner {...args} /></div>,
+  play: async ({ canvasElement }) => {
+    const frame = within(canvasElement).getByTestId('frame');
+    const banner = canvasElement.querySelector<HTMLElement>('.grg-banner')!;
+    await waitFor(() => expect(banner).toHaveAttribute('data-layout', 'stack'));
+    const box = (el: Element) => el.getBoundingClientRect();
+    const icon = box(banner.querySelector('.grg-banner__status-icon')!);
+    const text = box(banner.querySelector('.grg-banner__text')!);
+    const action = box(banner.querySelector('.grg-banner__action')!);
+    const close = box(within(banner).getByRole('button', { name: 'Close banner' }));
+    // Even with align="center": the text starts at the 48px inset, next to the icon on its first line
+    await expect(icon.left - box(banner).left).toBeCloseTo(48, 0);
+    await expect(icon.top).toBeCloseTo(text.top, 0);
+    await expect(action.top).toBeGreaterThanOrEqual(text.bottom);
+    await expect(action.right).toBeCloseTo(text.right, 0);
+    await expect(close.top - box(banner).top).toBeLessThan(icon.top - box(banner).top + 1);
+    // Room for the whole message on one line: back to the centred one-line layout, and narrow again
+    const narrow = frame.getAttribute('style')!;
+    frame.setAttribute('style', 'width: 1600px');
+    await waitFor(() => expect(banner).toHaveAttribute('data-layout', 'line'));
+    frame.setAttribute('style', narrow);
+    await waitFor(() => expect(banner).toHaveAttribute('data-layout', 'stack'));
+  },
 };
 
 /* ---- Overview ---- */
@@ -141,6 +167,7 @@ export const Alignment: Story = {
     <Showcase column>
       <Variant caption="Center (default)"><div style={full}><Banner {...args} align="center" /></div></Variant>
       <Variant caption="Left"><div style={full}><Banner {...args} align="left" /></div></Variant>
+      <Variant caption="Long text (always left)"><div style={{ width: 'calc(var(--space-2000) * 9)', maxWidth: '100%' }}><Banner {...args} {...LONG} align="center" /></div></Variant>
     </Showcase>
   ),
 };
