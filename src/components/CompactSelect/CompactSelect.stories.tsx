@@ -72,7 +72,14 @@ export const PickACountry: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvasElement.querySelector<HTMLElement>('.grg-compact-select__box')!);
-    await userEvent.type(await canvas.findByRole('textbox', { name: /search/i }), 'pol');
+    const search = await canvas.findByRole('textbox', { name: /search/i });
+    const panel = canvasElement.querySelector<HTMLElement>('.grg-dropdown')!;
+    await waitFor(() => expect(panel).toHaveAttribute('data-open-width'));
+    const width = panel.getBoundingClientRect().width;
+    // The list keeps its width while searching: the clear icon has its place, and a shorter list doesn't narrow it
+    await userEvent.type(search, 'pol');
+    await waitFor(() => expect(canvas.getAllByRole('option')).toHaveLength(1));
+    await expect(panel.getBoundingClientRect().width).toBeCloseTo(width, 0);
     await userEvent.click(await canvas.findByRole('option', { name: /poland/i }));
     await expect(args.onChange).toHaveBeenCalledWith('PL');
   },

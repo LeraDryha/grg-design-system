@@ -8,7 +8,7 @@ import { primeReactConfig } from '../../primereact-config';
 import { Icon } from '../Icon/Icon';
 import { Badge, type BadgeColor } from '../Badge/Badge';
 import { ActionButton } from '../ActionButton/ActionButton';
-import { DropdownItem, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons, useListLayer } from '../Select/dropdown';
+import { DropdownItem, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchBehaviour, searchIcons, useListLayer, useMultiListHeader } from '../Select/dropdown';
 import { useDropdownCombobox } from '../Select/useDropdownCombobox';
 import type { SelectOption } from '../Select/options';
 import { DatePickerPanel, type DatePickerValue } from '../DatePicker/DatePickerPanel';
@@ -50,6 +50,8 @@ export type FilterProps = {
   disabled?: boolean;
   /** Name of the clear button; "Clear Merchant filter" by default */
   clearLabel?: string;
+  /** Multiple: the label of the Select all row (from 4 options) */
+  selectAllLabel?: string;
   className?: string;
 };
 
@@ -64,7 +66,7 @@ const isPeriod = (v: FilterValue | undefined): v is [Date | null, Date | null] =
 export function Filter({
   label, type = 'single', options = [], value: controlled, defaultValue = null, onChange, size = 'md',
   searchable, searchPlaceholder = 'Search', noResults = 'Nothing found', presets = true, locale,
-  disabled = false, clearLabel, className = '',
+  disabled = false, clearLabel, selectAllLabel = 'Select all', className = '',
 }: FilterProps) {
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
@@ -132,6 +134,7 @@ export function Filter({
   }, [type, open]);
 
   const withSearch = searchable ?? options.length >= SEARCH_FROM;
+  const multiHeader = useMultiListHeader({ options, values: asArray(value), onValues: set, withSearch, selectAllLabel });
   const badgeSize = size === 'sm' ? 'xs' : 'sm';
 
   const content = (
@@ -197,6 +200,7 @@ export function Filter({
           emptyFilterMessage={noResults}
           emptyMessage={noResults}
           {...searchIcons}
+          {...searchBehaviour}
           onChange={e => set(e.value)}
           onShow={() => { setOpen(true); layer.place(); }}
           onHide={() => { setOpen(false); layer.release(); }}
@@ -236,6 +240,7 @@ export function Filter({
             emptyMessage={noResults}
             showSelectAll={false}
             {...searchIcons}
+            {...multiHeader.props}
             onChange={e => {
               // Each tick applies at once and the list stays open, so several can be ticked in a row
               const next = (e.value as string[]) ?? [];
@@ -243,7 +248,7 @@ export function Filter({
               set([...current.filter(v => next.includes(v)), ...next.filter(v => !current.includes(v))]);
             }}
             onShow={() => { setOpen(true); layer.place(); }}
-            onHide={() => { setOpen(false); layer.release(); }}
+            onHide={() => { setOpen(false); layer.release(); multiHeader.reset(); }}
             // Called once per chosen option: the first call draws the whole filter
             selectedItemTemplate={(v: string | undefined) => (v === undefined || v === asArray(value)[0] ? content : null)}
             itemTemplate={({ status: _status, ...o }: FilterOption) => <DropdownItem option={o} selected={asArray(value).includes(o.value)} multiple />}
@@ -255,9 +260,9 @@ export function Filter({
               hiddenInputWrapper: { className: 'grg-sr-only' },
               trigger: { className: 'grg-filter__chevron', 'aria-hidden': true, hidden: applied !== 'none' },
               panel: { className: 'grg-dropdown grg-dropdown--filter' },
-              header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
               filterContainer: { className: 'grg-dropdown__search' },
-              filterInput: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` },
+              // MultiSelect hands this to its InputText, which reads it as that component's own pass-through (types say otherwise)
+              filterInput: { root: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` } } as object,
               closeButton: { hidden: true },
               wrapper: { className: 'grg-dropdown__scroll' },
               list: { className: 'grg-dropdown__list', 'aria-label': label },
