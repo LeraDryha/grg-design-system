@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { Badge as PrimeBadge } from 'primereact/badge';
 import { Icon, type IconName } from '../Icon/Icon';
 import './Badge.css';
@@ -62,4 +62,24 @@ export function Badge({
     aria-hidden={decorative ? true : rest['aria-hidden']}
     value={content}
   />;
+}
+
+export type OverlayBadgeProps = {
+  /** The Badge on the corner: a Numeric count, or a Dot (the Text style for a dot without a tile) */
+  badge: ReactNode;
+  /** What it marks: an icon or an icon button (an Avatar has its own StatusBadge) */
+  children: ReactNode;
+  className?: string;
+};
+
+/** A Badge on the top right corner of something else, its middle on the corner (PrimeReact's Overlay badge). The
+ *  thing it marks keeps its name; say the count or the news in that name (Notifications, 3 unread), and make the
+ *  Badge decorative. */
+export function OverlayBadge({ badge, children, className = '' }: OverlayBadgeProps) {
+  return (
+    <span className={`grg-overlay-badge ${className}`}>
+      {children}
+      <span className="grg-overlay-badge__badge">{badge}</span>
+    </span>
+  );
 }

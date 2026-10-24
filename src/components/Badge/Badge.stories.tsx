@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { Badge, type BadgeProps, type BadgeColor, type BadgeSize, type BadgeType, type BadgeVariant } from './Badge';
+import { Badge, OverlayBadge, type BadgeProps, type BadgeColor, type BadgeSize, type BadgeType, type BadgeVariant } from './Badge';
 import { baseIconNames } from '../../icons/names';
+import { ActionButton } from '../ActionButton/ActionButton';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/badge/badge-component.png';
 import guidelinesFrame from '../../assets/design/badge/badge-guidelines.png';
@@ -107,11 +108,28 @@ export const DotNextToAStatus: Story = {
   },
 };
 
-/** A long label wraps inside its parent and the badge grows; prefer a short word people can scan. */
-export const ALongLabel: Story = {
-  name: 'A long label',
-  args: { label: 'Awaiting additional verification documents' },
-  render: (args: BadgeProps) => <div style={{ width: 'calc(var(--space-2000) * 2)', maxWidth: '100%' }}><Badge {...args} type="text" /></div>,
+/** PrimeReact's Overlay: a count or a dot on the corner of an icon or an icon button (an Avatar has its own StatusBadge). The name of what it
+ *  marks says the news (Notifications, 3 unread), so the Badge itself is decorative. */
+export const Overlay: Story = {
+  render: () => (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-1000)', padding: 'var(--space-300)', ...text }}>
+      <OverlayBadge badge={<Badge type="numeric" variant="filled" color="error" size="sm" value={3} decorative />}>
+        <ActionButton icon="notification" size="md" aria-label="Notifications, 3 unread" />
+      </OverlayBadge>
+      <OverlayBadge badge={<Badge type="numeric" variant="filled" color="error" size="sm" value="99+" decorative />}>
+        <ActionButton icon="mail" size="md" aria-label="Messages, more than 99 unread" />
+      </OverlayBadge>
+      <OverlayBadge badge={<Badge type="dot" variant="text" color="error" size="sm" decorative />}>
+        <ActionButton icon="setting" size="md" aria-label="Settings, something new" />
+      </OverlayBadge>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole('button', { name: 'Notifications, 3 unread' })).toBeVisible();
+    // The badge repeats the button's name, so screen readers don't hear it twice
+    await expect(canvas.queryAllByRole('img', { name: /^3$/ })).toHaveLength(0);
+  },
 };
 
 /* ---- Overview ---- */

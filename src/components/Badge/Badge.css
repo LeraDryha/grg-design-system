@@ -57,7 +57,10 @@
   letter-spacing: var(--typo-caption-xs-medium-tracking);
 }
 
-.grg-badge__label { min-width: 0; overflow-wrap: anywhere; }
+/* One line, always: a label that doesn't fit is cut with an ellipsis (badges take a word or two; longer text needs
+   another component) */
+.grg-badge { white-space: nowrap; }
+.grg-badge__label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 .grg-badge__left-icon,
 .grg-badge__right-icon { flex: none; }
 
@@ -67,7 +70,7 @@
 .grg-badge[data-type='numeric'] { padding: var(--space-100); }
 .grg-badge[data-type='numeric'][data-size='sm'] { padding: var(--space-050); }
 .grg-badge[data-type='numeric'][data-size='xs'] { padding: var(--space-050) 0; }
-.grg-badge__value { min-width: var(--space-400); overflow-wrap: anywhere; }
+.grg-badge__value { min-width: var(--space-400); }
 
 /* Dot frames are fixed squares in Figma. Centre the native ellipse instead of applying
    the inconsistent 8px padding to its 20px frame (which would make it 22px tall). */
@@ -84,3 +87,7 @@
   border-radius: var(--radius-fully-rounded);
   background: currentColor;
 }
+
+/* Overlay badge: the Badge's middle on the top right corner of what it marks */
+.grg-overlay-badge { position: relative; display: inline-flex; vertical-align: middle; }
+.grg-overlay-badge__badge { position: absolute; top: 0; right: 0; display: flex; translate: 50% -50%; pointer-events: none; }
