@@ -37,6 +37,7 @@ export const LIST_HEIGHT = 'calc(var(--space-4000) * 2 + var(--space-1400))';
  * pushes its scrolling content aside. It stays in the modal's markup, next to its field: the modal is `aria-modal`, and
  * screen readers must keep reaching the options. Outside a modal nothing changes.
  * Call `place` when the list opens; it follows scrolling, resizing and a list that changes height (search).
+ * Everywhere, in a modal or not, `place` also fixes the list's width as it opened, so searching never narrows it.
  */
 export function useListLayer(root: RefObject<HTMLElement | null>) {
   const [inModal, setInModal] = useState(false);
@@ -60,7 +61,13 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
   const place = () => {
     const host = root.current;
     const panel = host?.querySelector<HTMLElement>('.grg-dropdown');
-    if (!inModal || !host || !panel) return;
+    if (!host || !panel) return;
+    // The list keeps the width it opened with: filtering out its longest options doesn't narrow it
+    if (!panel.dataset.openWidth) {
+      panel.dataset.openWidth = String(panel.getBoundingClientRect().width);
+      panel.style.minWidth = `${panel.dataset.openWidth}px`;
+    }
+    if (!inModal) return;
     // Already over the modal (placed as it was added): nothing to do when PrimeReact reports it shown
     if (panel.hasAttribute('data-layer') && stop.current) return;
     stop.current?.();
@@ -77,7 +84,7 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
       busy = true;
       panel.style.position = 'fixed';
       const field = host.getBoundingClientRect();
-      panel.style.minWidth = `${Math.max(minWidth, field.width)}px`;
+      panel.style.minWidth = `${Math.max(minWidth, field.width, Number(panel.dataset.openWidth) || 0)}px`;
       const height = panel.offsetHeight;
       const below = field.bottom + gap;
       const top = below + height > window.innerHeight && field.top - gap - height > 0 ? field.top - gap - height : below;

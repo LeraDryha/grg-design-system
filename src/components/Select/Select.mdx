@@ -101,6 +101,7 @@ What the code adds to the Figma file, and why:
   Figma examples ask. When the list overflows, what they picked first stays visible. (PrimeReact would follow the list order.)
 - **Search from 11 options.** The Figma guidelines show 9 rows without scrolling and a search row once the list is longer
   than 10. The code applies it by itself; `searchable` overrides it.
+- **Searching doesn't move the list.** The clear icon's place in the search row is kept while it is empty, and the list keeps the width it opened with when shorter options remain. The same for Compact Select, Inline Select and Filter.
 - **Over a modal.** Inside a modal the open list is drawn over it, whole, and can reach past its edges; it stays in the modal's markup, so screen readers still reach the options of an `aria-modal` dialog. The same for Compact Select, Inline Select and Filter.
 - **One row for every list.** Select, Compact Select, Inline Select and Dropdown Menu share the Figma *Dropdown menu item*,
   so a fix or a new option type reaches all of them.
