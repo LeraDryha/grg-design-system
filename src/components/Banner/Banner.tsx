@@ -1,4 +1,4 @@
-import { useState, type ComponentPropsWithoutRef } from 'react';
+import { useLayoutEffect, useRef, useState, type ComponentPropsWithoutRef } from 'react';
 import { Message as PrimeMessage } from 'primereact/message';
 import { Button as PrimeButton } from 'primereact/button';
 import { ActionButton } from '../ActionButton/ActionButton';
@@ -19,7 +19,8 @@ export type BannerProps = Omit<ComponentPropsWithoutRef<'div'>, 'title' | 'child
   status?: BannerStatus;
   /** Figma Filled: On → muted status background; Off → Ghost, using bg-base-0. */
   filled?: boolean;
-  /** Guidelines / Banner Alignment: Center (default) or Left-Center auto layout. */
+  /** Guidelines / Banner Alignment: Center (default) or Left-Center auto layout, for a banner on one line.
+   *  Text that needs more than one line always uses the left-aligned long-text layout. */
   align?: 'center' | 'left';
   /** Figma Button: present when there is a label; a Link for navigation or a button for an action. */
   actionLabel?: string;
@@ -59,7 +60,32 @@ export function Banner({
   statusLabel = STATUS_LABEL[status], role = status === 'error' ? 'alert' : 'status', className = '', ...props
 }: BannerProps) {
   const [dismissed, setDismissed] = useState(false);
-  if (!(open ?? !dismissed)) return null;
+  const [layout, setLayout] = useState<'line' | 'stack'>('line');
+  const contentRef = useRef<HTMLDivElement>(null);
+  const visible = open ?? !dismissed;
+
+  // One line while the whole message fits; otherwise the long-text layout. The natural one-line width
+  // is measured with the line layout forced for an instant, so the choice never flips back and forth.
+  useLayoutEffect(() => {
+    const content = contentRef.current;
+    const root = content?.parentElement;
+    if (!content || !root) return;
+    function measure() {
+      root!.dataset.measuring = '';
+      const needed = content!.getBoundingClientRect().width;
+      delete root!.dataset.measuring;
+      const style = getComputedStyle(root!);
+      const available = root!.clientWidth - parseFloat(style.paddingInlineStart) - parseFloat(style.paddingInlineEnd);
+      setLayout(needed > available + 0.5 ? 'stack' : 'line');
+    }
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(root);
+    document.fonts?.ready.then(measure);
+    return () => observer.disconnect();
+  }, [visible, title, description, actionLabel, statusLabel]);
+
+  if (!visible) return null;
 
   function close() {
     if (open === undefined) setDismissed(true);
@@ -78,17 +104,18 @@ export function Banner({
     data-status={status}
     data-filled={filled || undefined}
     data-align={align}
+    data-layout={layout}
     pt={{ root: { role, 'aria-live': props['aria-live'] ?? (role === 'alert' ? 'assertive' : 'polite'), 'aria-atomic': true } }}
     content={<>
-      <div className="grg-banner__content">
-        <div className="grg-banner__lead">
-          <Icon name={ICON[status]} size={20} className="grg-banner__status-icon" />
+      <div ref={contentRef} className="grg-banner__content">
+        <Icon name={ICON[status]} size={20} className="grg-banner__status-icon" />
+        <p className="grg-banner__text">
           <span className="grg-banner__title">
             {statusLabel && <span className="grg-sr-only">{statusLabel}: </span>}
             {title}
           </span>
-        </div>
-        {description && <span className="grg-banner__description">{description}</span>}
+          {description && <>{' '}<span className="grg-banner__description">{description}</span></>}
+        </p>
         {action}
       </div>
       {closable && <ActionButton icon="remove" size="sm" className="grg-banner__close" aria-label={closeLabel} onClick={close} />}
