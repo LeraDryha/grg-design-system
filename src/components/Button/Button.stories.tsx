@@ -54,8 +54,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** Edit everything in Controls. */
-export const Playground: Story = {};
+/** Edit everything in Controls. The showcase opens on Primary; the component's default stays Secondary. */
+export const Playground: Story = { args: { variant: 'primary' } };
 
 /* ---- Examples: real tasks, each one a live story with a check of its behaviour ---- */
 
