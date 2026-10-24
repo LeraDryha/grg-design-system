@@ -75,6 +75,7 @@ There is no hint under a compact select, so the reason goes next to it and is co
 
 ## Design decisions
 
+- **No clear button.** It always holds a value, which is changed, not emptied.
 - **The same list as Select.** The open list, its rows and search are shared with Select, Inline Select and Dropdown Menu.
 - **No label, but always a name.** `aria-label` is a required prop: a select without visible text still has a name for screen readers.
 - **Never a silent choice.** An empty or removed value stays empty instead of jumping to the first option.

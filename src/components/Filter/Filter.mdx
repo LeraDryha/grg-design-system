@@ -60,7 +60,7 @@ The filter keeps its label, shows the chosen value after a divider, and the clea
 
 <Canvas of={FilterStories.ChooseSeveral} />
 
-Each tick applies at once and the list stays open, so several can be ticked in a row; a click outside or Escape closes it. The filter shows a count instead of the names.
+Each tick applies at once and the list stays open, so several can be ticked in a row; a click outside or Escape closes it. The filter shows a count instead of the names. **Select all** (from 4 options) ticks every option the search shows, as in Select.
 
 ### Filter by status
 
@@ -127,7 +127,8 @@ lg-44 and md-40 have 12 and 10px paddings and a sm-20 Badge; sm-32 has 6 × 8px 
 | ↑ ↓ | Move through the options |
 | Enter or Space | Chooses an option; in Multi, ticks it and keeps the list open |
 | Escape | Closes the list or the calendar |
-| Typing (with search) | Filters the list |
+| Tab (list open) | Moves into the search, then to Select all |
+| Typing (in the search) | Filters the list |
 
 - The filter is a combobox named by its label and what is applied; the list is a listbox, and the option under the arrow keys is announced.
 - The date filter is a button that opens a dialog with the calendar.

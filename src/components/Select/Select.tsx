@@ -7,7 +7,7 @@ import { OverflowSummary } from './OverflowSummary';
 import { Icon, type IconName } from '../Icon/Icon';
 import { FormField } from '../FormField/FormField';
 import { EMPTY_ICON, OptionPicture, type OptionKind, type SelectOption } from './options';
-import { DropdownItem, DropdownSkeleton, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchIcons, useListLayer } from './dropdown';
+import { DropdownItem, DropdownSkeleton, LIST_HEIGHT, SEARCH_FROM, dropdownPanelPt, searchBehaviour, searchIcons, useListLayer, useMultiListHeader } from './dropdown';
 import { useDropdownCombobox } from './useDropdownCombobox';
 import './Select.css';
 
@@ -59,8 +59,10 @@ export type SelectProps = {
   values?: string[];
   defaultValues?: string[];
   onValuesChange?: (values: string[]) => void;
-  /** Name of the clear button of a multi-select */
+  /** Name of the clear button: a multi-select, or an optional single select with a value */
   clearLabel?: string;
+  /** Multi-select: the label of the Select all row (from 4 options) */
+  selectAllLabel?: string;
   /** Opens the list when the field first appears, for a step where choosing is the only task. Doesn't move focus. */
   defaultOpen?: boolean;
   disabled?: boolean;
@@ -77,7 +79,7 @@ export function Select({
   options, value: controlled, defaultValue, onChange, type = 'common', size = 'md',
   label, floatingLabel = true, placeholder, required, optional, info, hint, error, hintIcon = true, topKey, topValue,
   icon = true, emptyIcon, searchable, searchPlaceholder = 'Search', noResults = 'There are no search results', loading = false,
-  multiple = false, values: controlledValues, defaultValues = [], onValuesChange, clearLabel = 'Clear selection', defaultOpen = false,
+  multiple = false, values: controlledValues, defaultValues = [], onValuesChange, clearLabel = 'Clear selection', selectAllLabel = 'Select all', defaultOpen = false,
   disabled, id: suppliedId, name, className = '',
 }: SelectProps) {
   const generatedId = useId();
@@ -101,10 +103,31 @@ export function Select({
   const [open, setOpen] = useState(false);
   const [focused, setFocused] = useState(false);
   const value = controlled === undefined ? local : controlled;
+  const setValues = (next: string[]) => {
+    if (controlledValues === undefined) setLocalValues(next);
+    onValuesChange?.(next);
+  };
+  const multiHeader = useMultiListHeader({ options: loading ? [] : options, values, onValues: setValues, withSearch, selectAllLabel });
   const selected = options.find(o => o.value === value);
   const isFocused = focused || open;
   const labelVisible = !floatingLabel || isFocused || (multiple ? chosen.length > 0 : !!selected);
   const message = error || hint;
+  // A function, so PrimeReact's click and keyboard handlers reach the button (an element would drop them)
+  const clearIcon = ({ iconProps }: { iconProps: HTMLAttributes<HTMLSpanElement> }) => (
+    <span
+      {...iconProps}
+      className="grg-select__clear"
+      role="button"
+      aria-label={clearLabel}
+      onClick={e => {
+        // Clearing shouldn't also open the list
+        e.stopPropagation();
+        iconProps.onClick?.(e);
+      }}
+    >
+      <Icon name="remove" size={20} />
+    </span>
+  );
   useDropdownCombobox(rootRef, inputRef, `${id}-list`, label, message ? hintId : undefined, !!error);
 
   const empty = emptyIcon ?? EMPTY_ICON[type];
@@ -169,15 +192,14 @@ export function Select({
             showSelectAll={false}
             showClear={chosen.length > 0 && !disabled}
             {...searchIcons}
+            {...multiHeader.props}
             onChange={e => {
               const next = (e.value as string[]) ?? [];
               // Keep the order in which the options were chosen, as Figma asks
-              const ordered = [...values.filter(v => next.includes(v)), ...next.filter(v => !values.includes(v))];
-              if (controlledValues === undefined) setLocalValues(ordered);
-              onValuesChange?.(ordered);
+              setValues([...values.filter(v => next.includes(v)), ...next.filter(v => !values.includes(v))]);
             }}
             onShow={() => { setOpen(true); layer.place(); }}
-            onHide={() => { setOpen(false); layer.release(); }}
+            onHide={() => { setOpen(false); layer.release(); multiHeader.reset(); }}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
             selectedItemTemplate={(v: string | undefined) =>
@@ -196,21 +218,7 @@ export function Select({
             itemTemplate={(o: SelectOption) => <DropdownItem option={o} selected={values.includes(o.value)} multiple />}
             dropdownIcon={<Icon name="direction-down" size={20} />}
             // A function, so PrimeReact's click and keyboard handlers reach the button (an element would drop them)
-            clearIcon={({ iconProps }: { iconProps: HTMLAttributes<HTMLSpanElement> }) => (
-              <span
-                {...iconProps}
-                className="grg-select__clear"
-                role="button"
-                aria-label={clearLabel}
-                onClick={e => {
-                  // Clearing shouldn't also open the list
-                  e.stopPropagation();
-                  iconProps.onClick?.(e);
-                }}
-              >
-                <Icon name="remove" size={20} />
-              </span>
-            )}
+            clearIcon={clearIcon}
             pt={{
               root: { className: 'grg-select__box', 'aria-disabled': disabled || undefined } as object,
               labelContainer: { className: 'grg-select__input' },
@@ -218,10 +226,9 @@ export function Select({
               hiddenInputWrapper: { className: 'grg-sr-only' },
               trigger: { className: 'grg-select__trigger', 'aria-hidden': true },
               panel: { className: 'grg-dropdown grg-dropdown--select' },
-              // Without search the header would hold only the hidden close button and a divider
-              header: withSearch ? { className: 'grg-dropdown__header' } : { hidden: true },
               filterContainer: { className: 'grg-dropdown__search' },
-              filterInput: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` },
+              // MultiSelect hands this to its InputText, which reads it as that component's own pass-through (types say otherwise)
+              filterInput: { root: { className: 'grg-dropdown__search-input', 'aria-label': `Search ${label.toLowerCase()}` } } as object,
               closeButton: { hidden: true },
               wrapper: { className: 'grg-dropdown__scroll' },
               list: { className: 'grg-dropdown__list', 'aria-label': label },
@@ -260,9 +267,15 @@ export function Select({
             emptyFilterMessage={noResults}
             emptyMessage={noResults}
             {...searchIcons}
+            {...searchBehaviour}
+            // An optional field can be emptied again; a required one can't, so it has no clear button
+            showClear={!required && !!selected && !disabled}
+            clearIcon={clearIcon}
             onChange={e => {
-              if (controlled === undefined) setLocal(e.value);
-              onChange?.(e.value);
+              // Cleared: PrimeReact passes undefined; the field's empty value is null
+              const next = e.value ?? null;
+              if (controlled === undefined) setLocal(next);
+              onChange?.(next);
             }}
             onShow={() => { setOpen(true); layer.place(); }}
             onHide={() => { setOpen(false); layer.release(); }}
