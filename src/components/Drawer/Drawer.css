@@ -1,0 +1,32 @@
+/* Drawer: Modal's parts at the right edge, the whole height of the screen. Every value is a token. */
+
+/* The overlay holds the drawer against its right edge, no space around */
+.grg-modal-mask.grg-drawer-mask { justify-content: flex-end; align-items: stretch; padding: 0; }
+.grg-modal-dialog.grg-drawer-dialog { height: 100%; max-height: 100%; }
+
+/* Opening and closing: it slides in from the right edge */
+.grg-modal-dialog.grg-drawer-dialog.enter { opacity: 1; transform: translateX(100%); }
+.grg-modal-dialog.grg-drawer-dialog.enter-active { opacity: 1; transform: none; transition: transform 250ms ease-out; }
+.grg-modal-dialog.grg-drawer-dialog.exit { opacity: 1; transform: none; }
+.grg-modal-dialog.grg-drawer-dialog.exit-active { opacity: 1; transform: translateX(100%); transition: transform 200ms ease-in; }
+
+/* The surface: sm-480, md-560, lg-960; rounded on the side facing the page, square on the screen's edge */
+.grg-modal.grg-drawer {
+  --modal-width: calc(var(--space-5000) * 2 + var(--space-2000));
+  height: 100%;
+  border-radius: var(--radius-xl-16) 0 0 var(--radius-xl-16);
+}
+.grg-modal.grg-drawer[data-size='md'] { --modal-width: calc(var(--space-5000) * 2 + var(--space-4000)); }
+.grg-modal.grg-drawer[data-size='lg'] { --modal-width: calc(var(--space-5000) * 4 + var(--space-4000)); }
+/* Phones: the whole screen */
+.grg-modal.grg-drawer[data-layout='mobile'] { width: 100%; border-radius: 0; }
+
+/* The title keeps clear of Close */
+.grg-drawer > .grg-modal-header { padding-right: var(--space-1400); }
+/* The content scrolls between the header and the footer; a line and 24px above the footer */
+.grg-drawer > .grg-modal__content { padding-bottom: var(--space-600); }
+.grg-drawer > .grg-modal-footer { border-top: 1px solid var(--stroke-soft-200); padding-top: var(--space-600); }
+
+@media (prefers-reduced-motion: reduce) {
+  .grg-modal-dialog.grg-drawer-dialog:is(.enter-active, .exit-active) { transition: opacity 150ms ease; transform: none; }
+}

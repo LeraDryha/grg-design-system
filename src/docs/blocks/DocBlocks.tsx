@@ -17,7 +17,7 @@ export type ComponentHeaderProps = {
   status?: Status;
   /** Figma node of the component set, as in the URL: "73-3711". For maintainers only: the design file belongs
    *  to the company and is never linked from the public Storybook. Its frames are shown in the Design tab. */
-  figma: string;
+  figma?: string;
   /** Figma node of the usage guidelines (maintainers only, not linked) */
   guidelines?: string;
   /** The page's stories have a Design tab with the Figma frames */
@@ -40,13 +40,13 @@ function useMetaTags(): string[] {
 }
 
 /** The line under a component's title: status, where the design lives, what it is built on. */
-export function ComponentHeader({ status: given, designTab = false, builtOn, related = [] }: ComponentHeaderProps) {
+export function ComponentHeader({ status: given, designTab = false, builtOn, related = [], designedIn = 'figma' }: ComponentHeaderProps & { designedIn?: 'figma' | 'code' }) {
   const tags = useMetaTags();
   const status = given ?? (Object.keys(STATUS) as Status[]).find(s => tags.includes(s)) ?? 'draft';
   return (
     <div className="sb-unstyled doc-header">
       <span className="doc-status" data-status={status}>{STATUS[status]}</span>
-      <span className="doc-chip doc-chip--quiet">Designed in Figma{designTab ? ': see the Design tab of each story' : ''}</span>
+      <span className="doc-chip doc-chip--quiet">{designedIn === 'code' ? 'Designed in code, from the system’s parts' : `Designed in Figma${designTab ? ': see the Design tab of each story' : ''}`}</span>
       {builtOn && <span className="doc-chip doc-chip--quiet">Built on {builtOn}</span>}
       {related.map(r => (
         <a key={r.href} className="doc-chip" href={r.href} target="_top">

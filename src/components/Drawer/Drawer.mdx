@@ -1,0 +1,99 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as DrawerStories from './Drawer.stories';
+import { ComponentHeader, DoDont } from '../../docs/blocks/DocBlocks';
+
+<Meta of={DrawerStories} />
+
+# Drawer
+
+<ComponentHeader
+  designedIn="code"
+  builtOn="PrimeReact Dialog"
+  related={[
+    { label: 'Modal', href: '?path=/docs/components-modal--docs' },
+    { label: 'Button', href: '?path=/docs/components-button--docs' },
+  ]}
+/>
+
+A panel at the right edge of the screen for a task that belongs to the page under it: create an item, see its details. The page stays in view under the overlay.
+It is made of Modal's parts: the same **header**, **content** and **footer**, the same overlay and the same rules, at the full height of the screen. On phones it takes the whole screen.
+
+<Canvas of={DrawerStories.Playground} />
+<Controls of={DrawerStories.Playground} include={['title', 'description', 'size', 'footerType', 'destructive', 'layout', 'dismissableMask']} />
+
+```tsx
+<Drawer
+  visible={open}
+  onHide={() => setOpen(false)}
+  title="Create invoice"
+  primaryAction={{ label: 'Create invoice', onClick: create }}
+  secondaryAction={{ label: 'Cancel', onClick: () => setOpen(false) }}
+>
+  {fields}
+</Drawer>
+```
+
+## When to use
+
+<DoDont
+  dos={[
+    'Create an item without leaving its list: an invoice, a payment link, a member',
+    'The details of one row of a table, read next to the table',
+    'A form longer than a Modal holds, that still belongs to the page',
+  ]}
+  donts={[
+    'A decision that needs an answer before going on: use Modal',
+    'A page people return to or share by link: give it its own page',
+    'A Modal or another Drawer opened from a drawer: change the drawer’s content instead',
+    'Navigation: use Sidebar Navigation',
+  ]}
+/>
+
+## Examples
+
+Every example is a live story. Its steps also run as a test in the **Interactions** tab. Each opens with its button; the overlay covers the example only.
+
+### Create a payment link
+
+<Canvas of={DrawerStories.CreateAPaymentLink} />
+
+One task, one drawer: the form, then its result in the same drawer, with the link to copy. Focus starts in the first field; Create link waits for an amount; Escape closes and focus goes back to the button.
+
+### Details at a glance
+
+<Canvas of={DrawerStories.DetailsAtAGlance} />
+
+A wider drawer (md) for the details of one row: read only, with Close.
+
+## Design decisions
+
+- **Made of Modal's parts.** The Figma file has no drawer; the header, content, footer, overlay, spacing and rules are Modal's, so a drawer and a modal read as one family.
+- **PrimeReact Dialog, not Sidebar.** Sidebar keeps no focus inside and isn't announced as a dialog. Dialog at the right edge gives the drawer what Modal has: focus kept inside, Escape (which first closes a list open in it), focus back to the control that opened it, the page behind not scrolling.
+- **One task, one drawer.** Steps and results change inside the drawer; nothing opens a Modal or a second drawer over it. Lists inside it open over it.
+- **Full height, the content scrolls.** The header and the footer stay; a line sets the footer apart from the scrolling content.
+- **Rounded towards the page**, square at the screen's edge; it slides in from the right.
+- **The content is never wider than the drawer** (the check after every story covers drawers too).
+
+## Sizes
+
+<Canvas of={DrawerStories.Sizes} />
+
+- **sm-480**: a form, such as Create invoice.
+- **md-560**: the details of an item.
+- **lg-960**: a form with a preview beside it.
+- **Phones** (under 480px): the whole screen, with the mobile header and footer of Modal.
+
+## Accessibility
+
+| Key | What it does |
+|---|---|
+| Tab / Shift+Tab | Moves through the drawer; focus stays inside |
+| Escape | Closes an open list first, then the drawer; focus goes back to what opened it |
+| Enter / Space | Activates the focused button |
+
+- The drawer is a dialog (`aria-modal`), named by its title and described by the line under it.
+- Focus starts in the first field, otherwise on the main action, otherwise on the first button.
+
+## Props
+
+<ArgTypes of={DrawerStories} />
