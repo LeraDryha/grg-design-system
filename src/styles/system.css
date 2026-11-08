@@ -9,6 +9,21 @@
   --focus-ring: 0 0 0 var(--space-050) var(--surface-base), 0 0 0 var(--space-150) var(--info-base-600);
   /* Modal overlay: Figma draws #0A0A0A at 60% (with Blur/sm) without a variable. The same dark in both themes. */
   --overlay: color-mix(in srgb, var(--color-neutral-1000) 60%, transparent);
+  /* Optical centring: Nunito Sans sits its capitals and digits about 0.03em above the middle of their line, so text
+     in a control looks high next to an icon or inside a frame. Single-line text in controls moves down by that much. */
+  --text-optical-shift: 0.03em;
+}
+
+/* The text of single-line controls, centred by the middle of its capitals rather than of its line (see above).
+   Only the text moves: frames, icons and the controls' sizes stay as in Figma. */
+:is(
+  .grg-button__label, .grg-button-group-item__label, .grg-chip__label, .grg-badge__label, .grg-badge__value,
+  .grg-input__control, .grg-search__control, .grg-multi-value__input,
+  .grg-select__text, .grg-compact-select__text, .grg-inline-select__value, .grg-filter__label, .grg-filter__value,
+  .grg-menu-item__label, .grg-sidebar-item__label, .grg-tab__label, .grg-breadcrumb-item__label,
+  .grg-checkbox-label__label, .grg-checkbox-label__title
+) {
+  translate: 0 var(--text-optical-shift);
 }
 
 /* The ring is for the keyboard only: after a mouse, touchpad or touch press it is off, and the control shows its
