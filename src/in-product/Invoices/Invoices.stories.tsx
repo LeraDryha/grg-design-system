@@ -54,6 +54,17 @@ export const Walkthrough: Story = {
       await userEvent.click(canvasElement.querySelector<HTMLElement>('[aria-label="Status"]')!.closest('.grg-compact-select')!.querySelector<HTMLElement>('.grg-compact-select__box')!);
       await userEvent.click(await canvas.findByRole('option', { name: 'All statuses' }));
     });
+    await step('The period opens the whole Date Picker, as in Figma', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Period: All period' }));
+      const picker = within(await canvas.findByRole('dialog', { name: 'Choose a period' }));
+      await userEvent.click(picker.getByRole('option', { name: 'Last 7 days' }));
+      await userEvent.click(picker.getByRole('button', { name: 'Apply' }));
+      await expect(await canvas.findByRole('button', { name: 'Period: Last 7 days' })).toHaveFocus();
+      await userEvent.click(canvas.getByRole('button', { name: 'Period: Last 7 days' }));
+      await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Choose a period' })).getByRole('option', { name: 'All period' }));
+      await userEvent.click(within(canvas.getByRole('dialog', { name: 'Choose a period' })).getByRole('button', { name: 'Apply' }));
+      await expect(await canvas.findByRole('button', { name: 'Period: All period' })).toBeInTheDocument();
+    });
     await step('Create an invoice in the drawer; the result and the link stay in it', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Create invoice' }));
       const drawer = within(await canvas.findByRole('dialog', { name: 'Create invoice' }));

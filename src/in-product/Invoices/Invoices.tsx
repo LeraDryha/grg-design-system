@@ -18,7 +18,7 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame, money, startAssets } from '../shared/AssetsApp';
-import { PeriodSelect, pad, shift, startOf, type Range } from '../shared/period';
+import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
 
 /* GRX Pay redesign, sections Invoices tables (1676:55326) and Creating invoice (1676:58206): the list with its
    filters; creating an invoice in a drawer (it was a page in Figma), its result and its details in the same drawer,
@@ -277,7 +277,7 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
             options={[{ value: 'all', label: 'All invoice assets' }, ...CURRENCIES.map(c => ({ ...c, label: c.value }))]} />
           <CompactSelect size="sm" aria-label="Status" value={status} onChange={setStatus}
             options={[{ value: 'all', label: 'All statuses' }, ...STATUSES.map(s => ({ value: s, label: s }))]} />
-          <PeriodSelect value={period} onChange={setPeriod} allLabel="All period" />
+          <PeriodPicker value={period} onChange={setPeriod} />
         </div>
       </div>
       <Table aria-label="Invoices" rows={rows} rowKey={row => row.id} rowLabel={row => `Invoice ${row.id.slice(0, 8)}, ${amountText(row.amount, row.currency)}`}

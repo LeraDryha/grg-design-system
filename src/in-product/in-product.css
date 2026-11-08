@@ -327,3 +327,4 @@
 .grg-ip-waiting__text { max-width: calc(var(--space-5000) + var(--space-2000)); margin: 0; font: var(--typo-body-md-regular); color: var(--text-subtle-700); }
 
 .grg-ip-result-icon { align-self: center; }
+.grg-ip-period__button { margin: 0; }

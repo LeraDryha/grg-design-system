@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { DatePickerPanel } from '../../components/DatePicker/DatePickerPanel';
-import { sameDay, type DatePreset } from '../../components/DatePicker/presets';
+import { defaultPresets, sameDay, type DatePreset } from '../../components/DatePicker/presets';
+import { Icon } from '../../components/Icon/Icon';
+import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 
 /* The period select of the GRX Pay screens (Dashboard, Invoices): the Figma periods, then Custom period… which opens
    the system's calendar under the select. Not the admin's Filter. */
@@ -66,6 +68,52 @@ export function PeriodSelect({ value, onChange, allLabel, 'aria-label': label = 
           <DatePickerPanel selectionMode="range" double value={value ?? undefined}
             onChange={next => { if (Array.isArray(next) && next[0]) onChange([next[0], next[1] ?? next[0]]); }}
             onApply={() => { setCalendar(false); root.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); }} />
+        </div>
+      )}
+    </span>
+  );
+}
+
+/** Figma Invoices: the Date Picker's own presets, "All time" named "All period" */
+const LIST_PRESETS: DatePreset[] = defaultPresets.slice(0, 6).map(p => (p.id === 'all' ? { ...p, label: 'All period' } : p));
+const listName = (value: Range | null) => !value ? 'All period'
+  : LIST_PRESETS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], value[0]) && sameDay(r[1], value[1]); })?.label
+    ?? `${date(value[0])} – ${date(value[1])}`;
+
+/**
+ * Figma Invoices: a select that opens the whole Date Picker, its presets on the left and the calendar with Reset / Apply.
+ * The trigger is the Compact Select's (the same classes, so it looks and behaves like the selects beside it); a list
+ * can't hold a calendar, so the panel is the system's DatePickerPanel in a dialog under it, lined up with its right edge.
+ */
+export function PeriodPicker({ value, onChange, 'aria-label': label = 'Period' }: { value: Range | null; onChange: (value: Range | null) => void; 'aria-label'?: string }) {
+  const [open, setOpen] = useState(false);
+  const root = useRef<HTMLSpanElement>(null);
+  const box = useRef<HTMLSpanElement>(null);
+  useKeyboardNavigation(box);
+  const name = listName(value);
+  const close = (focus = true) => { setOpen(false); if (focus) root.current?.querySelector<HTMLElement>('button')?.focus(); };
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') close(); };
+    const onPointer = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) close(false); };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointer);
+    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onPointer); };
+  });
+  return (
+    <span ref={root} className="grg-ip-period">
+      <span ref={box} className="grg-compact-select" data-type="default" data-size="sm" data-open={open || undefined}>
+        <button type="button" className="grg-compact-select__box grg-ip-period__button" aria-haspopup="dialog" aria-expanded={open}
+          aria-label={`${label}: ${name}`} onClick={() => setOpen(!open)}>
+          <span className="grg-compact-select__value"><span className="grg-compact-select__text">{name}</span></span>
+          <span className="grg-compact-select__trigger" aria-hidden="true"><Icon name={open ? 'direction-up' : 'direction-down'} size={20} /></span>
+        </button>
+      </span>
+      {open && (
+        <div className="grg-ip-period__calendar" role="dialog" aria-label="Choose a period">
+          <DatePickerPanel selectionMode="range" presets={LIST_PRESETS} value={value ?? null}
+            onChange={next => onChange(Array.isArray(next) && next[0] ? [next[0], next[1] ?? next[0]] : null)}
+            onApply={() => close()} />
         </div>
       )}
     </span>
