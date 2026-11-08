@@ -41,7 +41,7 @@ A business swaps one asset for another: ether for euros, euros for a stablecoin.
 <Canvas of={ConvertStories.NotEnoughOnTheMarket} />
 
 - **The limits moved into the modal.** Fee, minimum and maximum sat in a popover beside the modal, as in Withdraw; they are now a card above the Convert button, red when the amount is outside them.
-- **Coins from a dropdown, not a separate window.** The first design opened *You receive*, a window with a search and a list of coins. The select now opens the system's dropdown list with a search, in place: one step less, and the amounts stay in view. Choosing the coin of the other side swaps the two.
+- **Coins from a dropdown, not a separate window.** The first design opened *You receive*, a window with a search and a list of coins. The select now opens the system's dropdown list with a search, in place: one step less, and the amounts stay in view. *From* is the coin chosen in the Assets table and is read only, as in Figma; *To* lists the other coins, so the pair is never one coin twice.
 - **Test data.** Only ETH to USDC is limited by the market (1.45866 ETH), to show that message. *Contact the support team* has no page behind it in this demo.
 
 <Canvas of={ConvertStories.WhenItFails} />

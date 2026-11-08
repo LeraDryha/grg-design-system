@@ -49,6 +49,14 @@ export const Walkthrough: Story = {
       await userEvent.click(canvas.getByRole('button', { name: 'Convert ETH' }));
     });
     const dialog = within(await canvas.findByRole('dialog', { name: 'Convert' }));
+    await step('From is the coin of the row, read only; To lists the other coins', async () => {
+      await expect(dialog.queryByRole('combobox', { name: 'From currency' })).toBeNull();
+      await expect(dialog.getByRole('combobox', { name: 'To currency' })).toBeInTheDocument();
+      await userEvent.click(canvasElement.querySelector<HTMLElement>('.grg-modal .grg-compact-select__box')!);
+      await expect(await dialog.findByRole('option', { name: /Euro/ })).toBeInTheDocument();
+      await expect(dialog.queryByRole('option', { name: /Ethereum/ })).toBeNull();
+      await userEvent.keyboard('{Escape}');
+    });
     await step('The coin list stays under its field while searching', async () => {
       const field = canvasElement.querySelector<HTMLElement>('.grg-modal .grg-compact-select__box')!;
       await userEvent.click(field);
