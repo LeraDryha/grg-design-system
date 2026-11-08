@@ -10,22 +10,30 @@
 .grg-modal-dialog.grg-drawer-dialog.exit { opacity: 1; transform: none; }
 .grg-modal-dialog.grg-drawer-dialog.exit-active { opacity: 1; transform: translateX(100%); transition: transform 200ms ease-in; }
 
-/* The surface: sm-480, md-560, lg-960; rounded on the side facing the page, square on the screen's edge */
+/* The surface: sm-480, md-560, lg-960; square corners, flush with the screen */
 .grg-modal.grg-drawer {
   --modal-width: calc(var(--space-5000) * 2 + var(--space-2000));
   height: 100%;
-  border-radius: var(--radius-xl-16) 0 0 var(--radius-xl-16);
+  border-radius: 0;
 }
+/* 24px at the sides (Modal has 32px) */
+.grg-modal.grg-drawer[data-layout='desktop'] { --modal-side: var(--space-600); }
 .grg-modal.grg-drawer[data-size='md'] { --modal-width: calc(var(--space-5000) * 2 + var(--space-4000)); }
 .grg-modal.grg-drawer[data-size='lg'] { --modal-width: calc(var(--space-5000) * 4 + var(--space-4000)); }
 /* Phones: the whole screen */
 .grg-modal.grg-drawer[data-layout='mobile'] { width: 100%; border-radius: 0; }
 
-/* The title keeps clear of Close */
-.grg-drawer > .grg-modal-header { padding-right: var(--space-1400); }
-/* The content scrolls between the header and the footer; a line and 24px above the footer */
+/* Header: 24px around; Close on the title's line, 24px from the edge, and the title keeps clear of it */
+.grg-drawer > .grg-modal-header[data-size='desktop'] {
+  padding: var(--space-600) calc(var(--space-600) * 2 + var(--space-300)) 0 var(--space-600);
+}
+.grg-drawer:has(> .grg-modal__content) > .grg-modal-header[data-size='desktop'] { padding-bottom: var(--space-600); }
+.grg-drawer > .grg-modal-header .grg-modal-header__close { top: var(--space-600); right: var(--modal-side); }
+/* The content scrolls between the header and the footer, 24px above the footer's line */
 .grg-drawer > .grg-modal__content { padding-bottom: var(--space-600); }
-.grg-drawer > .grg-modal-footer { border-top: 1px solid var(--stroke-soft-200); padding-top: var(--space-600); }
+/* Footer: a line above, 16px above and below the buttons, 24px at the sides */
+.grg-drawer > .grg-modal-footer { border-top: 1px solid var(--stroke-soft-200); }
+.grg-drawer > .grg-modal-footer[data-size='desktop'] { padding: var(--space-400) var(--space-600); }
 
 @media (prefers-reduced-motion: reduce) {
   .grg-modal-dialog.grg-drawer-dialog:is(.enter-active, .exit-active) { transition: opacity 150ms ease; transform: none; }
