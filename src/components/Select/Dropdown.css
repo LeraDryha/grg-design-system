@@ -131,7 +131,13 @@
 
 /* Inside a modal (useListLayer): drawn over the modal, fixed to the screen; the offsets are set inline. Fixed from the
    first moment (PrimeReact writes position: absolute inline), so the list never sits in the modal's content */
-.grg-modal-dialog .grg-dropdown { position: fixed !important; z-index: 30; }
+.grg-modal-dialog .grg-dropdown {
+  position: fixed !important;
+  z-index: 30;
+  /* Its own layer: Safari otherwise paints the modal's later content (cards, text) over the list where the modal sits
+     in a transformed box, as on docs pages. Nothing moves; the layer only fixes the painting order */
+  will-change: transform;
+}
 .grg-dropdown[data-layer='top'] { margin: 0; }
 /* Invisible (still focusable) for the two frames it takes to settle over the modal */
 .grg-modal-dialog .grg-dropdown:not([data-placed]) { opacity: 0; }
