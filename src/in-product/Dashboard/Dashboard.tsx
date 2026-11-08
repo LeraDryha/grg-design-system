@@ -3,7 +3,8 @@ import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Badge, type BadgeColor } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { CoinIcon } from '../../components/CoinIcon/CoinIcon';
-import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
+import { Filter } from '../../components/Filter/Filter';
+import { sameDay, type DatePreset } from '../../components/DatePicker/presets';
 import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
 import { FeaturedIcon, type FeaturedIconType } from '../../components/FeaturedIcon/FeaturedIcon';
 import { Link } from '../../components/Link/Link';
@@ -21,65 +22,86 @@ import documentsImage from '../../assets/in-product/documents-warning.png';
 
 /* GRX Pay redesign, section Dashboard - Verified: the balance and its shares, the successful payments over a period,
    the last transactions; a new account's empty dashboard, the notes on top and the verification modal.
-   Test data only. "Today" is fixed (Thursday 23 April 2026, 14:00), so the charts and the tests stay the same. */
-
-const TODAY = { year: 2026, month: 3, day: 23, hour: 14 };
+   Test data only, around today's date: the same day always shows the same payments. */
 
 /* ---- Successful payments ---- */
 
-export type Period = 'today' | 'week' | 'month' | 'last-30' | 'last-month';
-const PERIODS: { value: Period; label: string }[] = [
-  { value: 'today', label: 'Today' },
-  { value: 'week', label: 'This week' },
-  { value: 'month', label: 'This month' },
-  { value: 'last-30', label: 'Last 30 days' },
-  { value: 'last-month', label: 'Last month' },
+/** The periods of the Figma Time period list, as Date Picker presets; any other period is picked in the calendar */
+const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const shift = (d: Date, days: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + days);
+export const PERIODS: DatePreset[] = [
+  { id: 'today', label: 'Today', range: today => [startOf(today), startOf(today)] },
+  { id: 'this-week', label: 'This week', range: today => { const monday = shift(today, -((today.getDay() + 6) % 7)); return [monday, shift(monday, 6)]; } },
+  { id: 'this-month', label: 'This month', range: today => [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth() + 1, 0)] },
+  { id: 'last-30-days', label: 'Last 30 days', range: today => [shift(today, -29), startOf(today)] },
+  { id: 'last-month', label: 'Last month', range: today => [new Date(today.getFullYear(), today.getMonth() - 1, 1), new Date(today.getFullYear(), today.getMonth(), 0)] },
 ];
+type Range = [Date, Date];
+const thisMonth = () => PERIODS[2].range(new Date()) as Range;
 
 /** One point of the chart: its label on the axis, the date for the tooltip, the paid sum and the count; null is still to come */
 type Point = { label: string; date: string; amount: number | null; count: number };
 
-/** Repeatable test numbers: the same payments on every visit */
+/** Repeatable test numbers: the same payments for the same day on every visit */
 const seeded = (seed: number) => {
   let value = seed;
   return () => { value = (value * 9301 + 49297) % 233280; return value / 233280; };
 };
 const pad = (n: number) => String(n).padStart(2, '0');
 const date = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
-const day = (offset: number) => new Date(TODAY.year, TODAY.month, TODAY.day + offset);
+const key = (d: Date) => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
 
-function points(period: Period, empty: boolean): Point[] {
-  const random = seeded({ today: 3, week: 7, month: 11, 'last-30': 13, 'last-month': 17 }[period]);
-  const sum = (scale: number) => {
-    if (empty) return { amount: 0, count: 0 };
-    // Mostly a few payments a day, now and then none: a calm line with a few peaks
-    const quiet = random() < 0.12;
-    const count = quiet ? 0 : 1 + Math.floor(random() * random() * 5);
-    return { amount: quiet ? 0 : +(count * (scale * 0.6 + random() * scale * 0.4)).toFixed(2), count };
-  };
-  if (period === 'today') {
+/** Test data for one day, or one hour of it: mostly a few payments, now and then none */
+function paidOn(d: Date, hour?: number, empty = false) {
+  if (empty) return { amount: 0, count: 0 };
+  const random = seeded(key(d) * 31 + (hour ?? 99));
+  random();
+  const scale = hour === undefined ? 600 : 180;
+  if (random() < 0.12) return { amount: 0, count: 0 };
+  const count = 1 + Math.floor(random() * random() * 5);
+  return { amount: +(count * (scale * 0.6 + random() * scale * 0.4)).toFixed(2), count };
+}
+
+/** The chart's points for a period: hours for one day, days up to two months, months beyond; what is still to come is null */
+function points([from, to]: Range, empty: boolean): Point[] {
+  const now = new Date();
+  const days = Math.round((startOf(to).getTime() - startOf(from).getTime()) / 86400000) + 1;
+  if (days === 1) {
     return Array.from({ length: 24 }, (_, hour) => {
-      const now = hour <= TODAY.hour;
-      const paid = sum(180);
-      return { label: String(hour), date: `${date(day(0))}, ${pad(hour)}:00`, amount: now ? paid.amount : null, count: now ? paid.count : 0 };
+      const at = new Date(from.getFullYear(), from.getMonth(), from.getDate(), hour);
+      const paid = paidOn(from, hour, empty);
+      return { label: String(hour), date: `${date(from)}, ${pad(hour)}:00`, amount: at <= now ? paid.amount : null, count: at <= now ? paid.count : 0 };
     });
   }
-  const days = period === 'week' ? Array.from({ length: 7 }, (_, i) => day(i - day(0).getDay() + 1))
-    : period === 'month' ? Array.from({ length: 30 }, (_, i) => new Date(TODAY.year, TODAY.month, i + 1))
-    : period === 'last-30' ? Array.from({ length: 30 }, (_, i) => day(i - 29))
-    : Array.from({ length: 31 }, (_, i) => new Date(TODAY.year, TODAY.month - 1, i + 1));
-  return days.map(d => {
-    const now = d <= day(0);
-    const paid = sum(period === 'week' ? 900 : 600);
-    const label = period === 'week' ? d.toLocaleDateString('en-GB', { weekday: 'short' }) : String(d.getDate());
-    return { label, date: date(d), amount: now ? paid.amount : null, count: now ? paid.count : 0 };
-  });
+  if (days <= 62) {
+    return Array.from({ length: days }, (_, i) => {
+      const d = shift(from, i);
+      const paid = paidOn(d, undefined, empty);
+      const label = days <= 7 ? d.toLocaleDateString('en-GB', { weekday: 'short' }) : String(d.getDate());
+      return { label, date: date(d), amount: d <= now ? paid.amount : null, count: d <= now ? paid.count : 0 };
+    });
+  }
+  // Longer periods: one point a month, the sum of its days
+  const list: Point[] = [];
+  for (let m = new Date(from.getFullYear(), from.getMonth(), 1); m <= to; m = new Date(m.getFullYear(), m.getMonth() + 1, 1)) {
+    let amount = 0, count = 0;
+    for (let d = new Date(Math.max(m.getTime(), startOf(from).getTime())); d.getMonth() === m.getMonth() && d <= to && d <= now; d = shift(d, 1)) {
+      const paid = paidOn(d, undefined, empty); amount += paid.amount; count += paid.count;
+    }
+    const label = m.toLocaleDateString('en-GB', { month: 'short' });
+    list.push({ label, date: m.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' }), amount: m <= now ? +amount.toFixed(2) : null, count });
+  }
+  return list;
 }
+
+/** A period's name: its preset, or its dates */
+const periodName = ([from, to]: Range) => PERIODS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], from) && sameDay(r[1], to); })?.label
+  ?? `${date(from)} – ${date(to)}`;
 
 /** The point for now: the current hour or day, or the last one of a past period */
 const nowIndex = (list: Point[]) => list.reduce((last, point, index) => (point.amount === null ? last : index), 0);
 
-function PaymentsChart({ list, period }: { list: Point[]; period: Period }) {
+function PaymentsChart({ list, period }: { list: Point[]; period: string }) {
   const [active, setActive] = useState<number | null>(null);
   const now = nowIndex(list);
   const shown = active ?? now;
@@ -89,7 +111,6 @@ function PaymentsChart({ list, period }: { list: Point[]; period: Period }) {
   const line = list.flatMap((point, index) => (point.amount === null ? [] : [`${index + 0.5},${y(point.amount)}`])).join(' ');
   const position = (index: number) => `${((index + 0.5) / list.length) * 100}%`;
   const label = (point: Point) => `${point.date}: ${money(point.amount ?? 0)} EUR, ${point.count} ${point.count === 1 ? 'transaction' : 'transactions'}`;
-  const period_ = PERIODS.find(item => item.value === period)?.label ?? '';
 
   // One Tab stop; the arrow keys move through the points (a roving tab index)
   // On the plot, not the buttons: Tooltip takes over its control's own key handler
@@ -105,7 +126,7 @@ function PaymentsChart({ list, period }: { list: Point[]; period: Period }) {
   };
 
   return (
-    <div className="grg-ip-chart" role="group" aria-label={`Successful payments, ${period_}`} onMouseLeave={() => setActive(null)}>
+    <div className="grg-ip-chart" role="group" aria-label={`Successful payments, ${period}`} onMouseLeave={() => setActive(null)}>
       <div className="grg-ip-chart__plot" onKeyDown={move}>
         <span className="grg-ip-chart__grid" aria-hidden="true" />
         <span className="grg-ip-chart__now" style={{ left: position(shown) }} aria-hidden="true" />
@@ -140,8 +161,9 @@ const SUMMARY: { key: 'paid' | 'pending' | 'timeout'; label: string; type: Featu
 ];
 
 function PaymentsCard({ empty }: { empty: boolean }) {
-  const [period, setPeriod] = useState<Period>('month');
+  const [period, setPeriod] = useState<Range>(thisMonth);
   const list = useMemo(() => points(period, empty), [period, empty]);
+  const name = periodName(period);
   const paid = list.reduce((sum, point) => sum + (point.amount ?? 0), 0);
   // Test data: what is still waiting and what timed out are small shares of the paid sum
   const totals = { paid, pending: empty ? 0 : +(paid * 0.04).toFixed(2), timeout: empty ? 0 : +(paid * 0.02).toFixed(2) };
@@ -153,12 +175,14 @@ function PaymentsCard({ empty }: { empty: boolean }) {
           <p className="grg-ip-card__value">{money(paid)} EUR</p>
         </div>
         <div className="grg-ip-card__tools">
-          <CompactSelect size="sm" aria-label="Period" options={PERIODS} value={period} onChange={value => setPeriod(value as Period)} />
+          {/* The system's period picker: the Figma periods as presets, or any period in the calendar. Clearing it goes back to This month */}
+          <Filter type="date" size="sm" label="Period" presets={PERIODS} value={period}
+            onChange={value => setPeriod(Array.isArray(value) && value[0] instanceof Date ? [value[0], (value[1] as Date | null) ?? value[0]] : thisMonth())} />
           {/* No payments page in this demo: View all stays, as in Figma, without a destination */}
           <Link size="sm" color="black">View all</Link>
         </div>
       </div>
-      <PaymentsChart list={list} period={period} />
+      <PaymentsChart list={list} period={name} />
       <ul className="grg-ip-summary">
         {SUMMARY.map(item => (
           <li key={item.key}>
@@ -296,13 +320,16 @@ type Status = 'Completed' | 'Refunded' | 'Cancelled' | 'Processing';
 type Transaction = { id: string; type: TransactionType; name: string; at: string; amount: string; status: Status };
 const STATUS_COLOR: Record<Status, BadgeColor> = { Completed: 'success', Refunded: 'neutral', Cancelled: 'error', Processing: 'warning' };
 
+/** dd/mm/yy, hh:mm:ss, some days and hours ago */
+const ago = (days: number, time: string) => { const d = shift(new Date(), -days); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${time}`; };
+
 export const transactions: Transaction[] = [
-  { id: '4f4eef79-0976-4226-a141-e0ef893b5521', type: 'payment', name: 'Invoice Payment', at: '23/04/26, 13:52:07', amount: '0.065769 ETH', status: 'Completed' },
-  { id: '9b2c41d0-5e7a-4c3f-8d16-2a7e90c1b4f8', type: 'deposit', name: 'Deposit', at: '23/04/26, 11:08:44', amount: '2.2219778 ETH', status: 'Refunded' },
-  { id: 'c71a0e5b-34d2-4f89-b0a6-91e3d27f5c02', type: 'withdrawal', name: 'Withdrawal', at: '22/04/26, 18:30:12', amount: '0.5 BTC', status: 'Cancelled' },
-  { id: '2d8f6a13-b7c4-4e05-9a2d-6f1c08e3b7a9', type: 'withdrawal', name: 'Withdrawal', at: '22/04/26, 16:02:55', amount: '1,250.00 EUR', status: 'Processing' },
-  { id: 'e5a9c2f7-1b38-4d6e-a40c-7d2b95f8e163', type: 'exchange', name: 'Exchange', at: '21/04/26, 09:47:31', amount: 'ETH → EUR', status: 'Processing' },
-  { id: '0f3b7d82-6c19-4a5e-b2f4-83a6e1d90c57', type: 'payment', name: 'Invoice Payment', at: '20/04/26, 22:28:07', amount: '0.0412 BTC', status: 'Completed' },
+  { id: '4f4eef79-0976-4226-a141-e0ef893b5521', type: 'payment', name: 'Invoice Payment', at: ago(0, '09:52:07'), amount: '0.065769 ETH', status: 'Completed' },
+  { id: '9b2c41d0-5e7a-4c3f-8d16-2a7e90c1b4f8', type: 'deposit', name: 'Deposit', at: ago(0, '08:08:44'), amount: '2.2219778 ETH', status: 'Refunded' },
+  { id: 'c71a0e5b-34d2-4f89-b0a6-91e3d27f5c02', type: 'withdrawal', name: 'Withdrawal', at: ago(1, '18:30:12'), amount: '0.5 BTC', status: 'Cancelled' },
+  { id: '2d8f6a13-b7c4-4e05-9a2d-6f1c08e3b7a9', type: 'withdrawal', name: 'Withdrawal', at: ago(1, '16:02:55'), amount: '1,250.00 EUR', status: 'Processing' },
+  { id: 'e5a9c2f7-1b38-4d6e-a40c-7d2b95f8e163', type: 'exchange', name: 'Exchange', at: ago(2, '09:47:31'), amount: 'ETH → EUR', status: 'Processing' },
+  { id: '0f3b7d82-6c19-4a5e-b2f4-83a6e1d90c57', type: 'payment', name: 'Invoice Payment', at: ago(3, '22:28:07'), amount: '0.0412 BTC', status: 'Completed' },
 ];
 
 /** dd/mm/yy, hh:mm:ss → a number that sorts in time order */

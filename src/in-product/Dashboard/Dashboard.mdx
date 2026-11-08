@@ -19,12 +19,12 @@ The first page a business sees: how much it holds and in what, how payments are 
 
 <Canvas of={DashboardStories.LiveFlow} />
 
-**Try it:** point at the coloured bar or the chart; pick another period; open **⋮** on Ethereum and convert; copy a transaction ID; press **View all** in Total balance to reach Assets, and **Dashboard** in the menu to come back. The sun in the bar switches the theme.
+**Try it:** point at the coloured bar or the chart; pick another period or any dates in the calendar; open **⋮** on Ethereum and convert; copy a transaction ID; press **View all** in Total balance to reach Assets, and **Dashboard** in the menu to come back. The sun in the bar switches the theme.
 
 ## What the page has to get right
 
 - **The balance in one look.** The total, then how it splits: the bar shows the shares, the list names the four largest with their value in euros and in the coin.
-- **Payments over a chosen period.** Today by the hour, this week by the day, this month, the last 30 days or last month; the current hour or day stands out, and the sums for paid, pending and timed-out payments sit under the chart.
+- **Payments over a chosen period.** Today by the hour, this week by the day, this month, the last 30 days, last month, or any dates; the current hour or day stands out, and the sums for paid, pending and timed-out payments sit under the chart.
 - **Act from where the money is.** Convert and withdraw from an asset's menu, without going to another page first.
 - **Every part says when it is empty**, so a new account doesn't look broken.
 
@@ -44,7 +44,7 @@ The next step sits on top of the balance and can be put away. Verification ends 
 
 - **The shares add up.** The percentages under each asset are its share of the total balance (Figma's tooltip on the bar shows the same number), counted from the balances on the Assets page, so the bar, the list and the total always agree. The bar colours the three largest and puts the rest in grey.
 - **The same data as Assets.** The total is the Assets page's estimated balance, and a conversion or a withdrawal changes both pages.
-- **Periods beyond Figma.** Figma draws *This month*; the other periods follow the same chart: *Today* by the hour, *This week* by the weekday, *Last 30 days* and *Last month* by the day.
+- **The period is the system's picker.** The Figma list (Today, This week, This month, Last 30 days, Last month) became the presets of the period Filter with its Date Picker, so any other period can be picked in the calendar too. Figma draws *This month*; the others follow the same chart: one day by the hour, up to two months by the day, longer periods by the month. Clearing the period goes back to This month.
 - **The chart and the bar work with the keyboard.** Each is one Tab stop; ← → move along the days or the parts, and each says its figures to screen readers.
 - **The bar's tooltip is the system's Tooltip**, which gained Figma's small table for it: the coin and the share, then Amount and Balance under a line (the coin is 20px, the smallest Coin Icon).
 - **Any width.** Full screen follows the screen: the sidebar folds into icons on tablets and into the menu on phones; the columns become one under 950px; on narrow cards the tools go under the title and every other day stays on the axis. On this page each example is a narrow window, so its sidebar is folded.
@@ -71,6 +71,6 @@ The frames this page was built from (also in the **Design** tab), without the ba
 
 ## Built from
 
-[Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Feature Card](?path=/docs/components-feature-card--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Button](?path=/docs/components-button--docs) · [Link](?path=/docs/components-link--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Table](?path=/docs/components-table--docs) · [Transaction Icon](?path=/docs/components-transaction-icon--docs) · [Badge](?path=/docs/components-badge--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs) · [Modal](?path=/docs/components-modal--docs)
+[Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Feature Card](?path=/docs/components-feature-card--docs) · [Filter](?path=/docs/components-filter--docs) and [Date Picker](?path=/docs/components-date-picker--docs) · [Button](?path=/docs/components-button--docs) · [Link](?path=/docs/components-link--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Table](?path=/docs/components-table--docs) · [Transaction Icon](?path=/docs/components-transaction-icon--docs) · [Badge](?path=/docs/components-badge--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs) · [Modal](?path=/docs/components-modal--docs)
 
 The new pieces, the bar of shares and the chart, live with this page.
