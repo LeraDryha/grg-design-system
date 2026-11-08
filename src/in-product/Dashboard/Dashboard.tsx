@@ -189,11 +189,9 @@ function PaymentsCard({ empty }: { empty: boolean }) {
   const totals = { paid, pending: empty ? 0 : +(paid * 0.04).toFixed(2), timeout: empty ? 0 : +(paid * 0.02).toFixed(2) };
   return (
     <section className="grg-ip-card grg-ip-card--payments" aria-labelledby="payments-title">
+      {/* The title row: the title on the left, the period and View all on the right; the sum under it */}
       <div className="grg-ip-card__head">
-        <div>
-          <h2 id="payments-title" className="grg-ip-card__title">Successful payments</h2>
-          <p className="grg-ip-card__value">{money(paid)} EUR</p>
-        </div>
+        <h2 id="payments-title" className="grg-ip-card__title">Successful payments</h2>
         <div ref={tools} className="grg-ip-card__tools">
           <span className="grg-ip-period">
             <CompactSelect size="sm" aria-label="Period" options={options} value={preset?.id ?? 'chosen'}
@@ -214,6 +212,7 @@ function PaymentsCard({ empty }: { empty: boolean }) {
           <Link size="sm" color="black">View all</Link>
         </div>
       </div>
+      <p className="grg-ip-card__value grg-ip-card__value--under">{money(paid)} EUR</p>
       <PaymentsChart list={list} period={name} />
       <ul className="grg-ip-summary">
         {SUMMARY.map(item => (

@@ -177,8 +177,10 @@
 }
 .grg-ip-card--balance { flex: 1; }
 .grg-ip-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-300); }
+.grg-ip-card--payments .grg-ip-card__head { align-items: center; }
 .grg-ip-card__title { margin: 0; font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
 .grg-ip-card__value { margin: var(--space-200) 0 0; font: var(--typo-title-md-semibold); color: var(--text-strong-1000); white-space: nowrap; }
+.grg-ip-card__value--under { margin-top: calc(var(--space-200) - var(--space-300)); }
 .grg-ip-card__tools { display: flex; flex: none; align-items: center; gap: var(--space-300); }
 /* The period select, and under it (Custom period) the calendar, lined up with its right edge */
 .grg-ip-period { position: relative; display: inline-flex; }
@@ -253,12 +255,12 @@
 }
 /* A narrow card: the tools go under the title; every other day on the axis; the sums one under another */
 @container ip-card (max-width: 600px) {
-  .grg-ip-card--payments .grg-ip-card__head { flex-wrap: wrap; }
-  .grg-ip-card__tools { flex: 1 1 100%; flex-wrap: wrap; }
   .grg-ip-chart__axis span:nth-child(even):not([data-now]) { visibility: hidden; }
 }
 @container ip-card (max-width: 420px) {
   .grg-ip-summary { grid-template-columns: minmax(0, 1fr); }
+  /* Phones: no room beside the title, so the period and View all go under it */
+  .grg-ip-card--payments .grg-ip-card__head { flex-wrap: wrap; }
 }
 /* Too narrow for the coin amount under the euros: the euros alone */
 @container ip-card (max-width: 290px) {
