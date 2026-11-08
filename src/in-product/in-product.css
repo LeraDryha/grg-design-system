@@ -272,3 +272,58 @@
   .grg-ip-card { padding: var(--space-400); }
   .grg-ip-chart { margin: 0 calc(var(--space-400) * -1); }
 }
+
+/* ---- Invoices (Figma Invoices tables, Creating invoice) ---- */
+.grg-ip-page__actions { display: flex; flex-wrap: wrap; gap: var(--space-300); }
+.grg-ip-page__back { display: flex; align-items: center; gap: var(--space-200); }
+/* The toolbar over the table: the search on the left, the three selects on the right; they wrap on narrow screens */
+.grg-ip-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-300); }
+.grg-ip-toolbar__search { flex: 0 1 calc(var(--space-5000) + var(--space-2000)); min-width: 0; }
+.grg-ip-toolbar__filters { display: flex; flex-wrap: wrap; gap: var(--space-300); }
+
+/* The drawer's form: titled sections, fields two by two */
+.grg-ip-section { display: flex; flex-direction: column; gap: var(--space-200); padding-bottom: var(--space-600); border-bottom: 1px solid var(--stroke-soft-200); }
+.grg-ip-section:last-child { padding-bottom: 0; border-bottom: 0; }
+.grg-ip-section__head { display: flex; align-items: center; gap: var(--space-200); margin: 0; font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
+.grg-ip-section__toggle {
+  display: flex; flex: 1; align-items: center; gap: var(--space-200); margin: 0; padding: 0; border: 0; border-radius: var(--radius-xxs-4);
+  background: transparent; color: inherit; font: inherit; text-align: start; cursor: pointer;
+}
+.grg-ip-section__toggle > :last-child { margin-left: auto; color: var(--icon-base-500); }
+.grg-ip-section__toggle:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-ip-section__title { min-width: 0; }
+/* 20px over the first floating label, 40px between rows of fields (the Modal rule) */
+.grg-ip-section__body { display: flex; flex-direction: column; gap: var(--space-1000); }
+.grg-ip-section__description { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-1000) var(--space-300); }
+.grg-ip-grid--one { grid-template-columns: minmax(0, 1fr); }
+.grg-ip-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-300); }
+.grg-ip-fields__item { display: flex; align-items: center; gap: var(--space-100); min-width: 0; }
+.grg-ip-fields__add { align-self: flex-start; margin-top: calc(var(--space-300) - var(--space-1000)); }
+.grg-ip-fields__new { display: flex; flex-direction: column; gap: var(--space-300); padding-top: var(--space-500); }
+.grg-ip-fields__actions { display: flex; justify-content: flex-end; gap: var(--space-200); }
+
+/* An invoice: its amount and status, the link, the figures */
+.grg-ip-invoice { display: flex; flex-direction: column; align-items: center; gap: var(--space-200); padding: var(--space-300) 0; text-align: center; }
+.grg-ip-invoice__key { font: var(--typo-body-md-regular); color: var(--text-subtle-700); }
+.grg-ip-invoice__amount { font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-link { display: flex; flex: 1; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-ip-box > .grg-ip-link__key, .grg-ip-box > .grg-ip-link__value { display: block; }
+.grg-ip-link__key { font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
+.grg-ip-link__value { overflow: hidden; font: var(--typo-body-md-medium); color: var(--text-strong-1000); text-overflow: ellipsis; white-space: nowrap; }
+.grg-ip-tab { display: flex; flex-direction: column; gap: var(--space-300); padding-top: var(--space-400); }
+.grg-ip-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-100); padding: var(--space-1200) 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); text-align: center; }
+.grg-ip-empty__title { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-ip-operations { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.grg-ip-operations > li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-300); padding: var(--space-300) 0; border-bottom: 1px solid var(--stroke-soft-200); }
+.grg-ip-operations > li > span { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
+/* The details as a page: the invoice, and its operations beside it */
+.grg-ip-invoice-page { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--space-300); align-items: start; }
+@media (max-width: 900px) { .grg-ip-invoice-page { grid-template-columns: minmax(0, 1fr); } }
+
+/* Before verification: the page waits, with what to do */
+.grg-ip-waiting { align-items: center; justify-content: center; gap: var(--space-400); padding: var(--space-1200) var(--space-600); text-align: center; }
+.grg-ip-waiting__title { margin: var(--space-200) 0 0; font: var(--typo-title-sm-semibold); color: var(--text-strong-1000); }
+.grg-ip-waiting__text { max-width: calc(var(--space-5000) + var(--space-2000)); margin: 0; font: var(--typo-body-md-regular); color: var(--text-subtle-700); }
+
+.grg-ip-result-icon { align-self: center; }

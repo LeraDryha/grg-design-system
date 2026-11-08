@@ -16,6 +16,7 @@ import { AppFrame, AssetsPage, format, money, startAssets, type Asset, type AppP
 import { useConvert } from '../Convert/Convert';
 import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
 import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
+import { useInvoices } from '../Invoices/Invoices';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
 
@@ -357,16 +358,18 @@ export type DashboardFlowProps = {
   verified?: boolean;
 };
 
-/** The Dashboard and the Assets page, with Convert and Withdraw: the app as one working flow */
-export function DashboardFlow({ empty = false, note, verified = false }: DashboardFlowProps) {
+/** The app behind the Dashboard: its pages, flows and messages (DashboardFlow gives it the Toast area) */
+function DashboardApp({ empty = false, note, verified = false }: DashboardFlowProps) {
   const [assets, setAssets] = useState(() => (empty ? startAssets.map(asset => ({ ...asset, amount: 0 })) : startAssets));
   const [page, setPage] = useState<AppPage>('dashboard');
   const [shownNote, setShownNote] = useState(note);
   const [welcome, setWelcome] = useState(verified);
   const convert = useConvert({ assets, setAssets });
   const withdraw = useWithdrawEth({ assets, setAssets });
+  const invoices = useInvoices();
 
   let content: ReactNode = withdraw.outside;
+  if (!content && page === 'invoices') content = invoices.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -376,8 +379,8 @@ export function DashboardFlow({ empty = false, note, verified = false }: Dashboa
         {/* The page's main action next to its title (in Figma it sat in the payments card) */}
         <div className="grg-ip-page__head">
           <h1 className="grg-ip-page__title">Dashboard</h1>
-          {/* No invoices page in this demo: the button stays without a destination */}
-          <Button variant="primary" size="md" leftIcon="plus">Create new invoice</Button>
+          {/* The same drawer as on the Invoices page */}
+          <Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create new invoice</Button>
         </div>
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">
@@ -393,14 +396,20 @@ export function DashboardFlow({ empty = false, note, verified = false }: Dashboa
   }
 
   return (
-    <MessagesProvider appendTo="self">
+    <>
       <AppFrame centred={!!withdraw.outside} current={page} onNavigate={setPage}>{content}</AppFrame>
       {convert.modal}
       {withdraw.modal}
+      {invoices.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
         closable={false} footerType="fill" primaryAction={{ label: 'Okay', onClick: () => setWelcome(false) }} />
-    </MessagesProvider>
+    </>
   );
+}
+
+/** The Dashboard, the Assets and Invoices pages, Convert, Withdraw and Create invoice: the app as one working flow */
+export function DashboardFlow(props: DashboardFlowProps) {
+  return <MessagesProvider appendTo="self"><DashboardApp {...props} /></MessagesProvider>;
 }
