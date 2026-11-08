@@ -7,6 +7,7 @@ import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { HintText } from '../../components/FormField/FormField';
 import { Icon, type IconName } from '../../components/Icon/Icon';
 import { Modal } from '../../components/Modal/Modal';
+import { OptionPicture } from '../../components/Select/options';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { AppFrame, AssetsPage, format, money, startAssets, type Asset } from '../shared/AssetsApp';
 
@@ -27,9 +28,9 @@ type Side = 'from' | 'to';
 const clean = (text: string) => text.replace(',', '.').replace(/[^\d.]/g, '').replace(/(\..*)\./g, '$1');
 const trim = (value: number, digits: number) => (value > 0 ? String(+value.toFixed(digits)) : '');
 
-/** Figma "Currency input": From or To, the balance, a large amount and the coin to pick */
+/** Figma "Currency input": From or To, the balance, a large amount and the coin: to pick (To), or shown as chosen (From) */
 function CurrencyInput({ side, asset, assets, text, onText, onAsset, error, over }: {
-  side: Side; asset: Asset; assets: Asset[]; text: string; onText: (text: string) => void; onAsset: (id: string) => void; error?: string; over?: boolean;
+  side: Side; asset: Asset; assets: Asset[]; text: string; onText: (text: string) => void; onAsset?: (id: string) => void; error?: string; over?: boolean;
 }) {
   const id = useId();
   const root = useRef<HTMLDivElement>(null);
@@ -57,8 +58,16 @@ function CurrencyInput({ side, asset, assets, text, onText, onAsset, error, over
           </span>
           {error && <HintText id={`${id}-error`} state="error" icon={false}>{error}</HintText>}
         </div>
-        <CompactSelect type="coin" withText size="md" aria-label={`${label} currency`} value={asset.id} onChange={onAsset} searchable
-          options={assets.map(item => ({ value: item.id, label: item.code, listLabel: `${item.name} (${item.code})`, coin: item.coin }))} />
+        {onAsset ? (
+          <CompactSelect type="coin" withText size="md" aria-label={`${label} currency`} value={asset.id} onChange={onAsset} searchable
+            options={assets.map(item => ({ value: item.id, label: item.code, listLabel: `${item.name} (${item.code})`, coin: item.coin }))} />
+        ) : (
+          // Figma: the coin chosen in the Assets table, read only (no frame, no chevron)
+          <span className="grg-ip-currency__coin">
+            <OptionPicture option={{ value: asset.id, label: asset.code, coin: asset.coin }} />
+            {asset.code}
+          </span>
+        )}
       </div>
     </div>
   );
@@ -104,11 +113,8 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
   const ready = fromValue > 0 && !over && !limit && !marketError;
 
   const type = (side: Side, value: string) => { setEdited(side); setText(value); setPreset(null); };
-  const choose = (side: Side, id: string) => {
-    // Picking the coin on the other side swaps them, so the pair is never the same coin twice
-    const other = side === 'from' ? toId : fromId;
-    if (id === other) { setFromId(toId); setToId(fromId); } else if (side === 'from') setFromId(id); else setToId(id);
-  };
+  // From is the coin chosen in the Assets table; only To is picked here, from the other coins
+  const choose = (id: string) => setToId(id);
   const pick = (share: number) => {
     if (preset === share) { setPreset(null); setText(''); return; }
     setPreset(share);
@@ -143,11 +149,11 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
       content: <>
         <AccordionKeyValue rows={[{ key: 'Rate', value: `1 ${from.code} = ${format(rate, to.digits)} ${to.code}` }]} />
         <div className="grg-ip-pair">
-          <CurrencyInput side="from" asset={from} assets={assets} text={fromText} onText={value => type('from', value)} onAsset={id => choose('from', id)}
+          <CurrencyInput side="from" asset={from} assets={assets} text={fromText} onText={value => type('from', value)}
             over={over} error={over ? 'Over balance' : undefined} />
-          {/* Figma: only a pointer from From to To; the coins are swapped with the selects */}
+          {/* Figma: only a pointer from From to To */}
           <span className="grg-ip-pair__gap" aria-hidden="true"><span className="grg-ip-pair__arrow"><Icon name="arrow-down" size={20} /></span></span>
-          <CurrencyInput side="to" asset={to} assets={assets} text={toText} onText={value => type('to', value)} onAsset={id => choose('to', id)} />
+          <CurrencyInput side="to" asset={to} assets={assets.filter(item => item.id !== from.id)} text={toText} onText={value => type('to', value)} onAsset={choose} />
         </div>
         {marketError && <HintText state="error" icon={false}>{marketError}</HintText>}
         <div className="grg-ip-chips" role="group" aria-label="Share of the balance">

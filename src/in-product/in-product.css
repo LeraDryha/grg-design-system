@@ -101,6 +101,8 @@
 .grg-ip-currency__top [data-over] { color: var(--error-base-600); }
 .grg-ip-currency__row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-300); }
 .grg-ip-currency__amount { display: grid; flex: 1; min-width: 0; padding: var(--space-150) 0; }
+/* The From coin, read only: the Compact Select's content and size (md, 40px), without its frame and chevron */
+.grg-ip-currency__coin { display: inline-flex; flex: none; align-items: center; gap: var(--space-200); padding: var(--space-250); font: var(--typo-body-md-regular); color: var(--text-strong-1000); white-space: nowrap; }
 .grg-ip-currency__field { display: flex; align-items: baseline; font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
 .grg-ip-currency__field input {
   /* No width of its own (an input is about 20 characters wide by default): it takes what the row leaves */
