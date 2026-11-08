@@ -70,6 +70,17 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
         panel.dataset.openWidth = String(panel.getBoundingClientRect().width);
         panel.style.minWidth = `${panel.dataset.openWidth}px`;
       }
+      // Near the right edge of the screen (or of a box that cuts off what spills out) the list moves left to stay whole;
+      // PrimeReact places it again as it filters, so it is kept in after each placement
+      stop.current?.();
+      const keepIn = () => {
+        const over = panel.getBoundingClientRect().right - (clipRight(panel) - GAP);
+        if (over > 0.5) panel.style.left = `${(parseFloat(panel.style.left) || 0) - over}px`;
+      };
+      keepIn();
+      const watch = new MutationObserver(keepIn);
+      watch.observe(panel, { attributes: true, attributeFilter: ['style'] });
+      stop.current = () => { watch.disconnect(); stop.current = undefined; };
       return;
     }
     // Already over the modal (placed as it was added): nothing to do when PrimeReact reports it shown
@@ -126,6 +137,19 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
     };
   };
   return { place, release: () => stop.current?.() };
+}
+
+/** Space a list keeps from the edge of the screen */
+const GAP = 8;
+
+/** The right edge a list must stay inside: the screen, or the nearest box around it that cuts off what spills out */
+function clipRight(element: HTMLElement) {
+  let right = document.documentElement.clientWidth;
+  for (let node = element.parentElement; node && node !== document.body; node = node.parentElement) {
+    const style = getComputedStyle(node);
+    if (style.overflowX !== 'visible') right = Math.min(right, node.getBoundingClientRect().right);
+  }
+  return right;
 }
 
 /** Pass-through classes for the PrimeReact Dropdown panel, list, search and options. `owner` names the field the

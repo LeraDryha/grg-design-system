@@ -3,9 +3,6 @@ import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Badge, type BadgeColor } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { CoinIcon } from '../../components/CoinIcon/CoinIcon';
-import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
-import { DatePickerPanel } from '../../components/DatePicker/DatePickerPanel';
-import { sameDay, type DatePreset } from '../../components/DatePicker/presets';
 import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
 import { FeaturedIcon, type FeaturedIconType } from '../../components/FeaturedIcon/FeaturedIcon';
 import { Link } from '../../components/Link/Link';
@@ -17,7 +14,9 @@ import { TransactionIcon, type TransactionType } from '../../components/Transact
 import type { IconName } from '../../components/Icon/Icon';
 import { AppFrame, AssetsPage, format, money, startAssets, type Asset, type AppPage } from '../shared/AssetsApp';
 import { useConvert } from '../Convert/Convert';
+import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
 import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
+import { useInvoices } from '../Invoices/Invoices';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
 
@@ -27,19 +26,6 @@ import documentsImage from '../../assets/in-product/documents-warning.png';
 
 /* ---- Successful payments ---- */
 
-/** The periods of the Figma Time period list; any other period is picked in the calendar (Custom period) */
-const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
-const shift = (d: Date, days: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + days);
-export const PERIODS: DatePreset[] = [
-  { id: 'today', label: 'Today', range: today => [startOf(today), startOf(today)] },
-  { id: 'this-week', label: 'This week', range: today => { const monday = shift(today, -((today.getDay() + 6) % 7)); return [monday, shift(monday, 6)]; } },
-  { id: 'this-month', label: 'This month', range: today => [new Date(today.getFullYear(), today.getMonth(), 1), new Date(today.getFullYear(), today.getMonth() + 1, 0)] },
-  { id: 'last-30-days', label: 'Last 30 days', range: today => [shift(today, -29), startOf(today)] },
-  { id: 'last-month', label: 'Last month', range: today => [new Date(today.getFullYear(), today.getMonth() - 1, 1), new Date(today.getFullYear(), today.getMonth(), 0)] },
-];
-type Range = [Date, Date];
-const thisMonth = () => PERIODS[2].range(new Date()) as Range;
-
 /** One point of the chart: its label on the axis, the date for the tooltip, the paid sum and the count; null is still to come */
 type Point = { label: string; date: string; amount: number | null; count: number };
 
@@ -48,8 +34,6 @@ const seeded = (seed: number) => {
   let value = seed;
   return () => { value = (value * 9301 + 49297) % 233280; return value / 233280; };
 };
-const pad = (n: number) => String(n).padStart(2, '0');
-const date = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
 const key = (d: Date) => d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate();
 
 /** Test data for one day, or one hour of it: mostly a few payments, now and then none */
@@ -94,10 +78,6 @@ function points([from, to]: Range, empty: boolean): Point[] {
   }
   return list;
 }
-
-/** A period's name: its preset, or its dates */
-const periodName = ([from, to]: Range) => PERIODS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], from) && sameDay(r[1], to); })?.label
-  ?? `${date(from)} – ${date(to)}`;
 
 /** The point for now: the current hour or day, or the last one of a past period */
 const nowIndex = (list: Point[]) => list.reduce((last, point, index) => (point.amount === null ? last : index), 0);
@@ -163,27 +143,8 @@ const SUMMARY: { key: 'paid' | 'pending' | 'timeout'; label: string; type: Featu
 
 function PaymentsCard({ empty }: { empty: boolean }) {
   const [period, setPeriod] = useState<Range>(thisMonth);
-  const [calendar, setCalendar] = useState(false);
   const list = useMemo(() => points(period, empty), [period, empty]);
   const name = periodName(period);
-  const preset = PERIODS.find(p => p.label === name);
-  // The list: the Figma periods; a custom period once chosen (its dates, checked); then Custom period… for the calendar
-  const options = [
-    ...PERIODS.map(p => ({ value: p.id, label: p.label })),
-    ...(preset ? [] : [{ value: 'chosen', label: name }]),
-    { value: 'custom', label: 'Custom period…', icon: 'calendar' as const },
-  ];
-  const tools = useRef<HTMLDivElement>(null);
-  // The calendar closes with Escape or a click outside, and gives focus back to the select
-  useEffect(() => {
-    if (!calendar) return;
-    const close = () => { setCalendar(false); tools.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); };
-    const onKey = (event: globalThis.KeyboardEvent) => { if (event.key === 'Escape') close(); };
-    const onPointer = (event: PointerEvent) => { if (!tools.current?.contains(event.target as Node)) setCalendar(false); };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onPointer);
-    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onPointer); };
-  }, [calendar]);
   const paid = list.reduce((sum, point) => sum + (point.amount ?? 0), 0);
   // Test data: what is still waiting and what timed out are small shares of the paid sum
   const totals = { paid, pending: empty ? 0 : +(paid * 0.04).toFixed(2), timeout: empty ? 0 : +(paid * 0.02).toFixed(2) };
@@ -192,22 +153,8 @@ function PaymentsCard({ empty }: { empty: boolean }) {
       {/* The title row: the title on the left, the period and View all on the right; the sum under it */}
       <div className="grg-ip-card__head">
         <h2 id="payments-title" className="grg-ip-card__title">Successful payments</h2>
-        <div ref={tools} className="grg-ip-card__tools">
-          <span className="grg-ip-period">
-            <CompactSelect size="sm" aria-label="Period" options={options} value={preset?.id ?? 'chosen'}
-              onChange={value => {
-                if (value === 'custom') setCalendar(true);
-                else { const next = PERIODS.find(p => p.id === value)?.range(new Date()); if (next) setPeriod(next as Range); }
-              }} />
-            {/* Custom period: the system's calendar, two months with Reset / Apply, under the select */}
-            {calendar && (
-              <div className="grg-ip-period__calendar" role="dialog" aria-label="Choose a period">
-                <DatePickerPanel selectionMode="range" double value={period}
-                  onChange={value => { if (Array.isArray(value) && value[0]) setPeriod([value[0], value[1] ?? value[0]]); }}
-                  onApply={() => { setCalendar(false); tools.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); }} />
-              </div>
-            )}
-          </span>
+        <div className="grg-ip-card__tools">
+          <PeriodSelect value={period} onChange={next => setPeriod(next ?? thisMonth())} />
           {/* No payments page in this demo: View all stays, as in Figma, without a destination */}
           <Link size="sm" color="black">View all</Link>
         </div>
@@ -411,16 +358,18 @@ export type DashboardFlowProps = {
   verified?: boolean;
 };
 
-/** The Dashboard and the Assets page, with Convert and Withdraw: the app as one working flow */
-export function DashboardFlow({ empty = false, note, verified = false }: DashboardFlowProps) {
+/** The app behind the Dashboard: its pages, flows and messages (DashboardFlow gives it the Toast area) */
+function DashboardApp({ empty = false, note, verified = false }: DashboardFlowProps) {
   const [assets, setAssets] = useState(() => (empty ? startAssets.map(asset => ({ ...asset, amount: 0 })) : startAssets));
   const [page, setPage] = useState<AppPage>('dashboard');
   const [shownNote, setShownNote] = useState(note);
   const [welcome, setWelcome] = useState(verified);
   const convert = useConvert({ assets, setAssets });
   const withdraw = useWithdrawEth({ assets, setAssets });
+  const invoices = useInvoices();
 
   let content: ReactNode = withdraw.outside;
+  if (!content && page === 'invoices') content = invoices.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -430,8 +379,8 @@ export function DashboardFlow({ empty = false, note, verified = false }: Dashboa
         {/* The page's main action next to its title (in Figma it sat in the payments card) */}
         <div className="grg-ip-page__head">
           <h1 className="grg-ip-page__title">Dashboard</h1>
-          {/* No invoices page in this demo: the button stays without a destination */}
-          <Button variant="primary" size="md" leftIcon="plus">Create new invoice</Button>
+          {/* The same drawer as on the Invoices page */}
+          <Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create new invoice</Button>
         </div>
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">
@@ -447,14 +396,20 @@ export function DashboardFlow({ empty = false, note, verified = false }: Dashboa
   }
 
   return (
-    <MessagesProvider appendTo="self">
+    <>
       <AppFrame centred={!!withdraw.outside} current={page} onNavigate={setPage}>{content}</AppFrame>
       {convert.modal}
       {withdraw.modal}
+      {invoices.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
         closable={false} footerType="fill" primaryAction={{ label: 'Okay', onClick: () => setWelcome(false) }} />
-    </MessagesProvider>
+    </>
   );
+}
+
+/** The Dashboard, the Assets and Invoices pages, Convert, Withdraw and Create invoice: the app as one working flow */
+export function DashboardFlow(props: DashboardFlowProps) {
+  return <MessagesProvider appendTo="self"><DashboardApp {...props} /></MessagesProvider>;
 }

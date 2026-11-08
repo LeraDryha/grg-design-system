@@ -82,6 +82,12 @@ export const Walkthrough: Story = {
       await userEvent.click(within(dialog).getByRole('button', { name: /Close/ }));
       await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
     });
+    await step('Create new invoice opens the Invoices drawer', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Create new invoice' }));
+      await expect(await canvas.findByRole('dialog', { name: 'Create invoice' })).toBeInTheDocument();
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
+    });
     await step('View all goes to the Assets page; the menu comes back', async () => {
       await userEvent.click(canvas.getAllByRole('link', { name: 'View all' })[0]);
       await expect(await canvas.findByRole('heading', { name: 'Assets', level: 1 })).toBeInTheDocument();

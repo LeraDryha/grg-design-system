@@ -12,7 +12,6 @@
   /* Full height leaves 40px above and below; the sides keep 16px on small screens */
   padding: var(--space-1000) var(--space-400);
   background: var(--overlay);
-  backdrop-filter: blur(var(--blur-sm));
 }
 .grg-modal-mask[data-sheet] {
   align-items: flex-end;

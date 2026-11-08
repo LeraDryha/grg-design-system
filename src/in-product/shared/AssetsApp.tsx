@@ -52,8 +52,8 @@ const logo = (
 );
 
 /** The pages built in this demo; the others are in the menu but lead nowhere */
-export type AppPage = 'dashboard' | 'assets';
-const built: string[] = ['dashboard', 'assets'];
+export type AppPage = 'dashboard' | 'assets' | 'invoices';
+const built: string[] = ['dashboard', 'assets', 'invoices'];
 
 /** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow.
  *  `onNavigate` moves between the built pages; without it the menu stays on `current` */

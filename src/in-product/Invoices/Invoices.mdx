@@ -1,0 +1,70 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as InvoicesStories from './Invoices.stories';
+import listFrame from '../../assets/design/in-product/invoices/1-list.png';
+import periodFrame from '../../assets/design/in-product/invoices/2-custom-period.png';
+import createFrame from '../../assets/design/in-product/invoices/3-create-empty.png';
+import filledFrame from '../../assets/design/in-product/invoices/4-create-filled.png';
+import fieldFrame from '../../assets/design/in-product/invoices/5-custom-field.png';
+import deactivateFrame from '../../assets/design/in-product/invoices/6-deactivate.png';
+import notVerifiedFrame from '../../assets/design/in-product/invoices/7-not-verified.png';
+import verifyingFrame from '../../assets/design/in-product/invoices/8-verifying.png';
+
+<Meta of={InvoicesStories} />
+
+# Invoices
+
+A business sells by link: it creates an invoice, sends the link to its customer and follows the payment. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work.
+
+<a href="iframe.html?viewMode=story&id=in-product-invoices--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={InvoicesStories.LiveFlow} />
+
+**Try it:** filter by asset, status or period; press **Create invoice**, type an amount, add a custom field and create it; copy the link, then **View invoice**. Open a row for its details, **Deactivate link** from the drawer or from a row, and **Open as a page**.
+
+## What the flow has to get right
+
+- **A link in seconds.** Only the currency and the amount are required; everything else is optional and folds away.
+- **The link right after.** The new invoice shows its amount, status and link to copy without leaving the list.
+- **Follow every payment.** Each invoice's details and operations are a click away from its row, and as a page for the full story.
+- **Stop a link safely.** Deactivating asks first and says what it means: nobody can pay with it any more.
+
+## Decided while building it
+
+- **Creating moved into a drawer.** Figma made Create invoice a page. In a drawer the list stays in view, the new invoice appears in it, and creating, its result, the details and deactivating are one drawer whose content changes (the Drawer rule: one task, one drawer).
+- **The result stays in the drawer**, with the amount, the status and the link to copy, then *View invoice* or *Create another*.
+- **Details in the drawer and as a page.** A row opens the details in the drawer (*Details* and *Operations*); *Open as a page* shows the Figma page, for the full history.
+- **Custom fields are typed in the drawer.** Figma added them in a modal; a modal over a drawer breaks the rule, so the field opens in place, with edit and remove for each custom field.
+- **Deactivate asks where it is.** From a row or the page, the Figma modal; from the drawer, the same question inside the drawer.
+- **Filters right after the search, then Reset.** Figma put the search on the left and the filters on the right; here they follow the search, so more filters can join the row, and *Reset* appears as soon as anything is searched or chosen.
+- **The filters are selects.** Asset and status are the GRX Pay selects; the period is a select too, which opens the whole Date Picker, as in Figma: its presets (All period, Today, Last 7 days…) and the calendar with Reset and Apply.
+- **The optional sections fold away.** *Redirect link* starts folded, *Customer details* open.
+- **Before verification**, the Figma empty states with the system's Featured icon in place of the 3D pictures.
+- **Download stays without an action** in this demo; the payment links use `pay.example.com`.
+
+## Before verification
+
+<Canvas of={InvoicesStories.NotVerified} />
+
+<Canvas of={InvoicesStories.VerificationInProgress} />
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {[
+    [listFrame, '1 · Invoices'], [periodFrame, '2 · A custom period'], [createFrame, '3 · Create invoice, a page in Figma'], [filledFrame, '4 · Required fields filled'],
+    [fieldFrame, '5 · Add custom field'], [deactivateFrame, '6 · Deactivate'], [notVerifiedFrame, '7 · Not verified'], [verifyingFrame, '8 · Verification in progress'],
+  ].map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Drawer](?path=/docs/components-drawer--docs) · [Modal](?path=/docs/components-modal--docs) · [Table](?path=/docs/components-table--docs) · [Search](?path=/docs/components-search--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Date Picker](?path=/docs/components-date-picker--docs) · [Select](?path=/docs/components-select--docs) · [Input](?path=/docs/components-input--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Switch](?path=/docs/components-switch--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Tab Menu](?path=/docs/components-tab-menu--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Badge](?path=/docs/components-badge--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+
+The form's sections and the invoice summary live with this page.
