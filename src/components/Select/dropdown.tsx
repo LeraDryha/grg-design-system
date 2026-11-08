@@ -63,12 +63,15 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
     const host = root.current;
     const panel = host?.querySelector<HTMLElement>('.grg-dropdown');
     if (!host || !panel) return;
-    // The list keeps the width it opened with: filtering out its longest options doesn't narrow it
-    if (!panel.dataset.openWidth) {
-      panel.dataset.openWidth = String(panel.getBoundingClientRect().width);
-      panel.style.minWidth = `${panel.dataset.openWidth}px`;
+    // The list keeps the width it opened with: filtering out its longest options doesn't narrow it.
+    // Over a modal it is measured once placed (below): until then its 100% is the overlay's width, not the field's
+    if (!inModal) {
+      if (!panel.dataset.openWidth) {
+        panel.dataset.openWidth = String(panel.getBoundingClientRect().width);
+        panel.style.minWidth = `${panel.dataset.openWidth}px`;
+      }
+      return;
     }
-    if (!inModal) return;
     // Already over the modal (placed as it was added): nothing to do when PrimeReact reports it shown
     if (panel.hasAttribute('data-layer') && stop.current) return;
     stop.current?.();
@@ -86,6 +89,7 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
       panel.style.position = 'fixed';
       const field = host.getBoundingClientRect();
       panel.style.minWidth = `${Math.max(minWidth, field.width, Number(panel.dataset.openWidth) || 0)}px`;
+      if (!panel.dataset.openWidth) panel.dataset.openWidth = String(panel.getBoundingClientRect().width);
       const height = panel.offsetHeight;
       const below = field.bottom + gap;
       const top = below + height > window.innerHeight && field.top - gap - height > 0 ? field.top - gap - height : below;

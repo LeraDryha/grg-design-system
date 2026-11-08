@@ -194,10 +194,16 @@ const FIELD = 'input:not([type="hidden"]):not(:disabled), select:not(:disabled),
  * PrimeReact focuses its own close button; this one focuses the first field, or else the safe action:
  * Cancel when the main action is destructive, the main action otherwise.
  */
-export function Modal({
-  visible, onHide, layout = 'auto', dismissableMask = false, closable = true, appendTo, className = '', ...panel
-}: ModalProps) {
+export function Modal(props: ModalProps) {
+  return <ModalFrame {...props} />;
+}
+
+/** Modal's frame, shared with Drawer: `right` puts the panel at the right edge, the whole height of the screen */
+export function ModalFrame({
+  visible, onHide, layout = 'auto', dismissableMask = false, closable = true, appendTo, className = '', placement = 'center', ...panel
+}: ModalProps & { placement?: 'center' | 'right' }) {
   const mobile = useMobile(layout);
+  const drawer = placement === 'right';
   const id = useId();
   const titleId = `${id}-title`;
   const descriptionId = panel.description ? `${id}-description` : undefined;
@@ -234,7 +240,7 @@ export function Modal({
       visible={visible}
       onHide={onHide}
       appendTo={appendTo}
-      position={mobile ? 'bottom' : 'center'}
+      position={drawer ? 'right' : mobile ? 'bottom' : 'center'}
       modal
       // The page behind stops scrolling, unless the modal is kept inside its parent ('self', as on docs pages):
       // there the page must still scroll past it
@@ -250,8 +256,8 @@ export function Modal({
       aria-labelledby={titleId}
       aria-describedby={descriptionId ?? ''}
       pt={{
-        mask: { className: 'grg-modal-mask', 'data-sheet': mobile || undefined } as never,
-        root: { className: 'grg-modal-dialog' },
+        mask: { className: `grg-modal-mask${drawer ? ' grg-drawer-mask' : ''}`, 'data-sheet': (!drawer && mobile) || undefined } as never,
+        root: { className: `grg-modal-dialog${drawer ? ' grg-drawer-dialog' : ''}` },
       }}
       content={() => (
         <ModalPanel
