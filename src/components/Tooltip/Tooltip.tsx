@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactElement } from 'react';
+import { useEffect, useId, useRef, useState, type ReactElement, type ReactNode } from 'react';
 import { Tooltip as PrimeTooltip } from 'primereact/tooltip';
 import { Icon, type IconName } from '../Icon/Icon';
 import { useOverlayTheme } from '../../hooks/useOverlayTheme';
@@ -19,6 +19,12 @@ export type TooltipProps = {
   description?: string;
   /** Figma Left icon: a Base icon before the text; off when not set */
   icon?: IconName;
+  /** A picture before the title instead of a Base icon, such as a 16px coin (the Dashboard balance) */
+  leading?: ReactNode;
+  /** A value at the end of the title row, such as a share: "Bitcoin … 7.1%" */
+  value?: string;
+  /** Key-value rows under a line, such as Amount and Balance: a small table of figures for one item */
+  rows?: { key: string; value: string }[];
   /** Figma Color: White, or Black (Inverted). Black turns light in the dark theme */
   color?: 'white' | 'black';
   /** Where the tooltip opens from the control. Figma Side names the edge with the tip, the opposite one:
@@ -47,7 +53,7 @@ const ALIGN: Record<TooltipSide, Record<'start' | 'end', { my: string; at: strin
  * readers, so the text reaches them through the control itself (`purpose`).
  */
 export function Tooltip({
-  children, target: givenTarget, title, description, icon, color = 'white', side = 'top', align = 'center', purpose = 'description',
+  children, target: givenTarget, title, description, icon, leading, value, rows, color = 'white', side = 'top', align = 'center', purpose = 'description',
   disabled = false,
 }: TooltipProps) {
   const id = useId();
@@ -62,7 +68,7 @@ export function Tooltip({
     if (!target || disabled) return;
     const describedBy = target.getAttribute('aria-describedby');
     if (purpose === 'name') target.setAttribute('aria-label', title);
-    const describe = purpose === 'description' || (purpose === 'name' && description);
+    const describe = purpose === 'description' || (purpose === 'name' && (description || value || rows?.length));
     if (describe) target.setAttribute('aria-describedby', [describedBy, id].filter(Boolean).join(' '));
     return () => {
       if (purpose === 'name') target.removeAttribute('aria-label');
@@ -71,7 +77,7 @@ export function Tooltip({
         else target.removeAttribute('aria-describedby');
       }
     };
-  }, [target, purpose, title, description, id, disabled]);
+  }, [target, purpose, title, description, value, rows, id, disabled]);
 
   /* Escape closes it (WCAG 1.4.13). PrimeReact's own closeOnEscape fails without its overlay stack, so the tooltip is
      closed the way PrimeReact closes it: as if the pointer and the focus had left; focus stays on the control. */
@@ -87,7 +93,9 @@ export function Tooltip({
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [shown, target]);
 
-  const spoken = purpose === 'description' ? [title, description].filter(Boolean).join('. ') : description;
+  // Everything the tooltip shows, in reading order, for the control's description
+  const details = [value, description, ...(rows ?? []).map(row => `${row.key} ${row.value}`)].filter(Boolean).join('. ') || undefined;
+  const spoken = purpose === 'description' ? [title, details].filter(Boolean).join('. ') : purpose === 'name' ? details : description;
   const position = align === 'center' ? undefined : ALIGN[side][align];
 
   return (
@@ -113,18 +121,28 @@ export function Tooltip({
               'data-side': state.position,
               'data-align': align,
               'data-color': color,
-              'data-details': description ? true : undefined,
+              'data-details': description || rows?.length ? true : undefined,
+              'data-rows': rows?.length ? true : undefined,
               ...theme,
             }),
             arrow: { className: 'grg-tooltip__arrow' },
             text: { className: 'grg-tooltip__body' },
           } as object}
         >
-          {icon && <Icon name={icon} size={16} className="grg-tooltip__icon" />}
+          {icon && !leading && <Icon name={icon} size={16} className="grg-tooltip__icon" />}
+          {leading && <span className="grg-tooltip__leading">{leading}</span>}
           <span className="grg-tooltip__text">
-            <span className="grg-tooltip__title">{title}</span>
+            <span className="grg-tooltip__title-row">
+              <span className="grg-tooltip__title">{title}</span>
+              {value && <span className="grg-tooltip__value">{value}</span>}
+            </span>
             {description && <span className="grg-tooltip__description">{description}</span>}
           </span>
+          {rows?.length ? (
+            <span className="grg-tooltip__rows">
+              {rows.map(row => <span key={row.key} className="grg-tooltip__row"><span>{row.key}</span><span>{row.value}</span></span>)}
+            </span>
+          ) : null}
         </PrimeTooltip>
       )}
     </span>

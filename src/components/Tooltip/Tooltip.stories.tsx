@@ -4,6 +4,7 @@ import { Tooltip, type TooltipProps, type TooltipSide } from './Tooltip';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Button } from '../Button/Button';
 import { Icon } from '../Icon/Icon';
+import { CoinIcon } from '../CoinIcon/CoinIcon';
 import { baseIconNames } from '../../icons/names';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/tooltip/tooltip-component.png';
@@ -100,6 +101,34 @@ export const ExplainASetting: Story = {
     await expect(button).toHaveAccessibleDescription('Payment window. How long a customer has to pay before the invoice expires.');
     await userEvent.hover(button);
     await expect(await tooltip()).toHaveTextContent('How long a customer has to pay');
+  },
+};
+
+/** The figures for one part of a chart: its share at the end of the title row, then key-value rows under a line. */
+export const FiguresForOnePart: Story = {
+  name: 'Figures for one part',
+  args: {
+    title: 'Bitcoin',
+    value: '7.1%',
+    leading: <CoinIcon name="bitcoin-btc" size={20} />,
+    rows: [{ key: 'Amount:', value: '4,896,218.73 EUR' }, { key: 'Balance:', value: '78.91994642 BTC' }],
+    side: 'top',
+    purpose: 'description',
+  },
+  render: args => (
+    <div style={{ display: 'flex', gap: 'var(--space-050)', width: 'calc(var(--space-5000) * 1.5)', height: 'var(--space-300)' }}>
+      <span style={{ flex: 8, borderRadius: 'var(--radius-xxs-4)', background: 'var(--success-base-600)' }} />
+      <Tooltip {...args}>
+        <button type="button" aria-label="Bitcoin" style={{ flex: 3, padding: 0, border: 0, borderRadius: 'var(--radius-xxs-4)', background: 'var(--warning-base-600)', cursor: 'pointer' }} />
+      </Tooltip>
+      <span style={{ flex: 1, borderRadius: 'var(--radius-xxs-4)', background: 'var(--bg-soft-200)' }} />
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const part = within(canvasElement).getByRole('button', { name: 'Bitcoin' });
+    await expect(part).toHaveAccessibleDescription('Bitcoin. 7.1%. Amount: 4,896,218.73 EUR. Balance: 78.91994642 BTC');
+    await userEvent.hover(part);
+    await expect(await tooltip()).toHaveTextContent('Amount:4,896,218.73 EUR');
   },
 };
 

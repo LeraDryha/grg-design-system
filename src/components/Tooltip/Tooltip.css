@@ -41,6 +41,28 @@
 .grg-tooltip[data-details] .grg-tooltip__body { padding: var(--space-300); border-radius: var(--radius-lg-12); }
 
 .grg-tooltip__icon { flex: none; color: var(--icon-base-500); }
+.grg-tooltip__leading { display: inline-grid; flex: none; }
+.grg-tooltip__title-row { display: flex; justify-content: space-between; gap: var(--space-200); }
+.grg-tooltip__value { color: var(--text-subtle-700); }
+.grg-tooltip[data-color='black'] .grg-tooltip__value { color: var(--text-disabled-400); }
+/* Key-value rows (the Dashboard figure, 220px): the title row, a line, then each key with its value at the end, 10px apart */
+.grg-tooltip[data-rows] .grg-tooltip__body {
+  flex-wrap: wrap;
+  row-gap: var(--space-250);
+  width: calc(var(--space-5000) + var(--space-500));
+}
+.grg-tooltip[data-rows] .grg-tooltip__text { flex: 1; }
+.grg-tooltip__rows {
+  display: flex;
+  flex: 1 0 100%;
+  flex-direction: column;
+  gap: var(--space-250);
+  padding-top: var(--space-250);
+  border-top: 1px solid var(--stroke-soft-200);
+}
+.grg-tooltip__row { display: flex; justify-content: space-between; gap: var(--space-200); }
+.grg-tooltip__row > :first-child { color: var(--text-subtle-700); }
+.grg-tooltip[data-color='black'] .grg-tooltip__row > :first-child { color: var(--text-disabled-400); }
 .grg-tooltip__text { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
 .grg-tooltip[data-details] .grg-tooltip__title { font: var(--typo-body-sm-medium); }
 .grg-tooltip__description { color: var(--text-subtle-700); }

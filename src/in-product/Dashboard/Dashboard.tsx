@@ -177,6 +177,18 @@ function PaymentsCard({ empty }: { empty: boolean }) {
 
 /* ---- Total balance ---- */
 
+/** ← → (Home, End) move focus along a row of buttons marked data-part, one Tab stop for the whole row */
+const moveAlong = (event: KeyboardEvent<HTMLDivElement>) => {
+  const buttons = Array.from(event.currentTarget.querySelectorAll<HTMLButtonElement>('[data-part]'));
+  const index = buttons.indexOf(event.target as HTMLButtonElement);
+  const next = event.key === 'ArrowRight' ? index + 1 : event.key === 'ArrowLeft' ? index - 1 : event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 : null;
+  if (index < 0 || next === null) return;
+  event.preventDefault();
+  const target = buttons[Math.max(0, Math.min(buttons.length - 1, next))];
+  buttons.forEach(button => { button.tabIndex = button === target ? 0 : -1; });
+  target.focus();
+};
+
 const SHARE_COLORS = ['var(--success-base-600)', 'var(--warning-base-600)', 'var(--info-base-600)'];
 const share = (part: number, total: number) => {
   const value = (part / total) * 100;
@@ -195,6 +207,16 @@ function BalanceCard({ assets, onAction, onViewAll }: {
   const rows = sorted.slice(0, 4);
   const rest = sorted.slice(SHARE_COLORS.length);
   const restValue = rest.reduce((sum, asset) => sum + value(asset), 0);
+  const parts = [
+    ...sorted.slice(0, SHARE_COLORS.length).map((asset, index) => ({
+      id: asset.id, name: asset.name, coin: asset.coin, value: value(asset), color: SHARE_COLORS[index],
+      rows: [{ key: 'Amount:', value: `${money(value(asset))} EUR` }, { key: 'Balance:', value: `${format(asset.amount, asset.digits)} ${asset.code}` }],
+    })),
+    ...(restValue > 0 ? [{
+      id: 'rest', name: 'Other assets', coin: undefined, value: restValue, color: 'var(--bg-soft-200)',
+      rows: [{ key: 'Amount:', value: `${money(restValue)} EUR` }, { key: 'Assets:', value: rest.map(asset => asset.code).join(', ') }],
+    }] : []),
+  ];
   return (
     <section className="grg-ip-card grg-ip-card--balance" aria-labelledby="balance-title">
       <div className="grg-ip-card__head">
@@ -204,21 +226,18 @@ function BalanceCard({ assets, onAction, onViewAll }: {
         </div>
         <Link size="sm" color="black" href="#assets" onClick={event => { event.preventDefault(); onViewAll(); }}>View all</Link>
       </div>
-      {/* The shares are also in the list under it, so the bar is a picture with a summary; its tooltips repeat the list */}
-      <div className="grg-ip-shares" role="img"
-        aria-label={total ? `Shares: ${sorted.map(asset => `${asset.name} ${share(value(asset), total)}`).join(', ')}` : 'No assets'}>
-        {total > 0 && sorted.slice(0, SHARE_COLORS.length).map((asset, index) => (
-          <Tooltip key={asset.id} title={`${asset.name} · ${share(value(asset), total)}`} color="white" side="top" purpose="repeat"
-            description={`${money(value(asset))} EUR · ${format(asset.amount, asset.digits)} ${asset.code}`}>
-            <span className="grg-ip-shares__part" style={{ flexGrow: value(asset), background: SHARE_COLORS[index] }} />
-          </Tooltip>
-        ))}
-        {restValue > 0 && (
-          <Tooltip title={`Other assets · ${share(restValue, total)}`} description={rest.map(asset => asset.code).join(', ')} color="white" side="top" purpose="repeat">
-            <span className="grg-ip-shares__part" style={{ flexGrow: restValue, background: 'var(--bg-soft-200)' }} />
-          </Tooltip>
-        )}
-      </div>
+      {/* The tooltips need a control that takes focus: one Tab stop, ← → move along the parts (as on the chart) */}
+      {total > 0 ? (
+        <div className="grg-ip-shares" role="group" aria-label="Shares of the balance" onKeyDown={moveAlong}>
+          {parts.map((part, index) => (
+            <Tooltip key={part.id} title={part.name} value={share(part.value, total)} leading={part.coin && <CoinIcon name={part.coin} size={20} />}
+              rows={part.rows} color="white" side="top" purpose="description">
+              <button type="button" className="grg-ip-shares__part" data-part={index} tabIndex={index === 0 ? 0 : -1} aria-label={part.name}
+                style={{ flexGrow: part.value, background: part.color }} />
+            </Tooltip>
+          ))}
+        </div>
+      ) : <div className="grg-ip-shares" aria-hidden="true" />}
       {rows.length ? (
         <ul className="grg-ip-holdings">
           {rows.map(asset => (
