@@ -26,6 +26,7 @@
 .grg-ip-surface__section { display: flex; flex-direction: column; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
 .grg-ip-surface__divider { margin: 0; border: 0; border-top: 1px solid var(--stroke-soft-200); }
 .grg-ip-page__title { margin: 0; padding: var(--space-050) 0; font: var(--typo-title-lg-semibold); }
+.grg-ip-page__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-300); }
 .grg-ip-centre { display: grid; flex: 1; place-items: center; padding: var(--space-600); overflow: auto; }
 
 /* A neutral logo: the company's own logos are not shown */

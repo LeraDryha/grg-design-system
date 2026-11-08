@@ -154,8 +154,7 @@ function PaymentsCard({ empty }: { empty: boolean }) {
         </div>
         <div className="grg-ip-card__tools">
           <CompactSelect size="sm" aria-label="Period" options={PERIODS} value={period} onChange={value => setPeriod(value as Period)} />
-          {/* No invoices page in this demo: the button and View all stay, as in Figma, without a destination */}
-          <Button variant="primary" size="sm" leftIcon="plus">Create new invoice</Button>
+          {/* No payments page in this demo: View all stays, as in Figma, without a destination */}
           <Link size="sm" color="black">View all</Link>
         </div>
       </div>
@@ -370,7 +369,12 @@ export function DashboardFlow({ empty = false, note, verified = false }: Dashboa
   if (!content) {
     content = (
       <main className="grg-ip-page">
-        <h1 className="grg-ip-page__title">Dashboard</h1>
+        {/* The page's main action next to its title (in Figma it sat in the payments card) */}
+        <div className="grg-ip-page__head">
+          <h1 className="grg-ip-page__title">Dashboard</h1>
+          {/* No invoices page in this demo: the button stays without a destination */}
+          <Button variant="primary" size="md" leftIcon="plus">Create new invoice</Button>
+        </div>
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">
             {shownNote && <NoteCard note={shownNote} onClose={() => setShownNote(undefined)} />}
