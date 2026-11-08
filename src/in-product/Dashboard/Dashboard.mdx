@@ -1,0 +1,74 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as DashboardStories from './Dashboard.stories';
+import tooltipsFrame from '../../assets/design/in-product/dashboard/1-tooltips.png';
+import periodFrame from '../../assets/design/in-product/dashboard/2-period.png';
+import menuFrame from '../../assets/design/in-product/dashboard/3-asset-menu.png';
+import hoverFrame from '../../assets/design/in-product/dashboard/4-row-hover.png';
+import emptyFrame from '../../assets/design/in-product/dashboard/5-empty.png';
+import keyFrame from '../../assets/design/in-product/dashboard/6-integrate-the-key.png';
+import documentsFrame from '../../assets/design/in-product/dashboard/7-verify-documents.png';
+import verifiedFrame from '../../assets/design/in-product/dashboard/8-business-verified.png';
+
+<Meta of={DashboardStories} />
+
+# Dashboard
+
+The first page a business sees: how much it holds and in what, how payments are going, and what happened last. I designed it in Figma for a crypto payments platform; here it is rebuilt from the design system's components, and it works, together with the Assets page and the Convert and Withdraw flows.
+
+<a href="iframe.html?viewMode=story&id=in-product-dashboard--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={DashboardStories.LiveFlow} />
+
+**Try it:** point at the coloured bar or the chart; pick another period; open **⋮** on Ethereum and convert; copy a transaction ID; press **View all** in Total balance to reach Assets, and **Dashboard** in the menu to come back. The sun in the bar switches the theme.
+
+## What the page has to get right
+
+- **The balance in one look.** The total, then how it splits: the bar shows the shares, the list names the four largest with their value in euros and in the coin.
+- **Payments over a chosen period.** Today by the hour, this week by the day, this month, the last 30 days or last month; the current hour or day stands out, and the sums for paid, pending and timed-out payments sit under the chart.
+- **Act from where the money is.** Convert and withdraw from an asset's menu, without going to another page first.
+- **Every part says when it is empty**, so a new account doesn't look broken.
+
+## A new account
+
+<Canvas of={DashboardStories.NewAccount} />
+
+<Canvas of={DashboardStories.IntegrateTheKey} />
+
+<Canvas of={DashboardStories.VerifyDocuments} />
+
+<Canvas of={DashboardStories.BusinessVerified} />
+
+The next step sits on top of the balance and can be put away. Verification ends with one modal, then the dashboard.
+
+## Decided while building it
+
+- **The shares add up.** The percentages under each asset are its share of the total balance (Figma's tooltip on the bar shows the same number), counted from the balances on the Assets page, so the bar, the list and the total always agree. The bar colours the three largest and puts the rest in grey.
+- **The same data as Assets.** The total is the Assets page's estimated balance, and a conversion or a withdrawal changes both pages.
+- **Periods beyond Figma.** Figma draws *This month*; the other periods follow the same chart: *Today* by the hour, *This week* by the weekday, *Last 30 days* and *Last month* by the day.
+- **The chart works with the keyboard.** One Tab stop; ← → move along the days, and each point says its date, sum and number of payments.
+- **The tooltips use the system's Tooltip**: a title and a line under it, where Figma drew a small table (Amount, Balance).
+- **The verification modal has a Featured icon** where Figma has the trophy: the Modal has no place for a picture above the title yet.
+- **Deposit comes later**, so it is unavailable in the menu; Withdraw works for ether, as in the Withdraw flow. Pages this demo doesn't have (Invoices, Transactions) stay in the menu without a destination.
+- **Copying an ID** shows a short *Copied* Toast that goes by itself.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {[
+    [tooltipsFrame, '1 · Tooltips'], [periodFrame, '2 · Time period'], [menuFrame, '3 · Asset menu'], [hoverFrame, '4 · Row hover'],
+    [emptyFrame, '5 · Empty'], [keyFrame, '6 · Integrate the key'], [documentsFrame, '7 · Verify your documents'], [verifiedFrame, '8 · Business verified'],
+  ].map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Feature Card](?path=/docs/components-feature-card--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Button](?path=/docs/components-button--docs) · [Link](?path=/docs/components-link--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Table](?path=/docs/components-table--docs) · [Transaction Icon](?path=/docs/components-transaction-icon--docs) · [Badge](?path=/docs/components-badge--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs) · [Modal](?path=/docs/components-modal--docs)
+
+The new pieces, the bar of shares and the chart, live with this page.

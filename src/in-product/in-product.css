@@ -147,3 +147,83 @@
 .grg-ip-receipt__gets { font: var(--typo-body-lg-regular); color: var(--text-soft-500); }
 .grg-ip-box__key { flex: 1; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
 .grg-ip-box__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+
+/* ---- Dashboard (Figma Dashboard - Verified): the balance column, the payments, the transactions under both ---- */
+.grg-ip-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--space-300);
+  align-items: stretch;
+}
+.grg-ip-dashboard__side { display: flex; flex-direction: column; gap: var(--space-300); min-width: 0; }
+.grg-ip-card--transactions { grid-column: 1 / -1; }
+
+/* Figma: white cards, radius 16, Elevation xs, 24px inside */
+.grg-ip-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-400);
+  min-width: 0;
+  padding: var(--space-600);
+  border-radius: var(--radius-xl-16);
+  background: var(--surface-base);
+  box-shadow: var(--shadow-xs);
+}
+.grg-ip-card--balance { flex: 1; }
+.grg-ip-card__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-300); }
+.grg-ip-card__title { margin: 0; font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
+.grg-ip-card__value { margin: var(--space-200) 0 0; font: var(--typo-title-md-semibold); color: var(--text-strong-1000); }
+.grg-ip-card__tools { display: flex; flex: none; align-items: center; gap: var(--space-300); }
+.grg-ip-card__empty { display: grid; flex: 1; place-items: center; margin: 0; padding: var(--space-800) 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+
+/* The balance: the shares in one bar, then the four largest assets */
+.grg-ip-shares { display: flex; gap: var(--space-050); height: var(--space-300); border-radius: var(--radius-xxs-4); background: var(--bg-weak-100); overflow: hidden; }
+.grg-ip-shares__part { min-width: var(--space-100); }
+.grg-ip-holdings { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.grg-ip-holdings > li { display: flex; align-items: center; gap: var(--space-300); padding: var(--space-300) 0; border-bottom: 1px solid var(--stroke-soft-200); }
+.grg-ip-holdings__name, .grg-ip-holdings__amount { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; font: var(--typo-body-md-regular); }
+.grg-ip-holdings__name { flex: 1; }
+.grg-ip-holdings__amount { align-items: flex-end; text-align: end; }
+.grg-ip-holdings__code { color: var(--text-soft-500); }
+.grg-ip-holdings__share { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+
+/* Successful payments: the chart and the three sums under it */
+.grg-ip-card--payments { gap: var(--space-300); }
+.grg-ip-chart { display: flex; flex-direction: column; gap: var(--space-200); margin: 0 calc(var(--space-600) * -1); }
+.grg-ip-chart__plot { position: relative; height: calc(var(--space-2000) * 2 + var(--space-1000)); border-bottom: 1px solid var(--stroke-soft-200); }
+.grg-ip-chart__grid { position: absolute; inset: 50% 0 auto; border-top: 1px solid var(--stroke-soft-200); }
+.grg-ip-chart__now { position: absolute; top: 0; bottom: 0; border-left: 1px solid var(--stroke-soft-200); }
+.grg-ip-chart__line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.grg-ip-chart__line polyline { fill: none; stroke: var(--info-base-600); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.grg-ip-chart__marker {
+  position: absolute;
+  width: var(--space-300);
+  height: var(--space-300);
+  border: 2px solid var(--info-base-600);
+  border-radius: 50%;
+  background: var(--surface-base);
+  translate: -50% -50%;
+  pointer-events: none;
+}
+/* Each point is a button from the point down to the axis: hover and the arrow keys show its tooltip */
+.grg-ip-chart__point { position: absolute; bottom: 0; margin: 0; padding: 0; border: 0; background: transparent; cursor: pointer; }
+.grg-ip-chart__point:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-xxs-4); }
+.grg-ip-chart__axis { display: grid; padding: 0; font: var(--typo-caption-sm-regular); color: var(--text-soft-500); text-align: center; }
+.grg-ip-chart__axis [data-now] { font: var(--typo-caption-sm-semibold); color: var(--text-strong-1000); }
+.grg-ip-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-300); margin: var(--space-300) 0 0; padding: 0; list-style: none; }
+.grg-ip-summary > li { display: flex; align-items: center; gap: var(--space-300); }
+.grg-ip-summary > li > span { display: flex; flex-direction: column; }
+.grg-ip-summary__key { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-summary__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+
+/* The notes: text and a button on the left, the picture on the right, Close in the corner */
+.grg-ip-note { flex-direction: row; align-items: flex-end; gap: var(--space-300); }
+.grg-ip-note__text { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: var(--space-200); min-width: 0; }
+.grg-ip-note__text p { margin: 0 0 var(--space-200); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-note__image { flex: none; width: calc(var(--space-1400) + var(--space-200)); height: auto; }
+.grg-ip-note__close { position: absolute; top: var(--space-400); right: var(--space-400); }
+
+/* The transaction ID: the text cut to fit, the copy button after it */
+.grg-ip-copy { display: flex; align-items: center; gap: var(--space-200); min-width: 0; }
+.grg-ip-copy > :first-child { min-width: 0; }

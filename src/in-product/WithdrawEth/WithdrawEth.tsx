@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import { AccordionKeyValue } from '../../components/Accordion/AccordionKeyValue';
 import { Button } from '../../components/Button/Button';
 import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
@@ -9,7 +9,7 @@ import { ProgressCircle } from '../../components/ProgressCircle/ProgressCircle';
 import { Switch } from '../../components/Switch/Switch';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
-import { AppFrame, AssetsPage, format, startAssets } from '../shared/AssetsApp';
+import { AppFrame, AssetsPage, format, startAssets, type Asset } from '../shared/AssetsApp';
 
 /* GRX Pay redesign, section Withdraw (XDynk3v9BU5pStqaulzutE, 63:58899): the Ethereum flow, from the Assets page to
    "Transaction in progress". Test data only; the company is "Company". */
@@ -66,9 +66,11 @@ export type WithdrawFlowProps = {
   startAmount?: string;
 };
 
-/** The Assets page and the withdrawal, as one working flow. */
-export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps) {
-  const [assets, setAssets] = useState(startAssets);
+/** The withdrawal itself, for any page of the app: `start` opens it on an asset; `outside` is the screen that takes
+ *  the place of the page once the payment is sent; `modal` is its one modal */
+export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }: WithdrawFlowProps & {
+  assets: Asset[]; setAssets: Dispatch<SetStateAction<Asset[]>>;
+}) {
   const [inProgress, setInProgress] = useState(688621.79);
   const [assetId, setAssetId] = useState('eth');
   const [step, setStep] = useState<Step | null>(startAt ?? null);
@@ -183,11 +185,10 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
   };
   const view = step && !outside ? views[step] : undefined;
 
-  return (
-    <>
-      <AppFrame centred={outside}>
-      {outside ? (
-        <>
+  return {
+    start,
+    inProgress,
+    outside: outside ? <>
           {step === 'processing' ? (
             /* Figma: the spinner above the header, so the panel is put together from its parts */
             <section className="grg-modal grg-ip-processing" data-size="sm" data-height="auto" data-layout="desktop" aria-labelledby="processing-title">
@@ -211,18 +212,28 @@ export function WithdrawEthFlow({ startAt, startAmount = '' }: WithdrawFlowProps
               description="This operation may take some time. We will let you know as soon as the transaction is completed."
               footerType="fill" primaryAction={{ label: 'Okay', onClick: finish }} secondaryAction={{ label: 'Transaction details', onClick: finish }} />
           )}
-        </>
-      ) : (
-        <AssetsPage assets={assets} inProgress={inProgress} onAction={{ withdraw: row => start(row.id) }} />
-      )}
-      </AppFrame>
-
+    </> : null,
+    modal: <>
       {/* One modal for the whole withdrawal (Modal: "steps in one modal", never a modal from a modal): the title,
           the back arrow, the content and the action change with the step */}
       <Modal appendTo="self" visible={!!view} onHide={close} title={view?.title ?? ''} description={view?.description}
         onBack={view?.back} footerType="fill" primaryAction={view?.action}>
         {view?.content}
       </Modal>
+    </>,
+  };
+}
+
+/** The Assets page and the withdrawal, as one working flow. */
+export function WithdrawEthFlow(props: WithdrawFlowProps) {
+  const [assets, setAssets] = useState(startAssets);
+  const withdraw = useWithdrawEth({ ...props, assets, setAssets });
+  return (
+    <>
+      <AppFrame centred={!!withdraw.outside}>
+        {withdraw.outside ?? <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ withdraw: row => withdraw.start(row.id) }} />}
+      </AppFrame>
+      {withdraw.modal}
     </>
   );
 }
