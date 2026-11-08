@@ -249,6 +249,8 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
   const [currency, setCurrency] = useState('all');
   const [status, setStatus] = useState('all');
   const [period, setPeriod] = useState<Range | null>(null);
+  const filtered = query.trim() !== '' || currency !== 'all' || status !== 'all' || period !== null;
+  const reset = () => { setQuery(''); setCurrency('all'); setStatus('all'); setPeriod(null); };
   const rows = invoices.filter(invoice => invoice.id.includes(query.trim().toLowerCase())
     && (currency === 'all' || invoice.currency === currency)
     && (status === 'all' || invoice.status === status)
@@ -270,6 +272,7 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
   ];
   return (
     <div className="grg-ip-surface__section">
+      {/* The search, the filters right after it (more may come), and Reset once anything is chosen */}
       <div className="grg-ip-toolbar">
         <Search size="sm" aria-label="Search invoices by ID" placeholder="Invoice ID" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
         <div className="grg-ip-toolbar__filters">
@@ -278,6 +281,7 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
           <CompactSelect size="sm" aria-label="Status" value={status} onChange={setStatus}
             options={[{ value: 'all', label: 'All statuses' }, ...STATUSES.map(s => ({ value: s, label: s }))]} />
           <PeriodPicker value={period} onChange={setPeriod} />
+          {filtered && <Button variant="text" size="sm" leftIcon="reload" onClick={reset}>Reset</Button>}
         </div>
       </div>
       <Table aria-label="Invoices" rows={rows} rowKey={row => row.id} rowLabel={row => `Invoice ${row.id.slice(0, 8)}, ${amountText(row.amount, row.currency)}`}
@@ -286,7 +290,7 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
           <Button variant="text" size="xs" tone="destructive" onClick={event => { event.stopPropagation(); onDeactivate(row); }}
             aria-label={`Deactivate invoice ${row.id.slice(0, 8)}`}>Deactivate</Button>
         ) : null}
-        empty={{ title: 'No invoices match these filters', subtitle: 'Try another asset, status or period' }} />
+        empty={{ title: 'No invoices match these filters', subtitle: 'Try another asset, status or period, or reset them' }} />
     </div>
   );
 }

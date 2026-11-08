@@ -277,7 +277,7 @@
 .grg-ip-page__actions { display: flex; flex-wrap: wrap; gap: var(--space-300); }
 .grg-ip-page__back { display: flex; align-items: center; gap: var(--space-200); }
 /* The toolbar over the table: the search on the left, the three selects on the right; they wrap on narrow screens */
-.grg-ip-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-300); }
+.grg-ip-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-300); }
 .grg-ip-toolbar__search { flex: 0 1 calc(var(--space-5000) + var(--space-2000)); min-width: 0; }
 .grg-ip-toolbar__filters { display: flex; flex-wrap: wrap; gap: var(--space-300); }
 

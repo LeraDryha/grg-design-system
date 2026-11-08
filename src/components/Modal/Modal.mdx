@@ -119,7 +119,7 @@ What the code adds to the Figma file, and why:
 - **Closing.** Close and Escape always; a click on the overlay only with `dismissableMask`, so nothing typed is lost by a stray click. The page behind doesn't scroll.
 - **Never wider than the modal.** Every part of the content takes its width and can shrink to it, and nothing scrolls sideways. After every story a check fails if anything in a modal's content is wider than the modal.
 - **Lists open over the modal.** A Select (or Compact Select, Inline Select, Filter) in the content opens its list over the modal instead of inside its scrolling content, where it was cut off; *Select user* shows it.
-- **Overlay.** Figma draws #0A0A0A at 60% with an 8px blur, not as a variable; it is the `--overlay` token here (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)), the same in both themes.
+- **Overlay.** Figma draws #0A0A0A at 60% with an 8px blur, not as a variable; here it is the `--overlay` token, lighter (40%) and without blur, so the page under a modal or a drawer stays readable (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)). The same in both themes.
 - **Back arrow on Center aligned only**, as in Figma: in the other types it would sit on the status icon.
 - **Not draggable, not resizable**, though PrimeReact Dialog is by default.
 - **Motion.** A short fade and scale; the sheet slides up. Reduced motion keeps the fade only.

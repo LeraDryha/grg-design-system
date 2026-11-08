@@ -51,8 +51,10 @@ export const Walkthrough: Story = {
       await userEvent.click(canvasElement.querySelector<HTMLElement>('[aria-label="Status"]')!.closest('.grg-compact-select')!.querySelector<HTMLElement>('.grg-compact-select__box')!);
       await userEvent.click(await canvas.findByRole('option', { name: 'Paid' }));
       await waitFor(() => expect(rows().length).toBeLessThan(all));
-      await userEvent.click(canvasElement.querySelector<HTMLElement>('[aria-label="Status"]')!.closest('.grg-compact-select')!.querySelector<HTMLElement>('.grg-compact-select__box')!);
-      await userEvent.click(await canvas.findByRole('option', { name: 'All statuses' }));
+      // Reset brings every filter back and goes away
+      await userEvent.click(canvas.getByRole('button', { name: 'Reset' }));
+      await waitFor(() => expect(rows().length).toBe(all));
+      await expect(canvas.queryByRole('button', { name: 'Reset' })).toBeNull();
     });
     await step('The period opens the whole Date Picker, as in Figma', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Period: All period' }));

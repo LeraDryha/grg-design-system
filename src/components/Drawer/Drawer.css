@@ -1,8 +1,7 @@
 /* Drawer: Modal's parts at the right edge, the whole height of the screen. Every value is a token. */
 
 /* The overlay holds the drawer against its right edge, no space around */
-/* A lighter overlay without blur: the page under the drawer stays readable (Modal's is darker and blurred) */
-.grg-modal-mask.grg-drawer-mask { justify-content: flex-end; align-items: stretch; padding: 0; background: var(--overlay-drawer); backdrop-filter: none; }
+.grg-modal-mask.grg-drawer-mask { justify-content: flex-end; align-items: stretch; padding: 0; }
 .grg-modal-dialog.grg-drawer-dialog { height: 100%; max-height: 100%; }
 
 /* Opening and closing: it slides in from the right edge */

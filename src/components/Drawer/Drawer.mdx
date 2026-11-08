@@ -71,7 +71,6 @@ A wider drawer (md) for the details of one row: read only, with Close.
 - **PrimeReact Dialog, not Sidebar.** Sidebar keeps no focus inside and isn't announced as a dialog. Dialog at the right edge gives the drawer what Modal has: focus kept inside, Escape (which first closes a list open in it), focus back to the control that opened it, the page behind not scrolling.
 - **One task, one drawer.** Steps and results change inside the drawer; nothing opens a Modal or a second drawer over it. Lists inside it open over it.
 - **Full height, the content scrolls.** The header and the footer stay; a line sets the footer apart from the scrolling content.
-- **A lighter overlay, no blur** (`--overlay-drawer`, 40% instead of Modal's 60% with blur): a drawer belongs to the page under it, so the page stays readable.
 - **Square corners and 24px at the sides**, tighter than Modal's 32px; Close sits on the title's line; the footer has 16px above and below its buttons. It slides in from the right.
 - **The content is never wider than the drawer** (the check after every story covers drawers too).
 
