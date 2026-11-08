@@ -202,6 +202,9 @@ export function Modal({
   const titleId = `${id}-title`;
   const descriptionId = panel.description ? `${id}-description` : undefined;
   const rootRef = useRef<HTMLDivElement | null>(null);
+  // A modal kept inside its parent ('self', the docs) and already open when the page loads is an example to look at:
+  // it doesn't take focus, so the page opens at its top. Opened later by people, it takes focus as usual.
+  const shownWithPage = useRef(visible && appendTo === 'self');
 
   /* Escape closes the modal, wherever focus is (even after a click on the overlay), unless a list or menu inside it is
      open: then it closes only that. PrimeReact's own Escape closed both. */
@@ -217,6 +220,7 @@ export function Modal({
   }, [visible, onHide]);
 
   function focusFirst() {
+    if (shownWithPage.current) { shownWithPage.current = false; return; }
     const root = rootRef.current;
     if (!root || root.contains(document.activeElement)) return;
     const field = root.querySelector<HTMLElement>(`.grg-modal__content :is(${FIELD})`);

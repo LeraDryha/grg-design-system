@@ -98,6 +98,12 @@ export const OverTheLimit: Story = {
   name: 'Over the limit',
   args: { startAt: 'amount', startAmount: '40000' },
   parameters: { a11y: { test: 'todo' } },
+  // Shown open with the page: no field takes focus, so the docs page isn't scrolled down to it
+  play: async ({ canvasElement }) => {
+    await waitFor(() => expect(canvasElement.querySelector('.grg-modal')).toBeInTheDocument());
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await expect(canvasElement.querySelector('.grg-modal')!.contains(document.activeElement)).toBe(false);
+  },
 };
 
 /** The last step: the payment is with the provider. */
