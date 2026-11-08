@@ -253,14 +253,15 @@ export function Modal({
         mask: { className: 'grg-modal-mask', 'data-sheet': mobile || undefined } as never,
         root: { className: 'grg-modal-dialog' },
       }}
-      content={({ hide }) => (
+      content={() => (
         <ModalPanel
           {...panel}
           className={className}
           mobile={mobile}
           titleId={titleId}
           descriptionId={descriptionId}
-          onClose={closable ? (() => hide(undefined as never)) : undefined}
+          // Straight to onHide: PrimeReact's hide() needs the click event and threw without one (after closing)
+          onClose={closable ? onHide : undefined}
           ref={rootRef}
         />
       )}
