@@ -1,4 +1,4 @@
-import { useId, useRef, useState, type ReactNode } from 'react';
+import { useId, useRef, useState, type Dispatch, type ReactNode, type SetStateAction } from 'react';
 import { AccordionKeyValue } from '../../components/Accordion/AccordionKeyValue';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Button } from '../../components/Button/Button';
@@ -84,9 +84,10 @@ export type ConvertFlowProps = {
   outcome?: 'success' | 'failure';
 };
 
-/** The Assets page and the conversion, as one working flow. */
-export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcome = 'success' }: ConvertFlowProps) {
-  const [assets, setAssets] = useState(startAssets);
+/** The conversion itself, for any page of the app: `start` opens it on an asset, `modal` is its one modal */
+export function useConvert({ assets, setAssets, startAt, startAmount = '', startTo = 'eur', outcome = 'success' }: ConvertFlowProps & {
+  assets: Asset[]; setAssets: Dispatch<SetStateAction<Asset[]>>;
+}) {
   const [step, setStep] = useState<Step | null>(startAt ?? null);
   const [fromId, setFromId] = useState('eth');
   const [toId, setToId] = useState(startTo);
@@ -213,12 +214,9 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
   };
   const view = step ? views[step] : undefined;
 
-  return (
-    <>
-      <AppFrame>
-        <AssetsPage assets={assets} inProgress={688621.79} onAction={{ convert: start }} />
-      </AppFrame>
-
+  return {
+    start,
+    modal: <>
       {/* One modal for the whole conversion (Modal: "steps in one modal", never a modal from a modal): the header,
           the content and the action change with the step */}
       <Modal appendTo="self" visible={!!view} onHide={close} title={view?.title ?? ''} description={view?.description}
@@ -226,6 +224,20 @@ export function ConvertFlow({ startAt, startAmount = '', startTo = 'eur', outcom
         footerType="fill" primaryAction={view?.action}>
         {view?.content}
       </Modal>
+    </>,
+  };
+}
+
+/** The Assets page and the conversion, as one working flow. */
+export function ConvertFlow(props: ConvertFlowProps) {
+  const [assets, setAssets] = useState(startAssets);
+  const convert = useConvert({ ...props, assets, setAssets });
+  return (
+    <>
+      <AppFrame>
+        <AssetsPage assets={assets} inProgress={688621.79} onAction={{ convert: convert.start }} />
+      </AppFrame>
+      {convert.modal}
     </>
   );
 }

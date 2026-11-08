@@ -1,5 +1,6 @@
 import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { Button } from '../../components/Button/Button';
+import { FeatureCard } from '../../components/FeatureCard/FeatureCard';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { CoinIcon, type CoinName } from '../../components/CoinIcon/CoinIcon';
 import { Icon } from '../../components/Icon/Icon';
@@ -7,6 +8,7 @@ import { SidebarHeaderCard, SidebarNavigation, type SidebarItem, type SidebarSec
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { Tooltip } from '../../components/Tooltip/Tooltip';
 import { TopbarNavigation } from '../../components/TopbarNavigation/TopbarNavigation';
+import { useScreen } from './screen';
 import '../in-product.css';
 
 /* The app around every In product flow of the GRX Pay redesign (XDynk3v9BU5pStqaulzutE): the bar, the sidebar and
@@ -36,7 +38,9 @@ const pages: SidebarSection[] = [{
     { id: 'payouts', label: 'Mass payouts', href: '#payouts', icon: 'money-profit' },
     { id: 'transactions', label: 'Transactions', href: '#transactions', icon: 'reload' },
     { id: 'members', label: 'Members', href: '#members', icon: 'users' },
+    { id: 'referrals', label: 'Referrals', href: '#referrals', icon: 'gift' },
     { id: 'settings', label: 'Settings', href: '#settings', icon: 'setting' },
+    { id: 'reporting', label: 'Reporting', href: '#reporting', icon: 'file-fill-in' },
   ],
 }];
 
@@ -47,18 +51,36 @@ const logo = (
   </a>
 );
 
-/** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow */
-export function AppFrame({ centred = false, children }: { centred?: boolean; children: ReactNode }) {
-  const navigate = (_item: SidebarItem, event?: MouseEvent<HTMLElement>) => event?.preventDefault();
+/** The pages built in this demo; the others are in the menu but lead nowhere */
+export type AppPage = 'dashboard' | 'assets';
+const built: string[] = ['dashboard', 'assets'];
+
+/** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow.
+ *  `onNavigate` moves between the built pages; without it the menu stays on `current` */
+export function AppFrame({ centred = false, current = 'assets', onNavigate, children }: {
+  centred?: boolean; current?: AppPage; onNavigate?: (page: AppPage) => void; children: ReactNode;
+}) {
+  const [support, setSupport] = useState(true);
+  const screenInfo = useScreen();
+  // A docs page shows a narrow window into the app: the sidebar collapsed; full screen follows the screen's width
+  const docs = !!screenInfo?.docs;
+  const navigate = (item: SidebarItem, event?: MouseEvent<HTMLElement>) => {
+    event?.preventDefault();
+    if (onNavigate && built.includes(item.id)) onNavigate(item.id as AppPage);
+  };
   return (
     <div className="grg-ip-app">
-      <TopbarNavigation type="company" layout="desktop" logo={logo}
+      <TopbarNavigation type="company" layout={docs ? 'desktop' : 'auto'} logo={logo} sections={pages} current={current} onNavigate={navigate}
         company={<SidebarHeaderCard name="My Company" />}
+        // Figma: the language and the theme in the bar. Only English in this demo; the theme switches Storybook's
+        language={{ value: 'en', options: [{ value: 'en', label: 'EN' }], onChange: () => undefined, label: 'Language' }}
+        theme={screenInfo?.theme} onThemeChange={screenInfo?.setTheme}
         actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', inBar: true, onClick: () => undefined }, { id: 'help', label: 'Help', icon: 'help', href: '#help' }]}
         account={{ name: 'Guadalupe Schimmel', email: 'g.schimmel@company.test' }} />
       {centred ? <main className="grg-ip-centre">{children}</main> : (
         <div className="grg-ip-body">
-          <SidebarNavigation layout="expanded" sections={pages} current="assets" onNavigate={navigate} />
+          <SidebarNavigation layout={docs ? 'collapsed' : 'auto'} sections={pages} current={current} onNavigate={navigate}
+            featureCard={support ? <FeatureCard type="support" title="Need support?" description="Write to us any time: we answer within an hour." href="#support" onClose={() => setSupport(false)} /> : undefined} />
           {children}
         </div>
       )}
