@@ -180,6 +180,9 @@
 .grg-ip-card__title { margin: 0; font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
 .grg-ip-card__value { margin: var(--space-200) 0 0; font: var(--typo-title-md-semibold); color: var(--text-strong-1000); white-space: nowrap; }
 .grg-ip-card__tools { display: flex; flex: none; align-items: center; gap: var(--space-300); }
+/* The period select, and under it (Custom period) the calendar, lined up with its right edge */
+.grg-ip-period { position: relative; display: inline-flex; }
+.grg-ip-period__calendar { position: absolute; z-index: 20; top: calc(100% + var(--space-200)); right: 0; }
 .grg-ip-card__empty { display: grid; flex: 1; place-items: center; margin: 0; padding: var(--space-800) 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
 
 /* The balance: the shares in one bar, then the four largest assets */

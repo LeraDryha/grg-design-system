@@ -1,9 +1,10 @@
-import { useMemo, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Badge, type BadgeColor } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { CoinIcon } from '../../components/CoinIcon/CoinIcon';
-import { Filter } from '../../components/Filter/Filter';
+import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
+import { DatePickerPanel } from '../../components/DatePicker/DatePickerPanel';
 import { sameDay, type DatePreset } from '../../components/DatePicker/presets';
 import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
 import { FeaturedIcon, type FeaturedIconType } from '../../components/FeaturedIcon/FeaturedIcon';
@@ -26,7 +27,7 @@ import documentsImage from '../../assets/in-product/documents-warning.png';
 
 /* ---- Successful payments ---- */
 
-/** The periods of the Figma Time period list, as Date Picker presets; any other period is picked in the calendar */
+/** The periods of the Figma Time period list; any other period is picked in the calendar (Custom period) */
 const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 const shift = (d: Date, days: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + days);
 export const PERIODS: DatePreset[] = [
@@ -162,8 +163,27 @@ const SUMMARY: { key: 'paid' | 'pending' | 'timeout'; label: string; type: Featu
 
 function PaymentsCard({ empty }: { empty: boolean }) {
   const [period, setPeriod] = useState<Range>(thisMonth);
+  const [calendar, setCalendar] = useState(false);
   const list = useMemo(() => points(period, empty), [period, empty]);
   const name = periodName(period);
+  const preset = PERIODS.find(p => p.label === name);
+  // The list: the Figma periods; a custom period once chosen (its dates, checked); then Custom period… for the calendar
+  const options = [
+    ...PERIODS.map(p => ({ value: p.id, label: p.label })),
+    ...(preset ? [] : [{ value: 'chosen', label: name }]),
+    { value: 'custom', label: 'Custom period…', icon: 'calendar' as const },
+  ];
+  const tools = useRef<HTMLDivElement>(null);
+  // The calendar closes with Escape or a click outside, and gives focus back to the select
+  useEffect(() => {
+    if (!calendar) return;
+    const close = () => { setCalendar(false); tools.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); };
+    const onKey = (event: globalThis.KeyboardEvent) => { if (event.key === 'Escape') close(); };
+    const onPointer = (event: PointerEvent) => { if (!tools.current?.contains(event.target as Node)) setCalendar(false); };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onPointer);
+    return () => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onPointer); };
+  }, [calendar]);
   const paid = list.reduce((sum, point) => sum + (point.amount ?? 0), 0);
   // Test data: what is still waiting and what timed out are small shares of the paid sum
   const totals = { paid, pending: empty ? 0 : +(paid * 0.04).toFixed(2), timeout: empty ? 0 : +(paid * 0.02).toFixed(2) };
@@ -174,10 +194,22 @@ function PaymentsCard({ empty }: { empty: boolean }) {
           <h2 id="payments-title" className="grg-ip-card__title">Successful payments</h2>
           <p className="grg-ip-card__value">{money(paid)} EUR</p>
         </div>
-        <div className="grg-ip-card__tools">
-          {/* The system's period picker: the Figma periods as presets, or any period in the calendar. Clearing it goes back to This month */}
-          <Filter type="date" size="sm" label="Period" presets={PERIODS} value={period}
-            onChange={value => setPeriod(Array.isArray(value) && value[0] instanceof Date ? [value[0], (value[1] as Date | null) ?? value[0]] : thisMonth())} />
+        <div ref={tools} className="grg-ip-card__tools">
+          <span className="grg-ip-period">
+            <CompactSelect size="sm" aria-label="Period" options={options} value={preset?.id ?? 'chosen'}
+              onChange={value => {
+                if (value === 'custom') setCalendar(true);
+                else { const next = PERIODS.find(p => p.id === value)?.range(new Date()); if (next) setPeriod(next as Range); }
+              }} />
+            {/* Custom period: the system's calendar, two months with Reset / Apply, under the select */}
+            {calendar && (
+              <div className="grg-ip-period__calendar" role="dialog" aria-label="Choose a period">
+                <DatePickerPanel selectionMode="range" double value={period}
+                  onChange={value => { if (Array.isArray(value) && value[0]) setPeriod([value[0], value[1] ?? value[0]]); }}
+                  onApply={() => { setCalendar(false); tools.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); }} />
+              </div>
+            )}
+          </span>
           {/* No payments page in this demo: View all stays, as in Figma, without a destination */}
           <Link size="sm" color="black">View all</Link>
         </div>

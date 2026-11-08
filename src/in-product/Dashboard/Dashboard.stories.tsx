@@ -52,12 +52,16 @@ export const Walkthrough: Story = {
     });
     await step('A period changes the chart', async () => {
       await expect(canvas.getByRole('group', { name: 'Successful payments, This month' })).toBeInTheDocument();
-      await userEvent.click(canvas.getByRole('button', { name: /^Period\s*:\s*This month/ }));
-      const calendar = within(await canvas.findByRole('dialog', { name: 'Choose a period: Period' }));
-      await userEvent.click(calendar.getByRole('option', { name: 'This week' }));
-      await userEvent.click(calendar.getByRole('button', { name: 'Apply' }));
+      const select = () => canvasElement.querySelector<HTMLElement>('.grg-ip-card--payments .grg-compact-select__box')!;
+      await userEvent.click(select());
+      await userEvent.click(await canvas.findByRole('option', { name: 'This week' }));
       await expect(await canvas.findByRole('group', { name: 'Successful payments, This week' })).toBeInTheDocument();
-      await expect(canvas.getByRole('button', { name: /^Period\s*:\s*This week/ })).toBeInTheDocument();
+      // Custom period… opens the calendar under the select; Escape closes it
+      await userEvent.click(select());
+      await userEvent.click(await canvas.findByRole('option', { name: 'Custom period…' }));
+      await expect(await canvas.findByRole('dialog', { name: 'Choose a period' })).toBeInTheDocument();
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(canvas.queryByRole('dialog', { name: 'Choose a period' })).toBeNull());
     });
     await step('The arrow keys move through the points', async () => {
       const now = canvasElement.querySelector<HTMLButtonElement>('.grg-ip-chart__point[tabindex="0"]')!;

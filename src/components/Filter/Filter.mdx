@@ -100,7 +100,6 @@ Filters sit side by side in the sm size, with the text Button **Reset** at the e
 
 What the code adds to the Figma file, and why:
 
-- **The calendar stays on screen.** It opens to the right of the filter, or to the left near the right edge of the screen (a filter at the end of a toolbar or a card).
 - **Applied at once, except dates.** As in Jira, Linear and GitHub, every choice updates the table right away and the list stays open for more. A period needs two clicks (start and end), so the date filter applies on Apply. A product that loads data from a server can wait a moment after the last tick and send one request.
 - **Search depends on the data, not the count.** Lists that come from data and grow (merchants, counterparties, currencies) turn search on with `searchable`; short fixed lists (status, type) don't need it. Without the prop, search comes with more than 10 options, as in Select.
 - **A clear button you can reach.** PrimeReact's own clear icon sits inside the field and can't be reached with the keyboard. Here it is the Action Button next to the filter: visually inside the same frame, a separate Tab stop in code.

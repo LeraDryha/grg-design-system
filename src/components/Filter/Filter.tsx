@@ -134,14 +134,6 @@ export function Filter({
   }, [type, open]);
 
   const withSearch = searchable ?? options.length >= SEARCH_FROM;
-  // The calendar opens to the right of the filter; near the right edge of the screen it opens to the left instead
-  const overlayRef = useRef<HTMLDivElement>(null);
-  useLayoutEffect(() => {
-    const overlay = overlayRef.current;
-    if (!overlay) return;
-    overlay.removeAttribute('data-align');
-    if (overlay.getBoundingClientRect().right > document.documentElement.clientWidth) overlay.setAttribute('data-align', 'end');
-  });
   const multiHeader = useMultiListHeader({ options, values: asArray(value), onValues: set, withSearch, selectAllLabel });
   const badgeSize = size === 'sm' ? 'xs' : 'sm';
 
@@ -303,7 +295,7 @@ export function Filter({
             {applied === 'none' && <span className="grg-filter__chevron" aria-hidden="true"><Icon name="calendar-01" size={20} /></span>}
           </PrimeButton>
           {open && (
-            <div ref={overlayRef} className="grg-filter__overlay" id={`${id}-calendar`} role="dialog" aria-label={`Choose a period: ${label}`}>
+            <div className="grg-filter__overlay" id={`${id}-calendar`} role="dialog" aria-label={`Choose a period: ${label}`}>
               <DatePickerPanel
                 selectionMode="range"
                 double
