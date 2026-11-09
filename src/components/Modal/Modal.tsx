@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef, useState, type ReactNode, type Ref } from 'react';
+import { useEffect, useId, useRef, useState, type CSSProperties, type ReactNode, type Ref } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { ActionButton } from '../ActionButton/ActionButton';
 import { Button } from '../Button/Button';
@@ -50,20 +50,26 @@ export type ModalHeaderProps = {
   mobile?: boolean;
   titleId?: string;
   descriptionId?: string;
+  /** Drawer only: what the item is, under the title (the kind, the amount, the status), kept in view while the content scrolls */
+  lead?: ReactNode;
+  /** Drawer only: a colour token behind the header, the colour of the item it shows */
+  tint?: string;
 };
 
 /** Figma "Modal header": status icon, title, description, back and close. */
 export function ModalHeader({
   title, description, align = 'center', status, statusIcon, onBack, backLabel = 'Back', onClose, closeLabel = 'Close',
-  mobile = false, titleId, descriptionId,
+  mobile = false, titleId, descriptionId, lead, tint,
 }: ModalHeaderProps) {
   return (
-    <div className="grg-modal-header" data-align={align} data-size={mobile ? 'mobile' : 'desktop'}>
+    <div className="grg-modal-header" data-align={align} data-size={mobile ? 'mobile' : 'desktop'} data-tinted={tint ? '' : undefined}
+      style={tint ? { '--modal-header-tint': tint } as CSSProperties : undefined}>
       {status && <FeaturedIcon type={status} icon={statusIcon} />}
       <div className="grg-modal-header__text">
         <h2 id={titleId} className="grg-modal-header__title">{title}</h2>
         {description && <p id={descriptionId} className="grg-modal-header__description">{description}</p>}
       </div>
+      {lead && <div className="grg-modal-header__lead">{lead}</div>}
       {onBack && align === 'center' && (
         <ActionButton icon="arrow-left" className="grg-modal-header__back" aria-label={backLabel} onClick={onBack} />
       )}
@@ -194,7 +200,7 @@ const FIELD = 'input:not([type="hidden"]):not(:disabled), select:not(:disabled),
  * PrimeReact focuses its own close button; this one focuses the first field, or else the safe action:
  * Cancel when the main action is destructive, the main action otherwise.
  */
-export function Modal(props: ModalProps) {
+export function Modal(props: Omit<ModalProps, 'lead' | 'tint'>) {
   return <ModalFrame {...props} />;
 }
 

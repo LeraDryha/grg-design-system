@@ -10,6 +10,8 @@ import { Input } from '../Input/Input';
 import { Select } from '../Select/Select';
 import { SwitchLabel } from '../SwitchLabel/SwitchLabel';
 import { TextArea } from '../TextArea/TextArea';
+import { Badge } from '../Badge/Badge';
+import { TransactionIcon } from '../TransactionIcon/TransactionIcon';
 import { sampleCoins } from '../Select/samples';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 
@@ -145,7 +147,8 @@ export const CreateAPaymentLink: Story = {
   },
 };
 
-/** Details of one item next to its list: wider, read only, closed with Close or Escape. */
+/** Details of one item next to its list: wider, read only, closed with Close or Escape. The header names the item
+ *  on its colour (`tint`, `lead`). */
 export const DetailsAtAGlance: Story = {
   name: 'Details at a glance',
   render: function DetailsAtAGlance() {
@@ -155,6 +158,17 @@ export const DetailsAtAGlance: Story = {
       <>
         <Button variant="secondary" onClick={() => setVisible(true)}>Invoice a389befa</Button>
         <Drawer appendTo="self" visible={visible} onHide={close} size="md" title="Invoice details"
+          tint="var(--add-indigo-50)"
+          lead={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-400)' }}>
+              <TransactionIcon type="payment" size="lg" />
+              <span style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
+                <span style={{ font: 'var(--typo-body-md-regular)', color: 'var(--text-subtle-700)' }}>Invoice amount</span>
+                <span style={{ font: 'var(--typo-title-lg-semibold)', color: 'var(--text-strong-1000)' }}>1,000.00 USDC</span>
+              </span>
+              <Badge label="Paid" variant="stroke" size="sm" color="success" leftIcon={null} rightIcon={null} />
+            </div>
+          }
           secondaryAction={{ label: 'Close', onClick: close }}>
           <AccordionKeyValue rows={[
             { key: 'Invoice amount', value: '1,000.00 USDC' },
@@ -172,6 +186,7 @@ export const DetailsAtAGlance: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Invoice a389befa' }));
     const drawer = await canvas.findByRole('dialog', { name: 'Invoice details' });
     await expect(drawer).toHaveAttribute('aria-modal', 'true');
+    await expect(drawer.querySelector('.grg-modal-header')).toHaveAttribute('data-tinted');
     // Nothing to fill in: focus starts on the first button, inside the drawer
     await waitFor(() => expect(drawer.contains(document.activeElement)).toBe(true));
     await userEvent.click(drawer.querySelector<HTMLElement>('[data-modal-action="secondary"]')!);

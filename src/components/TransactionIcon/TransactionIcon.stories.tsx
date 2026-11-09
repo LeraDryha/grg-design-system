@@ -6,7 +6,7 @@ import { baseIconNames } from '../../icons/names';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/transaction-icon/transaction-icon-component.png';
 
-const types: TransactionType[] = ['deposit', 'withdrawal', 'payment', 'exchange'];
+const types: TransactionType[] = ['deposit', 'withdrawal', 'payment', 'exchange', 'cashback'];
 
 const meta = {
   title: 'Foundations/Icons/Transaction icons',
@@ -19,7 +19,7 @@ const meta = {
     // The Design tab: the Figma frames as images (the company's file isn't linked publicly)
     design: [{ name: 'Component', type: 'image', url: componentFrame }],
   },
-  args: { type: 'deposit', size: 'md' },
+  args: { type: 'deposit', size: 'md', failed: false },
   argTypes: {
     type: { control: 'inline-radio', options: types },
     size: { control: 'inline-radio', options: ['sm', 'md', 'lg'] },
@@ -40,6 +40,7 @@ const rows: [TransactionType, string, string][] = [
   ['deposit', 'Deposit', '9.9990001 ETH'],
   ['withdrawal', 'Withdrawal', '1.0005 ETH'],
   ['exchange', 'Exchange', 'ETH → EUR'],
+  ['cashback', 'Referral cashback', '12.40 EUR'],
 ];
 
 /** In a list of transactions the type is written next to the icon, so the icon is decorative. */
@@ -61,18 +62,33 @@ export const InATransactionList: Story = {
   },
 };
 
+/** A transaction that didn't go through: red with a cross, whatever its kind; the Badge next to it says why. */
+export const Failed: Story = {
+  render: (args: TransactionIconProps) => (
+    <ul style={{ display: 'grid', gap: 'var(--space-300)', width: 'calc(var(--space-5000) + var(--space-2000))', margin: 0, padding: 0, listStyle: 'none', font: 'var(--typo-body-sm-regular)' }}>
+      {([['withdrawal', 'Withdrawal', false], ['withdrawal', 'Withdrawal', true]] as const).map(([type, label, failed]) => (
+        <li key={String(failed)} style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-300)' }}>
+          <TransactionIcon {...args} type={type} failed={failed} size="sm" />
+          <span style={{ flex: 1, color: 'var(--text-strong-1000)' }}>{label}</span>
+          <span style={{ color: 'var(--text-subtle-700)' }}>{failed ? 'Cancelled' : 'Completed'}</span>
+        </li>
+      ))}
+    </ul>
+  ),
+};
+
 /** A kind of transaction not in the list: any Base icon on any Additional colour. */
 export const AnotherKind: Story = {
   name: 'Another kind',
-  args: { icon: 'gift', color: 'pink', label: 'Referral reward', size: 'lg' },
+  args: { icon: 'card-arrow-up', color: 'cyan', label: 'Card payout', size: 'lg' },
   play: async ({ canvasElement }) => {
-    await expect(within(canvasElement).getByRole('img', { name: 'Referral reward' })).toBeInTheDocument();
+    await expect(within(canvasElement).getByRole('img', { name: 'Card payout' })).toBeInTheDocument();
   },
 };
 
 /* ---- Overview ---- */
 
-/** The four kinds, in the three Figma sizes. */
+/** The five kinds, in the three Figma sizes. */
 export const TypesAndSizes: Story = {
   name: 'Types and sizes',
   render: (args: TransactionIconProps) => (

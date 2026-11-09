@@ -63,7 +63,7 @@ One task, one drawer: the form, then its result in the same drawer, with the lin
 
 <Canvas of={DrawerStories.DetailsAtAGlance} />
 
-A wider drawer (md) for the details of one row: read only, with Close.
+A wider drawer (md) for the details of one row: read only, with Close. The header names the item on its colour: `lead` under the title (icon, amount, status) and `tint` behind it.
 
 ## Design decisions
 
@@ -72,6 +72,7 @@ A wider drawer (md) for the details of one row: read only, with Close.
 - **One task, one drawer.** Steps and results change inside the drawer; nothing opens a Modal or a second drawer over it. Lists inside it open over it.
 - **Full height, the content scrolls.** The header and the footer stay; a line sets the footer apart from the scrolling content.
 - **Square corners and 24px at the sides**, tighter than Modal's 32px; Close sits on the title's line; the footer has 16px above and below its buttons. It slides in from the right.
+- **The item's colour in the header** (`tint`, `lead`). Details of a transaction or an invoice show what the item is under the title, its icon, amount and status, on its colour (`--add-<colour>-50` for a kind, `--<status>-muted-50` for a status). The header stays while the content scrolls, so the item stays named. A drawer with a form keeps a white header.
 - **The content is never wider than the drawer** (the check after every story covers drawers too).
 
 ## Sizes

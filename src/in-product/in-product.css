@@ -332,3 +332,30 @@
 .grg-ip-period__button { margin: 0; }
 .grg-ip-figures { display: flex; flex-direction: column; gap: var(--space-300); }
 .grg-ip-figures__pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-300); }
+
+/* The lead of an item's details: its icon, kind, amount and status (the drawer's tinted header, or a box on a page) */
+.grg-ip-lead { display: flex; align-items: center; gap: var(--space-400); min-width: 0; }
+.grg-ip-lead__text { display: flex; flex: 1; flex-direction: column; gap: var(--space-050); min-width: 0; }
+.grg-ip-lead__kind { font: var(--typo-body-md-regular); color: var(--text-subtle-700); }
+.grg-ip-lead__amount { overflow-wrap: anywhere; font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-lead__sub { font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
+.grg-ip-lead__badge { align-self: flex-start; }
+.grg-ip-lead-box { padding: var(--space-600); border-radius: var(--radius-lg-12); background: var(--ip-tint); }
+
+/* A value with its copy button, at the end of a key-value row */
+.grg-ip-copy--end { justify-content: flex-end; }
+.grg-ip-copy__text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The comment: its key and the edit button, then the text, or the field with Cancel and Save */
+.grg-ip-comment { display: flex; flex-direction: column; gap: var(--space-200); }
+.grg-ip-comment__head { display: flex; align-items: center; gap: var(--space-100); font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-ip-comment__text { margin: 0; overflow-wrap: anywhere; white-space: pre-line; font: var(--typo-body-md-regular); color: var(--text-strong-1000); }
+/* The field's label sits above it and takes no space (Form Field): room for it under the rows above */
+.grg-ip-comment > .grg-field:first-child { margin-top: var(--space-500); }
+.grg-ip-comment__actions { display: flex; justify-content: flex-end; gap: var(--space-200); }
+
+/* Transaction details as a page: one card, as wide as Figma's */
+.grg-ip-transaction-page { display: flex; flex-direction: column; gap: var(--space-300); max-width: calc(var(--space-5000) * 3 + var(--space-2000)); }
+.grg-ip-waiting__image { width: var(--space-4000); height: auto; }
+/* Details cards: their parts 12px apart, as in the drawer */
+.grg-ip-card--details, .grg-ip-transaction-page > .grg-ip-card { gap: var(--space-300); }

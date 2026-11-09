@@ -1,0 +1,56 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as TransactionsStories from './Transactions.stories';
+
+<Meta of={TransactionsStories} />
+
+# Transactions
+
+Every movement of a business's money in one list: invoice payments, deposits, withdrawals, exchanges and referral cashback. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work.
+
+<a href="iframe.html?viewMode=story&id=in-product-transactions--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={TransactionsStories.LiveFlow} />
+
+**Try it:** filter by type, status, currency or period, then **Reset**; search by an ID or a blockchain ID. Open a row for its details, add or edit the comment on a withdrawal, and **Open as a page**.
+
+## What the flow has to get right
+
+- **Tell the kinds apart at a glance.** Each kind has its colour and icon, the same in the list, the filters and the details; a transaction that didn't go through turns red with a cross.
+- **Find one transaction fast.** Search by its ID or its blockchain ID, or narrow the list by type, status, currency and period.
+- **Everything about it in one place.** The details show what matters for its kind: the invoice it paid, the network and the addresses, the card, the exchange rate, the fee.
+- **Notes for the team.** A withdrawal takes a comment, so others know why it was made or cancelled.
+
+## Decided while building it
+
+- **Details in a drawer, and as a page.** Figma opened every transaction as a page. A drawer keeps the list in view (as on Invoices); *Open as a page* shows the Figma page.
+- **The colour moved into the drawer's header.** Figma put a coloured band above the details card. Here the transaction's colour fills the drawer's header, behind the title, the icon, the amount and the status (Drawer `tint` and `lead`); on the page, the same block is a tinted box. Invoices take the colour of their status the same way.
+- **One state in the icon: failed.** A cancelled or arrested transaction is red with a cross, as in Figma; every other status stays in the Badge, so the colour keeps meaning the kind (Transaction Icon `failed`).
+- **Referral cashback got its own kind**: purple, with a gift (it was in the Figma type list without an icon).
+- **The comment is written in place.** Figma opened a modal for it; a modal over a drawer breaks the rule, so the pencil opens the field right there, with *Cancel* and *Save*.
+- **Filters right after the search, then Reset**, as on Invoices. The period opens the whole Date Picker with its presets.
+- **Refunded is in the status list.** The Figma table shows it; the Figma list didn't have it.
+- **Convert is gone** from the details: it had no clear job there.
+- **An exchange shows both currencies** (“0.03856091 ETH → EUR”), in the list and in the details, where Figma's header showed a different amount.
+
+## Before verification
+
+<Canvas of={TransactionsStories.NotVerified} />
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {TransactionsStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Drawer](?path=/docs/components-drawer--docs) · [Table](?path=/docs/components-table--docs) · [Search](?path=/docs/components-search--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Date Picker](?path=/docs/components-date-picker--docs) · [Transaction icons](?path=/docs/foundations-icons-transaction-icons--docs) · [Badge](?path=/docs/components-badge--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Text Area](?path=/docs/components-text-area--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+
+The lead block of the details lives with the In product pages.

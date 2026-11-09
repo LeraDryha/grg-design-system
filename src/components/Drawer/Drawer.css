@@ -29,6 +29,14 @@
 }
 .grg-drawer:has(> .grg-modal__content) > .grg-modal-header[data-size='desktop'] { padding-bottom: var(--space-600); }
 .grg-drawer > .grg-modal-header .grg-modal-header__close { top: var(--space-600); right: var(--modal-side); }
+/* Tinted: the item's colour behind the whole header, the lead under the title; the content starts 24px under it */
+.grg-drawer > .grg-modal-header[data-tinted] { background: var(--modal-header-tint); }
+.grg-drawer > .grg-modal-header[data-tinted][data-size='mobile'] { padding-bottom: var(--space-600); }
+.grg-drawer > .grg-modal-header[data-tinted] + .grg-modal__content { padding-top: var(--space-600); }
+.grg-modal-header__lead { align-self: stretch; min-width: 0; }
+/* The lead runs to the content's edge, under Close (the title keeps clear of Close; the lead sits below it) */
+.grg-drawer > .grg-modal-header[data-size='desktop'] > .grg-modal-header__lead { margin-right: calc(-1 * (var(--space-600) + var(--space-300))); }
+
 /* The content scrolls between the header and the footer, 24px above the footer's line */
 .grg-drawer > .grg-modal__content { padding-bottom: var(--space-600); }
 /* Footer: a line above, 16px above and below the buttons, 24px at the sides */

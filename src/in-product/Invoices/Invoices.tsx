@@ -7,8 +7,8 @@ import { Button } from '../../components/Button/Button';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { Drawer } from '../../components/Drawer/Drawer';
-import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
-import { Icon } from '../../components/Icon/Icon';
+import { FeaturedIcon, type FeaturedIconType } from '../../components/FeaturedIcon/FeaturedIcon';
+import { Icon, type IconName } from '../../components/Icon/Icon';
 import { Input } from '../../components/Input/Input';
 import { Modal } from '../../components/Modal/Modal';
 import { Search } from '../../components/Search/Search';
@@ -18,6 +18,7 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame, money, startAssets } from '../shared/AssetsApp';
+import { Lead, LeadBox } from '../shared/lead';
 import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
 
 /* GRX Pay redesign, sections Invoices tables (1676:55326) and Creating invoice (1676:58206): the list with its
@@ -27,6 +28,11 @@ import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period'
 export type Status = 'Created' | 'Payment awaiting' | 'Paid' | 'Timeout' | 'Deactivated';
 const STATUSES: Status[] = ['Created', 'Payment awaiting', 'Paid', 'Timeout', 'Deactivated'];
 const STATUS_COLOR: Record<Status, BadgeColor> = { Created: 'warning', 'Payment awaiting': 'warning', Paid: 'success', Timeout: 'error', Deactivated: 'error' };
+/** The colour of an invoice is its status's: waiting, paid, closed (a Featured Icon, the status's soft colour behind) */
+const STATUS_LEAD: Record<Status, { type: FeaturedIconType; icon: IconName }> = {
+  Created: { type: 'warning', icon: 'clock-circle-filled' }, 'Payment awaiting': { type: 'warning', icon: 'clock-circle-filled' },
+  Paid: { type: 'success', icon: 'check-circle-filled' }, Timeout: { type: 'error', icon: 'remove-circle-filled' }, Deactivated: { type: 'error', icon: 'remove-circle-filled' },
+};
 /** A link can be deactivated while nobody has paid it */
 const active = (status: Status) => status === 'Created' || status === 'Payment awaiting';
 
@@ -201,11 +207,21 @@ function Summary({ invoice }: { invoice: Invoice }) {
   );
 }
 
-function Details({ invoice }: { invoice: Invoice }) {
+/** The invoice's lead: its status's colour and icon, the amount and the status */
+const leadOf = (invoice: Invoice) => ({
+  tint: `var(--${STATUS_LEAD[invoice.status].type}-muted-50)`,
+  icon: <FeaturedIcon type={STATUS_LEAD[invoice.status].type} icon={STATUS_LEAD[invoice.status].icon} filled={false} />,
+  kind: 'Invoice amount',
+  amount: amountText(invoice.amount, invoice.currency),
+  badge: <Badge label={invoice.status} variant="stroke" size="sm" color={STATUS_COLOR[invoice.status]} leftIcon={null} rightIcon={null} />,
+});
+
+/** The details; the amount and the status lead them in the drawer's header, or (`lead`) in a box on the page */
+function Details({ invoice, lead = false }: { invoice: Invoice; lead?: boolean }) {
   const paid = invoice.status === 'Paid';
   return (
     <>
-      <Summary invoice={invoice} />
+      {lead && <LeadBox {...leadOf(invoice)} />}
       {/* The two figures and the link: one group, 12px apart each way, wherever it sits (drawer or page) */}
       <div className="grg-ip-figures">
       <div className="grg-ip-figures__pair">
@@ -342,6 +358,7 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
 
   const valid = !!draft.currency && Number(draft.amount) > 0;
   const current = view && view.kind !== 'create' ? find(view.id) : null;
+  const lead = view?.kind === 'details' && current ? leadOf(current) : null;
   const drawer = !view ? { title: '' } : view.kind === 'create' ? {
     title: 'Create invoice', size: 'sm' as const,
     content: <CreateForm draft={draft} setDraft={setDraft} />,
@@ -392,7 +409,7 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
         {active(pageInvoice.status) && <Button variant="outline" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>}
       </div>
       <div className="grg-ip-invoice-page">
-        <section className="grg-ip-card" aria-label="Invoice"><Details invoice={pageInvoice} /></section>
+        <section className="grg-ip-card grg-ip-card--details" aria-label="Invoice"><Details invoice={pageInvoice} lead /></section>
         <section className="grg-ip-card" aria-labelledby="operations-title">
           <h2 id="operations-title" className="grg-ip-card__title">Operations</h2>
           <Operations invoice={pageInvoice} />
@@ -421,6 +438,7 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
     overlays: <>
       {/* One drawer for the whole task (Drawer: one task, one drawer): creating, its result, the details, deactivating */}
       <Drawer appendTo="self" visible={!!view} onHide={close} title={drawer.title} description={'description' in drawer ? drawer.description : undefined}
+        tint={lead?.tint} lead={lead ? <Lead icon={lead.icon} kind={lead.kind} amount={lead.amount} badge={lead.badge} /> : undefined}
         size={'size' in drawer ? drawer.size : 'sm'} destructive={'destructive' in drawer ? drawer.destructive : false}
         footerType={'extra' in drawer && drawer.extra ? 'button' : 'basic'} footerExtra={'extra' in drawer ? drawer.extra : undefined}
         primaryAction={'primary' in drawer ? drawer.primary : undefined} secondaryAction={'secondary' in drawer ? drawer.secondary : undefined}>

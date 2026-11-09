@@ -18,7 +18,7 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
 The kind of a transaction: a white icon on a colour tile, in lists, tables, tabs and notifications.
 
 <Canvas of={TIStories.Playground} />
-<Controls of={TIStories.Playground} include={['type', 'size', 'icon', 'color']} />
+<Controls of={TIStories.Playground} include={['type', 'size', 'failed', 'icon', 'color']} />
 
 ```tsx
 <TransactionIcon type="withdrawal" size="sm" />
@@ -29,7 +29,7 @@ The kind of a transaction: a white icon on a colour tile, in lists, tables, tabs
 <DoDont
   dos={['Rows of transactions, notifications about them, and tabs that filter them']}
   donts={[
-    'Statuses (paid, failed): use Status Badge',
+    'Statuses (completed, processing, refunded): use Badge next to it. The one exception is `failed`',
     'The subject of a modal or an empty state: use Featured Icon',
   ]}
 />
@@ -42,6 +42,12 @@ The kind of a transaction: a white icon on a colour tile, in lists, tables, tabs
 
 The type is written next to it, so the icon is decorative.
 
+### Failed
+
+<Canvas of={TIStories.Failed} />
+
+A transaction that didn't go through (cancelled, arrested) turns red with a cross, whatever its kind, as in Figma. It is the only state the icon shows; the Badge next to it names the status.
+
 ### Another kind
 
 <Canvas of={TIStories.AnotherKind} />
@@ -50,7 +56,9 @@ Any Base icon on any Additional colour; `label` names it when nothing next to it
 
 ## Design decisions
 
-- **Four kinds** from the Figma examples: Deposit (blue, arrow down), Withdrawal (orange, arrow up), Payment (indigo, bill), Exchange (green). Figma sets the colour and the icon on each instance.
+- **Five kinds** from the Figma examples: Deposit (blue, arrow down), Withdrawal (orange, arrow up), Payment (indigo, bill), Exchange (green), Referral cashback (purple, gift). Figma sets the colour and the icon on each instance.
+- **Failed is the one state**: red with a cross, from the Figma transaction list and details. Other statuses stay in the Badge, so the colour keeps meaning the kind.
+- **Its colour tints the details.** `transactionColor()` gives the colour name, so a transaction's details can take the same colour (`--add-<colour>-50`) behind their header.
 - **Decorative by default**; `label` makes it an image with a name.
 
 ## Types and sizes
@@ -71,7 +79,8 @@ The Figma frame is in the **Design** tab of every story.
 <PropsMapping
   rows={[
     { figma: 'Size', prop: 'size', values: 'sm-20, md-24, lg-48 → sm, md, lg' },
-    { figma: 'Fill (per instance)', prop: 'type · color', values: 'deposit, withdrawal, payment, exchange · Additional colour' },
+    { figma: 'Fill (per instance)', prop: 'type · color', values: 'deposit, withdrawal, payment, exchange, cashback · Additional colour' },
+    { figma: 'Red fill with a cross (per instance)', prop: 'failed', values: 'true, false' },
     { figma: 'Icon (per instance)', prop: 'icon', values: 'Base icon name' },
   ]}
 />
