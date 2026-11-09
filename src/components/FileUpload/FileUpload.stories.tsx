@@ -5,6 +5,11 @@ import { FileUpload, type FileUploadProps, type UploadFile } from './FileUpload'
 import { FileCard } from './FileCard';
 import { FileIcon, fileFormats } from '../FileIcon/FileIcon';
 import { Button } from '../Button/Button';
+import { Avatar } from '../Avatar/Avatar';
+import { DropdownMenu } from '../DropdownMenu/DropdownMenu';
+import { Modal } from '../Modal/Modal';
+import { ImageCrop, cropImage, defaultCrop, type Crop } from './ImageCrop';
+import testLogo from '../../assets/test/company-logo.svg';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/file-upload/file-upload-component.png';
 import cardsFrame from '../../assets/design/file-upload/file-upload-cards.png';
@@ -13,7 +18,14 @@ import guidelinesFrame from '../../assets/design/file-upload/file-upload-guideli
 
 const MB = 1024 * 1024;
 const IMAGES_HINT = 'JPEG, JPG, PNG, SVG formats, up to 5 MB.';
-const width: Decorator = Story => <div style={{ width: 'min(400px, 100%)' }}><Story /></div>;
+// A story with its own stage (a modal flow) sets parameters.stage and skips the narrow column
+const width: Decorator = (Story, { parameters }) => (parameters.stage ? <Story /> : <div style={{ width: 'min(400px, 100%)' }}><Story /></div>);
+/** A screen-sized stage: the modal opens inside it, as on the Modal page */
+const stage: Decorator = Story => (
+  <div style={{ position: 'relative', transform: 'translateZ(0)', overflow: 'hidden', width: '100%', height: 760, display: 'grid', placeItems: 'center', background: 'var(--surface-canvas)' }}>
+    <Story />
+  </div>
+);
 
 /**
  * Stands in for the product's upload: each chosen file climbs to 100% and completes. A file with "fail" in its name
@@ -131,11 +143,16 @@ export const AFileTooBig: Story = {
   args: { accept: 'image/png,image/jpeg,.svg', maxFileSize: 5 * MB },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const zone = canvasElement.querySelector<HTMLElement>('.grg-file-upload__zone')!;
     await userEvent.upload(input(canvasElement), fileOf('team-photo.png', 6 * MB, 'image/png'));
-    await expect(await canvas.findByText('Larger than 5 MB')).toBeVisible();
-    await expect(canvas.queryByRole('button', { name: /try again/i })).toBeNull();
-    await userEvent.click(canvas.getByRole('button', { name: 'Remove team-photo.png' }));
-    await expect(canvas.queryByText('Larger than 5 MB')).toBeNull();
+    // No card: the zone turns red and the reason is under it, read with the zone
+    await expect(await canvas.findByText('team-photo.png is larger than 5 MB.')).toBeVisible();
+    await expect(zone).toHaveAttribute('aria-invalid', 'true');
+    await expect(canvas.queryByRole('listitem')).toBeNull();
+    // A file that fits clears the error
+    await userEvent.upload(input(canvasElement), fileOf('team-photo-small.png', 2 * MB, 'image/png'));
+    await waitFor(() => expect(canvas.queryByText('team-photo.png is larger than 5 MB.')).toBeNull());
+    await expect(zone).not.toHaveAttribute('aria-invalid');
   },
 };
 
@@ -184,6 +201,97 @@ export const UploadALogo: Story = {
   },
 };
 
+/** The logo flow from Figma (Upload photo flow): the avatar opens Upload logo; the chosen picture is cropped in the
+ *  same modal (back returns to the upload), then shows in the avatar. With a logo, the avatar opens Edit logo and
+ *  Remove; Edit logo crops the original again. */
+export const CropALogo: Story = {
+  name: 'Crop a logo',
+  parameters: { stage: true, layout: 'fullscreen' },
+  decorators: [stage],
+  render: function CropALogo() {
+    const [logo, setLogo] = useState<{ src: string; original: string; crop: Crop } | null>(null);
+    const [step, setStep] = useState<null | 'upload' | 'crop' | 'edit'>(null);
+    const [draft, setDraft] = useState<{ src: string; crop: Crop } | null>(null);
+    const close = () => setStep(null);
+    const save = async () => {
+      if (!draft) return;
+      setLogo({ src: await cropImage(draft.src, draft.crop), original: draft.src, crop: draft.crop });
+      close();
+    };
+    const avatar = <Avatar size={120} shape="company" src={logo?.src} status="edit" decorative />;
+    const description = 'Your uploaded logo will be shown on the payment checkout';
+    return (
+      <>
+        {logo ? (
+          <DropdownMenu aria-label="Logo" width={160} items={[
+            { label: 'Edit logo', onSelect: () => { setDraft({ src: logo.original, crop: logo.crop }); setStep('edit'); } },
+            { label: 'Remove', onSelect: () => setLogo(null) },
+          ]} trigger={props => <button type="button" className="grg-avatar-button" aria-label="Logo" {...props}>{avatar}</button>} />
+        ) : (
+          <button type="button" className="grg-avatar-button" aria-label="Upload logo" onClick={() => setStep('upload')}>{avatar}</button>
+        )}
+        <Modal appendTo="self" visible={step !== null} onHide={close} title={step === 'edit' ? 'Edit logo' : 'Upload logo'} description={description}
+          onBack={step === 'crop' ? () => setStep('upload') : undefined}
+          footerType="basic"
+          primaryAction={step === 'upload' ? undefined : { label: 'Save', onClick: () => { void save(); } }}
+          secondaryAction={step === 'upload' ? undefined : { label: 'Cancel', onClick: close }}>
+          {step === 'upload' && (
+            <FileUpload accept="image/png,image/jpeg,.svg" maxFileSize={5 * MB} hint={IMAGES_HINT}
+              onSelect={([file]) => { setDraft({ src: URL.createObjectURL(file), crop: defaultCrop }); setStep('crop'); }} />
+          )}
+          {(step === 'crop' || step === 'edit') && draft && (
+            <ImageCrop src={draft.src} label="Logo position" value={draft.crop} onChange={crop => setDraft({ ...draft, crop })} />
+          )}
+        </Modal>
+      </>
+    );
+  },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const file = new File([await (await fetch(testLogo)).blob()], 'logo.svg', { type: 'image/svg+xml' });
+    await step('The avatar opens Upload logo; a picture goes on to the crop', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Upload logo' }));
+      const modal = await canvas.findByRole('dialog', { name: 'Upload logo' });
+      await userEvent.upload(input(modal), file);
+      await expect(await within(modal).findByRole('group', { name: 'Logo position' })).toBeInTheDocument();
+    });
+    await step('Zoom with + and the keys; the picture stays inside the window', async () => {
+      const modal = canvas.getByRole('dialog');
+      const zoom = within(modal).getByRole('slider', { name: 'Zoom' });
+      await userEvent.click(within(modal).getByRole('button', { name: 'More' }));
+      await expect(zoom).toHaveAttribute('aria-valuenow', '110');
+      within(modal).getByRole('group', { name: 'Logo position' }).focus();
+      await userEvent.keyboard('+');
+      await expect(zoom).toHaveAttribute('aria-valuenow', '120');
+      await userEvent.keyboard('{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}{ArrowLeft}');
+      const window = within(modal).getByRole('group', { name: 'Logo position' }).getBoundingClientRect();
+      const picture = modal.querySelector('.grg-image-crop__image')!.getBoundingClientRect();
+      await expect(picture.right).toBeGreaterThanOrEqual(window.right - 1);
+    });
+    await step('Back returns to the upload; Save puts the logo in the avatar', async () => {
+      const modal = canvas.getByRole('dialog');
+      await userEvent.click(within(modal).getByRole('button', { name: 'Back' }));
+      await userEvent.upload(input(await canvas.findByRole('dialog', { name: 'Upload logo' })), file);
+      await userEvent.click(await within(canvas.getByRole('dialog')).findByRole('button', { name: 'Save' }));
+      await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
+      await waitFor(() => expect(canvasElement.querySelector('.grg-avatar img')).toBeTruthy());
+    });
+    await step('With a logo: Edit logo crops the original again, Remove takes it away', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Logo' }));
+      // A pointer presses the row's text, once the menu has opened
+      await userEvent.click(within(await canvas.findByRole('menuitem', { name: 'Edit logo' })).getByText('Edit logo'));
+      const modal = await canvas.findByRole('dialog', { name: 'Edit logo' });
+      await expect(within(modal).queryByRole('button', { name: 'Back' })).toBeNull();
+      await userEvent.click(within(modal).getByRole('button', { name: 'Cancel' }));
+      await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
+      await userEvent.click(canvas.getByRole('button', { name: 'Logo' }));
+      // A pointer presses the row's text, once the menu has opened
+      await userEvent.click(within(await canvas.findByRole('menuitem', { name: 'Remove' })).getByText('Remove'));
+      await expect(await canvas.findByRole('button', { name: 'Upload logo' })).toBeInTheDocument();
+    });
+  },
+};
+
 /** Upload files, in a card with Cancel and Save, as in the Figma examples (the dialog itself comes with Modal). */
 export const UploadFilesInACard: Story = {
   name: 'Upload files in a card',
@@ -215,7 +323,7 @@ export const Unavailable: Story = {
 
 /* ---- Overview ---- */
 
-/** Uploading, Completed, Failed (an upload error, and a file that didn't pass the check). */
+/** Uploading, Completed, Failed (the upload failed: Try again). */
 export const FileCards: Story = {
   name: 'File cards',
   render: () => (
@@ -224,7 +332,6 @@ export const FileCards: Story = {
         { id: 'a', name: 'my_cv.pdf', size: 120 * 1024, status: 'uploading', progress: 10 },
         { id: 'b', name: 'my_cv.pdf', size: 120 * 1024, status: 'completed' },
         { id: 'c', name: 'my_cv.pdf', size: 120 * 1024, status: 'failed', retryable: true },
-        { id: 'd', name: 'team-photo.png', size: 6 * MB, status: 'failed', error: 'Larger than 5 MB', retryable: false },
       ] as UploadFile[]).map(file => <FileCard key={file.id} file={file} onCancel={() => {}} onRemove={() => {}} onRetry={() => {}} />)}
     </ul>
   ),
