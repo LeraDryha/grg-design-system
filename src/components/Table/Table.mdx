@@ -77,6 +77,12 @@ When the columns don't fit, the table scrolls sideways. The checkboxes and the f
 
 <Canvas of={TableStories.RowPages} />
 
+### Expandable rows
+
+<Canvas of={TableStories.ExpandableRows} />
+
+More about a row, right under it (`expansion`): the row or its chevron opens it in place and closes it again; the chevron points down, then up. Several rows can be open at once.
+
 ### Sticky header
 
 <Canvas of={TableStories.StickyHeader} />
@@ -92,7 +98,7 @@ When the columns don't fit, the table scrolls sideways. The checkboxes and the f
 
 ## Design decisions
 
-- **Three kinds of rows.** A table to read has no row press and no chevron. When a row has details, the whole row opens them and a chevron ends the row (`onRowOpen`); when it has its own page, the row and the chevron are a link (`rowHref`). A single link inside a cell, such as an ID, is a Link.
+- **Four kinds of rows.** A table to read has no row press and no chevron. When a row has details, the whole row opens them and a chevron ends the row (`onRowOpen`); when it has its own page, the row and the chevron are a link (`rowHref`); when a little more belongs right under it, the row opens in place, with a chevron down or up (`expansion`, PrimeReact row expansion). A single link inside a cell, such as an ID, is a Link.
 - **Sorting** cycles ascending → descending → original order, one column at a time, as Carbon and Material do. The icon shows both arrows while unsorted, one while sorted; screen readers hear the order.
 - **Sticky columns.** The selection and the first column stick to the left, the actions (or the chevron) to the right, with the Figma table shadows while something hides under them.
 - **Scroll arrows** are for the mouse; the keyboard and screen readers scroll the table itself, which takes focus.
@@ -114,7 +120,7 @@ When the columns don't fit, the table scrolls sideways. The checkboxes and the f
 | ← / → on the table | Scrolls it sideways |
 
 - A real table: screen readers read the header of each cell, and `aria-sort` on the sorted column.
-- Checkboxes are named after the row (*Select Rudy Kozey*), the chevron too (*Open Rudy Kozey*).
+- Checkboxes are named after the row (*Select Rudy Kozey*), the chevron too (*Open Rudy Kozey*). An expanding row's chevron is *More about …*, says whether it is open (`aria-expanded`) and points to the part it opens.
 - Loading sets `aria-busy`.
 
 ## Figma and code
