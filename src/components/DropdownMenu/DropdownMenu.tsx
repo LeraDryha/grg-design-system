@@ -5,6 +5,7 @@ import type { MenuItem } from 'primereact/menuitem';
 import { Icon, type IconName } from '../Icon/Icon';
 import { Button } from '../Button/Button';
 import { DropdownMenuItem, type DropdownMenuItemContent } from './DropdownMenuItem';
+import { useListLayer } from '../Select/dropdown';
 import '../Select/Dropdown.css';
 import './DropdownMenu.css';
 
@@ -61,6 +62,9 @@ export type DropdownMenuProps = {
 export function DropdownMenu({ items, trigger, inline = false, 'aria-label': label, width, align = 'start', className = '' }: DropdownMenuProps) {
   const id = useId();
   const menu = useRef<TieredMenu>(null);
+  // Inside a modal the menu opens over it, as the lists do, so the modal's content never cuts it off
+  const host = useRef<HTMLDivElement>(null);
+  const layer = useListLayer(host);
   const [open, setOpen] = useState(false);
 
   /* PrimeReact activates a row (pointer, Enter, Space) through its action link: keep that link and only replace
@@ -150,8 +154,8 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
       model={toModel(items)}
       popup={!inline}
       appendTo="self"
-      onShow={() => setOpen(true)}
-      onHide={() => setOpen(false)}
+      onShow={() => { setOpen(true); layer.place(); }}
+      onHide={() => { setOpen(false); layer.release(); }}
       submenuIcon={null}
       style={style}
       // `content` (the row inside each item) exists at runtime but is missing from PrimeReact's types
@@ -171,7 +175,7 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
 
   if (inline) return <div className={`grg-dropdown-menu-host ${className}`}>{tiered}</div>;
   return (
-    <div className={`grg-dropdown-menu-host ${className}`} data-align={align}>
+    <div ref={host} className={`grg-dropdown-menu-host ${className}`} data-align={align}>
       {trigger?.({
         onClick: event => {
           const trigger = event.currentTarget;

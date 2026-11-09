@@ -40,6 +40,8 @@ export type DatePickerPanelProps = {
   applyLabel?: string;
   /** Name of the calendar for screen readers */
   'aria-label'?: string;
+  /** Inside a modal or a sheet (a step that is only the calendar): no surface, padding or shadow of its own */
+  flat?: boolean;
   className?: string;
 };
 
@@ -55,7 +57,7 @@ const today = () => new Date();
 export function DatePickerPanel({
   selectionMode = 'single', value = null, onChange, double = false, presets = false, buttons, view = 'date',
   locale, minDate, maxDate, disabledDates, yearRange, onApply, resetLabel = 'Reset', applyLabel = 'Apply',
-  'aria-label': label, className = '',
+  'aria-label': label, flat = false, className = '',
 }: DatePickerPanelProps) {
   const id = useId();
   const dl = dateLocale(locale);
@@ -112,7 +114,7 @@ export function DatePickerPanel({
   );
 
   return (
-    <div className={`grg-date-panel ${className}`} data-presets={presetList.length > 0 || undefined} role="group" aria-label={label ?? (range ? 'Choose a period' : 'Choose a date')}>
+    <div className={`grg-date-panel ${className}`} data-presets={presetList.length > 0 || undefined} data-flat={flat || undefined} role="group" aria-label={label ?? (range ? 'Choose a period' : 'Choose a date')}>
       {presetList.length > 0 && (
         <>
           <ListBox

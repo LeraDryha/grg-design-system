@@ -140,7 +140,12 @@ export const ClearAnOptionalChoice: Story = {
   args: { label: 'Preferred provider', options: sampleProviders, defaultValue: 'stripe', onChange: fn() },
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(canvas.getByRole('button', { name: 'Clear selection' }));
+    const clear = canvas.getByRole('button', { name: 'Clear selection' });
+    // At rest the × is out of sight; focusing the field (here: Tab) shows it
+    await expect(getComputedStyle(clear).opacity).toBe('0');
+    await userEvent.tab();
+    await waitFor(() => expect(getComputedStyle(clear).opacity).toBe('1'));
+    await userEvent.click(clear);
     await expect(args.onChange).toHaveBeenLastCalledWith(null);
     await expect(canvas.queryByRole('listbox')).toBeNull();
     await expect(canvas.queryByRole('button', { name: 'Clear selection' })).toBeNull();

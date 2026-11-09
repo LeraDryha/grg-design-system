@@ -422,3 +422,4 @@
 .grg-ip-rate__about strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
 .grg-ip-rate__actions { display: flex; flex: none; gap: var(--space-300); }
 .grg-ip-rate { max-width: calc(var(--space-5000) - var(--space-1000)); }
+

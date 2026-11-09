@@ -16,6 +16,8 @@
 }
 /* With presets the panel starts 16px from the left, as in Figma */
 .grg-date-panel[data-presets] { padding-left: var(--space-400); }
+/* Flat: the calendar is a modal's content (a step), centred, without a surface of its own */
+.grg-date-panel[data-flat] { display: flex; justify-content: center; width: 100%; padding: 0; border-radius: 0; background: transparent; box-shadow: none; }
 
 /* Presets (Figma period filter of Period range rows) */
 .grg-date-panel__presets { flex: none; }

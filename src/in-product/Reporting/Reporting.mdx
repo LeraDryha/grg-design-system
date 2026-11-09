@@ -1,0 +1,61 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as ReportingStories from './Reporting.stories';
+
+<Meta of={ReportingStories} />
+
+# Reporting
+
+Reports for the business's accountants: every transaction with its fees over a period, as CSV or PDF. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work: the files are made in your browser from the demo's test transactions.
+
+<a href="iframe.html?viewMode=story&id=in-product-reporting--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={ReportingStories.LiveFlow} />
+
+**Try it:** press **Generate report**, choose currencies, a time zone, a period and the format; the report is processed, then **Download** it. Delete one, and **Undo**.
+
+## What the page has to get right
+
+- **A report in a few choices.** Currencies (all by default), the time zone, the period and the format; nothing else to fill in.
+- **Every report kept.** The history shows who made each one and when, while it is processed and once it can be downloaded.
+
+## Decided while building it
+
+- **Version 3 of three.** Figma has the parameters on the page (version 1), beside the table (version 2), or in a modal behind *Generate report* (version 3). Version 3 is built: it has the same shape as the API key tab in Settings (a card with an icon, a line and the main action, the list under it), and the form is short, the kind the Modal rule is for. In version 1 the selects above the table looked like its filters, as on Invoices and Transactions, but they don't filter it; version 2's side panel is used nowhere else.
+- **No *Reset filters*** in the modal: it opens with the defaults each time.
+- **The currencies with their coins**, several at once, with a search (Select `multiple`, `type="coin"`); none chosen means all of them. The time zone has a search; the period is a list of the usual periods, *Last month* first, and *Custom period…* at the end turns the modal into its calendar step (*Custom period*, with Back): the calendar is the modal's content, so nothing covers the form or gets cut off, as the IP white list step in Settings. One month, since two don't fit the modal's width; *Apply* brings the form back, the dates a checked row of the list.
+- **Processing, then Generated.** A new report shows a Progress Circle for a few seconds, then *Download* and *Delete*.
+- **Real files.** *Download* saves a CSV or a one-page PDF with the demo's transactions in the period and currencies.
+- **Delete at once, with Undo**, as the logo in Settings: a report can always be made again.
+- **Statement Report is shown, not available yet:** it has no screens.
+- **The empty history** is the Table's own empty state.
+
+## No reports yet
+
+<Canvas of={ReportingStories.NoReports} />
+
+## Before verification
+
+<Canvas of={ReportingStories.NotVerified} />
+
+## Verification in progress
+
+<Canvas of={ReportingStories.Verifying} />
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {ReportingStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Tab Menu](?path=/docs/components-tab-menu--docs) · [Table](?path=/docs/components-table--docs) · [Modal](?path=/docs/components-modal--docs) · [Select](?path=/docs/components-select--docs) · [Radio](?path=/docs/components-radio--docs) · [Progress Circle](?path=/docs/components-progress-circle--docs) · [Badge](?path=/docs/components-badge--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+
+The 3D pictures live with the In product pages.

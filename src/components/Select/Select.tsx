@@ -162,6 +162,7 @@ export function Select({
         data-invalid={error ? true : undefined}
         data-disabled={disabled || undefined}
         data-focused={isFocused || undefined}
+        data-floating={floatingLabel || undefined}
         data-open={open || undefined}
       >
         {multiple ? (
