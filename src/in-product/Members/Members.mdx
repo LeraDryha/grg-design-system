@@ -1,0 +1,47 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as MembersStories from './Members.stories';
+
+<Meta of={MembersStories} />
+
+# Members
+
+A business's team and what each person may do: the owner invites people, gives each one a role, changes it and removes people who left. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work.
+
+<a href="iframe.html?viewMode=story&id=in-product-members--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={MembersStories.LiveFlow} />
+
+**Try it:** press **Add member**, type an address already in the team, then a new one, choose a role and **Send invite**; edit a member's role; delete a member; search by email.
+
+## What the flow has to get right
+
+- **The right access for each person.** Three roles, explained right where the role is chosen, so nobody gets more access than their job needs.
+- **Who is in and who is still invited.** A new member waits, in grey, until they accept the invitation.
+- **No accidental changes.** Saving waits for a new role, and deleting asks first and says what it means.
+
+## Decided while building it
+
+- **The result is a toast.** Figma closed with a *New member added successfully* modal; a result that needs no answer is a Toast (the Modal rule). The new member appears on top of the list, waiting.
+- **The roles note is an Alert** (Info, not filled) in its long-content form, as on the Alert page: a short title, *Roles*, and the Figma text as its description in one paragraph; the role names aren't bold, since the Alert's text is plain.
+- **The owner is you.** The first row is the account's owner, marked *You*, without edit and delete: Admins can't change ownership.
+- **Send invite waits** for a valid address and a role. An address already in the team says so at once; a mistyped one, once the field is left. Both fields are marked required, so Role has no clear button.
+- **Save changes waits** until the role is different. The email can't be edited, and its field says so.
+- **Waiting for confirmation**, not *Wait confirmation*, on a grey Badge; a waiting member's avatar is grey, as in Figma.
+- **A real team's size.** Six people instead of twelve, with invented addresses.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo; the company’s own address is replaced by an invented one.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {MembersStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Table](?path=/docs/components-table--docs) · [Avatar](?path=/docs/components-avatar--docs) · [Badge](?path=/docs/components-badge--docs) · [Search](?path=/docs/components-search--docs) · [Modal](?path=/docs/components-modal--docs) · [Input](?path=/docs/components-input--docs) · [Select](?path=/docs/components-select--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs)
