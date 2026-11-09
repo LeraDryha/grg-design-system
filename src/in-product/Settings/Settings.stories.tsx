@@ -18,6 +18,17 @@ import addContactFrame from '../../assets/design/in-product/settings/12-add-cont
 import requiredFrame from '../../assets/design/in-product/settings/13-contact-required.png';
 import editContactFrame from '../../assets/design/in-product/settings/14-edit-contact.png';
 import editedFrame from '../../assets/design/in-product/settings/15-contact-edited.png';
+import api0Frame from '../../assets/design/in-product/settings/16-api-empty.png';
+import api1Frame from '../../assets/design/in-product/settings/17-api-create.png';
+import api2Frame from '../../assets/design/in-product/settings/18-api-ip.png';
+import api3Frame from '../../assets/design/in-product/settings/19-api-ip-added.png';
+import api4Frame from '../../assets/design/in-product/settings/20-api-ip-field.png';
+import api5Frame from '../../assets/design/in-product/settings/21-api-create-filled.png';
+import api6Frame from '../../assets/design/in-product/settings/22-api-created.png';
+import api7Frame from '../../assets/design/in-product/settings/23-api-list.png';
+import api8Frame from '../../assets/design/in-product/settings/24-api-expanded.png';
+import api9Frame from '../../assets/design/in-product/settings/25-api-delete.png';
+import api10Frame from '../../assets/design/in-product/settings/26-api-delete-all.png';
 
 export const frames: [string, string][] = [
   [notVerifiedFrame, '1 · Not verified'], [verifyingFrame, '2 · Verification in progress'], [accountFrame, '3 · Account'],
@@ -25,11 +36,22 @@ export const frames: [string, string][] = [
   [ownerFrame, '8 · Change the owner'], [ownerSetFrame, '9 · New owner set'], [errorFrame, '10 · Something went wrong'],
   [noContactFrame, '11 · No contact yet'], [addContactFrame, '12 · Add contact'], [requiredFrame, '13 · Contact is required'],
   [editContactFrame, '14 · Edit contact'], [editedFrame, '15 · Contact edited'],
+  [api0Frame, '16 · No API keys'],
+  [api1Frame, '17 · Create API key'],
+  [api2Frame, '18 · IP white list'],
+  [api3Frame, '19 · Addresses added'],
+  [api4Frame, '20 · Addresses in the field'],
+  [api5Frame, '21 · Create API key, filled'],
+  [api6Frame, '22 · The key generated'],
+  [api7Frame, '23 · My API keys'],
+  [api8Frame, '24 · A key opened'],
+  [api9Frame, '25 · Delete API key'],
+  [api10Frame, '26 · Delete all API keys'],
 ];
 
 const meta = {
   title: 'In product/Settings',
-  // The Account tab is built; API key, Payment settings and Exchange rate come next
+  // Account and API key are built; Payment settings and Exchange rate come next
   tags: ['in-progress'],
   component: SettingsFlow,
   decorators: [screen],
@@ -43,7 +65,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The page to try: upload and crop a logo, change the owner, add or edit the contact for buyers. */
+/** The page to try: upload and crop a logo, change the owner, add or edit the contact for buyers; create, open and delete API keys. */
 export const LiveFlow: Story = { name: 'Live flow' };
 
 /** The checks behind the live flow: they run as tests, and in the Interactions tab. */
@@ -54,7 +76,7 @@ export const Walkthrough: Story = {
     const dialog = () => canvas.getByRole('dialog');
     await step('The other tabs are there, not available yet', async () => {
       await expect(canvas.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true');
-      await expect(canvas.getByRole('tab', { name: 'API key' })).toHaveAttribute('aria-disabled', 'true');
+      await expect(canvas.getByRole('tab', { name: 'Payment settings' })).toHaveAttribute('aria-disabled', 'true');
     });
     await step('Upload a logo, crop it, then remove it and undo', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Upload logo' }));
@@ -101,6 +123,53 @@ export const Walkthrough: Story = {
     });
   },
 };
+
+/** The API key tab: create a key with its permissions and IP white list, see it once, open it in the list, delete. */
+export const ApiKeysWalkthrough: Story = {
+  name: 'API keys walkthrough',
+  tags: ['!dev', '!autodocs'],
+  args: { tab: 'api' },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const dialog = () => canvas.getByRole('dialog');
+    await step('Create waits for a name and a permission', async () => {
+      await userEvent.click(canvas.getAllByRole('button', { name: 'Create API key' })[0]);
+      const create = within(dialog()).getByRole('button', { name: 'Create API key' });
+      await expect(create).toBeDisabled();
+      await userEvent.type(within(dialog()).getByRole('textbox', { name: /Key name/ }), 'Accounting');
+      await userEvent.click(within(dialog()).getByRole('checkbox', { name: /^Read/ }));
+      await expect(create).toBeEnabled();
+    });
+    await step('The IP white list is a step with Back; a wrong address is not added', async () => {
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Create IP white list' }));
+      const field = within(await canvas.findByRole('dialog', { name: 'IP white list' })).getByRole('textbox', { name: /IP address/ });
+      await userEvent.type(field, '224.876.103.42{Enter}');
+      await expect(await within(dialog()).findByText('224.876.103.42 isn’t a valid IP address')).toBeInTheDocument();
+      await userEvent.type(field, '201.195.88.21{Enter}');
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Save list' }));
+      await expect(await within(dialog()).findByText('201.195.88.21')).toBeInTheDocument();
+    });
+    await step('The keys show once, with a QR code', async () => {
+      await userEvent.click(within(dialog()).getByRole('button', { name: 'Create API key' }));
+      const created = await canvas.findByRole('dialog', { name: 'The key has been successfully generated' });
+      await expect(await within(created).findByRole('img', { name: /QR code/ })).toBeInTheDocument();
+      await expect(within(created).getByRole('button', { name: 'Copy private key' })).toBeInTheDocument();
+      await userEvent.click(within(created).getByRole('button', { name: 'Okay' }));
+    });
+    await step('In the list, a key opens under its row', async () => {
+      await userEvent.click(await canvas.findByRole('button', { name: 'More about Accounting' }));
+      await expect(canvas.getByRole('region', { name: 'More about Accounting' })).toHaveTextContent('201.195.88.21');
+    });
+    await step('Delete all asks first; then the empty state', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Delete all' }));
+      await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Delete all API keys?' })).getByRole('button', { name: 'Delete' }));
+      await expect(await canvas.findByRole('heading', { name: 'API Key' })).toBeInTheDocument();
+    });
+  },
+};
+
+/** No API keys yet: what they are for, and the button to create one. */
+export const NoApiKeys: Story = { name: 'No API keys yet', args: { tab: 'api', apiKeys: 'none' } };
 
 /** Saving the owner or the contact fails: the Figma warning toast. */
 export const WhenSavingFails: Story = {

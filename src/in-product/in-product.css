@@ -388,3 +388,17 @@
 .grg-ip-setting__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); white-space: pre-line; overflow-wrap: anywhere; }
 /* Change the owner: the list scrolls under the search when the team is big */
 .grg-ip-owner-list { max-height: calc(var(--space-5000) + var(--space-1000)); overflow-y: auto; }
+
+/* Settings - API key */
+.grg-ip-setting__head--center { align-items: center; }
+.grg-ip-keys__intro { display: flex; align-items: flex-start; gap: var(--space-400); min-width: 0; }
+.grg-ip-keys__group { margin: 0; font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
+/* The IP card in the modal: bg-weak-100 as in Figma (bg-muted-50 is the modal's own grey in the dark theme) */
+.grg-ip-keys__ips { display: flex; flex-direction: column; gap: var(--space-300); padding: var(--space-300) var(--space-300) var(--space-300) var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
+.grg-ip-keys__ips-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-300); font: var(--typo-body-md-regular); color: var(--text-strong-1000); }
+.grg-ip-keys__chips { display: flex; flex-wrap: wrap; gap: var(--space-200); }
+.grg-ip-key-more { display: grid; grid-template-columns: max-content 1fr; align-items: center; gap: var(--space-300) var(--space-400); margin: 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-key-more dd { display: flex; flex-wrap: wrap; gap: var(--space-200); margin: 0; }
+/* The QR code stays black on white in both themes, so a camera reads it */
+.grg-ip-qr { display: grid; justify-items: center; }
+.grg-ip-qr img { width: calc(var(--space-2000) + var(--space-500)); height: auto; border-radius: var(--radius-sm-8); }
