@@ -141,7 +141,7 @@ export const ClearAnOptionalChoice: Story = {
   play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     const clear = canvas.getByRole('button', { name: 'Clear selection' });
-    // At rest the × is out of sight; pointing at the field or focusing it (here: Tab) shows it
+    // At rest the × is out of sight; focusing the field (here: Tab) shows it
     await expect(getComputedStyle(clear).opacity).toBe('0');
     await userEvent.tab();
     await waitFor(() => expect(getComputedStyle(clear).opacity).toBe('1'));
