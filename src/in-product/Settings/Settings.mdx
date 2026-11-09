@@ -5,19 +5,20 @@ import * as SettingsStories from './Settings.stories';
 
 # Settings
 
-The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account tab is built; API key, Payment settings and Exchange rate come next.
+The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account and API key tabs are built; Payment settings and Exchange rate come next.
 
 <a href="iframe.html?viewMode=story&id=in-product-settings--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
 
 <Canvas of={SettingsStories.LiveFlow} />
 
-**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one.
+**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**.
 
 ## What the page has to get right
 
 - **The logo buyers see.** It shows on the payment checkout, so it is cropped round right here, and can be cropped again from the original.
 - **Ownership changes on purpose.** Only the owner hands it on, to a confirmed member, and confirms first: the previous owner becomes an Admin and can't take it back.
 - **A way for buyers to get help.** A link or any contact, up to 200 characters, shown on the payment receipt.
+- **Keys with only the access they need.** Each API key has its permissions and, if wanted, the IP addresses it works from; the secret is shown once, to copy or scan.
 
 ## Decided while building it
 
@@ -27,8 +28,22 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group with its title, *Members*, and a search above it. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
 - **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
 - **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
-- **All four tabs, three not available yet**, until their screens are built.
+- **All four tabs; Payment settings and Exchange rate not available yet**, until their screens are built.
+
+### API key
+
+- **The IP white list is the Multi-value Input** (Figma's second version): type an address, press Enter. Only IPv4 or IPv6 addresses are added; a wrong one (Figma's example has 224.876.103.42) says so under the field.
+- **The keys in read-only fields with Copy**, the Figma version that matches [Input](?path=/docs/components-input--docs) (*Copy a referral link*), and a real QR code of the private key, black on white in both themes. The result stays in the modal (not a toast): the keys must be saved. *Shown only once: save it now* under the private key.
+- **A key opens under its row** ([Table](?path=/docs/components-table--docs) `expansion`): its permissions and IP addresses. The chevron sits before the actions, as the Table's other chevrons do.
+- **Edit is the same modal** with the name, permissions and addresses; the keys themselves don't change.
+- **Create waits** for a name and at least one permission.
+- **Texts without the brand**: the Withdrawal description drops the product name and mass payouts.
+- **Icons**: a Featured Icon with a key in the header and on each key (Warning, filled, as Figma's orange tile); the 3D key on the empty tab.
 - **Test data**: our test logo, the owner from Members, an invented support link.
+
+## No API keys yet
+
+<Canvas of={SettingsStories.NoApiKeys} />
 
 ## When saving fails
 
@@ -44,7 +59,7 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 
 ## From Figma
 
-The frames this page was built from (also in the **Design** tab), without the bar and its logo; a car brand’s logo, an email and a phone number are blurred.
+The frames this page was built from (also in the **Design** tab), without the bar and its logo; a car brand’s logo, an email, a phone number and the product’s name are blurred.
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
   {SettingsStories.frames.map(([src, caption]) => (
@@ -57,6 +72,6 @@ The frames this page was built from (also in the **Design** tab), without the ba
 
 ## Built from
 
-[Tab Menu](?path=/docs/components-tab-menu--docs) · [Avatar](?path=/docs/components-avatar--docs) · [File Upload](?path=/docs/components-file-upload--docs) (Image Crop) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Search](?path=/docs/components-search--docs) · [Radio](?path=/docs/components-radio--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Badge](?path=/docs/components-badge--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+[Tab Menu](?path=/docs/components-tab-menu--docs) · [Table](?path=/docs/components-table--docs) · [Checkbox](?path=/docs/components-checkbox--docs) (Label) · [Multi-value Input](?path=/docs/components-multi-value-input--docs) · [Input](?path=/docs/components-input--docs) · [Chips](?path=/docs/components-chips--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Avatar](?path=/docs/components-avatar--docs) · [File Upload](?path=/docs/components-file-upload--docs) (Image Crop) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Search](?path=/docs/components-search--docs) · [Radio](?path=/docs/components-radio--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Badge](?path=/docs/components-badge--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
 
 The 3D pictures live with the In product pages.

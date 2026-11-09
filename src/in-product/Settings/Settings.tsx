@@ -15,6 +15,7 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame } from '../shared/AssetsApp';
 import { pad } from '../shared/period';
+import { useApiKeys } from './ApiKeys';
 import { YOU, startMembers, type Member, type MembersState } from '../Members/Members';
 import settingsImage from '../../assets/in-product/settings.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
@@ -28,6 +29,10 @@ export type SettingsProps = {
   account?: 'verified' | 'not-verified' | 'verifying';
   /** Saving the owner or the contact fails, to show the error toast */
   failing?: boolean;
+  /** The API key tab starts with a key, or with none (its empty state) */
+  apiKeys?: 'none' | 'some';
+  /** The tab open at first */
+  tab?: 'account' | 'api';
 };
 
 const MB = 1024 * 1024;
@@ -61,12 +66,14 @@ function Section({ title, text, action, children }: { title: string; text: strin
 
 /** The Settings page and its modal, for any app that holds it. An app that also shows Members passes one list to
  *  both, so a new owner shows there too */
-export function useSettings({ account = 'verified', failing = false }: SettingsProps = {}, shared?: MembersState) {
+export function useSettings({ account = 'verified', failing = false, apiKeys = 'some', tab: startTab = 'account' }: SettingsProps = {}, shared?: MembersState) {
   const own = useState(startMembers);
   const [members, setMembers] = shared ?? own;
   const [logo, setLogo] = useState<Logo | null>(null);
   const [contact, setContact] = useState('https://t.me/company_support');
   const [view, setView] = useState<View | null>(null);
+  const [tab, setTab] = useState<string>(startTab);
+  const api = useApiKeys({ start: apiKeys });
   const { toast } = useMessages();
   const close = () => setView(null);
   const owner = members.find(m => m.role === 'Owner');
@@ -170,13 +177,13 @@ export function useSettings({ account = 'verified', failing = false }: SettingsP
     <main className="grg-ip-page">
       <h1 className="grg-ip-page__title">Settings</h1>
       {/* The other tabs come with the next screens: shown, not available yet */}
-      <TabMenu aria-label="Settings" items={[
+      <TabMenu aria-label="Settings" value={tab} onChange={setTab} items={[
         { id: 'account', label: 'Account' },
-        { id: 'api', label: 'API key', disabled: true },
+        { id: 'api', label: 'API key' },
         { id: 'payments', label: 'Payment settings', disabled: true },
         { id: 'rates', label: 'Exchange rate', disabled: true },
       ]}>
-        {item => (item.id === 'account' ? <div className="grg-ip-tab-panel">{accountTab}</div> : null)}
+        {item => (item.id === 'account' ? <div className="grg-ip-tab-panel">{accountTab}</div> : item.id === 'api' ? <div className="grg-ip-tab-panel">{api.tab}</div> : null)}
       </TabMenu>
     </main>
   );
@@ -224,7 +231,7 @@ export function useSettings({ account = 'verified', failing = false }: SettingsP
 
   return {
     content,
-    overlays: <Modal {...(modal ?? { ...base, visible: false, title: '' })} />,
+    overlays: <><Modal {...(modal ?? { ...base, visible: false, title: '' })} />{api.overlays}</>,
   };
 }
 
