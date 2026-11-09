@@ -1,6 +1,7 @@
 /* File upload. Every value is a token; Figma: Upload area (324:4742) and File upload cards (660:16427). */
 
-.grg-file-upload { display: grid; gap: var(--space-300); width: 100%; }
+/* The error sits right under the zone, as a field's Hint text; the cards 12px under it */
+.grg-file-upload { display: grid; width: 100%; }
 
 /* ---- Drop zone (Figma Upload area) ---- */
 .grg-file-upload__content { position: relative; }
@@ -20,6 +21,8 @@
 .grg-file-upload__zone:where(:hover) { background: var(--bg-weak-100); }
 /* Active: a file is dragged over the zone */
 .grg-file-upload__content[data-dragging] .grg-file-upload__zone { background: var(--bg-weak-100); border-color: var(--stroke-stronger-900); }
+/* Error: a file that failed the check, or the product's error; the Hint text under the zone says why */
+.grg-file-upload__content[data-error] .grg-file-upload__zone { border-color: var(--error-base-600); }
 .grg-file-upload__zone:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 .grg-file-upload[data-disabled] .grg-file-upload__zone { background: var(--bg-weak-100); border-color: var(--stroke-disabled); color: var(--icon-disabled-400); cursor: default; }
 
@@ -30,7 +33,7 @@
 .grg-file-upload[data-disabled] :is(.grg-file-upload__cta, .grg-file-upload__action, .grg-file-upload__hint) { color: var(--text-disabled-400); }
 
 /* ---- File cards ---- */
-.grg-file-upload__files { display: grid; gap: var(--space-200); margin: 0; padding: 0; list-style: none; }
+.grg-file-upload__files { display: grid; gap: var(--space-200); margin: var(--space-300) 0 0; padding: 0; list-style: none; }
 .grg-file-card {
   box-sizing: border-box;
   display: flex;

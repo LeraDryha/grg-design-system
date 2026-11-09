@@ -1,14 +1,15 @@
 import { useEffect, useId, useRef, useState, type DragEvent, type KeyboardEvent } from 'react';
 import { FileUpload as PrimeFileUpload } from 'primereact/fileupload';
 import { Icon } from '../Icon/Icon';
+import { HintText } from '../FormField/FormField';
 import { FileCard, type UploadFile } from './FileCard';
 import { formatFileSize } from './fileSize';
 import './FileUpload.css';
 
 export type { UploadFile };
 
-/** A file that didn't pass the check (type or size); the component shows it as a Failed card with the reason */
-type Rejected = { id: string; name: string; size: number; reason: 'type' | 'size' };
+/** A file that didn't pass the check (type or size): the zone turns red and says why under it */
+type Rejected = { name: string; reason: 'type' | 'size' };
 
 /** Figma "Upload area" (324:4742) with "File upload cards" (660:16427). */
 export type FileUploadProps = {
@@ -22,7 +23,7 @@ export type FileUploadProps = {
   onRetry?: (id: string) => void;
   /** File types, as for a file input: "image/png,image/jpeg,.svg" or ".pdf,.docx" */
   accept?: string;
-  /** Largest file in bytes; bigger files show as Failed with the reason */
+  /** Largest file in bytes; a bigger file isn't added: the zone turns red and says why under it */
   maxFileSize?: number;
   /** Several files at once; otherwise a new file replaces the chosen one */
   multiple?: boolean;
@@ -32,6 +33,9 @@ export type FileUploadProps = {
   actionLabel?: string;
   /** The rest of the call to action */
   dropLabel?: string;
+  /** An error from the product (Figma Upload area in red with Hint text), such as the server refusing the picture.
+   *  A file that fails the type or size check shows its own error the same way */
+  error?: string;
   /** Name of the upload area for screen readers; the call to action and the hint by default */
   'aria-label'?: string;
   disabled?: boolean;
@@ -49,15 +53,13 @@ const accepts = (file: File, accept?: string) => {
     a.startsWith('.') ? name.endsWith(a) : a.endsWith('/*') ? type.startsWith(a.slice(0, -1)) : type === a);
 };
 
-let uid = 0;
-
 /**
  * A drop zone that is one big button, and a card for each file. PrimeReact FileUpload gives the file dialog,
  * the dropping and the size check; the product does the upload and reports each file's progress and status.
  */
 export function FileUpload({
   files = [], onSelect, onCancel, onRemove, onRetry, accept, maxFileSize, multiple = false,
-  hint, actionLabel = 'Click to upload', dropLabel = 'or drag and drop', 'aria-label': ariaLabel,
+  hint, actionLabel = 'Click to upload', dropLabel = 'or drag and drop', error, 'aria-label': ariaLabel,
   disabled = false, locale, className = '',
 }: FileUploadProps) {
   const id = useId();
@@ -65,7 +67,6 @@ export function FileUpload({
   const [rejected, setRejected] = useState<Rejected[]>([]);
   const [dragging, setDragging] = useState(false);
   const [announcement, setAnnouncement] = useState('');
-  const sizeTooBig = useRef<File[]>([]);
 
   // Screen readers hear when a file finishes or fails (the cards change silently otherwise)
   const previous = useRef(new Map<string, UploadFile['status']>());
@@ -91,19 +92,10 @@ export function FileUpload({
     }
   };
 
-  const reject = (list: Rejected[]) => {
-    if (!list.length) return;
-    setRejected(r => (multiple ? [...r, ...list] : list));
-    setAnnouncement(list.map(f => `${f.name}: ${f.reason === 'size' ? 'too large' : 'file type not supported'}`).join('. '));
-  };
-
-  const reasonText = (reason: Rejected['reason']) =>
-    reason === 'size' && maxFileSize ? `Larger than ${formatFileSize(maxFileSize, locale)}` : 'File type not supported';
-
-  const cards: UploadFile[] = [
-    ...files,
-    ...rejected.map(r => ({ id: r.id, name: r.name, size: r.size, status: 'failed' as const, error: reasonText(r.reason), retryable: false })),
-  ];
+  const reasonText = ({ name, reason }: Rejected) =>
+    reason === 'size' && maxFileSize ? `${name} is larger than ${formatFileSize(maxFileSize, locale)}` : `${name}: this file type isn’t supported`;
+  const message = error ?? (rejected.length ? `${rejected.map(reasonText).join('. ')}.` : undefined);
+  const errorId = `${id}-error`;
 
   return (
     <div className={`grg-file-upload ${className}`} data-disabled={disabled || undefined}>
@@ -114,22 +106,17 @@ export function FileUpload({
         customUpload
         multiple={multiple}
         accept={accept}
-        maxFileSize={maxFileSize}
         disabled={disabled}
-        onValidationFail={file => { sizeTooBig.current.push(file); }}
+        // The size is checked here, not by PrimeReact: its check shows a message of its own above the zone
         onSelect={e => {
-          const tooBig = sizeTooBig.current;
-          sizeTooBig.current = [];
-          const valid = e.files.filter(f => accepts(f, accept));
-          const wrongType = e.files.filter(f => !accepts(f, accept));
-          reject([
-            ...tooBig.map(f => ({ id: `rejected-${++uid}`, name: f.name, size: f.size, reason: 'size' as const })),
-            ...wrongType.map(f => ({ id: `rejected-${++uid}`, name: f.name, size: f.size, reason: 'type' as const })),
-          ]);
-          if (valid.length) {
-            if (!multiple) setRejected([]);
-            onSelect?.(multiple ? valid : valid.slice(0, 1));
-          }
+          const list = e.files.flatMap((f): Rejected[] => (
+            !accepts(f, accept) ? [{ name: f.name, reason: 'type' }]
+              : maxFileSize && f.size > maxFileSize ? [{ name: f.name, reason: 'size' }] : []));
+          const valid = e.files.filter(f => !list.some(r => r.name === f.name));
+          // Each choice starts afresh: the error says what happened to the files just chosen
+          setRejected(list);
+          if (list.length) setAnnouncement(list.map(reasonText).join('. '));
+          if (valid.length) onSelect?.(multiple ? valid : valid.slice(0, 1));
           // The product keeps the list of files; PrimeReact's own list stays empty, so the drop zone always shows
           upload.current?.clear();
         }}
@@ -142,6 +129,8 @@ export function FileUpload({
             aria-disabled={disabled || undefined}
             // Named by its own text (the call to action and the hint) unless a name is given
             aria-label={ariaLabel}
+            aria-invalid={message ? true : undefined}
+            aria-describedby={message ? errorId : undefined}
             onClick={choose}
             onKeyDown={onKeyDown}
           >
@@ -162,21 +151,23 @@ export function FileUpload({
             onDragLeave: (e: DragEvent<HTMLDivElement>) => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setDragging(false); },
             onDrop: () => setDragging(false),
             'data-dragging': dragging || undefined,
+            'data-error': message ? true : undefined,
           },
-          // PrimeReact's own messages are replaced by Failed cards with the reason
+          // PrimeReact's own messages are never shown: an error is the red zone and the Hint text under it
           message: { root: { hidden: true } },
           progressbar: { root: { hidden: true } },
         } as object}
       />
-      {cards.length > 0 && (
+      {message && <HintText id={errorId} state="error">{message}</HintText>}
+      {files.length > 0 && (
         <ul className="grg-file-upload__files" aria-label="Files">
-          {cards.map(file => (
+          {files.map(file => (
             <FileCard
               key={file.id}
               file={file}
               locale={locale}
               onCancel={() => onCancel?.(file.id)}
-              onRemove={() => (file.id.startsWith('rejected-') ? setRejected(r => r.filter(x => x.id !== file.id)) : onRemove?.(file.id))}
+              onRemove={() => onRemove?.(file.id)}
               onRetry={() => onRetry?.(file.id)}
             />
           ))}

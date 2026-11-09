@@ -70,7 +70,7 @@ With `multiple`, new files join the list. Each card has its own progress and its
 
 <Canvas of={FileUploadStories.AFileTooBig} />
 
-A file that doesn't pass the check (too big, or a type not in `accept`) shows as Failed with the reason: *Larger than 5 MB* or *File type not supported*. It was never sent, so there is no *Try again*; the bin removes it.
+A file that doesn't pass the check (too big, or a type not in `accept`) isn't added and gets no card: the zone turns red and the reason is under it, in the Hint text of the fields (*team-photo.png is larger than 5 MB.*). The next file chosen clears it. The product shows its own error the same way, with `error`.
 
 ### Try again
 
@@ -119,7 +119,8 @@ What the code adds to the Figma file, and why:
 
 - **The product uploads, the component shows.** PrimeReact can send files itself, but with one progress for all of them and no status per file. Here PrimeReact gives the file dialog, the dropping and the size check; the product sends the files and passes each one's status and progress back. Every product has its own server and rules, so this keeps the component usable everywhere.
 - **The whole zone is a button.** In PrimeReact only a separate Choose button opens the dialog and the drop area can't be reached with the keyboard. Here the zone itself is the button, for the mouse, the keyboard and dropping.
-- **Two kinds of failure.** A file that didn't pass the check shows the reason and no *Try again*; a failed upload shows *Try again*.
+- **Two kinds of failure.** A file that didn't pass the check never becomes a card: the zone turns red with the reason under it, as a field shows its error. A failed upload keeps its card, with *Try again*.
+- **PrimeReact's message is never shown.** PrimeReact checks the size itself and puts a grey message above the zone; here the size is checked by the component, and only its red error shows.
 - **File format icons.** The Figma *File format icon* set: fifteen formats in their colours, with a dark-theme sheet. Formats the set doesn't have (jpg, png, svg…) get the same sheet with a neutral label and their extension.
 - **Sizes in the locale's numbers.** *1.2 MB* in English, *1,2 MB* in Ukrainian.
 - **Focus you can see.** The zone shows the system blue ring with the keyboard.
@@ -131,7 +132,7 @@ What the code adds to the Figma file, and why:
 
 <Canvas of={FileUploadStories.FileCards} />
 
-**Uploading:** the progress bar and the percentage, and × to cancel. **Completed:** a green check and a bin. **Failed:** a red border and a bin; *Try again* for a failed upload, the reason for a file that didn't pass the check.
+**Uploading:** the progress bar and the percentage, and × to cancel. **Completed:** a green check and a bin. **Failed:** a red border, *Try again* and a bin.
 The card has 16px padding, 16px corners and a 40px format icon.
 
 <Canvas of={FileUploadStories.FileFormatIcons} />
@@ -159,11 +160,11 @@ The Figma frames (Upload area, File upload cards, File format icons and the guid
 
 <PropsMapping
   rows={[
-    { figma: 'Upload area: State', prop: '(behaviour) · disabled', values: 'Hovered follows the pointer; Active while a file is dragged over; Disabled → disabled' },
+    { figma: 'Upload area: State', prop: '(behaviour) · disabled · error', values: 'Hovered follows the pointer; Active while a file is dragged over; Disabled → disabled; Error → error, or a file that fails the type or size check (the reason in Hint text under the zone)' },
     { figma: 'Click to upload or drag and drop', prop: 'actionLabel · dropLabel', values: 'the call to action' },
     { figma: 'JPEG, JPG, PNG, SVG formats, up to 5 MB.', prop: 'hint · accept · maxFileSize', values: 'the hint, and the check behind it' },
     { figma: 'File upload cards: State', prop: 'files[].status · progress', values: 'Uploading, Completed, Failed → uploading, completed, failed; 0–100' },
-    { figma: 'Validation messages', prop: 'files[].error · retryable', values: 'the reason; whether Try again shows' },
+    { figma: 'Validation messages', prop: 'error · files[].error · retryable', values: 'under the zone for a file not added; on the card for a failed upload, and whether Try again shows' },
     { figma: 'Action button', prop: 'onCancel · onRemove · onRetry', values: '× while uploading; bin when done or failed; Try again' },
     { figma: 'File format icon: Type', prop: '(from the file name)', values: '7z, csv, doc, docx, odt, pdf, pot, potx, pps, ppsx, rtf, txt, xls, xlsx, zip' },
     { figma: '—', prop: 'multiple', values: 'several files; otherwise a new file replaces the chosen one' },

@@ -143,11 +143,16 @@ export const AFileTooBig: Story = {
   args: { accept: 'image/png,image/jpeg,.svg', maxFileSize: 5 * MB },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const zone = canvasElement.querySelector<HTMLElement>('.grg-file-upload__zone')!;
     await userEvent.upload(input(canvasElement), fileOf('team-photo.png', 6 * MB, 'image/png'));
-    await expect(await canvas.findByText('Larger than 5 MB')).toBeVisible();
-    await expect(canvas.queryByRole('button', { name: /try again/i })).toBeNull();
-    await userEvent.click(canvas.getByRole('button', { name: 'Remove team-photo.png' }));
-    await expect(canvas.queryByText('Larger than 5 MB')).toBeNull();
+    // No card: the zone turns red and the reason is under it, read with the zone
+    await expect(await canvas.findByText('team-photo.png is larger than 5 MB.')).toBeVisible();
+    await expect(zone).toHaveAttribute('aria-invalid', 'true');
+    await expect(canvas.queryByRole('listitem')).toBeNull();
+    // A file that fits clears the error
+    await userEvent.upload(input(canvasElement), fileOf('team-photo-small.png', 2 * MB, 'image/png'));
+    await waitFor(() => expect(canvas.queryByText('team-photo.png is larger than 5 MB.')).toBeNull());
+    await expect(zone).not.toHaveAttribute('aria-invalid');
   },
 };
 
@@ -318,7 +323,7 @@ export const Unavailable: Story = {
 
 /* ---- Overview ---- */
 
-/** Uploading, Completed, Failed (an upload error, and a file that didn't pass the check). */
+/** Uploading, Completed, Failed (the upload failed: Try again). */
 export const FileCards: Story = {
   name: 'File cards',
   render: () => (
@@ -327,7 +332,6 @@ export const FileCards: Story = {
         { id: 'a', name: 'my_cv.pdf', size: 120 * 1024, status: 'uploading', progress: 10 },
         { id: 'b', name: 'my_cv.pdf', size: 120 * 1024, status: 'completed' },
         { id: 'c', name: 'my_cv.pdf', size: 120 * 1024, status: 'failed', retryable: true },
-        { id: 'd', name: 'team-photo.png', size: 6 * MB, status: 'failed', error: 'Larger than 5 MB', retryable: false },
       ] as UploadFile[]).map(file => <FileCard key={file.id} file={file} onCancel={() => {}} onRemove={() => {}} onRetry={() => {}} />)}
     </ul>
   ),
