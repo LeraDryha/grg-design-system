@@ -225,7 +225,7 @@ export const CropALogo: Story = {
         {logo ? (
           <DropdownMenu aria-label="Logo" width={160} items={[
             { label: 'Edit logo', onSelect: () => { setDraft({ src: logo.original, crop: logo.crop }); setStep('edit'); } },
-            { label: 'Remove', onSelect: () => setLogo(null) },
+            { label: 'Remove', destructive: true, onSelect: () => setLogo(null) },
           ]} trigger={props => <button type="button" className="grg-avatar-button" aria-label="Logo" {...props}>{avatar}</button>} />
         ) : (
           <button type="button" className="grg-avatar-button" aria-label="Upload logo" onClick={() => setStep('upload')}>{avatar}</button>

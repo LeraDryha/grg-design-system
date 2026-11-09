@@ -21,13 +21,15 @@ export type DropdownMenuItemProps = DropdownMenuItemContent & {
   indeterminate?: boolean;
   /** Figma Arrow: the row opens a submenu */
   arrow?: boolean;
+  /** An action that removes or deletes something: the label and icon in red (Figma Global Settings: Remove) */
+  destructive?: boolean;
 };
 
 /**
  * The content of one dropdown row: picture, label and description, badge, and at the end a check, a checkbox
  * or an arrow. The list around it (Select, Dropdown Menu) gives the row its hover, focus and keyboard behaviour.
  */
-export function DropdownMenuItem({ label, description, badge, selected = false, multiple = false, indeterminate = false, arrow = false, disabled, ...picture }: DropdownMenuItemProps) {
+export function DropdownMenuItem({ label, description, badge, selected = false, multiple = false, indeterminate = false, arrow = false, destructive = false, disabled, ...picture }: DropdownMenuItemProps) {
   const hasPicture = !!(picture.icon || picture.country || picture.coin || picture.paymentMethod || picture.avatar || picture.social);
   const badgeProps = typeof badge === 'string' ? { label: badge } : badge;
   return (
@@ -36,6 +38,7 @@ export function DropdownMenuItem({ label, description, badge, selected = false, 
       data-basic={!hasPicture || undefined}
       data-description={description ? true : undefined}
       data-disabled={disabled || undefined}
+      data-destructive={destructive || undefined}
       aria-disabled={disabled || undefined}
     >
       {hasPicture && <OptionPicture option={{ value: '', label, ...picture }} large={!!description} />}

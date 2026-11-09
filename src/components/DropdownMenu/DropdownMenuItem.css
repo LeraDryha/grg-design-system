@@ -27,6 +27,9 @@
 .grg-menu-item__arrow { color: var(--icon-base-500); }
 .grg-menu-item__badge { flex: none; }
 
+/* Destructive: Remove, Delete; the label and its icon in red */
+.grg-menu-item[data-destructive] { color: var(--error-base-600); }
+.grg-menu-item[data-destructive] .grg-option-picture--icon { color: var(--error-base-600); }
 .grg-menu-item[data-disabled] { color: var(--text-disabled-400); }
 .grg-menu-item[data-disabled] .grg-menu-item__description { color: var(--text-disabled-400); }
 .grg-menu-item[data-disabled] .grg-option-picture { opacity: 0.5; }

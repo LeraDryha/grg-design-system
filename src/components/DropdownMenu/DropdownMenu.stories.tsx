@@ -198,6 +198,7 @@ export const ItemStates: Story = {
     <div style={panel}>
       <DropdownMenuItem label="Default" coin="bitcoin-btc" />
       <DropdownMenuItem label="Selected" coin="bitcoin-btc" selected />
+      <DropdownMenuItem label="Delete" icon="trash" destructive />
       <DropdownMenuItem label="Disabled" coin="bitcoin-btc" disabled />
       <DropdownMenuItem label="Disabled" coin="bitcoin-btc" multiple disabled />
     </div>

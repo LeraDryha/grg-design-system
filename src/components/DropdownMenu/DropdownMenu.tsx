@@ -19,6 +19,8 @@ export type DropdownMenuAction = DropdownMenuItemContent & {
   items?: DropdownMenuEntry[];
   /** A check at the end, for a choice such as "Sort by" */
   selected?: boolean;
+  /** Removes or deletes something: a red row, such as Remove or Delete */
+  destructive?: boolean;
 };
 
 /** Everything a dropdown menu can hold (Figma Dropdown menu item and Dropdown misc items) */
@@ -110,14 +112,14 @@ export function DropdownMenu({ items, trigger, inline = false, 'aria-label': lab
         const { kind: _kind, ...content } = entry;
         return { label: entry.label, disabled: true, className: 'grg-dropdown-menu__header', template: () => <span className="grg-dropdown-menu__header-row"><DropdownMenuItem {...content} /></span> };
       }
-      const { kind: _kind, onSelect, href, items: sub, selected, ...content } = entry;
+      const { kind: _kind, onSelect, href, items: sub, selected, destructive, ...content } = entry;
       return {
         label: entry.label,
         url: href,
         disabled: entry.disabled,
         command: onSelect ? ({ originalEvent }) => onSelect(originalEvent) : undefined,
         items: sub ? toModel(sub) : undefined,
-        template: inAction(<DropdownMenuItem {...content} selected={selected} arrow={!!sub} />),
+        template: inAction(<DropdownMenuItem {...content} selected={selected} arrow={!!sub} destructive={destructive} />),
       };
     });
 

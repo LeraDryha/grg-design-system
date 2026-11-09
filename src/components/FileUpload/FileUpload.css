@@ -92,13 +92,11 @@
   translate: -50% -50%;
   pointer-events: none;
 }
-/* Outside the circle: the Figma veil, white at 20% over an 8px blur, in both themes (system.css) */
+/* Outside the circle: the overlay of Modal and Drawer (--overlay, no blur), so the system darkens things one way */
 .grg-image-crop__veil {
   position: absolute;
   inset: 0;
-  background: var(--crop-veil);
-  backdrop-filter: blur(var(--blur-sm));
-  -webkit-backdrop-filter: blur(var(--blur-sm));
+  background: var(--overlay);
   mask-image: radial-gradient(circle closest-side, transparent calc(100% - 1px), var(--bg-base-1000) 100%);
   pointer-events: none;
 }
