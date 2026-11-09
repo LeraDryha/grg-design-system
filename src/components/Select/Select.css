@@ -47,8 +47,9 @@
 .grg-select__value { display: flex; align-items: center; gap: var(--space-200); min-width: 0; }
 .grg-select__text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .grg-select__text[data-placeholder] { color: var(--text-soft-500); }
-/* Open and empty: the label has floated above, so its copy inside goes away */
-.grg-select__frame[data-focused] .grg-select__text[data-placeholder] { color: transparent; }
+/* Open and empty: the label has floated above, so its copy inside goes away. A placeholder of its own (the label kept
+   above) stays, as in any field */
+.grg-select__frame[data-floating][data-focused] .grg-select__text[data-placeholder] { color: transparent; }
 .grg-select__icon { display: inline-grid; flex: none; color: var(--icon-base-500); }
 .grg-select__frame[data-disabled] :is(.grg-select__text, .grg-select__icon) { color: var(--text-disabled-400); }
 .grg-select__frame[data-disabled] .grg-option-picture:not(.grg-select__icon) { opacity: 0.5; }

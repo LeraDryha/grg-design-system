@@ -19,6 +19,7 @@ import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
 import { useInvoices } from '../Invoices/Invoices';
 import { startMembers, useMembers } from '../Members/Members';
 import { useSettings } from '../Settings/Settings';
+import { useReporting } from '../Reporting/Reporting';
 import { useTransactions } from '../Transactions/Transactions';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
@@ -376,12 +377,14 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   const team = useState(startMembers);
   const membersPage = useMembers(team);
   const settingsPage = useSettings({ account: empty ? 'not-verified' : 'verified' }, team);
+  const reportingPage = useReporting({ account: empty ? 'not-verified' : 'verified' });
 
   let content: ReactNode = withdraw.outside;
   if (!content && page === 'invoices') content = invoices.content;
   if (!content && page === 'transactions') content = transactionsPage.content;
   if (!content && page === 'members') content = membersPage.content;
   if (!content && page === 'settings') content = settingsPage.content;
+  if (!content && page === 'reporting') content = reportingPage.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -416,6 +419,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
       {transactionsPage.overlays}
       {membersPage.overlays}
       {settingsPage.overlays}
+      {reportingPage.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
