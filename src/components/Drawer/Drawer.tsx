@@ -17,6 +17,10 @@ export type DrawerProps = {
   title: string;
   /** A line under the title */
   description?: ReactNode;
+  /** What the item is, under the title: its kind, amount and status. It stays in view while the content scrolls */
+  lead?: ReactNode;
+  /** A colour token behind the header, the colour of the item it shows, such as `var(--add-orange-50)` */
+  tint?: string;
   /** Width: sm-480 for a form, md-560 for details, lg-960 for a form with a preview. On phones it takes the whole screen */
   size?: DrawerSize;
   /** Modal footer Type: Basic (buttons on the right) by default */

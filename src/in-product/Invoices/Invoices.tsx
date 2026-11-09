@@ -7,8 +7,9 @@ import { Button } from '../../components/Button/Button';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { Drawer } from '../../components/Drawer/Drawer';
+import type { AvatarColor } from '../../components/Avatar/Avatar';
 import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
-import { Icon } from '../../components/Icon/Icon';
+import { Icon, type IconName } from '../../components/Icon/Icon';
 import { Input } from '../../components/Input/Input';
 import { Modal } from '../../components/Modal/Modal';
 import { Search } from '../../components/Search/Search';
@@ -17,7 +18,10 @@ import { SwitchLabel } from '../../components/SwitchLabel/SwitchLabel';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
-import { AppFrame, money, startAssets } from '../shared/AssetsApp';
+import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
+import { AppFrame, format, money, startAssets, type AppPage } from '../shared/AssetsApp';
+import { useTransactions, type Transaction } from '../Transactions/Transactions';
+import { Lead, LeadBox } from '../shared/lead';
 import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
 
 /* GRX Pay redesign, sections Invoices tables (1676:55326) and Creating invoice (1676:58206): the list with its
@@ -27,10 +31,17 @@ import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period'
 export type Status = 'Created' | 'Payment awaiting' | 'Paid' | 'Timeout' | 'Deactivated';
 const STATUSES: Status[] = ['Created', 'Payment awaiting', 'Paid', 'Timeout', 'Deactivated'];
 const STATUS_COLOR: Record<Status, BadgeColor> = { Created: 'warning', 'Payment awaiting': 'warning', Paid: 'success', Timeout: 'error', Deactivated: 'error' };
+/** The colour of an invoice is its status's, drawn like a transaction's kind (Transaction Icon): amber with a clock
+ *  while it waits, green with a check when paid, red with a cross when closed (the Transaction Icon `failed`) */
+const STATUS_LEAD: Record<Status, { color: AvatarColor; icon: IconName; closed?: boolean }> = {
+  Created: { color: 'amber', icon: 'time-oclock' }, 'Payment awaiting': { color: 'amber', icon: 'time-oclock' },
+  Paid: { color: 'green', icon: 'check' }, Timeout: { color: 'red', icon: 'remove', closed: true }, Deactivated: { color: 'red', icon: 'remove', closed: true },
+};
 /** A link can be deactivated while nobody has paid it */
 const active = (status: Status) => status === 'Created' || status === 'Payment awaiting';
 
-type Operation = { at: Date; amount: string; network: string; status: 'Completed' | 'Processing' };
+/** A payment of the invoice, or the auto-conversion of what was paid: each is a transaction too */
+type Operation = { id: string; kind: 'payment' | 'exchange'; at: Date; amount: number; code: string; to?: string; network?: string; status: 'Completed' | 'Processing' };
 export type Invoice = {
   id: string; amount: number; currency: string; received: string; status: Status; createdAt: Date; createdBy: string;
   orderId?: string; category?: string; autoConvert: boolean; customer: string[]; operations: Operation[];
@@ -50,6 +61,15 @@ const uuid = (seed: number) => {
 };
 
 const people = ['Rudy Kozey', 'Guadalupe Schimmel'];
+const NETWORK: Record<string, string> = { BTC: 'Bitcoin', ETH: 'Ethereum', USDT: 'Tron (TRC-20)', USDC: 'Ethereum', EUR: 'SEPA' };
+/** A paid invoice's operations: the payment, then (auto-conversion on, paid in a coin) its exchange into EUR, still running */
+const operationsOf = (seed: number, received: string, at: Date, autoConvert: boolean): Operation[] => {
+  const [amount, code] = received.split(' ');
+  const payment: Operation = { id: uuid(seed + 600), kind: 'payment', at, amount: Number(amount.replace(/,/g, '')), code, network: NETWORK[code], status: 'Completed' };
+  return autoConvert && code !== 'EUR'
+    ? [payment, { id: uuid(seed + 700), kind: 'exchange', at: new Date(at.getTime() + 60000), amount: payment.amount, code, to: 'EUR', status: 'Processing' }]
+    : [payment];
+};
 export const startInvoices: Invoice[] = [
   [1237, 'EUR', 'Created', 1], [200, 'EUR', 'Created', 3], [25345, 'EUR', 'Payment awaiting', 6], [1237, 'EUR', 'Paid', 20, '0.29464091 BTC'],
   [320, 'EUR', 'Timeout', 30], [1237, 'EUR', 'Paid', 44, '1.65852492 ETH'], [800, 'USDT', 'Paid', 70, '800.00 USDT'], [1237, 'EUR', 'Deactivated', 96],
@@ -58,7 +78,7 @@ export const startInvoices: Invoice[] = [
   id: uuid(index + 1), amount: amount as number, currency: currency as string, status: status as Status, createdAt: hoursAgo(hours as number),
   received: (received as string | undefined) ?? `0.00 ${currency}`, createdBy: people[index % 2], orderId: `RT-${1675 + index}-19${80 + index}`,
   autoConvert: index % 3 === 0, customer: ['First name', 'Last name', 'Email'],
-  operations: status === 'Paid' ? [{ at: hoursAgo((hours as number) - 0.4), amount: received as string, network: (received as string).endsWith('BTC') ? 'Bitcoin' : (received as string).endsWith('EUR') ? 'SEPA' : 'Ethereum', status: 'Completed' }] : [],
+  operations: status === 'Paid' ? operationsOf(index, received as string, hoursAgo((hours as number) - 0.4), index % 3 === 0) : [],
 }));
 
 /* ---- The form's parts ---- */
@@ -180,7 +200,7 @@ function PaymentLink({ invoice }: { invoice: Invoice }) {
   const { toast } = useMessages();
   const link = `https://pay.example.com/i/${invoice.id.slice(0, 18)}`;
   return (
-    <div className="grg-ip-box grg-ip-box--row">
+    <div className="grg-ip-box grg-ip-box--muted grg-ip-box--row">
       <span className="grg-ip-link">
         <span className="grg-ip-link__key">Payment link</span>
         <span className="grg-ip-link__value">{link}</span>
@@ -201,19 +221,31 @@ function Summary({ invoice }: { invoice: Invoice }) {
   );
 }
 
-function Details({ invoice }: { invoice: Invoice }) {
+/** The invoice's lead: its status's colour and icon, the amount and the status */
+const leadOf = (invoice: Invoice) => ({
+  tint: `var(--add-${STATUS_LEAD[invoice.status].color}-50)`,
+  icon: <TransactionIcon type="payment" icon={STATUS_LEAD[invoice.status].icon} color={STATUS_LEAD[invoice.status].color} failed={STATUS_LEAD[invoice.status].closed} size="lg" />,
+  kind: 'Invoice amount',
+  amount: amountText(invoice.amount, invoice.currency),
+  badge: <Badge label={invoice.status} variant="stroke" size="sm" color={STATUS_COLOR[invoice.status]} leftIcon={null} rightIcon={null} />,
+});
+
+/** The details; the amount and the status lead them in the drawer's header, or (`lead`) in a box on the page */
+function Details({ invoice, lead = false }: { invoice: Invoice; lead?: boolean }) {
   const paid = invoice.status === 'Paid';
   return (
     <>
-      <Summary invoice={invoice} />
+      {lead && <LeadBox {...leadOf(invoice)} />}
       {/* The two figures and the link: one group, 12px apart each way, wherever it sits (drawer or page) */}
       <div className="grg-ip-figures">
       <div className="grg-ip-figures__pair">
-        <div className="grg-ip-box"><span className="grg-ip-link__key">Received amount</span><span className="grg-ip-link__value">{invoice.received}</span></div>
-        <div className="grg-ip-box"><span className="grg-ip-link__key">Amount left</span><span className="grg-ip-link__value">{paid ? `0.00 ${invoice.currency}` : amountText(invoice.amount, invoice.currency)}</span></div>
+        <div className="grg-ip-box grg-ip-box--muted"><span className="grg-ip-link__key">Received amount</span><span className="grg-ip-link__value">{invoice.received}</span></div>
+        <div className="grg-ip-box grg-ip-box--muted"><span className="grg-ip-link__key">Amount left</span><span className="grg-ip-link__value">{paid ? `0.00 ${invoice.currency}` : amountText(invoice.amount, invoice.currency)}</span></div>
       </div>
       <PaymentLink invoice={invoice} />
       </div>
+      {/* On a grey box, as the transaction details in Figma */}
+      <div className="grg-ip-box grg-ip-box--muted">
       <AccordionKeyValue rows={[
         { key: 'Invoice ID', value: invoice.id },
         { key: 'Created at', value: stamp(invoice.createdAt) },
@@ -224,22 +256,50 @@ function Details({ invoice }: { invoice: Invoice }) {
         { key: 'Auto-conversion', value: invoice.autoConvert ? 'On' : 'Off' },
         { key: 'Customer details', value: invoice.customer.length ? invoice.customer.join(', ') : '—' },
       ]} />
+      </div>
     </>
   );
 }
 
-function Operations({ invoice }: { invoice: Invoice }) {
+/** An operation as the transaction it is, for the Transactions page */
+const asTransaction = (op: Operation, invoice: Invoice): Transaction => ({
+  id: op.id, kind: op.kind, status: op.status, amount: op.amount, code: op.code, to: op.to, createdAt: op.at,
+  completedAt: op.status === 'Completed' ? op.at : null, network: op.network, invoiceId: invoice.id, fee: `0 ${op.code}`,
+  blockchainId: op.network && op.code !== 'EUR' ? `0x${op.id.replace(/-/g, '')}${invoice.id.replace(/-/g, '').slice(0, 32)}` : undefined,
+  address: op.kind === 'payment' ? `0x${op.id.replace(/-/g, '').slice(0, 26)}` : undefined,
+});
+const opAmount = (value: number, code: string) => { const digits = startAssets.find(a => a.code === code)?.digits ?? 8; return `${digits === 2 ? money(value) : format(value, digits)} ${code}`; };
+/** dd/mm/yy, hh:mm:ss, as in the Transactions table */
+const opTime = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+/** Figma Operations (1693:23731): each operation on a grey card (its kind, status, amount and time), View in transactions
+ *  under it, a line between them */
+function Operations({ invoice, onView }: { invoice: Invoice; onView: (transaction: Transaction) => void }) {
   if (!invoice.operations.length) {
     return <div className="grg-ip-empty"><span className="grg-ip-empty__title">No operations yet</span><span>Payments for this invoice will appear here</span></div>;
   }
   return (
     <ul className="grg-ip-operations">
-      {invoice.operations.map((op, index) => (
-        <li key={index}>
-          <span><span className="grg-ip-link__value">{op.amount}</span><span className="grg-ip-link__key">{stamp(op.at)} · {op.network}</span></span>
-          <Badge label={op.status} variant="light" size="sm" color={op.status === 'Completed' ? 'success' : 'warning'} leftIcon={null} rightIcon={null} />
-        </li>
-      ))}
+      {invoice.operations.map(op => {
+        const name = op.kind === 'payment' ? 'Invoice payment' : 'Auto-conversion';
+        return (
+          <li key={op.id}>
+            <div className="grg-ip-box grg-ip-box--muted grg-ip-operation">
+              <span className="grg-ip-operation__top">
+                <TransactionIcon type={op.kind} size="md" />
+                <span className="grg-ip-operation__name">{name}</span>
+                <Badge label={op.status} variant="light" size="sm" color={op.status === 'Completed' ? 'success' : 'warning'} leftIcon={null} rightIcon={null} />
+              </span>
+              <span className="grg-ip-operation__row">
+                <span>{op.kind === 'exchange' ? `${opAmount(op.amount, op.code)} → ${op.to}` : opAmount(op.amount, op.code)}</span>
+                <span>{opTime(op.at)}</span>
+              </span>
+            </div>
+            <Button variant="secondary" size="lg" justified onClick={() => onView(asTransaction(op, invoice))}
+              aria-label={`View ${name.toLowerCase()} in transactions`}>View in transactions</Button>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -307,10 +367,12 @@ export type InvoicesProps = {
   account?: 'verified' | 'not-verified' | 'verifying';
   /** Open with the Create invoice drawer */
   startCreating?: boolean;
+  /** View in transactions: the app shows the operation on its Transactions page */
+  onViewTransaction?: (transaction: Transaction) => void;
 };
 
 /** The Invoices page with its drawer and modal, for any app that holds it (this page, the Dashboard's Create new invoice) */
-export function useInvoices({ account = 'verified', startCreating = false }: InvoicesProps = {}) {
+export function useInvoices({ account = 'verified', startCreating = false, onViewTransaction }: InvoicesProps = {}) {
   const [invoices, setInvoices] = useState(startInvoices);
   const [view, setView] = useState<View | null>(startCreating ? { kind: 'create' } : null);
   const [draft, setDraft] = useState(emptyDraft);
@@ -339,9 +401,11 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
   };
   const open = (invoice: Invoice) => { setTab('details'); setView({ kind: 'details', id: invoice.id }); };
   const close = () => setView(null);
+  const viewTransaction = (transaction: Transaction) => { close(); setPage(null); onViewTransaction?.(transaction); };
 
   const valid = !!draft.currency && Number(draft.amount) > 0;
   const current = view && view.kind !== 'create' ? find(view.id) : null;
+  const lead = view?.kind === 'details' && current ? leadOf(current) : null;
   const drawer = !view ? { title: '' } : view.kind === 'create' ? {
     title: 'Create invoice', size: 'sm' as const,
     content: <CreateForm draft={draft} setDraft={setDraft} />,
@@ -361,7 +425,7 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
     content: (
       <TabMenu aria-label="Invoice" value={tab} onChange={setTab}
         items={[{ id: 'details', label: 'Details' }, { id: 'operations', label: `Operations (${current!.operations.length})` }]}>
-        {item => <div className="grg-ip-tab">{item.id === 'details' ? <Details invoice={current!} /> : <Operations invoice={current!} />}</div>}
+        {item => <div className="grg-ip-tab">{item.id === 'details' ? <Details invoice={current!} /> : <Operations invoice={current!} onView={viewTransaction} />}</div>}
       </TabMenu>
     ),
     extra: active(current!.status)
@@ -392,10 +456,10 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
         {active(pageInvoice.status) && <Button variant="outline" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>}
       </div>
       <div className="grg-ip-invoice-page">
-        <section className="grg-ip-card" aria-label="Invoice"><Details invoice={pageInvoice} /></section>
+        <section className="grg-ip-card grg-ip-card--details" aria-label="Invoice"><Details invoice={pageInvoice} lead /></section>
         <section className="grg-ip-card" aria-labelledby="operations-title">
           <h2 id="operations-title" className="grg-ip-card__title">Operations</h2>
-          <Operations invoice={pageInvoice} />
+          <Operations invoice={pageInvoice} onView={viewTransaction} />
         </section>
       </div>
     </main>
@@ -421,6 +485,7 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
     overlays: <>
       {/* One drawer for the whole task (Drawer: one task, one drawer): creating, its result, the details, deactivating */}
       <Drawer appendTo="self" visible={!!view} onHide={close} title={drawer.title} description={'description' in drawer ? drawer.description : undefined}
+        tint={lead?.tint} lead={lead ? <Lead icon={lead.icon} kind={lead.kind} amount={lead.amount} badge={lead.badge} /> : undefined}
         size={'size' in drawer ? drawer.size : 'sm'} destructive={'destructive' in drawer ? drawer.destructive : false}
         footerType={'extra' in drawer && drawer.extra ? 'button' : 'basic'} footerExtra={'extra' in drawer ? drawer.extra : undefined}
         primaryAction={'primary' in drawer ? drawer.primary : undefined} secondaryAction={'secondary' in drawer ? drawer.secondary : undefined}>
@@ -435,9 +500,19 @@ export function useInvoices({ account = 'verified', startCreating = false }: Inv
   };
 }
 
+/** Invoices, and Transactions for View in transactions: the menu moves between the two */
 function InvoicesApp(props: InvoicesProps) {
-  const invoices = useInvoices(props);
-  return <><AppFrame current="invoices">{invoices.content}</AppFrame>{invoices.overlays}</>;
+  const [page, setPage] = useState<AppPage>('invoices');
+  const transactions = useTransactions();
+  const invoices = useInvoices({ ...props, onViewTransaction: transaction => { transactions.show(transaction); setPage('transactions'); } });
+  const on = page === 'transactions' ? transactions : invoices;
+  return (
+    <>
+      <AppFrame current={page} onNavigate={next => { if (next === 'invoices' || next === 'transactions') setPage(next); }}>{on.content}</AppFrame>
+      {invoices.overlays}
+      {transactions.overlays}
+    </>
+  );
 }
 
 /** The Invoices page, creating an invoice in a drawer, its details, deactivating a link: one working flow */

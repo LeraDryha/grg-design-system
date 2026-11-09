@@ -63,15 +63,17 @@ One task, one drawer: the form, then its result in the same drawer, with the lin
 
 <Canvas of={DrawerStories.DetailsAtAGlance} />
 
-A wider drawer (md) for the details of one row: read only, with Close.
+A wider drawer (md) for the details of one row: read only, with Close. The header names the item on its colour: `lead` under the title (icon, amount, status) and `tint` behind it.
 
 ## Design decisions
 
-- **Made of Modal's parts.** The Figma file has no drawer; the header, content, footer, overlay, spacing and rules are Modal's, so a drawer and a modal read as one family.
+- **Made of Modal's parts.** The Figma file has no drawer; the header, content, footer, overlay, spacing and rules are Modal's, so a drawer and a modal read as one family. The one difference is its surface (below).
 - **PrimeReact Dialog, not Sidebar.** Sidebar keeps no focus inside and isn't announced as a dialog. Dialog at the right edge gives the drawer what Modal has: focus kept inside, Escape (which first closes a list open in it), focus back to the control that opened it, the page behind not scrolling.
 - **One task, one drawer.** Steps and results change inside the drawer; nothing opens a Modal or a second drawer over it. Lists inside it open over it.
 - **Full height, the content scrolls.** The header and the footer stay; a line sets the footer apart from the scrolling content.
+- **The page's surface** (`surface-base`), not Modal's `surface-floating`. A drawer holds what a page would (details, forms), so content designed on a page card looks the same in it: the grey cards (`bg-muted-50`) of Figma's details show in both themes. In light the two surfaces are the same white; in dark the drawer is a tone darker than a modal (Lera, 2026-11-09).
 - **Square corners and 24px at the sides**, tighter than Modal's 32px; Close sits on the title's line; the footer has 16px above and below its buttons. It slides in from the right.
+- **The item's colour in the header** (`tint`, `lead`). Details of a transaction or an invoice show what the item is under the title, its icon, amount and status, on its colour (`--add-<colour>-50` for a kind, `--<status>-muted-50` for a status). The header stays while the content scrolls, so the item stays named. A drawer with a form keeps a white header.
 - **The content is never wider than the drawer** (the check after every story covers drawers too).
 
 ## Sizes

@@ -19,7 +19,7 @@ A business sells by link: it creates an invoice, sends the link to its customer 
 
 <Canvas of={InvoicesStories.LiveFlow} />
 
-**Try it:** filter by asset, status or period; press **Create invoice**, type an amount, add a custom field and create it; copy the link, then **View invoice**. Open a row for its details, **Deactivate link** from the drawer or from a row, and **Open as a page**.
+**Try it:** filter by asset, status or period; open a paid invoice, its *Operations*, and *View in transactions*; press **Create invoice**, type an amount, add a custom field and create it; copy the link, then **View invoice**. Open a row for its details, **Deactivate link** from the drawer or from a row, and **Open as a page**.
 
 ## What the flow has to get right
 
@@ -33,6 +33,9 @@ A business sells by link: it creates an invoice, sends the link to its customer 
 - **Creating moved into a drawer.** Figma made Create invoice a page. In a drawer the list stays in view, the new invoice appears in it, and creating, its result, the details and deactivating are one drawer whose content changes (the Drawer rule: one task, one drawer).
 - **The result stays in the drawer**, with the amount, the status and the link to copy, then *View invoice* or *Create another*.
 - **Details in the drawer and as a page.** A row opens the details in the drawer (*Details* and *Operations*); *Open as a page* shows the Figma page, for the full history.
+- **The status gives the colour.** The drawer's header takes the colour of the invoice's status, with the amount and the Badge, and its icon is drawn the way Transactions draw a kind (Transaction Icon): amber with a clock while it waits, green with a check when paid, red with a cross when it timed out or was deactivated. On the page, the same block is a tinted box. Transactions do the same with their kind's colour.
+- **Details on grey cards, as in Figma**: the figures, the link and the list of details each sit on a grey card (bg-muted-50, 16px corners). The drawer has the page's surface, so they look the same in it, in both themes.
+- **Operations as in Figma.** Each payment, and its auto-conversion when it is on, is a grey card with its kind, status, amount and time, and *View in transactions* under it: it opens that transaction on the Transactions page, in its drawer.
 - **Custom fields are typed in the drawer.** Figma added them in a modal; a modal over a drawer breaks the rule, so the field opens in place, with edit and remove for each custom field.
 - **Deactivate asks where it is.** From a row or the page, the Figma modal; from the drawer, the same question inside the drawer.
 - **Filters right after the search, then Reset.** Figma put the search on the left and the filters on the right; here they follow the search, so more filters can join the row, and *Reset* appears as soon as anything is searched or chosen.
@@ -65,6 +68,6 @@ The frames this page was built from (also in the **Design** tab), without the ba
 
 ## Built from
 
-[Drawer](?path=/docs/components-drawer--docs) · [Modal](?path=/docs/components-modal--docs) · [Table](?path=/docs/components-table--docs) · [Search](?path=/docs/components-search--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Date Picker](?path=/docs/components-date-picker--docs) · [Select](?path=/docs/components-select--docs) · [Input](?path=/docs/components-input--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Switch](?path=/docs/components-switch--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Tab Menu](?path=/docs/components-tab-menu--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Badge](?path=/docs/components-badge--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+[Drawer](?path=/docs/components-drawer--docs) · [Modal](?path=/docs/components-modal--docs) · [Table](?path=/docs/components-table--docs) · [Search](?path=/docs/components-search--docs) · [Compact Select](?path=/docs/components-compact-select--docs) · [Date Picker](?path=/docs/components-date-picker--docs) · [Select](?path=/docs/components-select--docs) · [Input](?path=/docs/components-input--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Switch](?path=/docs/components-switch--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Tab Menu](?path=/docs/components-tab-menu--docs) · [Accordion](?path=/docs/components-accordion--docs) (Key-value) · [Badge](?path=/docs/components-badge--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Transaction icons](?path=/docs/foundations-icons-transaction-icons--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
 
 The form's sections and the invoice summary live with this page.

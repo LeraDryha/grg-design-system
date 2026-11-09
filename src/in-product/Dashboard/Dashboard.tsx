@@ -17,6 +17,7 @@ import { useConvert } from '../Convert/Convert';
 import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
 import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
 import { useInvoices } from '../Invoices/Invoices';
+import { useTransactions } from '../Transactions/Transactions';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
 
@@ -313,7 +314,7 @@ export const transactions: Transaction[] = [
 /** dd/mm/yy, hh:mm:ss → a number that sorts in time order */
 const when = (at: string) => { const [d, m, y, rest] = at.split(/[/, ]+/); return Number(`${y}${m}${d}${rest.replace(/:/g, '')}`); };
 
-function TransactionsCard({ rows }: { rows: Transaction[] }) {
+function TransactionsCard({ rows, onViewAll }: { rows: Transaction[]; onViewAll: () => void }) {
   const { toast } = useMessages();
   const copy = (id: string) => {
     void navigator.clipboard?.writeText(id).catch(() => undefined);
@@ -323,7 +324,7 @@ function TransactionsCard({ rows }: { rows: Transaction[] }) {
     { id: 'type', header: 'Type', width: '24%', cell: row => (
       <TableText priority="leading" orientation="horizontal" title={row.name}
         // Figma: a cancelled one shows a red cross
-        leading={row.status === 'Cancelled' ? <TransactionIcon icon="remove" color="red" size="md" /> : <TransactionIcon type={row.type} size="md" />} />
+        leading={<TransactionIcon type={row.type} failed={row.status === 'Cancelled'} size="md" />} />
     ) },
     { id: 'at', header: 'Completed at', width: '20%', sortValue: row => when(row.at), cell: row => <TableText title={row.at} /> },
     { id: 'id', header: 'ID', width: '24%', cell: row => (
@@ -339,7 +340,7 @@ function TransactionsCard({ rows }: { rows: Transaction[] }) {
     <section className="grg-ip-card grg-ip-card--transactions" aria-labelledby="transactions-title">
       <div className="grg-ip-card__head">
         <h2 id="transactions-title" className="grg-ip-card__title">Last transactions</h2>
-        <Link size="sm" color="black">View all</Link>
+        <Link size="sm" color="black" href="#transactions" onClick={event => { event.preventDefault(); onViewAll(); }}>View all</Link>
       </div>
       <Table aria-label="Last transactions" rows={rows} rowKey={row => row.id} rowLabel={row => `${row.name}, ${row.at}`} columns={columns}
         empty={{ title: 'You don’t have transactions yet' }} />
@@ -366,10 +367,12 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   const [welcome, setWelcome] = useState(verified);
   const convert = useConvert({ assets, setAssets });
   const withdraw = useWithdrawEth({ assets, setAssets });
-  const invoices = useInvoices();
+  const transactionsPage = useTransactions({ account: empty ? 'not-verified' : 'verified' });
+  const invoices = useInvoices({ onViewTransaction: transaction => { transactionsPage.show(transaction); setPage('transactions'); } });
 
   let content: ReactNode = withdraw.outside;
   if (!content && page === 'invoices') content = invoices.content;
+  if (!content && page === 'transactions') content = transactionsPage.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -389,7 +392,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
               onAction={{ convert: convert.start, withdraw: asset => withdraw.start(asset.id) }} />
           </div>
           <PaymentsCard empty={empty} />
-          <TransactionsCard rows={empty ? [] : transactions} />
+          <TransactionsCard rows={empty ? [] : transactions} onViewAll={() => setPage('transactions')} />
         </div>
       </main>
     );
@@ -401,6 +404,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
       {convert.modal}
       {withdraw.modal}
       {invoices.overlays}
+      {transactionsPage.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
