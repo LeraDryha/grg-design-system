@@ -54,8 +54,9 @@ export const Walkthrough: Story = {
       await expect(canvas.getByRole('group', { name: 'Successful payments, This month' })).toBeInTheDocument();
       const select = () => canvasElement.querySelector<HTMLElement>('.grg-ip-card--payments .grg-compact-select__box')!;
       await userEvent.click(select());
-      await userEvent.click(await canvas.findByRole('option', { name: 'This week' }));
-      await expect(await canvas.findByRole('group', { name: 'Successful payments, This week' })).toBeInTheDocument();
+      // Last 30 days always ends today with 29 days before it (This week has nothing before today on a Monday)
+      await userEvent.click(await canvas.findByRole('option', { name: 'Last 30 days' }));
+      await expect(await canvas.findByRole('group', { name: 'Successful payments, Last 30 days' })).toBeInTheDocument();
       // Custom period… opens the calendar under the select; Escape closes it
       await userEvent.click(select());
       await userEvent.click(await canvas.findByRole('option', { name: 'Custom period…' }));
