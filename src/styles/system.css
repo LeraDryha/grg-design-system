@@ -10,8 +10,6 @@
   /* Overlay under a Modal or a Drawer: Figma draws #0A0A0A at 60% with Blur/sm, without a variable. Lighter here and
      without blur, so the page under it stays readable. The same in both themes. */
   --overlay: color-mix(in srgb, var(--color-neutral-1000) 40%, transparent);
-  /* Image crop: outside the round window, Figma draws white at 20% over Blur/sm, without a variable. The same in both themes */
-  --crop-veil: color-mix(in srgb, var(--color-neutral-0) 20%, transparent);
   /* Optical centring: Nunito Sans sits its capitals and digits about 0.03em above the middle of their line, so text
      in a control looks high next to an icon or inside a frame. Single-line text in controls moves down by that much. */
   --text-optical-shift: 0.03em;

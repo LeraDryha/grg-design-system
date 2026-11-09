@@ -125,7 +125,7 @@ What the code adds to the Figma file, and why:
 - **Sizes in the locale's numbers.** *1.2 MB* in English, *1,2 MB* in Ukrainian.
 - **Focus you can see.** The zone shows the system blue ring with the keyboard.
 - **Crop of our own.** PrimeReact has no crop component. The window is drawn here; the zoom is [Slider](?path=/docs/components-slider--docs) with `steppers` (PrimeReact Slider), from 100% (the picture fills the window) to 300% in steps of 10%. The picture can't move so far that an edge shows in the square.
-- **The veil around the circle** is the Figma one: white at 20% over an 8px blur, the same in both themes (`--crop-veil`, see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **The veil around the circle** is the overlay of Modal and Drawer (`--overlay`), not Figma's white at 20% with a blur: the system darkens things one way (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
 - **Edit from the original.** Edit logo opens the original picture with the last zoom and position, so the logo can be zoomed out again, not cropped twice.
 
 ## File cards and formats
