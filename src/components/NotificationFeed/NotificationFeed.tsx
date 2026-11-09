@@ -105,6 +105,8 @@ export type NotificationFeedProps = {
   settingsHref?: string;
   /** Figma Footer: View all notifications */
   viewAllHref?: string;
+  /** View all notifications was chosen: a single-page app calls `event.preventDefault()` and shows the page itself */
+  onViewAll?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /** Figma Empty */
   empty?: { title: string; subtitle?: string };
   /** The bell (Topbar Navigation's button): spread the given props on it */
@@ -123,7 +125,7 @@ export type NotificationFeedProps = {
  * Escape) and Skeleton the loading rows. New notifications that arrive while it is open are announced.
  */
 export function NotificationFeed({
-  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, viewAllHref, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
+  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, viewAllHref, onViewAll, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
   trigger, title = 'Notifications', layout = 'auto', locale, className = '',
 }: NotificationFeedProps) {
   const panel = useRef<OverlayPanel>(null);
@@ -169,7 +171,8 @@ export function NotificationFeed({
     }
     return (
       <ul className="grg-feed__list">
-        {items.map(n => <li key={n.id}><NotificationItem notification={n} onOpen={onOpen} locale={locale} /></li>)}
+        {/* Opening a notification takes people to it: the feed closes */}
+        {items.map(n => <li key={n.id}><NotificationItem notification={n} onOpen={(item, event) => { onOpen?.(item, event); panel.current?.hide(); }} locale={locale} /></li>)}
       </ul>
     );
   };
@@ -231,7 +234,7 @@ export function NotificationFeed({
           <>
             <hr className="grg-feed__divider" />
             <div className="grg-feed__footer">
-              <a className="grg-feed__view-all" href={viewAllHref}>
+              <a className="grg-feed__view-all" href={viewAllHref} onClick={event => { onViewAll?.(event); panel.current?.hide(); }}>
                 View all notifications
                 <Icon name="arrow-right" size={16} />
               </a>

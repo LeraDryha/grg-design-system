@@ -423,3 +423,9 @@
 .grg-ip-rate__actions { display: flex; flex: none; gap: var(--space-300); }
 .grg-ip-rate { max-width: calc(var(--space-5000) - var(--space-1000)); }
 
+
+/* Notifications page (Figma version 2): the categories on the left, a line, the list */
+.grg-ip-notes { flex: 1 0 auto; padding: var(--space-600); }
+.grg-ip-notes__list { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
+.grg-ip-notes__list > li + li { border-top: 1px solid var(--stroke-soft-200); }
+.grg-ip-notes__empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-400); min-height: calc(var(--space-5000) * 2); text-align: center; }
