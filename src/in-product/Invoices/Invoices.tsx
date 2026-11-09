@@ -206,11 +206,14 @@ function Details({ invoice }: { invoice: Invoice }) {
   return (
     <>
       <Summary invoice={invoice} />
-      <div className="grg-ip-grid">
+      {/* The two figures and the link: one group, 12px apart each way, wherever it sits (drawer or page) */}
+      <div className="grg-ip-figures">
+      <div className="grg-ip-figures__pair">
         <div className="grg-ip-box"><span className="grg-ip-link__key">Received amount</span><span className="grg-ip-link__value">{invoice.received}</span></div>
         <div className="grg-ip-box"><span className="grg-ip-link__key">Amount left</span><span className="grg-ip-link__value">{paid ? `0.00 ${invoice.currency}` : amountText(invoice.amount, invoice.currency)}</span></div>
       </div>
       <PaymentLink invoice={invoice} />
+      </div>
       <AccordionKeyValue rows={[
         { key: 'Invoice ID', value: invoice.id },
         { key: 'Created at', value: stamp(invoice.createdAt) },
