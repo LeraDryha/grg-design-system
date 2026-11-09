@@ -67,7 +67,7 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
   const unread = feed?.items.filter(n => n.unread).length ?? 0;
   // The bell: the notification feed when the app gives its notifications, a plain button otherwise
   const bell = feed ? (
-    <NotificationFeed notifications={feed.items} settingsHref="#notification-settings" viewAllHref="#notifications"
+    <NotificationFeed notifications={feed.items} relativeDates settingsHref="#notification-settings" viewAllHref="#notifications"
       onOpen={(n, event) => { event.preventDefault(); feed.open(n); }} onMarkAllRead={feed.markAllRead}
       onViewAll={event => { event.preventDefault(); feed.viewAll?.(); }}
       empty={{ title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' }}

@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { MessagesProvider } from '../../components/Alert/Messages';
+import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Button } from '../../components/Button/Button';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { NotificationItem, type Notification } from '../../components/NotificationFeed/NotificationFeed';
 import { TabMenu, type TabMenuItem } from '../../components/TabMenu/TabMenu';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
-import { AppFrame, format } from '../shared/AssetsApp';
+import { AppFrame, format, money, startAssets } from '../shared/AssetsApp';
 import { NotificationsContext, type NotificationsController } from '../shared/notifications';
 import { startTransactions, useTransactions, type Transaction } from '../Transactions/Transactions';
 
@@ -28,46 +28,65 @@ const CATEGORIES: (TabMenuItem & { id: 'all' | Category })[] = [
 ];
 
 const amount = (t: Transaction) => `${format(t.amount, 8)} ${t.code}`;
+/** The amount in EUR beside a crypto one, as the Dashboard shows it: the size at a glance */
+const inEur = (t: Transaction) => {
+  const rate = startAssets.find(a => a.code === t.code)?.rate;
+  return t.code === 'EUR' || !rate ? '' : ` (≈ ${money(t.amount * rate)} EUR)`;
+};
+const short = (text?: string) => (text ? `${text.slice(0, 6)}…${text.slice(-4)}` : '');
 
-/** A transaction as its notification, in the Figma words; the others don't notify */
+/** A transaction as its notification; what needs people (on hold, arrested, cancelled) carries a badge */
 const fromTransaction = (t: Transaction): AppNotification | null => {
   const base = { id: `n-${t.id}`, date: t.completedAt ?? t.createdAt, transaction: t, href: `#notification-${t.id}` };
   const icon = (failed = false) => <TransactionIcon type={t.kind} failed={failed} size="sm" />;
   if (t.kind === 'deposit' && t.status === 'Completed') {
     return { ...base, category: 'deposits', icon: icon(), title: `${t.code} deposit successful`,
-      description: `The deposit of ${amount(t)} has been received. Your balance has been successfully updated.` };
+      description: `${amount(t)}${inEur(t)} has been received${t.network ? ` on ${t.network}` : ''}. Your balance has been updated.` };
   }
   if (t.kind === 'withdrawal' && t.status === 'Completed') {
     return { ...base, category: 'withdrawals', icon: icon(), title: `${t.code} withdrawal successful`,
-      description: `You have successfully withdrawn ${amount(t)}. If you do not recognize this activity, please contact us.` };
+      description: `${amount(t)}${inEur(t)} was sent ${t.card ? `to the card ${t.card}` : 'from your balance'}.` };
+  }
+  if (t.kind === 'withdrawal' && t.status === 'Suspended') {
+    return { ...base, category: 'withdrawals', icon: icon(), badge: { label: 'Action needed', color: 'warning' }, title: `${t.code} withdrawal on hold`,
+      description: `${amount(t)}${inEur(t)} is waiting for a check. Reply to our compliance team so we can send it.` };
+  }
+  if (t.kind === 'withdrawal' && t.status === 'Arrested') {
+    return { ...base, category: 'withdrawals', icon: icon(true), badge: { label: 'Blocked', color: 'error' }, title: `${t.code} withdrawal blocked`,
+      description: `${amount(t)}${inEur(t)} was stopped by the risk check. Contact support to release the funds.` };
   }
   if (t.kind === 'withdrawal' && t.status === 'Cancelled') {
-    return { ...base, category: 'withdrawals', icon: icon(true), title: `${t.code} withdrawal cancelled`,
-      description: `Your withdrawal of ${amount(t)} was cancelled. The funds are back on your balance.` };
+    return { ...base, category: 'withdrawals', icon: icon(true), badge: { label: 'Cancelled', color: 'error' }, title: `${t.code} withdrawal cancelled`,
+      description: `${amount(t)} is back on your balance.${t.comment ? ` ${t.comment}` : ''}` };
   }
   if (t.kind === 'payment' && t.status === 'Completed') {
-    return { ...base, category: 'invoices', icon: icon(), title: 'You have received a payment',
-      description: `You have received a payment of ${amount(t)} for an invoice.` };
+    return { ...base, category: 'invoices', icon: icon(), title: `Invoice paid · ${amount(t)}`,
+      description: `Invoice ${short(t.invoiceId)} was paid in full${inEur(t)}.` };
   }
   if (t.kind === 'exchange' && t.status === 'Completed') {
-    return { ...base, category: 'conversion', icon: icon(), title: 'Auto-conversion completed',
-      description: `${amount(t)} was converted to ${t.to}${t.rate ? ` at 1 ${t.code} = ${t.rate} ${t.to}` : ''}.` };
+    return { ...base, category: 'conversion', icon: icon(), title: `Auto-conversion · ${t.code} → ${t.to}`,
+      description: `${amount(t)} became ${t.rate ? `${money(t.amount * t.rate)} ${t.to}, at 1 ${t.code} = ${money(t.rate)} ${t.to}` : t.to}.` };
   }
   return null;
 };
 
 const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3600000);
+const signIn = (id: string, where: string, hours: number): AppNotification => ({
+  id, category: 'signin', date: hoursAgo(hours), href: `#notification-${id}`, icon: <TransactionIcon icon="login" color="pink" size="sm" />,
+  badge: { label: 'Security', color: 'warning' }, title: 'New sign-in to your account',
+  description: `${where}. If this wasn’t you, we’ll end that session and you’ll change your password.`,
+});
 
-/** The notifications at the start: the newest three unread, as when someone comes back to the app */
+/** The notifications at the start: the newest three unread, as when someone comes back to the app, and the sign-in */
 const startNotifications = (): AppNotification[] => {
   const list: AppNotification[] = [
     ...startTransactions.map(fromTransaction).filter((n): n is AppNotification => !!n),
-    { id: 'n-signin', category: 'signin', date: hoursAgo(30), href: '#notification-signin', icon: <TransactionIcon icon="login" color="pink" size="sm" />,
-      title: 'New sign-in to your account', description: 'Safari on macOS, Kyiv, Ukraine. If this wasn’t you, change your password and contact us.' },
+    signIn('n-signin', 'Safari on macOS, Kyiv, Ukraine', 30),
     { id: 'n-verified', category: 'verification', date: hoursAgo(430), href: '#notification-verified', icon: <TransactionIcon icon="shield-check" color="red" size="sm" />,
       title: 'Business verified successfully', description: 'Your documents have been verified. All services are available for your company.' },
   ];
-  return list.sort((a, b) => b.date!.getTime() - a.date!.getTime()).map((n, index) => ({ ...n, unread: index < 3 }));
+  // A sign-in waits for its answer, so it stays unread however old it is
+  return list.sort((a, b) => b.date!.getTime() - a.date!.getTime()).map((n, index) => ({ ...n, unread: index < 3 || n.category === 'signin' }));
 };
 
 /** The deposit that arrives while the app is open */
@@ -77,25 +96,43 @@ const arriving = (): Transaction => ({
   blockchainId: '0x9c41e2a7b05d4f18a3e6c92b7d0f5a1e84c3b6d29f07a5e1c8b4d3f2a6e9b017', address: '0x7a3d91c4e2b85f06d1a9c7e3b4f2',
 });
 
-/** The notifications of the app: read state, Mark all as read, and a new deposit a few seconds after it opens.
+/** The notifications of the app: read state, Mark all as read, the sign-in question, and what arrives while it is
+ *  open: a deposit (the bell's dot) and a sign-in from a new device (also in the corner, as it matters).
  *  `onOpenTransaction` shows a transaction's details where the app can */
 export function useNotifications({ onOpenTransaction, onViewAll, arrive = true, none = false }: {
   onOpenTransaction?: (transaction: Transaction) => void; onViewAll?: () => void; arrive?: boolean;
   /** A new account: nothing yet, and nothing arrives */
   none?: boolean;
 } = {}) {
-  const [items, setItems] = useState(() => (none ? [] : startNotifications()));
+  const [items, setItems] = useState<AppNotification[]>(() => (none ? [] : startNotifications()));
+  const [answered, setAnswered] = useState<Set<string>>(new Set());
+  const { notify, toast } = useMessages();
+  const add = (n: AppNotification | null) => n && setItems(list => (list.some(x => x.id === n.id) ? list : [{ ...n, unread: true }, ...list]));
   useEffect(() => {
     if (!arrive || none) return;
-    const timer = window.setTimeout(() => {
-      const n = fromTransaction(arriving());
-      if (n) setItems(list => (list.some(x => x.id === n.id) ? list : [{ ...n, unread: true }, ...list]));
-    }, 8000);
-    return () => window.clearTimeout(timer);
+    const deposit = window.setTimeout(() => add(fromTransaction(arriving())), 8000);
+    const security = window.setTimeout(() => {
+      add(signIn('n-signin-new', 'Chrome on Windows, Warsaw, Poland', 0));
+      notify({ status: 'warning', title: 'New sign-in from Warsaw', description: 'Chrome on Windows, just now. Was it you?', actionLabel: 'Review', onAction: () => onViewAll?.() });
+    }, 20000);
+    return () => { window.clearTimeout(deposit); window.clearTimeout(security); };
+    // Once, when the app opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrive, none]);
   const markRead = (id: string) => setItems(list => list.map(n => (n.id === id ? { ...n, unread: false } : n)));
+  // A sign-in asks: It was me, or Not me (then the session ends); once answered, it is a plain notification
+  const answer = (id: string, mine: boolean) => {
+    setAnswered(set => new Set(set).add(id));
+    markRead(id);
+    toast(mine
+      ? { status: 'success', title: 'Thanks, noted', duration: 3000 }
+      : { status: 'success', title: 'That session is ended', description: 'Change your password to keep the account safe.', duration: 6000 });
+  };
+  const shown = items.map(n => (n.category === 'signin' && n.unread && !answered.has(n.id)
+    ? { ...n, secondaryAction: { label: 'It was me', onClick: () => answer(n.id, true) }, primaryAction: { label: 'Not me', onClick: () => answer(n.id, false) } }
+    : n));
   const controller: NotificationsController = {
-    items,
+    items: shown,
     open: n => {
       markRead(n.id);
       const t = (n as AppNotification).transaction;
@@ -106,6 +143,18 @@ export function useNotifications({ onOpenTransaction, onViewAll, arrive = true, 
   };
   return controller;
 }
+
+const EMPTY: Record<string, string> = {
+  all: 'No notifications yet', signin: 'No sign-ins from new devices', invoices: 'No paid invoices yet', deposits: 'No deposits yet',
+  withdrawals: 'No withdrawals yet', conversion: 'No auto-conversions yet', verification: 'Nothing about verification yet',
+};
+
+/** Today, Yesterday, Earlier this week, Earlier: a long list in the days people think in */
+const dayGroup = (date: Date, now = new Date()) => {
+  const day = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  const days = Math.round((day(now) - day(date)) / 86400000);
+  return days <= 0 ? 'Today' : days === 1 ? 'Yesterday' : days < 7 ? 'Earlier this week' : 'Earlier';
+};
 
 /** The Notifications page (Figma version 2): the categories on the left, the list on the right; Hide read */
 export function NotificationsPage({ controller }: { controller: NotificationsController }) {
@@ -120,16 +169,31 @@ export function NotificationsPage({ controller }: { controller: NotificationsCon
       return (
         <div className="grg-ip-notes__empty">
           <FeaturedIcon type="neutral" size="lg" icon="notification" />
-          <span className="grg-ip-waiting__title">{hideRead ? 'You don’t have new notifications' : 'No notifications here yet'}</span>
+          <span className="grg-ip-waiting__title">{hideRead ? 'You don’t have new notifications' : EMPTY[id]}</span>
         </div>
       );
     }
+    const groups = shown.reduce<[string, AppNotification[]][]>((all, n) => {
+      const name = dayGroup(n.date!);
+      const last = all[all.length - 1];
+      if (last && last[0] === name) last[1].push(n); else all.push([name, [n]]);
+      return all;
+    }, []);
     return (
-      <ul className="grg-ip-notes__list">
-        {shown.map(n => (
-          <li key={n.id}><NotificationItem notification={n} onOpen={(item, event) => { event.preventDefault(); controller.open(item); }} /></li>
+      <div className="grg-ip-notes__groups">
+        {groups.map(([name, group]) => (
+          <section key={name} className="grg-ip-notes__group" aria-label={name}>
+            <h2 className="grg-ip-notes__day">{name}</h2>
+            <ul className="grg-ip-notes__list">
+              {group.map(n => (
+                <li key={n.id}>
+                  <NotificationItem notification={n} relativeDates onOpen={(item, event) => { event.preventDefault(); controller.open(item); }} />
+                </li>
+              ))}
+            </ul>
+          </section>
         ))}
-      </ul>
+      </div>
     );
   };
   return (

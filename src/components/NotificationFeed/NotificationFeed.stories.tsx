@@ -219,10 +219,11 @@ export const Items: Story = {
         ['new', { ...sample[0] }],
         ['read', { ...sample[0], id: 'read', unread: false }],
         ['two lines at most', { ...sample[1], id: 'long' }],
+        ['a state that needs attention, the date as how long ago', { ...sample[0], id: 'badge', badge: { label: 'Action needed', color: 'warning' }, date: new Date(Date.now() - 2 * 3600000), relative: true }],
         ['sublabel and buttons', { id: 'b', title: 'Label', sublabel: '(Sublabel)', description: 'Insert the notif feed description here.', date: at(0), unread: true, icon: <TransactionIcon type="withdrawal" />, secondaryAction: { label: 'Button', onClick: () => {} }, primaryAction: { label: 'Button', onClick: () => {} } }],
       ].map(([caption, n]) => (
         <Variant key={caption as string} caption={caption as string}>
-          <div style={{ width: 'calc(var(--space-5000) * 2 - var(--space-400))' }}><NotificationItem notification={n as Notification} /></div>
+          <div style={{ width: 'calc(var(--space-5000) * 2 - var(--space-400))' }}><NotificationItem notification={n as Notification} relativeDates={!!(n as { relative?: boolean }).relative} /></div>
         </Variant>
       ))}
     </Showcase>

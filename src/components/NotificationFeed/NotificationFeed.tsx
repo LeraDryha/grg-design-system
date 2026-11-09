@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState, useSyncExternalStore, type MouseEvent, type ReactNode } from 'react';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { Skeleton } from 'primereact/skeleton';
-import { Badge } from '../Badge/Badge';
+import { Badge, type BadgeColor } from '../Badge/Badge';
 import { Button } from '../Button/Button';
 import { FeaturedIcon } from '../FeaturedIcon/FeaturedIcon';
 import { Icon } from '../Icon/Icon';
@@ -21,6 +21,8 @@ export type Notification = {
   title: string;
   /** Figma Sublabel: a short note after the title */
   sublabel?: string;
+  /** A state that needs attention, after the title: Action needed, Cancelled, Security (Badge, Light) */
+  badge?: { label: string; color: BadgeColor };
   /** Figma Description: up to two lines; longer text ends with an ellipsis */
   description?: string;
   /** Figma Date: written in the page's language */
@@ -39,16 +41,30 @@ export type Notification = {
 const formatDate = (date: Date, locale?: string) =>
   new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(date);
 
+/** How long ago, for a list people scan: Just now, 5 min ago, 3 h ago, Yesterday, 14:47, then the date */
+export const relativeDate = (date: Date, locale?: string, now = new Date()) => {
+  const minutes = Math.round((now.getTime() - date.getTime()) / 60000);
+  const time = new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(date);
+  if (minutes < 1) return 'Just now';
+  if (minutes < 60) return `${minutes} min ago`;
+  if (minutes < 24 * 60 && date.getDate() === now.getDate()) return `${Math.floor(minutes / 60)} h ago`;
+  const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) return `Yesterday, ${time}`;
+  return `${new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)}, ${time}`;
+};
+
 export type NotificationItemProps = {
   notification: Notification;
   /** A notification without buttons was opened (clicked, or Enter on it); the product marks it read */
   onOpen?: (notification: Notification, event: MouseEvent<HTMLElement>) => void;
   /** Locale of the date; the page's language by default */
   locale?: string;
+  /** The date as how long ago (2 h ago, Yesterday, 14:47); the full date shows on hover */
+  relativeDates?: boolean;
 };
 
 /** Figma "Notification feed": icon, label, sublabel, description, date, the new dot and buttons. */
-export function NotificationItem({ notification: n, onOpen, locale }: NotificationItemProps) {
+export function NotificationItem({ notification: n, onOpen, locale, relativeDates = false }: NotificationItemProps) {
   const withButtons = !!(n.primaryAction || n.secondaryAction);
   const lang = locale ?? (typeof document !== 'undefined' ? document.documentElement.lang || undefined : undefined);
   const parts = (
@@ -59,10 +75,15 @@ export function NotificationItem({ notification: n, onOpen, locale }: Notificati
           <span className="grg-notification__title">
             <span className="grg-notification__label">{n.title}</span>
             {n.sublabel && <span className="grg-notification__sublabel">{n.sublabel}</span>}
+            {n.badge && <Badge className="grg-notification__badge" variant="light" size="sm" color={n.badge.color} label={n.badge.label} leftIcon={null} rightIcon={null} />}
           </span>
           {n.description && <span className="grg-notification__description">{n.description}</span>}
         </span>
-        {n.date && <time className="grg-notification__date" dateTime={n.date.toISOString()}>{formatDate(n.date, lang)}</time>}
+        {n.date && (
+          <time className="grg-notification__date" dateTime={n.date.toISOString()} title={relativeDates ? formatDate(n.date, lang) : undefined}>
+            {relativeDates ? relativeDate(n.date, lang) : formatDate(n.date, lang)}
+          </time>
+        )}
         {withButtons && (
           <span className="grg-notification__buttons">
             {n.secondaryAction && <Button variant="outline" size="sm" onClick={n.secondaryAction.onClick}>{n.secondaryAction.label}</Button>}
@@ -105,6 +126,8 @@ export type NotificationFeedProps = {
   settingsHref?: string;
   /** Figma Footer: View all notifications */
   viewAllHref?: string;
+  /** Dates as how long ago (2 h ago); the full date on hover */
+  relativeDates?: boolean;
   /** View all notifications was chosen: a single-page app calls `event.preventDefault()` and shows the page itself */
   onViewAll?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /** Figma Empty */
@@ -125,7 +148,7 @@ export type NotificationFeedProps = {
  * Escape) and Skeleton the loading rows. New notifications that arrive while it is open are announced.
  */
 export function NotificationFeed({
-  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, viewAllHref, onViewAll, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
+  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, viewAllHref, onViewAll, relativeDates = false, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
   trigger, title = 'Notifications', layout = 'auto', locale, className = '',
 }: NotificationFeedProps) {
   const panel = useRef<OverlayPanel>(null);
@@ -172,7 +195,7 @@ export function NotificationFeed({
     return (
       <ul className="grg-feed__list">
         {/* Opening a notification takes people to it: the feed closes */}
-        {items.map(n => <li key={n.id}><NotificationItem notification={n} onOpen={(item, event) => { onOpen?.(item, event); panel.current?.hide(); }} locale={locale} /></li>)}
+        {items.map(n => <li key={n.id}><NotificationItem notification={n} onOpen={(item, event) => { onOpen?.(item, event); panel.current?.hide(); }} locale={locale} relativeDates={relativeDates} /></li>)}
       </ul>
     );
   };

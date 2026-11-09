@@ -41,13 +41,20 @@ export const Walkthrough: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     const items = () => canvasElement.querySelectorAll('.grg-ip-notes__list li');
-    await step('Three unread; Hide read leaves them, a category narrows the list', async () => {
-      await expect(canvas.getByRole('tab', { name: /^All/ })).toHaveTextContent('3');
+    await step('Four unread (the sign-in waits for its answer); Hide read leaves them, a category narrows the list', async () => {
+      await expect(canvas.getByRole('tab', { name: /^All/ })).toHaveTextContent('4');
       await userEvent.click(canvas.getByText('Hide read'));
-      await waitFor(() => expect(items()).toHaveLength(3));
+      await waitFor(() => expect(items()).toHaveLength(4));
       await userEvent.click(canvas.getByText('Hide read'));
       await userEvent.click(canvas.getByRole('tab', { name: /Deposits/ }));
       await waitFor(() => expect(canvasElement.querySelector('.grg-ip-notes__list')).toHaveTextContent('deposit successful'));
+    });
+    await step('The sign-in asks: Not me ends the session', async () => {
+      await userEvent.click(canvas.getByRole('tab', { name: /Sign-in/ }));
+      await userEvent.click(await canvas.findByRole('button', { name: 'Not me' }));
+      await expect(await canvas.findByText('That session is ended')).toBeInTheDocument();
+      await waitFor(() => expect(canvas.queryByRole('button', { name: 'Not me' })).toBeNull());
+      await userEvent.click(canvas.getByRole('tab', { name: /Deposits/ }));
     });
     await step('A notification opens its transaction, read', async () => {
       await userEvent.click(canvasElement.querySelector<HTMLElement>('.grg-ip-notes__list .grg-notification')!);
