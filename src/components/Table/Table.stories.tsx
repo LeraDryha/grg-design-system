@@ -314,6 +314,39 @@ export const RowPages: Story = {
   },
 };
 
+/** More about a row right under it (`expansion`): the row or its chevron opens it in place, as the API keys in the
+ *  Figma Global Settings do. */
+export const ExpandableRows: Story = {
+  name: 'Expandable rows',
+  render: () => (
+    <Table aria-label="API keys" rows={[
+      { id: 'k1', name: 'Shop', scopes: ['Deposit', 'Invoicing'], ips: ['201.195.88.21', '91.196.103.42'] },
+      { id: 'k2', name: 'Accounting', scopes: ['Read'], ips: [] },
+    ]} rowKey={row => row.id} rowLabel={row => row.name}
+      columns={[
+        { id: 'name', header: 'Key name', cell: row => <TableText priority="leading" title={row.name} /> },
+        { id: 'status', header: 'Status', cell: () => <Badge label="Active" variant="light" size="sm" color="success" leftIcon={null} rightIcon={null} /> },
+      ]}
+      actions={row => <ActionButton icon="trash" size="sm" color="red" aria-label={`Delete ${row.name}`} />}
+      expansion={row => (
+        <span style={{ display: 'flex', gap: 'var(--space-200)', flexWrap: 'wrap', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>
+          Allowed operations: {row.scopes.join(', ')}. IP white list: {row.ips.length ? row.ips.join(', ') : 'any'}.
+        </span>
+      )} />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const more = canvas.getByRole('button', { name: 'More about Shop' });
+    await expect(more).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(more);
+    await expect(more).toHaveAttribute('aria-expanded', 'true');
+    await expect(canvas.getByRole('region', { name: 'More about Shop' })).toHaveTextContent('201.195.88.21');
+    // A press on the row closes it again; the delete button stays its own
+    await userEvent.click(canvas.getByText('Shop'));
+    await waitFor(() => expect(canvas.queryByRole('region', { name: 'More about Shop' })).toBeNull());
+  },
+};
+
 /** With a height: the table scrolls inside it and the header stays at the top. */
 export const StickyHeader: Story = {
   name: 'Sticky header',

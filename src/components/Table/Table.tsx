@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
+import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type MouseEvent, type ReactNode } from 'react';
 import { DataTable, type DataTableSortEvent } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Skeleton } from 'primereact/skeleton';
@@ -97,6 +97,9 @@ export type TableProps<T> = {
   onRowOpen?: (row: T) => void;
   /** Or a page for each row */
   rowHref?: (row: T) => string;
+  /** Or more about the row right under it: the row opens and closes in place, a chevron down or up ends it
+   *  (Figma Global Settings, API keys) */
+  expansion?: (row: T) => ReactNode;
   /** Rows on their way: grey placeholder rows */
   loading?: boolean;
   /** No rows (Figma Empty) */
@@ -117,7 +120,7 @@ const INTERACTIVE = 'a, button, input, select, textarea, label, [role="checkbox"
  * the right, with shadows, and arrows show what is hidden.
  */
 export function Table<T>({
-  rows, columns, rowKey, rowLabel = row => rowKey(row), size = 'md', selected, onSelectionChange, actions, onRowOpen, rowHref,
+  rows, columns, rowKey, rowLabel = row => rowKey(row), size = 'md', selected, onSelectionChange, actions, onRowOpen, rowHref, expansion,
   loading = false, empty = { title: 'No results found', subtitle: 'Try adjusting your search or filters' }, maxHeight,
   'aria-label': label, className = '',
 }: TableProps<T>) {
@@ -126,7 +129,15 @@ export function Table<T>({
   const [scroll, setScroll] = useState({ left: false, right: false });
   const [edges, setEdges] = useState({ start: 0, end: 0, crowded: false });
   const selectable = !!onSelectionChange;
-  const opens = !!(onRowOpen || rowHref);
+  const opens = !expansion && !!(onRowOpen || rowHref);
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const baseId = useId();
+  const toggle = (row: T) => setExpanded(set => {
+    const next = new Set(set);
+    const key = rowKey(row);
+    if (next.has(key)) next.delete(key); else next.add(key);
+    return next;
+  });
 
   const sorted = useMemo(() => {
     const column = columns.find(candidate => candidate.id === sort.field);
@@ -219,11 +230,23 @@ export function Table<T>({
         sortIcon={({ sorted: isSorted, sortOrder }) => (
           <Icon name={!isSorted ? 'expand-up-down-line' : (sortOrder ?? 0) > 0 ? 'direction-up' : 'direction-down'} size={16} className="grg-table__sort-icon" />
         )}
+        // An expanding row: PrimeReact draws the row under it; which rows are open is kept here, by key
+        expandedRows={expansion ? (sorted.filter(row => expanded.has(rowKey(row))) as never[]) : undefined}
+        rowExpansionTemplate={expansion ? (row: T, options: { customRendering: boolean }) => {
+          options.customRendering = true;
+          const span = (selectable ? 1 : 0) + columns.length + (actions ? 1 : 0) + 1;
+          return (
+            <td className="grg-table__expansion" colSpan={span}>
+              <div id={`${baseId}-${rowKey(row)}`} role="region" aria-label={`More about ${rowLabel(row)}`}>{expansion(row)}</div>
+            </td>
+          );
+        } : undefined}
         onRowClick={event => {
-          if (!opens || loading) return;
+          if (!(opens || expansion) || loading) return;
           const target = event.originalEvent.target as HTMLElement;
           if (target.closest(INTERACTIVE)) return;
           const row = event.data as T;
+          if (expansion) { toggle(row); return; }
           if (rowHref && !onRowOpen) {
             const link = (event.originalEvent.currentTarget as HTMLElement).querySelector<HTMLAnchorElement>('.grg-table__open');
             link?.click();
@@ -244,7 +267,8 @@ export function Table<T>({
           table: { className: 'grg-table__table', 'aria-label': label },
           thead: { className: 'grg-table__thead' },
           tbody: { className: 'grg-table__tbody' },
-          bodyRow: { className: 'grg-table__row', 'data-opens': opens || undefined },
+          bodyRow: { className: 'grg-table__row', 'data-opens': opens || !!expansion || undefined },
+          rowExpansion: { className: 'grg-table__expansion-row' },
           emptyMessage: { className: 'grg-table__empty-row' },
         } as object}
       >
@@ -303,6 +327,23 @@ export function Table<T>({
                 <Icon name="direction-right" size={20} />
               </button>
             )}
+            pt={cellPt(actions ? undefined : 'end', { 'data-chevron': true }) as object}
+          />
+        )}
+        {expansion && (
+          <Column
+            key="__expand"
+            header={<span className="grg-sr-only">More</span>}
+            body={(row: T) => {
+              if (loading) return null;
+              const open = expanded.has(rowKey(row));
+              return (
+                <button type="button" className="grg-table__open" aria-expanded={open} aria-controls={open ? `${baseId}-${rowKey(row)}` : undefined}
+                  aria-label={`More about ${rowLabel(row)}`} onClick={() => toggle(row)}>
+                  <Icon name={open ? 'direction-up' : 'direction-down'} size={20} />
+                </button>
+              );
+            }}
             pt={cellPt(actions ? undefined : 'end', { 'data-chevron': true }) as object}
           />
         )}

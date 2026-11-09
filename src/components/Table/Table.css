@@ -192,3 +192,6 @@
 @media (prefers-reduced-motion: reduce) {
   .grg-table__skeleton { animation: none; }
 }
+
+/* An expanding row: the part under it on bg-muted-50 (Badges and Chips in it keep their fill), 12px around, under a line (Figma Global Settings, API keys) */
+.grg-table__expansion { padding: var(--space-300) var(--space-400); background: var(--bg-muted-50); border-bottom: 1px solid var(--stroke-soft-200); }
