@@ -5,13 +5,13 @@ import * as SettingsStories from './Settings.stories';
 
 # Settings
 
-The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account, API key and Payment settings tabs are built; Exchange rate comes next.
+The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work: Account, API key, Payment settings and Exchange rate.
 
 <a href="iframe.html?viewMode=story&id=in-product-settings--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
 
 <Canvas of={SettingsStories.LiveFlow} />
 
-**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**. On **Payment settings**: turn fixed sum invoice or auto-convert on with a currency, and off.
+**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**. On **Payment settings**: turn fixed sum invoice or auto-convert on with a currency, and off. On **Exchange rate**: **Edit coefficients**, change one, **Save changes** or **Cancel**.
 
 ## What the page has to get right
 
@@ -29,7 +29,6 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group under the search; its title, *Members*, is for screen readers only (`labelHidden`), as Figma shows no title. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
 - **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
 - **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
-- **All four tabs; Exchange rate not available yet**, until its screens are built.
 
 ### API key
 
@@ -48,6 +47,14 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **Fixed sum turns auto-convert on**, in the same currency, as the Figma toast says. While fixed sum is on, auto-convert can't be turned off: its button is unavailable and the row says *Turn off fixed sum invoice first*.
 - **A currency first.** Nothing is chosen in *Turn on*, and the button waits for a choice. The coins sit before the names ([Radio](?path=/docs/components-radio--docs) label `picture`). The row shows the chosen currency. The options are spaced as the Figma list (12px above and below each), and the group's title is for screen readers only.
 - **Invoice fee, Referral accruals and Payment coverage** show their values; their *Change* buttons have no action in this demo. *Invoice fee* drops the product name.
+
+### Exchange rate
+
+- **Edited in place.** *Edit coefficients* turns each row's value into a field with %; *Save changes* keeps them, with the Figma toast *Saved successfully*.
+- **Cancel added** in place of *Learn more* while editing: it brings the old values back (Figma had no way out).
+- **From 0 to 10%**, up to two decimals (2.5). More than 10% says *Up to 10%* under the field, and *Save changes* waits.
+- **Not while fixed sum is on.** Fixed sum pays the exact fiat amount, so the coefficients don't apply: *Edit coefficients* is unavailable and the card says *Turn off fixed sum invoice to adjust the exchange rate* (as the Payment settings question says).
+- **The demo's own assets**, as on Assets: Ethereum, Bitcoin, USD Coin, Tether, Bitcoin Cash, Litecoin. *Learn more* has no action in this demo.
 
 ## No API keys yet
 

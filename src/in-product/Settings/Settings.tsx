@@ -17,13 +17,14 @@ import { AppFrame } from '../shared/AssetsApp';
 import { pad } from '../shared/period';
 import { useApiKeys } from './ApiKeys';
 import { usePaymentSettings } from './PaymentSettings';
+import { useExchangeRate } from './ExchangeRate';
 import { YOU, startMembers, type Member, type MembersState } from '../Members/Members';
 import settingsImage from '../../assets/in-product/settings.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
 
 /* GRX Pay redesign, file "Global Settings": Settings - empty (372:42877), the states before and during verification;
    Settings - Account (372:42976): the company's profile and logo (Upload photo flow, 372:79594), its owner and its
-   contact for buyers. The other tabs (API key, Payment settings, Exchange rate) come next. Test data only. */
+   contact for buyers; API key, Payment settings and Exchange rate in their own files. Test data only. */
 
 export type SettingsProps = {
   /** Verified: the settings. Not verified: they open after verification. Verifying: the documents are being checked */
@@ -33,7 +34,7 @@ export type SettingsProps = {
   /** The API key tab starts with a key, or with none (its empty state) */
   apiKeys?: 'none' | 'some';
   /** The tab open at first */
-  tab?: 'account' | 'api' | 'payments';
+  tab?: 'account' | 'api' | 'payments' | 'rates';
 };
 
 const MB = 1024 * 1024;
@@ -76,6 +77,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   const [tab, setTab] = useState<string>(startTab);
   const api = useApiKeys({ start: apiKeys });
   const payments = usePaymentSettings();
+  const rates = useExchangeRate({ fixedSumOn: payments.fixedSumOn });
   const { toast } = useMessages();
   const close = () => setView(null);
   const owner = members.find(m => m.role === 'Owner');
@@ -178,15 +180,15 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   const content = (
     <main className="grg-ip-page">
       <h1 className="grg-ip-page__title">Settings</h1>
-      {/* The other tabs come with the next screens: shown, not available yet */}
       <TabMenu aria-label="Settings" value={tab} onChange={setTab} items={[
         { id: 'account', label: 'Account' },
         { id: 'api', label: 'API key' },
         { id: 'payments', label: 'Payment settings' },
-        { id: 'rates', label: 'Exchange rate', disabled: true },
+        { id: 'rates', label: 'Exchange rate' },
       ]}>
         {item => (item.id === 'account' ? <div className="grg-ip-tab-panel">{accountTab}</div> : item.id === 'api' ? <div className="grg-ip-tab-panel">{api.tab}</div>
-          : item.id === 'payments' ? <div className="grg-ip-tab-panel">{payments.tab}</div> : null)}
+          : item.id === 'payments' ? <div className="grg-ip-tab-panel">{payments.tab}</div>
+          : <div className="grg-ip-tab-panel">{rates.tab}</div>)}
       </TabMenu>
     </main>
   );

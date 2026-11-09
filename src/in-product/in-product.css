@@ -416,3 +416,9 @@
 
 /* A choice list in a modal (Figma Select with Selection items): each option 12px above and below, 12px apart */
 .grg-ip-choices .grg-radio-label { padding: var(--space-300) 0; }
+
+/* Settings - Exchange rate */
+.grg-ip-rate__about { max-width: calc(var(--space-5000) * 2); }
+.grg-ip-rate__about strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
+.grg-ip-rate__actions { display: flex; flex: none; gap: var(--space-300); }
+.grg-ip-rate { max-width: calc(var(--space-5000) - var(--space-1000)); }
