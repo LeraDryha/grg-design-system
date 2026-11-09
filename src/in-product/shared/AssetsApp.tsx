@@ -35,7 +35,6 @@ const pages: SidebarSection[] = [{
     { id: 'dashboard', label: 'Dashboard', href: '#dashboard', icon: 'grid-02' },
     { id: 'assets', label: 'Assets', href: '#assets', icon: 'coin' },
     { id: 'invoices', label: 'Invoices', href: '#invoices', icon: 'bill' },
-    { id: 'payouts', label: 'Mass payouts', href: '#payouts', icon: 'money-profit' },
     { id: 'transactions', label: 'Transactions', href: '#transactions', icon: 'reload' },
     { id: 'members', label: 'Members', href: '#members', icon: 'users' },
     { id: 'referrals', label: 'Referrals', href: '#referrals', icon: 'gift' },
