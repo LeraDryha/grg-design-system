@@ -15,6 +15,9 @@
   --modal-width: calc(var(--space-5000) * 2 + var(--space-2000));
   height: 100%;
   border-radius: 0;
+  /* The page's surface, not Modal's floating one: content designed on a page card (grey bg-muted-50 cards) looks
+     the same here; in dark, floating is the same grey as those cards */
+  background: var(--surface-base);
 }
 /* 24px at the sides (Modal has 32px) */
 .grg-modal.grg-drawer[data-layout='desktop'] { --modal-side: var(--space-600); }

@@ -88,10 +88,8 @@
 .grg-ip-processing .grg-ip-spinner { padding-top: var(--space-800); }
 /* Figma "Card": the grey box round a Key-value or a row with a switch */
 .grg-ip-box { padding: var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
-/* Figma's details cards: bg-muted-50, 16px corners. In dark, muted-50 is the drawer's own surface (floating):
-   there the cards take the next grey, so they still show */
+/* Figma's details cards: bg-muted-50, 16px corners, on a page card or a drawer (both surface-base) */
 .grg-ip-box--muted { border-radius: var(--radius-xl-16); background: var(--bg-muted-50); }
-[data-theme='dark'] .grg-modal .grg-ip-box--muted { background: var(--bg-weak-100); }
 .grg-ip-box--row { display: flex; align-items: center; gap: var(--space-300); }
 .grg-ip-box__label { flex: 1; font: var(--typo-body-md-medium); }
 .grg-ip-comment { display: grid; gap: var(--space-200); }
