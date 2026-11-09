@@ -423,6 +423,3 @@
 .grg-ip-rate__actions { display: flex; flex: none; gap: var(--space-300); }
 .grg-ip-rate { max-width: calc(var(--space-5000) - var(--space-1000)); }
 
-/* Reporting: Date period, its calendar over the modal under the field (fixed; placed in the code) */
-.grg-ip-period-field { position: relative; }
-.grg-ip-period-field__calendar { position: fixed; z-index: 30; }

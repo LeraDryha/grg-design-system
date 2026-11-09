@@ -41,8 +41,9 @@ export const LIST_HEIGHT = 'calc(var(--space-4000) * 2 + var(--space-1400))';
  * Everywhere, in a modal or not, `place` also fixes the list's width as it opened, so searching never narrows it.
  */
 export function useListLayer(root: RefObject<HTMLElement | null>) {
-  const [inModal, setInModal] = useState(false);
+  const [inModalState, setInModal] = useState(false);
   useLayoutEffect(() => setInModal(!!root.current?.closest('.grg-modal-dialog')), [root]);
+  const inModal = inModalState;
   const stop = useRef<() => void>(undefined);
   useEffect(() => () => stop.current?.(), []);
   /* Place the list the moment it is added, before the screen is drawn: placing it once PrimeReact says it is shown
@@ -59,10 +60,14 @@ export function useListLayer(root: RefObject<HTMLElement | null>) {
     return () => watch.disconnect();
   });
 
-  const place = () => {
+  const place = (retry = true) => {
     const host = root.current;
     const panel = host?.querySelector<HTMLElement>('.grg-dropdown');
+    // A menu can report itself shown a frame before it is in the page (Dropdown Menu): look again then
+    if (host && !panel && retry) { requestAnimationFrame(() => place(false)); return; }
     if (!host || !panel) return;
+    // Read now as well: a menu drawn by a template (the calendar's month list) can open before its state has caught up
+    const inModal = inModalState || !!host.closest('.grg-modal-dialog');
     // The list keeps the width it opened with: filtering out its longest options doesn't narrow it.
     // Over a modal it is measured once placed (below): until then its 100% is the overlay's width, not the field's
     if (!inModal) {

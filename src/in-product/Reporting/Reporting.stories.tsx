@@ -48,14 +48,15 @@ export const Walkthrough: Story = {
     await step('Generate: the parameters in a modal, then the report is processed', async () => {
       const before = rows().length;
       await userEvent.click(canvas.getByRole('button', { name: 'Generate report' }));
-      const modal = within(await canvas.findByRole('dialog', { name: 'Settlement Report' }));
-      // Custom period… opens a calendar over the modal; Escape closes only the calendar
+      let modal = within(await canvas.findByRole('dialog', { name: 'Settlement Report' }));
+      // Custom period… is a calendar step of the same modal; Apply waits for a day, Back returns to the form
       await userEvent.click(canvas.getByRole('dialog').querySelectorAll<HTMLElement>('.grg-select__box')[2]);
       await userEvent.click(within(await canvas.findByRole('option', { name: 'Custom period…' })).getByText('Custom period…'));
-      await expect(await canvas.findByRole('dialog', { name: 'Choose a period' })).toBeInTheDocument();
-      await userEvent.keyboard('{Escape}');
-      await waitFor(() => expect(canvas.queryByRole('dialog', { name: 'Choose a period' })).toBeNull());
-      await expect(canvas.getByRole('dialog', { name: 'Settlement Report' })).toBeInTheDocument();
+      const step = within(await canvas.findByRole('dialog', { name: 'Custom period' }));
+      await expect(step.getByRole('button', { name: 'Apply' })).toBeDisabled();
+      await userEvent.click(step.getByRole('button', { name: 'Back' }));
+      await expect(await canvas.findByRole('dialog', { name: 'Settlement Report' })).toBeInTheDocument();
+      modal = within(canvas.getByRole('dialog', { name: 'Settlement Report' }));
       await userEvent.click(modal.getByText('PDF'));
       await userEvent.click(modal.getByRole('button', { name: 'Generate report' }));
       await waitFor(() => expect(rows().length).toBe(before + 1));

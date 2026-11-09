@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePickerPanel } from '../../components/DatePicker/DatePickerPanel';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
@@ -106,72 +106,11 @@ const download = (r: Report) => {
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 };
 
-/* ---- The period: the usual ones, or Custom period… with a calendar under the field (as the Dashboard select) ---- */
-
-/** Date period: a Select of the periods, then Custom period…, which opens a one-month calendar over the modal (two
- *  months don't fit its width). Once applied, the dates are a checked row of the list */
-function PeriodField({ period, custom, onChange }: { period: string; custom: Range | null; onChange: (period: string, custom: Range | null) => void }) {
-  const [calendar, setCalendar] = useState(false);
-  const [range, setRange] = useState<Range | null>(custom);
-  // The calendar's Apply may hold on to its first callback: it reads the chosen dates from here
-  const chosen = useRef<Range | null>(custom);
-  const choose = (next: Range | null) => { chosen.current = next; setRange(next); };
-  const root = useRef<HTMLDivElement>(null);
-  const layer = useRef<HTMLDivElement>(null);
-  const options = [
-    ...PERIODS.map(({ value, label }) => ({ value, label })),
-    ...(custom ? [{ value: 'custom-range', label: `${date(custom[0])} – ${date(custom[1])}` }] : []),
-    { value: 'custom', label: 'Custom period…', icon: 'calendar' as const },
-  ];
-  const close = () => { setCalendar(false); root.current?.querySelector<HTMLElement>('[role="combobox"]')?.focus(); };
-  // Over the modal, fixed to the screen by the field; measured, so it also works in a transformed box
-  useLayoutEffect(() => {
-    const panel = layer.current;
-    const field = root.current?.querySelector<HTMLElement>('.grg-select__frame');
-    if (!calendar || !panel || !field) return;
-    const place = () => {
-      Object.assign(panel.style, { left: '0px', top: '0px' });
-      const origin = panel.getBoundingClientRect();
-      const box = field.getBoundingClientRect();
-      const gap = parseFloat(getComputedStyle(panel).getPropertyValue('--space-200')) || 0;
-      // Under the field, or above it when the screen ends first
-      const height = panel.offsetHeight;
-      const top = box.bottom + gap + height > window.innerHeight - gap ? Math.max(gap, box.top - gap - height) : box.bottom + gap;
-      Object.assign(panel.style, { left: `${box.left - origin.left}px`, top: `${top - origin.top}px` });
-    };
-    place();
-    window.addEventListener('resize', place);
-    return () => window.removeEventListener('resize', place);
-  }, [calendar]);
-  useEffect(() => {
-    if (!calendar) return;
-    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') { event.stopPropagation(); close(); } };
-    const onPointer = (event: PointerEvent) => { if (!root.current?.contains(event.target as Node)) setCalendar(false); };
-    document.addEventListener('keydown', onKey, true);
-    document.addEventListener('pointerdown', onPointer);
-    return () => { document.removeEventListener('keydown', onKey, true); document.removeEventListener('pointerdown', onPointer); };
-  }, [calendar]);
-  return (
-    <div ref={root} className="grg-ip-period-field">
-      <Select label="Date period" floatingLabel={false} icon={false} required options={options} value={custom && period === 'custom' ? 'custom-range' : period}
-        onChange={next => {
-          if (next === 'custom') { choose(custom); setCalendar(true); } else if (next === 'custom-range') onChange('custom', custom);
-          else if (next) onChange(next, custom);
-        }} />
-      {calendar && (
-        <div ref={layer} className="grg-ip-period-field__calendar" data-open role="dialog" aria-label="Choose a period">
-          <DatePickerPanel selectionMode="range" value={range ?? undefined}
-            onChange={next => choose(Array.isArray(next) && next[0] ? [next[0], next[1] ?? next[0]] : null)}
-            onApply={() => { if (chosen.current) onChange('custom', chosen.current); close(); }} />
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* ---- The page ---- */
 
-type Draft = { currencies: string[]; zone: string; period: string; custom: Range | null; format: Format };
+type Draft = { currencies: string[]; zone: string; period: string; custom: Range | null; format: Format;
+  /** Custom period…: the modal's calendar step, with the dates being chosen */
+  picking?: [Date | null, Date | null] };
 const startDraft = (): Draft => ({ currencies: [], zone: DEFAULT_ZONE, period: 'last-month', custom: null, format: 'csv' });
 
 /** The Reporting page with its modal, for any app that holds it */
@@ -274,14 +213,33 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
   return {
     content,
     overlays: (
-      <Modal appendTo="self" visible={!!d} onHide={() => setDraft(null)} title="Settlement Report" footerType="fill"
-        primaryAction={{ label: 'Generate report', onClick: () => generate(d!) }}>
-        {d && <>
+      // One modal: the form, or Custom period… as its calendar step with Back (the Modal rule: steps inside one modal)
+      <Modal appendTo="self" visible={!!d} onHide={() => setDraft(null)} footerType="fill"
+        {...(d?.picking ? {
+          title: 'Custom period', description: 'Choose the first and the last day of the report',
+          onBack: () => setDraft({ ...d, picking: undefined }),
+          primaryAction: { label: 'Apply', disabled: !d.picking[0], onClick: () => {
+            const [from, to] = d.picking!;
+            setDraft({ ...d, period: 'custom', custom: [from!, to ?? from!], picking: undefined });
+          } },
+        } : { title: 'Settlement Report', primaryAction: { label: 'Generate report', onClick: () => generate(d!) } })}>
+        {d?.picking ? (
+          <DatePickerPanel selectionMode="range" buttons={false} flat value={d.picking[0] ? d.picking : undefined}
+            onChange={next => setDraft({ ...d, picking: Array.isArray(next) ? next : [null, null] })} />
+        ) : d && <>
           <Select label="Currency" floatingLabel={false} placeholder="All currencies" type="coin" multiple searchable options={CURRENCIES}
             values={d.currencies} onValuesChange={currencies => setDraft({ ...d, currencies })} />
           <Select label="Time zone" floatingLabel={false} searchable icon={false} options={ZONES} value={d.zone} required
             onChange={zone => setDraft({ ...d, zone: zone ?? DEFAULT_ZONE })} />
-          <PeriodField period={d.period} custom={d.custom} onChange={(period, custom) => setDraft({ ...d, period, custom })} />
+          {/* The usual periods, the chosen dates once applied (checked), then Custom period… */}
+          <Select label="Date period" floatingLabel={false} icon={false} required
+            options={[...PERIODS.map(({ value, label: name }) => ({ value, label: name })),
+              ...(d.custom ? [{ value: 'custom', label: `${date(d.custom[0])} – ${date(d.custom[1])}` }] : []),
+              { value: 'pick', label: 'Custom period…', icon: 'calendar' as const }]}
+            value={d.period}
+            onChange={period => (period === 'pick'
+              ? setDraft({ ...d, picking: d.custom ?? [null, null] })
+              : setDraft({ ...d, period: period ?? 'last-month' }))} />
           <RadioGroup label="Format" orientation="horizontal" value={d.format} onChange={format => setDraft({ ...d, format: format as Format })}>
             <RadioLabel value="csv" label="CSV" />
             <RadioLabel value="pdf" label="PDF" />
