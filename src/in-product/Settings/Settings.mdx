@@ -1,0 +1,40 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as SettingsStories from './Settings.stories';
+
+<Meta of={SettingsStories} />
+
+# Settings
+
+The company's settings: its profile and logo, its contacts, security and payment settings. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components. This page is in progress: so far, the Settings page before the business is verified and while it is being verified.
+
+## Before verification
+
+<Canvas of={SettingsStories.NotVerified} />
+
+## Verification in progress
+
+<Canvas of={SettingsStories.Verifying} />
+
+## What the page has to get right
+
+- **Say why it's empty.** Settings open once the business is verified; the page says so instead of showing settings that don't work yet.
+- **One next step.** Before verification, the page leads to it. While the documents are checked there is nothing to do, so there is no button.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {SettingsStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Button](?path=/docs/components-button--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Topbar Navigation](?path=/docs/components-topbar-navigation--docs)
+
+The 3D pictures live with the In product pages.
