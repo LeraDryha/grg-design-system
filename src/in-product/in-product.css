@@ -369,3 +369,22 @@
 
 /* Members: the roles note in a modal takes the content's width */
 .grg-ip-roles { width: 100%; }
+
+/* Settings - Account (Global Settings): one card, its parts 32 × 24 with lines between them */
+.grg-ip-surface--fit { flex: none; }
+/* The open tab's content, 16px under the tabs (Figma) */
+.grg-ip-tab-panel { padding-top: var(--space-400); }
+.grg-ip-profile { display: flex; align-items: center; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
+.grg-ip-profile__text { display: flex; flex-direction: column; gap: var(--space-400); min-width: 0; }
+.grg-ip-profile__name { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-400); margin: 0; font: var(--typo-title-md-semibold); letter-spacing: var(--typo-title-md-semibold-tracking); color: var(--text-strong-1000); }
+.grg-ip-profile__facts { display: grid; grid-template-columns: calc(var(--space-2000)) auto; align-items: center; gap: var(--space-400); margin: 0; font: var(--typo-body-md-regular); }
+.grg-ip-profile__facts dt { color: var(--text-soft-500); }
+.grg-ip-profile__facts dd { margin: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); overflow-wrap: anywhere; }
+.grg-ip-setting { display: flex; flex-direction: column; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
+.grg-ip-setting__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-600); }
+.grg-ip-setting__text { display: flex; flex-direction: column; gap: var(--space-100); min-width: 0; }
+.grg-ip-setting__title { margin: 0; font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-setting__line { margin: 0; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
+.grg-ip-setting__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); white-space: pre-line; overflow-wrap: anywhere; }
+/* Change the owner: the list scrolls under the search when the team is big */
+.grg-ip-owner-list { max-height: calc(var(--space-5000) + var(--space-1000)); overflow-y: auto; }

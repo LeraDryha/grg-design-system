@@ -5,7 +5,34 @@ import * as SettingsStories from './Settings.stories';
 
 # Settings
 
-The company's settings: its profile and logo, its contacts, security and payment settings. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components. This page is in progress: so far, the Settings page before the business is verified and while it is being verified.
+The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account tab is built; API key, Payment settings and Exchange rate come next.
+
+<a href="iframe.html?viewMode=story&id=in-product-settings--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={SettingsStories.LiveFlow} />
+
+**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one.
+
+## What the page has to get right
+
+- **The logo buyers see.** It shows on the payment checkout, so it is cropped round right here, and can be cropped again from the original.
+- **Ownership changes on purpose.** Only the owner hands it on, to a confirmed member, and confirms first: the previous owner becomes an Admin and can't take it back.
+- **A way for buyers to get help.** A link or any contact, up to 200 characters, shown on the payment receipt.
+
+## Decided while building it
+
+- **The logo is the button.** Figma made the pencil badge open the menu; here the whole logo does, and the badge stays a picture (the Avatar rule). Without a logo it opens *Upload logo*, with one a menu: *Edit logo*, and *Remove* in red.
+- **Remove at once, with Undo.** No question first: a toast says *Logo removed* and offers *Undo*.
+- **The crop is Image Crop** from [File Upload](?path=/docs/components-file-upload--docs), darkened around the circle with the overlay of modals and drawers, not Figma's white veil.
+- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group with its title, *Members*, and a search above it. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
+- **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
+- **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
+- **All four tabs, three not available yet**, until their screens are built.
+- **Test data**: our test logo, the owner from Members, an invented support link.
+
+## When saving fails
+
+<Canvas of={SettingsStories.WhenSavingFails} />
 
 ## Before verification
 
@@ -15,14 +42,9 @@ The company's settings: its profile and logo, its contacts, security and payment
 
 <Canvas of={SettingsStories.Verifying} />
 
-## What the page has to get right
-
-- **Say why it's empty.** Settings open once the business is verified; the page says so instead of showing settings that don't work yet.
-- **One next step.** Before verification, the page leads to it. While the documents are checked there is nothing to do, so there is no button.
-
 ## From Figma
 
-The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+The frames this page was built from (also in the **Design** tab), without the bar and its logo; a car brand’s logo, an email and a phone number are blurred.
 
 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
   {SettingsStories.frames.map(([src, caption]) => (
@@ -35,6 +57,6 @@ The frames this page was built from (also in the **Design** tab), without the ba
 
 ## Built from
 
-[Button](?path=/docs/components-button--docs) · [Sidebar Navigation](?path=/docs/components-sidebar-navigation--docs) · [Topbar Navigation](?path=/docs/components-topbar-navigation--docs)
+[Tab Menu](?path=/docs/components-tab-menu--docs) · [Avatar](?path=/docs/components-avatar--docs) · [File Upload](?path=/docs/components-file-upload--docs) (Image Crop) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Search](?path=/docs/components-search--docs) · [Radio](?path=/docs/components-radio--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Badge](?path=/docs/components-badge--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
 
 The 3D pictures live with the In product pages.

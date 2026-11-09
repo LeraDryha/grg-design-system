@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type Dispatch, type SetStateAction } from 'react';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { Alert } from '../../components/Alert/Alert';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
@@ -35,11 +35,11 @@ export type Member = {
 const daysAgo = (days: number) => new Date(Date.now() - days * 86400000);
 /** dd/mm/yy, hh:mm:ss, as in the Figma table */
 const short = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-/** The owner is the account in the bar (Guadalupe Schimmel) */
-const OWNER = 'g.schimmel@company.test';
+/** You: the account in the bar (Guadalupe Schimmel), the owner until Settings hands ownership to someone else */
+export const YOU = 'g.schimmel@company.test';
 
 export const startMembers: Member[] = [
-  { email: OWNER, role: 'Owner', addedAt: daysAgo(412), color: 'amber' },
+  { email: YOU, role: 'Owner', addedAt: daysAgo(412), color: 'amber' },
   { email: 'leo.okafor@company.test', role: 'Agent', addedAt: daysAgo(2), waiting: true },
   { email: 'hana.sato@company.test', role: 'Agent', addedAt: daysAgo(38), color: 'pink' },
   { email: 'priya.raman@company.test', role: 'Accountant', addedAt: daysAgo(96), color: 'purple' },
@@ -59,7 +59,7 @@ function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit
   const rows = members.filter(m => !q || m.email.includes(q));
   const columns: TableColumn<Member>[] = [
     { id: 'email', header: 'Email', width: '36%', cell: row => (
-      <TableText orientation="horizontal" title={row.email} badge={row.role === 'Owner' ? { label: 'You' } : undefined}
+      <TableText orientation="horizontal" title={row.email} badge={row.email === YOU ? { label: 'You' } : undefined}
         leading={<Avatar size={32} initials name={nameOf(row.email)} color={row.waiting ? undefined : row.color} decorative />} />
     ) },
     { id: 'role', header: 'Role', width: '16%', cell: row => <TableText title={row.role} /> },
@@ -74,8 +74,8 @@ function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit
         <Search size="sm" aria-label="Search members by email" placeholder="Email" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
       </div>
       <Table aria-label="Members" rows={rows} rowKey={row => row.email} rowLabel={row => `${row.email}, ${row.role}`} columns={columns}
-        // The owner can't be edited or deleted from here
-        actions={row => (row.role === 'Owner' ? null : (
+        // The owner and you can't be edited or deleted from here
+        actions={row => (row.role === 'Owner' || row.email === YOU ? null : (
           <>
             <ActionButton icon="pencil" size="sm" aria-label={`Edit ${row.email}`} onClick={() => onEdit(row)} />
             <ActionButton icon="trash" size="sm" color="red" aria-label={`Delete ${row.email}`} onClick={() => onDelete(row)} />
@@ -90,9 +90,13 @@ function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit
 
 type View = { kind: 'add' } | { kind: 'edit'; email: string } | { kind: 'delete'; email: string };
 
-/** The Members page with its modal, for any app that holds it (this page, the Dashboard) */
-export function useMembers() {
-  const [members, setMembers] = useState(startMembers);
+export type MembersState = [Member[], Dispatch<SetStateAction<Member[]>>];
+
+/** The Members page with its modal, for any app that holds it (this page, the Dashboard). An app that also shows
+ *  Settings passes one list to both, so a new owner shows here too */
+export function useMembers(shared?: MembersState) {
+  const own = useState(startMembers);
+  const [members, setMembers] = shared ?? own;
   const [view, setView] = useState<View | null>(null);
   const [email, setEmail] = useState('');
   const [emailTouched, setEmailTouched] = useState(false);
@@ -112,8 +116,8 @@ export function useMembers() {
   const canInvite = valid(typed) && !taken && !!role;
 
   const invite = () => {
-    // The new member goes on top, under the owner, and waits until the invitation is accepted
-    setMembers(([owner, ...rest]) => [owner, { email: typed, role: role as Role, addedAt: new Date(), waiting: true }, ...rest]);
+    // The new member goes on top, under the first row (the owner), and waits until the invitation is accepted
+    setMembers(([first, ...rest]) => [first, { email: typed, role: role as Role, addedAt: new Date(), waiting: true }, ...rest]);
     close();
     toast({ status: 'success', title: 'Invitation sent', description: `${typed} will receive an email invitation to your company soon`, duration: 5000 });
   };
