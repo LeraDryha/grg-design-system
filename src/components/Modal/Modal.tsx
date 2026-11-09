@@ -219,16 +219,29 @@ export function ModalFrame({
   const shownWithPage = useRef(visible && appendTo === 'self');
 
   /* Escape closes the modal, wherever focus is (even after a click on the overlay), unless a list or menu inside it is
-     open: then it closes only that. PrimeReact's own Escape closed both. */
+     open: then it closes only that. PrimeReact's own Escape closed both. Whether a list was open is read before any
+     control handles the key (capture), since closing it changes the page before the key reaches the document. */
   useEffect(() => {
     if (!visible) return;
+    let listOpen = false;
+    const onKeyDownCapture = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      listOpen = !!rootRef.current?.querySelector('[data-open], [role="combobox"][aria-expanded="true"], [aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]');
+    };
     const onKeyDown = (event: globalThis.KeyboardEvent) => {
-      if (event.key !== 'Escape' || event.defaultPrevented) return;
-      if (rootRef.current?.querySelector('[data-open], [role="combobox"][aria-expanded="true"], [aria-haspopup]:not([aria-haspopup="false"])[aria-expanded="true"]')) return;
+      if (event.key !== 'Escape' || listOpen) return;
+      // A control that used the key (Search clearing its text) prevents it. PrimeReact Dropdown prevents it even with its
+      // list closed, so on a closed select (Select, Compact Select) the key still closes the modal
+      const closedSelect = event.target instanceof Element && !!event.target.closest('[role="combobox"]');
+      if (event.defaultPrevented && !closedSelect) return;
       onHide();
     };
+    document.addEventListener('keydown', onKeyDownCapture, true);
     document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('keydown', onKeyDownCapture, true);
+      document.removeEventListener('keydown', onKeyDown);
+    };
   }, [visible, onHide]);
 
   function focusFirst() {
