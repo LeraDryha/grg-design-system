@@ -368,4 +368,4 @@
 .grg-ip-card--details, .grg-ip-transaction-page > .grg-ip-card { gap: var(--space-300); }
 
 /* Members: the roles note in a modal takes the content's width */
-.grg-ip-note { width: 100%; }
+.grg-ip-roles { width: 100%; }

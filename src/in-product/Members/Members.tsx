@@ -141,7 +141,7 @@ export function useMembers() {
   );
 
   // As wide as the modal's content, as in Figma
-  const note = <Alert className="grg-ip-note" status="info" title={ROLES_NOTE} closable={false} />;
+  const note = <Alert className="grg-ip-roles" status="info" title={ROLES_NOTE} closable={false} />;
   // One modal at a time; its content follows the task (Modal: never a modal from a modal)
   const modal = view?.kind === 'add' ? {
     title: 'Add member', description: 'Invite your new team member',
