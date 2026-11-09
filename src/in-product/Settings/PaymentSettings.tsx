@@ -121,5 +121,5 @@ export function usePaymentSettings() {
       secondaryAction: { label: 'Cancel', onClick: close } };
   }
 
-  return { tab, overlays: <Modal {...(modal ?? { ...base, visible: false, title: '' })} /> };
+  return { tab, fixedSumOn: fixed !== null, overlays: <Modal {...(modal ?? { ...base, visible: false, title: '' })} /> };
 }

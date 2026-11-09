@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SettingsFlow } from './Settings';
+import rateFrame from '../../assets/design/in-product/settings/35-exchange-rate.png';
+import rateEditFrame from '../../assets/design/in-product/settings/36-exchange-rate-edit.png';
 import pay0Frame from '../../assets/design/in-product/settings/27-payments.png';
 import pay1Frame from '../../assets/design/in-product/settings/28-turn-on-fixed-sum.png';
 import pay2Frame from '../../assets/design/in-product/settings/29-fixed-sum-on.png';
@@ -63,12 +65,12 @@ export const frames: [string, string][] = [
   [pay5Frame, '32 · Auto-convert on'],
   [pay6Frame, '33 · Turn off auto-convert'],
   [pay7Frame, '34 · Payment coverage'],
+  [rateFrame, '35 · Exchange rate'], [rateEditFrame, '36 · Editing the coefficients'],
 ];
 
 const meta = {
   title: 'In product/Settings',
-  // Account, API key and Payment settings are built; Exchange rate comes next
-  tags: ['in-progress'],
+  tags: ['ready'],
   component: SettingsFlow,
   decorators: [screen],
   parameters: {
@@ -90,9 +92,8 @@ export const Walkthrough: Story = {
   play: async ({ canvasElement, step }) => {
     const canvas = within(canvasElement);
     const dialog = () => canvas.getByRole('dialog');
-    await step('The other tabs are there, not available yet', async () => {
+    await step('Account is open first', async () => {
       await expect(canvas.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true');
-      await expect(canvas.getByRole('tab', { name: 'Exchange rate' })).toHaveAttribute('aria-disabled', 'true');
     });
     await step('Upload a logo, crop it, then remove it and undo', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Upload logo' }));
@@ -210,6 +211,36 @@ export const PaymentsWalkthrough: Story = {
       await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Turn off fixed sum invoice?' })).getByRole('button', { name: 'Turn off' }));
       await expect(await canvas.findByText('Fixed sum invoice was turned off successfully')).toBeInTheDocument();
       await expect(row('Auto-convert').getByRole('button', { name: 'Turn off' })).toBeEnabled();
+    });
+  },
+};
+
+/** Exchange rate: the coefficients edited in place, up to 10%; Cancel brings the old ones back. */
+export const ExchangeRateWalkthrough: Story = {
+  name: 'Exchange rate walkthrough',
+  tags: ['!dev', '!autodocs'],
+  args: { tab: 'rates' },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const field = () => canvas.getByRole('textbox', { name: 'Correction coefficient, Bitcoin' });
+    await step('Edit: a field in each row; more than 10% is refused', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Edit coefficients' }));
+      await userEvent.clear(field());
+      await userEvent.type(field(), '12');
+      await expect(await canvas.findByText('Up to 10%')).toBeInTheDocument();
+      await expect(canvas.getByRole('button', { name: 'Save changes' })).toBeDisabled();
+    });
+    await step('Cancel brings the old values back', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Cancel' }));
+      await expect(canvas.queryByRole('textbox', { name: 'Correction coefficient, Bitcoin' })).toBeNull();
+    });
+    await step('Save a new coefficient', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Edit coefficients' }));
+      await userEvent.clear(field());
+      await userEvent.type(field(), '2.5');
+      await userEvent.click(canvas.getByRole('button', { name: 'Save changes' }));
+      await expect(await canvas.findByText('Saved successfully')).toBeInTheDocument();
+      await expect(canvas.getByText('2.5%')).toBeInTheDocument();
     });
   },
 };
