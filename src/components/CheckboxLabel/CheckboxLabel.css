@@ -39,3 +39,7 @@
 
 /* The error sits right under the text block, 2px away, like the hint under a field */
 .grg-checkbox-label__content > .grg-hint { margin-top: calc(var(--space-050) - var(--space-250)); }
+
+/* Radio label with a picture (a coin, a flag): the picture and the text side by side, 8px apart, centred */
+.grg-checkbox-label__content[data-picture] { flex-direction: row; align-items: center; gap: var(--space-200); }
+.grg-radio-label__picture { display: inline-flex; flex: none; }

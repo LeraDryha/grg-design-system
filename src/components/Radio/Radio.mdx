@@ -63,6 +63,12 @@ The text first and the radio on the right (Flip). Nothing is chosen until people
 
 On submit without a choice, the error appears under the group and the rings turn red; screen readers hear it with each option. Choosing clears it.
 
+### Choose a currency
+
+<Canvas of={RadioStories.ChooseACurrency} />
+
+A picture before each option (`picture`): a coin, a flag, an icon. When a heading right above already says what is chosen (a modal's title), `labelHidden` keeps the group's title for screen readers only. It is decorative: the label names the option. Not in the Figma Radio label; the Global Settings screens draw it in their currency lists.
+
 ### Unavailable
 
 <Canvas of={RadioStories.Unavailable} />
@@ -110,6 +116,7 @@ The Figma frames are in the **Design** tab of every story.
     { figma: 'Radio · State = Hovered, Active, Focused', prop: '(pointer, keyboard)', values: '—' },
     { figma: 'Radio label · Label, Sublabel, Description, Link button', prop: 'RadioLabel label, sublabel, description, link', values: 'text; { label, href }' },
     { figma: 'Radio label · Flip', prop: 'RadioLabel flip', values: 'On → true' },
+    { figma: '(screens) a coin before the label', prop: 'RadioLabel picture', values: 'CoinIcon, CountryIcon, Icon' },
   ]}
 />
 

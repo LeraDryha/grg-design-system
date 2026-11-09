@@ -5,19 +5,20 @@ import * as SettingsStories from './Settings.stories';
 
 # Settings
 
-The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account and API key tabs are built; Payment settings and Exchange rate come next.
+The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. This page is in progress: the Account, API key and Payment settings tabs are built; Exchange rate comes next.
 
 <a href="iframe.html?viewMode=story&id=in-product-settings--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
 
 <Canvas of={SettingsStories.LiveFlow} />
 
-**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**.
+**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**. On **Payment settings**: turn fixed sum invoice or auto-convert on with a currency, and off.
 
 ## What the page has to get right
 
 - **The logo buyers see.** It shows on the payment checkout, so it is cropped round right here, and can be cropped again from the original.
 - **Ownership changes on purpose.** Only the owner hands it on, to a confirmed member, and confirms first: the previous owner becomes an Admin and can't take it back.
 - **A way for buyers to get help.** A link or any contact, up to 200 characters, shown on the payment receipt.
+- **Payments that settle as the business wants.** Fixed sum invoice pays out the exact fiat amount; auto-convert turns crypto into one currency.
 - **Keys with only the access they need.** Each API key has its permissions and, if wanted, the IP addresses it works from; the secret is shown once, to copy or scan.
 
 ## Decided while building it
@@ -25,10 +26,10 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **The logo is the button.** Figma made the pencil badge open the menu; here the whole logo does, and the badge stays a picture (the Avatar rule). Without a logo it opens *Upload logo*, with one a menu: *Edit logo*, and *Remove* in red.
 - **Remove at once, with Undo.** No question first: a toast says *Logo removed* and offers *Undo*.
 - **The crop is Image Crop** from [File Upload](?path=/docs/components-file-upload--docs), darkened around the circle with the overlay of modals and drawers, not Figma's white veil.
-- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group with its title, *Members*, and a search above it. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
+- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group under the search; its title, *Members*, is for screen readers only (`labelHidden`), as Figma shows no title. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
 - **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
 - **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
-- **All four tabs; Payment settings and Exchange rate not available yet**, until their screens are built.
+- **All four tabs; Exchange rate not available yet**, until its screens are built.
 
 ### API key
 
@@ -40,6 +41,13 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **Texts without the brand**: the Withdrawal description drops the product name and mass payouts.
 - **Icons**: a Featured Icon with a key in the header and on each key (Warning, filled, as Figma's orange tile); the 3D key on the empty tab.
 - **Test data**: our test logo, the owner from Members, an invented support link.
+
+### Payment settings
+
+- **Buttons, not switches.** Turning a setting on needs a currency, turning it off a question first; a Switch is for settings that take effect at once (the Switch rule), so the Figma *Turn on* and *Turn off* stay.
+- **Fixed sum turns auto-convert on**, in the same currency, as the Figma toast says. While fixed sum is on, auto-convert can't be turned off: its button is unavailable and the row says *Turn off fixed sum invoice first*.
+- **A currency first.** Nothing is chosen in *Turn on*, and the button waits for a choice. The coins sit before the names ([Radio](?path=/docs/components-radio--docs) label `picture`). The row shows the chosen currency. The options are spaced as the Figma list (12px above and below each), and the group's title is for screen readers only.
+- **Invoice fee, Referral accruals and Payment coverage** show their values; their *Change* buttons have no action in this demo. *Invoice fee* drops the product name.
 
 ## No API keys yet
 
@@ -72,6 +80,6 @@ The frames this page was built from (also in the **Design** tab), without the ba
 
 ## Built from
 
-[Tab Menu](?path=/docs/components-tab-menu--docs) · [Table](?path=/docs/components-table--docs) · [Checkbox](?path=/docs/components-checkbox--docs) (Label) · [Multi-value Input](?path=/docs/components-multi-value-input--docs) · [Input](?path=/docs/components-input--docs) · [Chips](?path=/docs/components-chips--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Avatar](?path=/docs/components-avatar--docs) · [File Upload](?path=/docs/components-file-upload--docs) (Image Crop) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Search](?path=/docs/components-search--docs) · [Radio](?path=/docs/components-radio--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Badge](?path=/docs/components-badge--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
+[Tab Menu](?path=/docs/components-tab-menu--docs) · [Radio](?path=/docs/components-radio--docs) · [Coin icons](?path=/docs/foundations-icons-coin-icons--docs) · [Table](?path=/docs/components-table--docs) · [Checkbox](?path=/docs/components-checkbox--docs) (Label) · [Multi-value Input](?path=/docs/components-multi-value-input--docs) · [Input](?path=/docs/components-input--docs) · [Chips](?path=/docs/components-chips--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Avatar](?path=/docs/components-avatar--docs) · [File Upload](?path=/docs/components-file-upload--docs) (Image Crop) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Search](?path=/docs/components-search--docs) · [Radio](?path=/docs/components-radio--docs) · [Text Area](?path=/docs/components-text-area--docs) · [Badge](?path=/docs/components-badge--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)
 
 The 3D pictures live with the In product pages.

@@ -1,6 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { SettingsFlow } from './Settings';
+import pay0Frame from '../../assets/design/in-product/settings/27-payments.png';
+import pay1Frame from '../../assets/design/in-product/settings/28-turn-on-fixed-sum.png';
+import pay2Frame from '../../assets/design/in-product/settings/29-fixed-sum-on.png';
+import pay3Frame from '../../assets/design/in-product/settings/30-turn-off-fixed-sum.png';
+import pay4Frame from '../../assets/design/in-product/settings/31-turn-on-auto-convert.png';
+import pay5Frame from '../../assets/design/in-product/settings/32-auto-convert-on.png';
+import pay6Frame from '../../assets/design/in-product/settings/33-turn-off-auto-convert.png';
+import pay7Frame from '../../assets/design/in-product/settings/34-payment-coverage.png';
 import { screen } from '../shared/screen';
 import testLogo from '../../assets/test/company-logo.svg';
 import notVerifiedFrame from '../../assets/design/in-product/settings/1-not-verified.png';
@@ -47,11 +55,19 @@ export const frames: [string, string][] = [
   [api8Frame, '24 · A key opened'],
   [api9Frame, '25 · Delete API key'],
   [api10Frame, '26 · Delete all API keys'],
+  [pay0Frame, '27 · Payment settings'],
+  [pay1Frame, '28 · Turn on fixed sum invoice'],
+  [pay2Frame, '29 · Fixed sum invoice on'],
+  [pay3Frame, '30 · Turn off fixed sum invoice'],
+  [pay4Frame, '31 · Turn on auto-convert'],
+  [pay5Frame, '32 · Auto-convert on'],
+  [pay6Frame, '33 · Turn off auto-convert'],
+  [pay7Frame, '34 · Payment coverage'],
 ];
 
 const meta = {
   title: 'In product/Settings',
-  // Account and API key are built; Payment settings and Exchange rate come next
+  // Account, API key and Payment settings are built; Exchange rate comes next
   tags: ['in-progress'],
   component: SettingsFlow,
   decorators: [screen],
@@ -76,7 +92,7 @@ export const Walkthrough: Story = {
     const dialog = () => canvas.getByRole('dialog');
     await step('The other tabs are there, not available yet', async () => {
       await expect(canvas.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true');
-      await expect(canvas.getByRole('tab', { name: 'Payment settings' })).toHaveAttribute('aria-disabled', 'true');
+      await expect(canvas.getByRole('tab', { name: 'Exchange rate' })).toHaveAttribute('aria-disabled', 'true');
     });
     await step('Upload a logo, crop it, then remove it and undo', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Upload logo' }));
@@ -164,6 +180,36 @@ export const ApiKeysWalkthrough: Story = {
       await userEvent.click(canvas.getByRole('button', { name: 'Delete all' }));
       await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Delete all API keys?' })).getByRole('button', { name: 'Delete' }));
       await expect(await canvas.findByRole('heading', { name: 'API Key' })).toBeInTheDocument();
+    });
+  },
+};
+
+/** Payment settings: fixed sum invoice turns auto-convert on too; auto-convert can't go off before fixed sum. */
+export const PaymentsWalkthrough: Story = {
+  name: 'Payment settings walkthrough',
+  tags: ['!dev', '!autodocs'],
+  args: { tab: 'payments' },
+  play: async ({ canvasElement, step }) => {
+    const canvas = within(canvasElement);
+    const row = (name: string) => within(canvas.getByRole('region', { name }));
+    await step('Turn on fixed sum invoice: a currency first', async () => {
+      await userEvent.click(row('Fixed sum invoice').getByRole('button', { name: 'Turn on' }));
+      const modal = within(await canvas.findByRole('dialog', { name: 'Turn on Fixed sum invoice' }));
+      await expect(modal.getByRole('button', { name: 'Turn on' })).toBeDisabled();
+      await userEvent.click(modal.getByText('EUR'));
+      await userEvent.click(modal.getByRole('button', { name: 'Turn on' }));
+      await expect(await canvas.findByText('Fixed sum invoice and auto-convert were turned on successfully')).toBeInTheDocument();
+    });
+    await step('Auto-convert is on too, and stays on while fixed sum is on', async () => {
+      await expect(row('Auto-convert').getByText('EUR')).toBeInTheDocument();
+      await expect(row('Auto-convert').getByRole('button', { name: 'Turn off' })).toBeDisabled();
+      await expect(row('Auto-convert').getByText('Turn off fixed sum invoice first')).toBeInTheDocument();
+    });
+    await step('Turning off asks first', async () => {
+      await userEvent.click(row('Fixed sum invoice').getByRole('button', { name: 'Turn off' }));
+      await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Turn off fixed sum invoice?' })).getByRole('button', { name: 'Turn off' }));
+      await expect(await canvas.findByText('Fixed sum invoice was turned off successfully')).toBeInTheDocument();
+      await expect(row('Auto-convert').getByRole('button', { name: 'Turn off' })).toBeEnabled();
     });
   },
 };
