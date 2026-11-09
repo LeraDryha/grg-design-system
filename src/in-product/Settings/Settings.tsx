@@ -16,6 +16,7 @@ import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame } from '../shared/AssetsApp';
 import { pad } from '../shared/period';
 import { useApiKeys } from './ApiKeys';
+import { usePaymentSettings } from './PaymentSettings';
 import { YOU, startMembers, type Member, type MembersState } from '../Members/Members';
 import settingsImage from '../../assets/in-product/settings.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
@@ -32,7 +33,7 @@ export type SettingsProps = {
   /** The API key tab starts with a key, or with none (its empty state) */
   apiKeys?: 'none' | 'some';
   /** The tab open at first */
-  tab?: 'account' | 'api';
+  tab?: 'account' | 'api' | 'payments';
 };
 
 const MB = 1024 * 1024;
@@ -74,6 +75,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   const [view, setView] = useState<View | null>(null);
   const [tab, setTab] = useState<string>(startTab);
   const api = useApiKeys({ start: apiKeys });
+  const payments = usePaymentSettings();
   const { toast } = useMessages();
   const close = () => setView(null);
   const owner = members.find(m => m.role === 'Owner');
@@ -180,10 +182,11 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       <TabMenu aria-label="Settings" value={tab} onChange={setTab} items={[
         { id: 'account', label: 'Account' },
         { id: 'api', label: 'API key' },
-        { id: 'payments', label: 'Payment settings', disabled: true },
+        { id: 'payments', label: 'Payment settings' },
         { id: 'rates', label: 'Exchange rate', disabled: true },
       ]}>
-        {item => (item.id === 'account' ? <div className="grg-ip-tab-panel">{accountTab}</div> : item.id === 'api' ? <div className="grg-ip-tab-panel">{api.tab}</div> : null)}
+        {item => (item.id === 'account' ? <div className="grg-ip-tab-panel">{accountTab}</div> : item.id === 'api' ? <div className="grg-ip-tab-panel">{api.tab}</div>
+          : item.id === 'payments' ? <div className="grg-ip-tab-panel">{payments.tab}</div> : null)}
       </TabMenu>
     </main>
   );
@@ -231,7 +234,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
 
   return {
     content,
-    overlays: <><Modal {...(modal ?? { ...base, visible: false, title: '' })} />{api.overlays}</>,
+    overlays: <><Modal {...(modal ?? { ...base, visible: false, title: '' })} />{api.overlays}{payments.overlays}</>,
   };
 }
 

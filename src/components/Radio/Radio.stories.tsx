@@ -4,6 +4,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { Radio, RadioGroup, type RadioProps } from './Radio';
 import { RadioLabel } from '../RadioLabel/RadioLabel';
 import { Button } from '../Button/Button';
+import { CoinIcon } from '../CoinIcon/CoinIcon';
 import { Showcase, Variant } from '../../docs/blocks/DocBlocks';
 import componentFrame from '../../assets/design/radio/radio-component.png';
 import labelFrame from '../../assets/design/radio/radio-label.png';
@@ -127,6 +128,25 @@ export const Unavailable: Story = {
   ),
   play: async ({ canvasElement }) => {
     await expect(within(canvasElement).getByRole('radio', { name: 'Solana' })).toBeDisabled();
+  },
+};
+
+/** A picture before each option, such as a coin: the label still names it. Nothing is chosen until people choose. */
+export const ChooseACurrency: Story = {
+  name: 'Choose a currency',
+  render: () => (
+    <div style={column}>
+      <RadioGroup label="Currency">
+        <RadioLabel flip value="usdc" label="USD Coin (USDC)" picture={<CoinIcon name="usd-coin-usdc" size={20} />} />
+        <RadioLabel flip value="eur" label="EUR" picture={<CoinIcon name="eur" size={20} />} />
+        <RadioLabel flip value="usd" label="USD" picture={<CoinIcon name="usd" size={20} />} />
+      </RadioGroup>
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(canvas.getByText('EUR'));
+    await expect(canvas.getByRole('radio', { name: 'EUR' })).toBeChecked();
   },
 };
 

@@ -66,6 +66,7 @@ Token differences and agreed implementation decisions. The table records how cod
 | Pagination / Navigation controls | Previous comes before First (`‹ «`) and Next before Last (`› »`) | First and Last on the outside, `« ‹ … › »`, as is usual. To be fixed in Figma |
 | Progress bar, Circular progress bar / Unknown length | No state for a task whose length isn't known | Added: the bar runs a piece of the fill along the track, the ring turns a quarter of itself (the bar on PrimeReact ProgressBar; the ring drawn in the code, as PrimeReact ProgressSpinner lets the arc drift off the track). To be added to Figma |
 | Circular progress bar guidelines / lg-64 | The label style is written *Body-mb/Medium* | Body-md/Medium, as in the component set |
+| Radio label / picture | No picture in the component; the Global Settings currency lists put a coin before the label | `picture`: before the text, 8px from it, centred |
 | Search / Style = Gray | Marked optional, to be reconsidered or deprecated | Not built: Outstroke only |
 | Search / Loading | No state while results load | The xs Progress Circle in place of the clear button |
 | Slider / Control handle, Default | The handle is light grey (`stroke-soft-200`) at 0 and black from the first step | Always black: the grey handle hardly shows on white (about 1.3:1) |

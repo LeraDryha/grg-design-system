@@ -402,3 +402,14 @@
 /* The QR code stays black on white in both themes, so a camera reads it */
 .grg-ip-qr { display: grid; justify-items: center; }
 .grg-ip-qr img { width: calc(var(--space-2000) + var(--space-500)); height: auto; border-radius: var(--radius-sm-8); }
+
+/* Settings - Payment settings: rows of an icon with its text, the value, the button (Figma) */
+.grg-ip-pay__row { display: grid; grid-template-columns: minmax(0, 1fr) var(--space-5000) auto; align-items: center; gap: var(--space-600); padding: var(--space-600); }
+.grg-ip-pay__about { display: flex; align-items: flex-start; gap: var(--space-400); min-width: 0; max-width: calc(var(--space-5000) * 2 + var(--space-1000)); }
+.grg-ip-pay__title { margin: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-ip-pay__text { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-pay__text strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
+.grg-ip-pay__note { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
+.grg-ip-pay__value { font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
+.grg-ip-pay__action { justify-self: end; }
+.grg-ip-pay__coin { display: inline-flex; align-items: center; gap: var(--space-200); }
