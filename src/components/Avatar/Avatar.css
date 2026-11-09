@@ -67,3 +67,15 @@
 }
 
 .grg-avatar__status { position: absolute; right: 0; bottom: 0; }
+
+/* The avatar's container as a button (the edit badge stays a picture): no frame of its own, the round focus ring */
+.grg-avatar-button {
+  display: inline-flex;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-fully-rounded);
+  background: transparent;
+  cursor: pointer;
+}
+.grg-avatar-button:focus-visible { outline: none; box-shadow: var(--focus-ring); }

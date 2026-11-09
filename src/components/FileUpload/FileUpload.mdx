@@ -10,10 +10,12 @@ import { ComponentHeader, DoDont, PropsMapping } from '../../docs/blocks/DocBloc
   figma="324-4742"
   guidelines="702-12903"
   designTab
-  builtOn="PrimeReact FileUpload and ProgressBar"
+  builtOn="PrimeReact FileUpload, ProgressBar and (Image Crop) Slider"
   related={[
     { label: 'Action Button', href: '?path=/docs/components-action-button--docs', relation: 'Uses' },
     { label: 'Button', href: '?path=/docs/components-button--docs', relation: 'Uses' },
+    { label: 'Slider', href: '?path=/docs/components-slider--docs', relation: 'Uses' },
+    { label: 'Modal', href: '?path=/docs/components-modal--docs', relation: 'See also' },
   ]}
 />
 
@@ -39,13 +41,12 @@ The product does the upload itself and tells the component how far each file has
 <DoDont
   dos={[
     'Adding documents to a request: a CV, a contract, a statement',
-    'A logo or a photo, one file that replaces the previous one',
+    'A logo or a photo, one file that replaces the previous one; cropped round with Image Crop',
     'Several files at once, each with its own progress',
   ]}
   donts={[
     'Pasting text or a link: use Input or Text Area',
     'Choosing from files already in the product: use Select or a list',
-    'Cropping a photo: the crop step comes later, with Modal',
   ]}
 />
 
@@ -89,6 +90,19 @@ The whole zone is one button: Tab reaches it, Enter or Space opens the file dial
 
 Without `multiple`, a new file replaces the previous one.
 
+### Crop a logo
+
+<Canvas of={FileUploadStories.CropALogo} />
+
+The Figma *Upload photo flow*. The avatar's container is the button (its edit badge stays a picture): without a logo it opens *Upload logo*; the chosen picture goes on to the crop in the same modal, and the back arrow returns to the upload. Drag the picture into the round window, zoom with the slider, its − and +, or the + and − keys; the picture always covers the window. *Save* puts the result in the avatar. With a logo, the avatar opens a menu: *Edit logo* crops the original again from where it was left, *Remove* takes the logo away.
+
+`ImageCrop` is the window and the zoom; `cropImage(src, crop)` gives the square result (512 × 512 PNG) for the product to upload. Keep the original picture and the crop to edit it later.
+
+```tsx
+<ImageCrop src={original} label="Logo position" value={crop} onChange={setCrop} />
+const logo = await cropImage(original, crop);
+```
+
 ### Upload files in a card
 
 <Canvas of={FileUploadStories.UploadFilesInACard} />
@@ -109,6 +123,9 @@ What the code adds to the Figma file, and why:
 - **File format icons.** The Figma *File format icon* set: fifteen formats in their colours, with a dark-theme sheet. Formats the set doesn't have (jpg, png, svg…) get the same sheet with a neutral label and their extension.
 - **Sizes in the locale's numbers.** *1.2 MB* in English, *1,2 MB* in Ukrainian.
 - **Focus you can see.** The zone shows the system blue ring with the keyboard.
+- **Crop of our own.** PrimeReact has no crop component. The window is drawn here; the zoom is [Slider](?path=/docs/components-slider--docs) with `steppers` (PrimeReact Slider), from 100% (the picture fills the window) to 300% in steps of 10%. The picture can't move so far that an edge shows in the square.
+- **The veil around the circle** is the Figma one: white at 20% over an 8px blur, the same in both themes (`--crop-veil`, see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
+- **Edit from the original.** Edit logo opens the original picture with the last zoom and position, so the logo can be zoomed out again, not cropped twice.
 
 ## File cards and formats
 
@@ -128,10 +145,13 @@ The drop zone has 40px padding, 12px corners and a dashed border. Hovered, it ge
 | Tab | Moves to the drop zone, then to each card's action |
 | Enter or Space (zone) | Opens the file dialog |
 | Enter or Space (action) | Cancels, removes or tries again |
+| Arrow keys (crop window) | Move the picture by 2% of the window; with Shift by 10% |
+| + and − (crop window) | Zoom in and out by one step |
 
 - The zone is named by its text: the call to action and the hint (formats and size).
 - Each progress bar is named *Uploading my_cv.pdf* and reports its value.
 - Finished and failed files are announced; the format icon is decorative, the file name says what it is.
+- The crop window is named (*Logo position*) and says how to use it: *Drag or use the arrow keys to move it, + and − to zoom*. The zoom slider is named *Zoom*.
 
 ## Figma and code
 
