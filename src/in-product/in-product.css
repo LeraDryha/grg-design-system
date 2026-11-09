@@ -366,3 +366,6 @@
 .grg-ip-waiting__image { width: var(--space-4000); height: auto; }
 /* Details cards: their parts 12px apart, as in the drawer */
 .grg-ip-card--details, .grg-ip-transaction-page > .grg-ip-card { gap: var(--space-300); }
+
+/* Members: the roles note in a modal takes the content's width */
+.grg-ip-note { width: 100%; }

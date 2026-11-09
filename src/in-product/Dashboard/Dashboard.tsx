@@ -17,6 +17,7 @@ import { useConvert } from '../Convert/Convert';
 import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
 import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
 import { useInvoices } from '../Invoices/Invoices';
+import { useMembers } from '../Members/Members';
 import { useTransactions } from '../Transactions/Transactions';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
@@ -370,9 +371,12 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   const transactionsPage = useTransactions({ account: empty ? 'not-verified' : 'verified' });
   const invoices = useInvoices({ onViewTransaction: transaction => { transactionsPage.show(transaction); setPage('transactions'); } });
 
+  const membersPage = useMembers();
+
   let content: ReactNode = withdraw.outside;
   if (!content && page === 'invoices') content = invoices.content;
   if (!content && page === 'transactions') content = transactionsPage.content;
+  if (!content && page === 'members') content = membersPage.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -405,6 +409,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
       {withdraw.modal}
       {invoices.overlays}
       {transactionsPage.overlays}
+      {membersPage.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
