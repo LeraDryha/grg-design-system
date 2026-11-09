@@ -7,7 +7,8 @@ import { Button } from '../../components/Button/Button';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { CompactSelect } from '../../components/CompactSelect/CompactSelect';
 import { Drawer } from '../../components/Drawer/Drawer';
-import { FeaturedIcon, type FeaturedIconType } from '../../components/FeaturedIcon/FeaturedIcon';
+import type { AvatarColor } from '../../components/Avatar/Avatar';
+import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { Icon, type IconName } from '../../components/Icon/Icon';
 import { Input } from '../../components/Input/Input';
 import { Modal } from '../../components/Modal/Modal';
@@ -17,6 +18,7 @@ import { SwitchLabel } from '../../components/SwitchLabel/SwitchLabel';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
+import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
 import { AppFrame, money, startAssets } from '../shared/AssetsApp';
 import { Lead, LeadBox } from '../shared/lead';
 import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
@@ -28,10 +30,11 @@ import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period'
 export type Status = 'Created' | 'Payment awaiting' | 'Paid' | 'Timeout' | 'Deactivated';
 const STATUSES: Status[] = ['Created', 'Payment awaiting', 'Paid', 'Timeout', 'Deactivated'];
 const STATUS_COLOR: Record<Status, BadgeColor> = { Created: 'warning', 'Payment awaiting': 'warning', Paid: 'success', Timeout: 'error', Deactivated: 'error' };
-/** The colour of an invoice is its status's: waiting, paid, closed (a Featured Icon, the status's soft colour behind) */
-const STATUS_LEAD: Record<Status, { type: FeaturedIconType; icon: IconName }> = {
-  Created: { type: 'warning', icon: 'clock-circle-filled' }, 'Payment awaiting': { type: 'warning', icon: 'clock-circle-filled' },
-  Paid: { type: 'success', icon: 'check-circle-filled' }, Timeout: { type: 'error', icon: 'remove-circle-filled' }, Deactivated: { type: 'error', icon: 'remove-circle-filled' },
+/** The colour of an invoice is its status's, drawn like a transaction's kind (Transaction Icon): amber with a clock
+ *  while it waits, green with a check when paid, red with a cross when closed (the Transaction Icon `failed`) */
+const STATUS_LEAD: Record<Status, { color: AvatarColor; icon: IconName; closed?: boolean }> = {
+  Created: { color: 'amber', icon: 'time-oclock' }, 'Payment awaiting': { color: 'amber', icon: 'time-oclock' },
+  Paid: { color: 'green', icon: 'check' }, Timeout: { color: 'red', icon: 'remove', closed: true }, Deactivated: { color: 'red', icon: 'remove', closed: true },
 };
 /** A link can be deactivated while nobody has paid it */
 const active = (status: Status) => status === 'Created' || status === 'Payment awaiting';
@@ -209,8 +212,8 @@ function Summary({ invoice }: { invoice: Invoice }) {
 
 /** The invoice's lead: its status's colour and icon, the amount and the status */
 const leadOf = (invoice: Invoice) => ({
-  tint: `var(--${STATUS_LEAD[invoice.status].type}-muted-50)`,
-  icon: <FeaturedIcon type={STATUS_LEAD[invoice.status].type} icon={STATUS_LEAD[invoice.status].icon} filled={false} />,
+  tint: `var(--add-${STATUS_LEAD[invoice.status].color}-50)`,
+  icon: <TransactionIcon type="payment" icon={STATUS_LEAD[invoice.status].icon} color={STATUS_LEAD[invoice.status].color} failed={STATUS_LEAD[invoice.status].closed} size="lg" />,
   kind: 'Invoice amount',
   amount: amountText(invoice.amount, invoice.currency),
   badge: <Badge label={invoice.status} variant="stroke" size="sm" color={STATUS_COLOR[invoice.status]} leftIcon={null} rightIcon={null} />,
