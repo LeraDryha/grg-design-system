@@ -49,6 +49,13 @@ export const Walkthrough: Story = {
       const before = rows().length;
       await userEvent.click(canvas.getByRole('button', { name: 'Generate report' }));
       const modal = within(await canvas.findByRole('dialog', { name: 'Settlement Report' }));
+      // Custom period… opens a calendar over the modal; Escape closes only the calendar
+      await userEvent.click(canvas.getByRole('dialog').querySelectorAll<HTMLElement>('.grg-select__box')[2]);
+      await userEvent.click(within(await canvas.findByRole('option', { name: 'Custom period…' })).getByText('Custom period…'));
+      await expect(await canvas.findByRole('dialog', { name: 'Choose a period' })).toBeInTheDocument();
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() => expect(canvas.queryByRole('dialog', { name: 'Choose a period' })).toBeNull());
+      await expect(canvas.getByRole('dialog', { name: 'Settlement Report' })).toBeInTheDocument();
       await userEvent.click(modal.getByText('PDF'));
       await userEvent.click(modal.getByRole('button', { name: 'Generate report' }));
       await waitFor(() => expect(rows().length).toBe(before + 1));

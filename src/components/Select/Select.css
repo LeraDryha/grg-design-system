@@ -94,3 +94,5 @@
   cursor: pointer;
 }
 .grg-select__clear:where(:hover) { color: var(--icon-subtle-700); }
+/* × shows while the field is hovered or focused (pointer, keyboard, touch), so a chosen value reads clean at rest */
+.grg-select__frame:not(:hover, :focus-within, [data-focused]) .grg-select__clear { opacity: 0; pointer-events: none; }
