@@ -50,10 +50,9 @@ const logo = (
   </a>
 );
 
-/** The pages in this demo; the others are in the menu but lead nowhere. Settings shows only its states before
- *  verification for now, so the menu doesn't lead to it yet */
+/** The pages in this demo; the others are in the menu but lead nowhere */
 export type AppPage = 'dashboard' | 'assets' | 'invoices' | 'transactions' | 'members' | 'settings';
-const built: string[] = ['dashboard', 'assets', 'invoices', 'transactions', 'members'];
+const built: string[] = ['dashboard', 'assets', 'invoices', 'transactions', 'members', 'settings'];
 
 /** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow.
  *  `onNavigate` moves between the built pages; without it the menu stays on `current` */
