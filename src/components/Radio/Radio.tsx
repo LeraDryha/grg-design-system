@@ -80,6 +80,8 @@ export function Radio({
 export type RadioGroupProps = {
   /** What is being chosen, such as "Payout method": the group's name for screen readers and its title */
   label: string;
+  /** Keep the title for screen readers only, when a heading right above already says what is chosen (a modal's title) */
+  labelHidden?: boolean;
   /** A line under the title */
   hint?: string;
   /** Error under the group, such as "Choose a payout method": the rings turn red and screen readers read it with the group */
@@ -102,7 +104,7 @@ export type RadioGroupProps = {
 
 /** A titled group of radios: only one can be chosen. Not in Figma; the title is a field label, the error a Hint text. */
 export function RadioGroup({
-  label, hint, error, value: controlled, defaultValue = null, onChange, orientation = 'vertical', size, disabled, name, children, className = '',
+  label, labelHidden = false, hint, error, value: controlled, defaultValue = null, onChange, orientation = 'vertical', size, disabled, name, children, className = '',
 }: RadioGroupProps) {
   const id = useId();
   const [local, setLocal] = useState(defaultValue);
@@ -129,7 +131,7 @@ export function RadioGroup({
       aria-invalid={!!error || undefined}
       disabled={disabled}
     >
-      <legend className="grg-radio-group__label">{label}</legend>
+      <legend className={labelHidden ? 'grg-sr-only' : 'grg-radio-group__label'}>{label}</legend>
       {/* A legend isn't a flex item of its fieldset: the rest sits in its own column */}
       <div className="grg-radio-group__body">
         {hint && <p className="grg-radio-group__hint" id={hintId}>{hint}</p>}

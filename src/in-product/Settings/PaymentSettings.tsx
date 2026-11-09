@@ -105,7 +105,7 @@ export function usePaymentSettings() {
         else { setConvert(v.chosen); done('Auto-convert was turned on successfully'); }
       } },
       children: (
-        <RadioGroup label="Currency" value={v.chosen} onChange={chosen => setView({ ...v, chosen: chosen as Currency })}>
+        <RadioGroup label="Currency" labelHidden className="grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen: chosen as Currency })}>
           {CURRENCIES.map(c => <RadioLabel key={c.id} flip value={c.id} label={c.label} picture={<CoinIcon name={c.coin} size={20} />} />)}
         </RadioGroup>
       ) };

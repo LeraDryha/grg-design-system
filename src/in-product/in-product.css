@@ -413,3 +413,6 @@
 .grg-ip-pay__value { font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
 .grg-ip-pay__action { justify-self: end; }
 .grg-ip-pay__coin { display: inline-flex; align-items: center; gap: var(--space-200); }
+
+/* A choice list in a modal (Figma Select with Selection items): each option 12px above and below, 12px apart */
+.grg-ip-choices .grg-radio-label { padding: var(--space-300) 0; }

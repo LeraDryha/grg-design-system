@@ -214,7 +214,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       children: <>
         <Search size="md" aria-label="Search members by email" placeholder="Email" value={v.query} onChange={query => setView({ ...v, query })} />
         {shown.length ? (
-          <RadioGroup label="Members" className="grg-ip-owner-list" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
+          <RadioGroup label="Members" labelHidden className="grg-ip-owner-list grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
             {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.email} />)}
           </RadioGroup>
         ) : <p className="grg-ip-setting__line">No members with this email</p>}

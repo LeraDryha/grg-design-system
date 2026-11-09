@@ -26,7 +26,7 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **The logo is the button.** Figma made the pencil badge open the menu; here the whole logo does, and the badge stays a picture (the Avatar rule). Without a logo it opens *Upload logo*, with one a menu: *Edit logo*, and *Remove* in red.
 - **Remove at once, with Undo.** No question first: a toast says *Logo removed* and offers *Undo*.
 - **The crop is Image Crop** from [File Upload](?path=/docs/components-file-upload--docs), darkened around the circle with the overlay of modals and drawers, not Figma's white veil.
-- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group with its title, *Members*, and a search above it. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
+- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group under the search; its title, *Members*, is for screen readers only (`labelHidden`), as Figma shows no title. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
 - **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
 - **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
 - **All four tabs; Exchange rate not available yet**, until its screens are built.
@@ -46,7 +46,7 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 
 - **Buttons, not switches.** Turning a setting on needs a currency, turning it off a question first; a Switch is for settings that take effect at once (the Switch rule), so the Figma *Turn on* and *Turn off* stay.
 - **Fixed sum turns auto-convert on**, in the same currency, as the Figma toast says. While fixed sum is on, auto-convert can't be turned off: its button is unavailable and the row says *Turn off fixed sum invoice first*.
-- **A currency first.** Nothing is chosen in *Turn on*, and the button waits for a choice. The coins sit before the names ([Radio](?path=/docs/components-radio--docs) label `picture`). The row shows the chosen currency.
+- **A currency first.** Nothing is chosen in *Turn on*, and the button waits for a choice. The coins sit before the names ([Radio](?path=/docs/components-radio--docs) label `picture`). The row shows the chosen currency. The options are spaced as the Figma list (12px above and below each), and the group's title is for screen readers only.
 - **Invoice fee, Referral accruals and Payment coverage** show their values; their *Change* buttons have no action in this demo. *Invoice fee* drops the product name.
 
 ## No API keys yet
