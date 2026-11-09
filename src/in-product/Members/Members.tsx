@@ -19,7 +19,7 @@ import { pad } from '../shared/period';
 export type Role = 'Owner' | 'Admin' | 'Agent' | 'Accountant';
 /** The roles a member can be given; there is one owner, and ownership isn't changed here. Required: no clear button */
 const ROLES = [{ value: 'Admin', label: 'Admin' }, { value: 'Agent', label: 'Agent' }, { value: 'Accountant', label: 'Accountant' }];
-/** The Figma note under Role, as one text (Alert's title is plain text: the role names aren't bold as in Figma) */
+/** The Figma note under Role: Alert's long content, a short title and the text as its description (plain text: the role names aren't bold as in Figma) */
 const ROLES_NOTE = 'Admin has access to all functionalities, excluding the ability to modify ownership. '
   + 'Agents have access to information related to the invoices they created; withdrawals, payouts, and API management are unavailable. '
   + 'Accountants are responsible for managing funds, by reviewing invoices, transactions, and reports.';
@@ -141,7 +141,7 @@ export function useMembers() {
   );
 
   // As wide as the modal's content, as in Figma
-  const note = <Alert className="grg-ip-roles" status="info" title={ROLES_NOTE} closable={false} />;
+  const note = <Alert className="grg-ip-roles" status="info" title="Roles" description={ROLES_NOTE} closable={false} />;
   // One modal at a time; its content follows the task (Modal: never a modal from a modal)
   const modal = view?.kind === 'add' ? {
     title: 'Add member', description: 'Invite your new team member',
