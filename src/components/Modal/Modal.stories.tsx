@@ -193,7 +193,17 @@ export const SelectUser: Story = {
     });
     await userEvent.click(admin);
     await waitFor(() => expect(modal.querySelectorAll('.grg-select__box')[1]).toHaveTextContent(/Admin/));
-    await userEvent.click(within(modal).getByRole('button', { name: 'Share' }));
+    // Escape with a list open closes only the list; on a closed select, it closes the modal
+    await userEvent.click(modal.querySelectorAll<HTMLElement>('.grg-select__box')[1]);
+    await within(modal).findByRole('option', { name: 'Admin' });
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(within(modal).queryByRole('option', { name: 'Admin' })).toBeNull());
+    await expect(within(canvasElement).getByRole('dialog')).toBeInTheDocument();
+    await waitFor(() => expect(within(modal).getByRole('combobox', { name: 'Select permission level' })).toHaveFocus());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() => expect(within(canvasElement).queryByRole('dialog')).toBeNull());
+    await userEvent.click(within(canvasElement).getByRole('button', { name: 'Share post' }));
+    await userEvent.click(within(await dialog(canvasElement)).getByRole('button', { name: 'Share' }));
     await waitFor(() => expect(within(canvasElement).queryByRole('dialog')).toBeNull());
   },
 };
