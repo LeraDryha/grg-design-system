@@ -88,6 +88,10 @@
 .grg-ip-processing .grg-ip-spinner { padding-top: var(--space-800); }
 /* Figma "Card": the grey box round a Key-value or a row with a switch */
 .grg-ip-box { padding: var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
+/* Figma's details cards: bg-muted-50, 16px corners. In dark, muted-50 is the drawer's own surface (floating):
+   there the cards take the next grey, so they still show */
+.grg-ip-box--muted { border-radius: var(--radius-xl-16); background: var(--bg-muted-50); }
+[data-theme='dark'] .grg-modal .grg-ip-box--muted { background: var(--bg-weak-100); }
 .grg-ip-box--row { display: flex; align-items: center; gap: var(--space-300); }
 .grg-ip-box__label { flex: 1; font: var(--typo-body-md-medium); }
 .grg-ip-comment { display: grid; gap: var(--space-200); }
@@ -316,9 +320,14 @@
 .grg-ip-tab { display: flex; flex-direction: column; gap: var(--space-300); padding-top: var(--space-400); }
 .grg-ip-empty { display: flex; flex-direction: column; align-items: center; gap: var(--space-100); padding: var(--space-1200) 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); text-align: center; }
 .grg-ip-empty__title { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
-.grg-ip-operations { display: flex; flex-direction: column; margin: 0; padding: 0; list-style: none; }
-.grg-ip-operations > li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-300); padding: var(--space-300) 0; border-bottom: 1px solid var(--stroke-soft-200); }
-.grg-ip-operations > li > span { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
+/* Figma Operations: a grey card and View in transactions under it (8px); a line between operations, 24px each side */
+.grg-ip-operations { display: flex; flex-direction: column; gap: var(--space-600); margin: 0; padding: 0; list-style: none; }
+.grg-ip-operations > li { display: flex; flex-direction: column; gap: var(--space-200); }
+.grg-ip-operations > li + li { padding-top: var(--space-600); border-top: 1px solid var(--stroke-soft-200); }
+.grg-ip-operation { display: flex; flex-direction: column; gap: var(--space-300); }
+.grg-ip-operation__top { display: flex; align-items: center; gap: var(--space-150); }
+.grg-ip-operation__name { flex: 1; min-width: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-ip-operation__row { display: flex; justify-content: space-between; gap: var(--space-300); font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
 /* The details as a page: the invoice, and its operations beside it */
 .grg-ip-invoice-page { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: var(--space-300); align-items: start; }
 @media (max-width: 900px) { .grg-ip-invoice-page { grid-template-columns: minmax(0, 1fr); } }

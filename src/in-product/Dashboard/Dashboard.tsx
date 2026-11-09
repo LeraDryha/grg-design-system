@@ -367,8 +367,8 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   const [welcome, setWelcome] = useState(verified);
   const convert = useConvert({ assets, setAssets });
   const withdraw = useWithdrawEth({ assets, setAssets });
-  const invoices = useInvoices();
   const transactionsPage = useTransactions({ account: empty ? 'not-verified' : 'verified' });
+  const invoices = useInvoices({ onViewTransaction: transaction => { transactionsPage.show(transaction); setPage('transactions'); } });
 
   let content: ReactNode = withdraw.outside;
   if (!content && page === 'invoices') content = invoices.content;

@@ -100,6 +100,15 @@ export const Walkthrough: Story = {
       await userEvent.click(ask.getByRole('button', { name: 'Cancel' }));
       await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
     });
+    await step('An operation opens in Transactions', async () => {
+      await userEvent.click(canvas.getAllByText('1.65852492 ETH')[0]);
+      const drawer = within(await canvas.findByRole('dialog', { name: 'Invoice details' }));
+      await userEvent.click(drawer.getByRole('tab', { name: /Operations/ }));
+      await userEvent.click(await drawer.findByRole('button', { name: 'View invoice payment in transactions' }));
+      const transaction = await canvas.findByRole('dialog', { name: 'Transaction details' });
+      await expect(within(transaction).getByText('1.65852492 ETH')).toBeInTheDocument();
+      await expect(canvas.getByRole('heading', { level: 1, name: 'Transactions' })).toBeInTheDocument();
+    });
   },
 };
 

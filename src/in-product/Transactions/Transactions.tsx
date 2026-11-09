@@ -172,14 +172,14 @@ function Details({ transaction: t, onComment }: { transaction: Transaction; onCo
   return (
     <>
       <div className="grg-ip-figures__pair">
-        <div className="grg-ip-box"><span className="grg-ip-link__key">Created at</span><span className="grg-ip-link__value">{long(t.createdAt)}</span></div>
-        <div className="grg-ip-box">
+        <div className="grg-ip-box grg-ip-box--muted"><span className="grg-ip-link__key">Created at</span><span className="grg-ip-link__value">{long(t.createdAt)}</span></div>
+        <div className="grg-ip-box grg-ip-box--muted">
           <span className="grg-ip-link__key">{failed(t.status) ? 'Cancelled at' : 'Completed at'}</span>
           <span className="grg-ip-link__value">{t.completedAt ? long(t.completedAt) : '—'}</span>
         </div>
       </div>
       {list.map((rows, index) => (
-        <div key={index} className="grg-ip-box grg-ip-figures">
+        <div key={index} className="grg-ip-box grg-ip-box--muted grg-ip-figures">
           <AccordionKeyValue rows={rows} />
           {/* A withdrawal takes a comment, at the end of its last group */}
           {t.kind === 'withdrawal' && index === list.length - 1 && <Comment value={t.comment} onSave={onComment} />}
@@ -274,6 +274,12 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
     toast({ status: 'success', title: value ? 'Comment saved' : 'Comment removed', duration: 3000 });
   };
   const close = () => setOpen(null);
+  /** Another page's link to a transaction (an invoice's operation): the list, with it open in the drawer */
+  const show = (transaction: Transaction) => {
+    setTransactions(list => (list.some(t => t.id === transaction.id) ? list : [transaction, ...list]));
+    setPage(null);
+    setOpen(transaction.id);
+  };
   const current = find(open);
   const shown = find(page);
 
@@ -322,6 +328,7 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
   const lead = current ? leadOf(current) : null;
   return {
     content,
+    show,
     overlays: (
       <Drawer appendTo="self" visible={!!current} onHide={close} title="Transaction details" size="md"
         tint={lead?.tint} lead={lead ? <Lead icon={lead.icon} kind={lead.kind} amount={lead.amount} sub={lead.sub} badge={lead.badge} /> : undefined}
