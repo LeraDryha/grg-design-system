@@ -111,7 +111,7 @@ const openFeed = async (canvasElement: HTMLElement) => {
   return within(document.body).findByRole('dialog', { name: 'Notifications' });
 };
 
-/** The bell opens the feed. Opening a notification marks it read; Unread shows what is left. */
+/** The bell opens the feed. Opening a notification marks it read and closes the feed; Unread shows what is left. */
 export const ReadAndUnread: Story = {
   name: 'Read and unread',
   // Known Figma contrast: the date (text-disabled-400, Caption-xs) is about 2.6:1
@@ -120,9 +120,12 @@ export const ReadAndUnread: Story = {
   render: ({ notifications: _n, trigger: _t, ...args }) => <Demo {...args} />,
   play: async ({ canvasElement }) => {
     const bell = within(canvasElement).getByRole('button', { name: 'Notifications, 3 unread' });
-    const feed = within(await openFeed(canvasElement));
+    let feed = within(await openFeed(canvasElement));
     await waitFor(() => expect(bell).toHaveAttribute('aria-expanded', 'true'));
+    // Opening a notification takes people to it: it is read and the feed closes
     await userEvent.click(feed.getByRole('link', { name: /ETH deposit successful/ }));
+    await waitFor(() => expect(bell).toHaveAttribute('aria-expanded', 'false'));
+    feed = within(await openFeed(canvasElement));
     await userEvent.click(feed.getByRole('tab', { name: /Unread/ }));
     await expect(within(feed.getByRole('tabpanel')).getAllByRole('link')).toHaveLength(2);
     await userEvent.click(feed.getByRole('button', { name: 'Mark all as read' }));
