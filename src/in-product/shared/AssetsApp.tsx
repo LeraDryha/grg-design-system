@@ -3,7 +3,8 @@ import { Button } from '../../components/Button/Button';
 import { FeatureCard } from '../../components/FeatureCard/FeatureCard';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
 import { CoinIcon, type CoinName } from '../../components/CoinIcon/CoinIcon';
-import { Icon } from '../../components/Icon/Icon';
+import { ActionButton } from '../../components/ActionButton/ActionButton';
+import { InlineSelect } from '../../components/InlineSelect/InlineSelect';
 import { SidebarHeaderCard, SidebarNavigation, type SidebarItem, type SidebarSection } from '../../components/SidebarNavigation/SidebarNavigation';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { Tooltip } from '../../components/Tooltip/Tooltip';
@@ -14,6 +15,8 @@ import { useNotificationsController } from './notifications';
 import { useAccount } from './account';
 import { useScreen } from './screen';
 import { formatNumber } from '../../locale/format';
+import marketImage from '../../assets/in-product/market.png';
+import verifyingImage from '../../assets/in-product/verification-in-progress.png';
 import '../in-product.css';
 
 /** You, without a photo: the same initials in the bar and in the menu header */
@@ -122,21 +125,51 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
 
 export type AssetAction = 'convert' | 'deposit' | 'withdraw';
 
+/** Figma Assets: the currencies the balance can be shown in, with their rate in EUR */
+const BALANCE_CURRENCIES = [
+  { value: 'BTC', label: 'BTC', rate: 62040.32 },
+  { value: 'ETH', label: 'ETH', rate: 1947.48 },
+  { value: 'USDT', label: 'USDT', rate: 0.864 },
+  { value: 'USD', label: 'USD', rate: 0.865 },
+  { value: 'EUR', label: 'EUR', rate: 1 },
+];
+
 /** Figma Assets: the balances on one white surface, the filter and the table under a line. Each flow wires its own action. */
-export function AssetsPage({ assets, inProgress, onAction }: {
+export function AssetsPage({ assets, inProgress, onAction, account = 'verified' }: {
   assets: Asset[];
   inProgress: number;
   onAction: Partial<Record<AssetAction, (asset: Asset) => void>>;
+  /** Before verification and while the documents are checked: the Figma empty states */
+  account?: 'verified' | 'not-verified' | 'verifying';
 }) {
   const [hideSmall, setHideSmall] = useState(false);
   const rows = useMemo(() => assets.filter(item => !hideSmall || item.amount * item.rate >= 1), [assets, hideSmall]);
   const estimated = assets.reduce((sum, item) => sum + item.amount * item.rate, 0);
+  // Figma: the balance in a currency of your choice (an Inline select by the number); rates are the demo's, in EUR
+  const [shownIn, setShownIn] = useState('EUR');
+  const inShown = (eur: number) => formatNumber(eur / (BALANCE_CURRENCIES.find(c => c.value === shownIn)?.rate ?? 1), shownIn);
   const columns: TableColumn<Asset>[] = [
     // Fixed shares: the columns keep their width when rows are hidden or sorted
-    { id: 'asset', header: 'Asset', width: '32%', sortValue: row => row.name, cell: row => <TableText priority="leading" orientation="horizontal" title={row.name} description={row.code} leading={<CoinIcon name={row.coin} size={24} />} /> },
-    { id: 'amount', header: 'Amount', width: '24%', sortValue: row => row.amount, cell: row => <TableText title={formatNumber(row.amount, row.code)} /> },
-    { id: 'eur', header: 'Equivalent amount', width: '24%', sortValue: row => row.amount * row.rate, cell: row => <TableText title={`${money(row.amount * row.rate)} EUR`} /> },
+    // Figma: three equal columns, the actions after them
+    { id: 'asset', header: 'Asset', width: '26%', sortValue: row => row.name, cell: row => <TableText priority="leading" orientation="horizontal" title={row.name} description={row.code} leading={<CoinIcon name={row.coin} size={24} />} /> },
+    { id: 'amount', header: 'Amount', width: '26%', sortValue: row => row.amount, cell: row => <TableText priority="passive" title={formatNumber(row.amount, row.code)} /> },
+    { id: 'eur', header: 'Equivalent amount', width: '26%', sortValue: row => row.amount * row.rate, cell: row => <TableText priority="passive" title={`${money(row.amount * row.rate)} EUR`} /> },
   ];
+  if (account !== 'verified') {
+    const verifying = account === 'verifying';
+    return (
+      <main className="grg-ip-page">
+        <PageHeader title="Assets" />
+        <div className="grg-ip-surface grg-ip-waiting">
+          <img className="grg-ip-waiting__image" src={verifying ? verifyingImage : marketImage} alt="" />
+          <h2 className="grg-ip-waiting__title">{verifying ? 'Verification in progress' : 'You don’t have assets yet'}</h2>
+          <p className="grg-ip-waiting__text">{verifying ? 'Please wait a little bit. We’ll let you know when it’s ready.' : 'Assets list will be available after successful verification'}</p>
+          {/* No verification in this demo: the button stays, as on Transactions, without an action */}
+          {!verifying && <Button variant="primary" size="lg" rightIcon="arrow-right">Verify business to get started</Button>}
+        </div>
+      </main>
+    );
+  }
   const action = (kind: AssetAction, label: string, row: Asset) => (
     <Button variant="text" size="xs" disabled={kind !== 'deposit' && row.amount === 0} onClick={onAction[kind] ? () => onAction[kind]?.(row) : undefined}
       aria-label={`${label} ${row.code}`}>{label}</Button>
@@ -149,17 +182,21 @@ export function AssetsPage({ assets, inProgress, onAction }: {
         <div className="grg-ip-surface__top">
           <div className="grg-ip-balances">
             <div>
-              <p className="grg-ip-balances__key">Estimated balance</p>
-              <p className="grg-ip-balances__value"><span>{money(estimated)}</span> EUR</p>
+              <p className="grg-ip-balances__key grg-ip-balances__key--strong">Estimated balance</p>
+              <p className="grg-ip-balances__value">
+                <span className="grg-ip-balances__number">{inShown(estimated)}</span>
+                <InlineSelect aria-label="Show the balance in" options={BALANCE_CURRENCIES} value={shownIn} onChange={setShownIn} />
+              </p>
             </div>
             <div>
               <p className="grg-ip-balances__key">
                 Withdrawal in progress
-                <Tooltip title="Sent, not yet confirmed by the network" side="top">
-                  <span className="grg-ip-info" tabIndex={0} aria-label="About withdrawals in progress"><Icon name="information-circle" size={16} /></span>
+                {/* Figma: a blue info button with the text in a tooltip */}
+                <Tooltip title="Temporarily reserved amount of assets for withdrawal." side="top" purpose="description">
+                  <ActionButton icon="information-circle" size="xs" color="blue" aria-label="About withdrawal in progress" />
                 </Tooltip>
               </p>
-              <p className="grg-ip-balances__small">{money(inProgress)} EUR</p>
+              <p className="grg-ip-balances__small">{inShown(inProgress)} {shownIn}</p>
             </div>
           </div>
         </div>

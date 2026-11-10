@@ -7,7 +7,7 @@ export type PageHeaderProps = {
   title: string;
   /** A page opened from a list (a transaction, an invoice): the arrow back to it, named for screen readers */
   back?: { label: string; onClick: () => void };
-  /** Up to two buttons at the end: the main one last (Button md) */
+  /** Up to two buttons at the end: the main one last (Button sm, as in Figma) */
   actions?: ReactNode;
   className?: string;
 };

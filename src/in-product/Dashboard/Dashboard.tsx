@@ -389,14 +389,14 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   if (!content && page === 'notifications') content = <NotificationsPage controller={notifications} />;
   if (!content && page === 'profile') content = profilePage.content;
   if (!content && page === 'assets') {
-    content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
+    content = <AssetsPage account={empty ? 'not-verified' : 'verified'} assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
   if (!content) {
     content = (
       <main className="grg-ip-page">
         {/* The page's main action next to its title (in Figma it sat in the payments card) */}
         {/* Create invoice opens the same drawer as on the Invoices page */}
-        <PageHeader title="Dashboard" actions={<Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create invoice</Button>} />
+        <PageHeader title="Dashboard" actions={<Button variant="primary" size="sm" leftIcon="plus" onClick={invoices.create}>Create invoice</Button>} />
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">
             {shownNote && <NoteCard note={shownNote} onClose={() => setShownNote(undefined)} />}

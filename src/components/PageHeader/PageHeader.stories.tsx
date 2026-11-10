@@ -29,8 +29,8 @@ type Story = StoryObj<typeof meta>;
 export const Playground: Story = {
   args: {
     actions: <>
-      <Button variant="outline" leftIcon="download">Download</Button>
-      <Button variant="primary" leftIcon="plus">Create invoice</Button>
+      <Button variant="outline" size="sm" leftIcon="download">Download</Button>
+      <Button variant="primary" size="sm" leftIcon="plus">Create invoice</Button>
     </>,
   },
 };
@@ -42,7 +42,7 @@ export const SameHeight: Story = {
   name: 'With buttons and without',
   render: () => (
     <>
-      <PageHeader title="Members" actions={<Button variant="primary" leftIcon="plus">Add member</Button>} />
+      <PageHeader title="Members" actions={<Button variant="primary" size="sm" leftIcon="plus">Add member</Button>} />
       <PageHeader title="Assets" />
     </>
   ),
@@ -57,7 +57,7 @@ const goBack = fn();
 export const OpenedFromAList: Story = {
   name: 'Opened from a list',
   args: { title: 'Invoice details', back: { label: 'Back to invoices', onClick: goBack },
-    actions: <Button variant="outline" tone="destructive">Deactivate link</Button> },
+    actions: <Button variant="outline" size="sm" tone="destructive">Deactivate link</Button> },
   play: async ({ canvasElement }) => {
     await userEvent.click(within(canvasElement).getByRole('button', { name: 'Back to invoices' }));
     await expect(goBack).toHaveBeenCalled();
