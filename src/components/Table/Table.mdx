@@ -107,6 +107,16 @@ More about a row, right under it (`expansion`): the row or its chevron opens it 
 - **Loading** isn't in Figma: grey placeholder rows (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
 - **Phones** scroll the table sideways; the columns never shrink into "…" headers. When the stuck columns would cover more than half the table, only the left ones stay and the actions scroll with the rest.
 
+## Row actions
+
+What goes in the actions column, so every table in the product does it the same way:
+
+- **Actions every product has: an Action Button with a tooltip.** Edit (pencil), delete (trash, red), download, copy. The icon is known; the tooltip and the screen reader name say what and whose: *Delete Hana Sato*.
+- **Actions of this product: a text button.** *Convert*, *Deposit*, *Withdraw*, *Deactivate*, *Transfer ownership*. No icon says these, so the word does. A text button that removes or stops something is red (*Deactivate*).
+- **More than three actions, or a narrow card: a menu.** One Action Button with three dots opens a Dropdown Menu with all of them, as on the Dashboard's balance card.
+- **An action that can’t be done stays and is disabled**, so the columns don’t jump: *Convert* and *Withdraw* on an empty balance.
+- **Opening the row is not an action.** The chevron and the row press open details (see Four kinds of rows); they never sit among the buttons.
+
 ## Cell types
 
 <Canvas of={TableStories.CellTypes} />
