@@ -87,7 +87,7 @@ export const Walkthrough: Story = {
     });
     await step('Confirm, and the balances change', async () => {
       const confirm = within(await canvas.findByRole('dialog', { name: 'Confirmation' }));
-      await expect(confirm.getByText('+2,000 EUR')).toBeInTheDocument();
+      await expect(confirm.getByText('+2,000.00 EUR')).toBeInTheDocument();
       await userEvent.click(confirm.getByRole('button', { name: /^Convert ~/ }));
       await userEvent.click(within(await canvas.findByRole('dialog', { name: 'Order successfully submitted' })).getByRole('button', { name: 'Done' }));
       await waitFor(() => expect(canvas.getByText('942,397.78')).toBeInTheDocument());

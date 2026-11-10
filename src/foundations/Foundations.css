@@ -2,6 +2,8 @@
 
 .fdn-table {
   width: 100%;
+  /* The same 20px before the next heading as a list or a paragraph gets in the docs */
+  margin-bottom: var(--space-500);
   border-collapse: collapse;
   font: var(--typo-body-md-regular);
 }

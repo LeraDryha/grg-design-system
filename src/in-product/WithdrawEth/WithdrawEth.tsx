@@ -9,7 +9,8 @@ import { ProgressCircle } from '../../components/ProgressCircle/ProgressCircle';
 import { Switch } from '../../components/Switch/Switch';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
-import { AppFrame, AssetsPage, format, startAssets, type Asset } from '../shared/AssetsApp';
+import { AppFrame, AssetsPage, startAssets, type Asset } from '../shared/AssetsApp';
+import { formatAmount } from '../../locale/format';
 
 /* GRX Pay redesign, section Withdraw (XDynk3v9BU5pStqaulzutE, 63:58899): the Ethereum flow, from the Assets page to
    "Transaction in progress". Test data only; the company is "Company". */
@@ -53,7 +54,7 @@ function AmountField({ value, onChange, code, fee, error }: { value: string; onC
         <span className="grg-ip-amount__code">{code}</span>
       </label>
       <p id={`${id}-note`} className="grg-ip-amount__note" aria-live="polite">
-        {error ?? `Fee ${format(fee)} ${code}`}
+        {error ?? `Fee ${formatAmount(fee, code)}`}
       </p>
     </div>
   );
@@ -88,8 +89,8 @@ export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }:
   const total = value + method.fee;
   const largest = Math.max(0, Math.min(asset.amount - method.fee, LIMITS.max));
   const error = !amount || value === 0 ? undefined
-    : value > LIMITS.max ? `More than the maximum, ${format(LIMITS.max)} ${asset.code}`
-    : total > asset.amount ? `Not enough ${asset.code}: ${format(asset.amount, asset.digits)} available`
+    : value > LIMITS.max ? `More than the maximum, ${formatAmount(LIMITS.max, asset.code)}`
+    : total > asset.amount ? `Not enough ${asset.code}: ${formatAmount(asset.amount, asset.code)} available`
     : undefined;
   const ready = value > 0 && !error;
 
@@ -130,7 +131,7 @@ export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }:
     },
     amount: {
       title: `Withdraw ${asset.code} to ${method.title}`,
-      description: `${format(asset.amount, asset.digits)} ${asset.code} available`,
+      description: `${formatAmount(asset.amount, asset.code)} available`,
       back: () => setStep('method'),
       action: { label: 'Continue', disabled: !ready, onClick: () => setStep('summary') },
       content: <>
@@ -140,10 +141,10 @@ export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }:
         </div>
         {/* Figma: the limit card, moved here from the popover beside the modal */}
         <div className="grg-ip-limits" data-invalid={value > LIMITS.max || undefined}>
-          <AccordionKeyValue rows={[{ key: 'Maximum', value: `${format(LIMITS.max)} ${asset.code}` }]} />
+          <AccordionKeyValue rows={[{ key: 'Maximum', value: formatAmount(LIMITS.max, asset.code) }]} />
         </div>
         <div className="grg-ip-box">
-          <AccordionKeyValue rows={[{ key: 'Recipient', value: method.title }, { key: 'Total amount', value: `${format(ready ? total : 0)} ${asset.code}` }]} />
+          <AccordionKeyValue rows={[{ key: 'Recipient', value: method.title }, { key: 'Total amount', value: formatAmount(ready ? total : 0, asset.code) }]} />
         </div>
         <div className="grg-ip-comment">
           <div className="grg-ip-comment__head">
@@ -165,9 +166,9 @@ export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }:
       back: () => setStep('amount'),
       action: { label: 'Continue', onClick: () => setStep(saveRecipient ? 'requisite' : 'processing') },
       content: <>
-        <p className="grg-ip-amount__total">{format(value)} {asset.code}</p>
+        <p className="grg-ip-amount__total">{formatAmount(value, asset.code)}</p>
         <div className="grg-ip-box">
-          <AccordionKeyValue rows={[{ key: 'Fee', value: `${format(method.fee)} ${asset.code}` }, { key: 'Total amount', value: `${format(total)} ${asset.code}` }]} />
+          <AccordionKeyValue rows={[{ key: 'Fee', value: formatAmount(method.fee, asset.code) }, { key: 'Total amount', value: formatAmount(total, asset.code) }]} />
         </div>
         <div className="grg-ip-box grg-ip-box--row">
           <FeaturedIcon type="primary" size="sm" filled={false} icon="user" />
@@ -201,7 +202,7 @@ export function useWithdrawEth({ assets, setAssets, startAt, startAmount = '' }:
                     { key: 'Operation number', value: `${operation.slice(0, 18)}…` },
                     { key: 'Provider', value: method.title },
                     { key: 'Payment date', value: '09/04/2026, 11:49:26' },
-                    { key: 'Payment amount', value: `${format(total)} ${asset.code}` },
+                    { key: 'Payment amount', value: formatAmount(total, asset.code) },
                   ]} />
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { FeaturedIcon } from '../FeaturedIcon/FeaturedIcon';
 import { Icon } from '../Icon/Icon';
 import { TabMenu } from '../TabMenu/TabMenu';
 import { useOverlayTheme } from '../../hooks/useOverlayTheme';
+import { formatDateTime, formatDay } from '../../locale/format';
 import './NotificationFeed.css';
 
 /* Figma page ❖ Notification feed: "Notification feed" (1870:9294), "Notifications misc items" (2161:16786), the usage
@@ -38,8 +39,8 @@ export type Notification = {
   secondaryAction?: Action;
 };
 
-const formatDate = (date: Date, locale?: string) =>
-  new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(date);
+/** Foundations → Formats, with seconds: 9 Apr 2026, 10:54:14 */
+const formatDate = (date: Date, locale?: string) => formatDateTime(date, { seconds: true, locale });
 
 /** How long ago, for a list people scan: Just now, 5 min ago, 3 h ago, Yesterday, 14:47, then the date */
 export const relativeDate = (date: Date, locale?: string, now = new Date()) => {
@@ -50,7 +51,7 @@ export const relativeDate = (date: Date, locale?: string, now = new Date()) => {
   if (minutes < 24 * 60 && date.getDate() === now.getDate()) return `${Math.floor(minutes / 60)} h ago`;
   const yesterday = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 1);
   if (date.toDateString() === yesterday.toDateString()) return `Yesterday, ${time}`;
-  return `${new Intl.DateTimeFormat(locale, { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date)}, ${time}`;
+  return `${formatDay(date, locale)}, ${time}`;
 };
 
 export type NotificationItemProps = {

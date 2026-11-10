@@ -10,6 +10,7 @@ import { baseIconNames } from '../icons/names';
 import tokens from '../tokens/tokens.json';
 import { colorDescriptions } from './color-descriptions';
 import { radiusUsage } from './radius-usage';
+import { formatAmount, formatDateTime, formatDay, formatPeriod } from '../locale/format';
 import './Foundations.css';
 
 /* Blocks for the Foundations pages. The data comes from src/tokens/tokens.json, generated from Figma. */
@@ -414,5 +415,43 @@ export function PictureSizes({ set, icon, sizes }: { set: PictureSet; icon: stri
         </li>
       ))}
     </ul>
+  );
+}
+
+/** Foundations → Formats: each rule written live by the product's formatters, in British and American English */
+export function FormatExamples() {
+  const at = new Date(2026, 10, 10, 12, 49, 41);
+  const rows: { what: string; fn: string; write: (locale: string) => string }[] = [
+    { what: 'Moment in a table or card', fn: 'formatDateTime(date)', write: l => formatDateTime(at, { locale: l }) },
+    { what: 'Moment in details', fn: 'formatDateTime(date, { seconds: true })', write: l => formatDateTime(at, { seconds: true, locale: l }) },
+    { what: 'Day', fn: 'formatDay(date)', write: l => formatDay(at, l) },
+    { what: 'Period in one month', fn: 'formatPeriod(from, to)', write: l => formatPeriod(new Date(2026, 10, 1), new Date(2026, 10, 7), l) },
+    { what: 'Period over two months', fn: 'formatPeriod(from, to)', write: l => formatPeriod(new Date(2026, 9, 28), new Date(2026, 10, 3), l) },
+    { what: 'Fiat', fn: "formatAmount(1250, 'EUR')", write: l => formatAmount(1250, 'EUR', l) },
+    { what: 'Stablecoin', fn: "formatAmount(460, 'USDC')", write: l => formatAmount(460, 'USDC', l) },
+    { what: 'Crypto', fn: "formatAmount(0.0657690, 'ETH')", write: l => formatAmount(0.065769, 'ETH', l) },
+    { what: 'Crypto, whole', fn: "formatAmount(3.2, 'ETH')", write: l => formatAmount(3.2, 'ETH', l) },
+  ];
+  return (
+    <table className="sb-unstyled fdn-table">
+      <thead>
+        <tr>
+          <th scope="col">What</th>
+          <th scope="col">Code</th>
+          <th scope="col">en-GB</th>
+          <th scope="col">en-US</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map(r => (
+          <tr key={r.what}>
+            <td>{r.what}</td>
+            <td><code>{r.fn}</code></td>
+            <td>{r.write('en-GB')}</td>
+            <td>{r.write('en-US')}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }

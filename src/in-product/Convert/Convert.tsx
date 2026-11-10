@@ -10,6 +10,7 @@ import { Modal } from '../../components/Modal/Modal';
 import { OptionPicture } from '../../components/Select/options';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 import { AppFrame, AssetsPage, format, money, startAssets, type Asset } from '../shared/AssetsApp';
+import { formatAmount, formatNumber } from '../../locale/format';
 
 /* GRX Pay redesign, section Convert Assets (XDynk3v9BU5pStqaulzutE, 56:48832): from the Assets page through the
    amounts and the confirmation to the order, or to the failure screen. */
@@ -44,7 +45,7 @@ function CurrencyInput({ side, asset, assets, text, onText, onAsset, error, over
     <div ref={root} className="grg-ip-currency" data-invalid={error ? true : undefined}>
       <div className="grg-ip-currency__top">
         <label htmlFor={id}>{label}</label>
-        <span data-over={over || undefined}>Balance: {format(asset.amount, asset.digits)}</span>
+        <span data-over={over || undefined}>Balance: {formatNumber(asset.amount, asset.code)}</span>
       </div>
       <div className="grg-ip-currency__row">
         <div className="grg-ip-currency__amount">
@@ -110,7 +111,7 @@ export function useConvert({ assets, setAssets, startAt, startAmount = '', start
   const over = fromValue > from.amount;
   const limit = fromValue > 0 && (inEur < LIMITS.min || inEur > LIMITS.max);
   const marketError = !over && market !== undefined && fromValue > market
-    ? `There is not enough volume on the market to make an exchange. Available ${format(market)} ${from.code}` : undefined;
+    ? `There is not enough volume on the market to make an exchange. Available ${formatAmount(market, from.code)}` : undefined;
   const ready = fromValue > 0 && !over && !limit && !marketError;
 
   const type = (side: Side, value: string) => { setEdited(side); setText(value); setPreset(null); };
@@ -137,7 +138,7 @@ export function useConvert({ assets, setAssets, startAt, startAmount = '', start
     setStep('done');
   };
   const close = () => setStep(null);
-  const amount = `${format(fromValue, from.digits)} ${from.code}`;
+  const amount = formatAmount(fromValue, from.code);
 
   type View = {
     title: string; description?: string; status?: 'success' | 'error'; statusIcon?: IconName; closable?: boolean; back?: () => void;
@@ -148,7 +149,7 @@ export function useConvert({ assets, setAssets, startAt, startAmount = '', start
       title: 'Convert',
       action: { label: 'Convert', disabled: !ready, onClick: () => setStep('confirm') },
       content: <>
-        <AccordionKeyValue rows={[{ key: 'Rate', value: `1 ${from.code} = ${format(rate, to.digits)} ${to.code}` }]} />
+        <AccordionKeyValue rows={[{ key: 'Rate', value: `1 ${from.code} = ${formatAmount(rate, to.code)}` }]} />
         <div className="grg-ip-pair">
           <CurrencyInput side="from" asset={from} assets={assets} text={fromText} onText={value => type('from', value)}
             over={over} error={over ? 'Over balance' : undefined} />
@@ -179,11 +180,11 @@ export function useConvert({ assets, setAssets, startAt, startAmount = '', start
         <div className="grg-ip-receipt">
           <p className="grg-ip-receipt__lead">You're converting</p>
           <p className="grg-ip-receipt__amount">~ {amount}</p>
-          <p className="grg-ip-receipt__gets">+{format(toValue, to.digits)} {to.code}</p>
+          <p className="grg-ip-receipt__gets">+{formatAmount(toValue, to.code)}</p>
         </div>
         <div className="grg-ip-box">
           <AccordionKeyValue rows={[
-            { key: 'Rate', value: `1 ${from.code} = ${format(rate, to.digits)} ${to.code}` },
+            { key: 'Rate', value: `1 ${from.code} = ${formatAmount(rate, to.code)}` },
             { key: 'Fee', value: `${format(FEE * 100, 2)}%` },
             { key: 'Total amount', value: amount },
           ]} />
