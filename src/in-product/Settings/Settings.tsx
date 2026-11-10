@@ -15,7 +15,8 @@ import { formatDateTime } from '../../locale/format';
 import { useApiKeys } from './ApiKeys';
 import { usePaymentSettings } from './PaymentSettings';
 import { useExchangeRate } from './ExchangeRate';
-import { YOU, startMembers, type MembersState } from '../Members/Members';
+import { YOU, personName, startMembers, type MembersState } from '../Members/Members';
+import { useAccount } from '../shared/account';
 import settingsImage from '../../assets/in-product/settings.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
 
@@ -79,6 +80,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   const { toast } = useMessages();
   const close = () => setView(null);
   const owner = members.find(m => m.role === 'Owner');
+  const you = useAccount();
   const registered = members.find(m => m.email === YOU)?.addedAt ?? new Date();
 
   if (account !== 'verified') {
@@ -156,7 +158,8 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       {/* Shown here, handed on in Members with the rest of the team's roles (after the audit) */}
       <Section title="Company owner" text="Owner has full access to the company profile. Ownership is transferred in Members"
         action={onMembers ? <Button variant="secondary" size="sm" onClick={onMembers}>Open Members</Button> : undefined}>
-        {owner?.email}
+        {/* The name, the address under it (after the audit: the same as in Members) */}
+        {owner && <><span>{owner.email === YOU ? you.name : personName(owner.email, members)}</span><p className="grg-ip-setting__line">{owner.email}</p></>}
       </Section>
       <hr className="grg-ip-surface__divider" />
       <Section title="Company contact" text="Provide buyers with company contact details for payment-related matters at checkout"

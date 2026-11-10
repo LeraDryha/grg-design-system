@@ -11,7 +11,7 @@ A business's team and what each person may do: the owner invites people, gives e
 
 <Canvas of={MembersStories.LiveFlow} />
 
-**Try it:** press **Add member**, type an address already in the team, then a new one, choose a role and **Send invite**; edit a member's role; delete a member; search by email. On your own row, **Transfer ownership**: choose a member and confirm.
+**Try it:** press **Add member**, type an address already in the team, then a new one, choose a role and **Send invite**; edit a member's role; delete a member; search by name or email. On your own row, **Transfer ownership**: choose a member and confirm.
 
 ## What the flow has to get right
 
@@ -29,7 +29,8 @@ A business's team and what each person may do: the owner invites people, gives e
 - **Send invite waits** for a valid address and a role. An address already in the team says so at once; a mistyped one, once the field is left. Both fields are marked required, so Role has no clear button.
 - **Save changes waits** until the role is different. The email can't be edited, and its field says so.
 - **Waiting for confirmation**, not *Wait confirmation*, on a grey Badge; a waiting member's avatar is grey, as in Figma.
-- **A real team's size.** Six people instead of twelve, with invented addresses.
+- **A real team's size.** Six people instead of twelve, with invented names and addresses.
+- **People by name** (after the audit). Figma listed addresses only, while Invoices said *Created by* with names and Reporting with addresses. Now the column is *Member*: the name, the address under it; someone still invited has only the address, since their name comes when they accept. Search finds either. Invoices, Transactions, Reporting and Settings name people the same way, from this list, and your own name follows Profile. The invoices are created by Hana Sato (an Agent) and you, withdrawals by Marco Lindqvist (the Admin) and you: Agents can't withdraw.
 
 ## From Figma
 

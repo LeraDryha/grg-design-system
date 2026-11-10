@@ -23,6 +23,7 @@ import { AppFrame, startAssets, type AppPage } from '../shared/AssetsApp';
 import { useTransactions, type Transaction } from '../Transactions/Transactions';
 import { formatAmount, formatDateTime } from '../../locale/format';
 import { Lead, LeadBox } from '../shared/lead';
+import { useAccount } from '../shared/account';
 import { PeriodPicker, shift, startOf, type Range } from '../shared/period';
 
 /* GRX Pay redesign, sections Invoices tables (1676:55326) and Creating invoice (1676:58206): the list with its
@@ -61,7 +62,8 @@ const uuid = (seed: number) => {
   return `${hex(8)}-${hex(4)}-4${hex(3)}-a${hex(3)}-${hex(12)}`;
 };
 
-const people = ['Rudy Kozey', 'Guadalupe Schimmel'];
+/** Who creates invoices: an Agent from Members and you */
+const people = ['Hana Sato', 'Guadalupe Schimmel'];
 const NETWORK: Record<string, string> = { BTC: 'Bitcoin', ETH: 'Ethereum', USDT: 'Tron (TRC-20)', USDC: 'Ethereum', EUR: 'SEPA' };
 /** A paid invoice's operations: the payment, then (auto-conversion on, paid in a coin) its exchange into EUR, still running */
 const operationsOf = (seed: number, received: string, at: Date, autoConvert: boolean): Operation[] => {
@@ -374,6 +376,8 @@ export type InvoicesProps = {
 
 /** The Invoices page with its drawer and modal, for any app that holds it (this page, the Dashboard's Create invoice) */
 export function useInvoices({ account = 'verified', startCreating = false, onViewTransaction }: InvoicesProps = {}) {
+  // A new invoice is yours, under your name as set on Profile
+  const you = useAccount();
   const [invoices, setInvoices] = useState(startInvoices);
   const [view, setView] = useState<View | null>(startCreating ? { kind: 'create' } : null);
   const [draft, setDraft] = useState(emptyDraft);
@@ -390,7 +394,7 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
   const submit = () => {
     const invoice: Invoice = {
       id: uuid(Date.now() % 100000), amount: Number(draft.amount), currency: draft.currency!, received: `0.00 ${draft.currency}`,
-      status: 'Created', createdAt: new Date(), createdBy: people[0], orderId: draft.orderId, category: draft.category,
+      status: 'Created', createdAt: new Date(), createdBy: you.name, orderId: draft.orderId, category: draft.category,
       autoConvert: draft.autoConvert, customer: draft.fields.filter(f => f.on).map(f => f.name), operations: [],
     };
     setInvoices(list => [invoice, ...list]);
