@@ -1,0 +1,77 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as SettingsRowStories from './SettingsRow.stories';
+import { ComponentHeader, DoDont } from '../../docs/blocks/DocBlocks';
+
+<Meta of={SettingsRowStories} />
+
+# Settings Row
+
+<ComponentHeader
+  designedIn="code"
+  related={[
+    { label: 'Featured Icon', href: '?path=/docs/components-featured-icon--docs' },
+    { label: 'Button', href: '?path=/docs/components-button--docs' },
+  ]}
+/>
+
+One setting: what it is, its value and the button that changes it. **Settings List** stacks rows in a card with a line between them. It came out of the In product audit: Profile, Payment settings, Settings and Reporting built the same row three ways, and their values didn't line up.
+
+<Canvas of={SettingsRowStories.Playground} />
+<Controls of={SettingsRowStories.Playground} include={['title', 'description', 'icon', 'value', 'note', 'layout']} />
+
+```tsx
+<SettingsList className="card">
+  <SettingsRow icon="lock" title="Password" description="This password is used to sign in to your account"
+    value="••••••••••" action={<Button variant="secondary" size="sm" onClick={change}>Change</Button>} />
+</SettingsList>
+```
+
+## When to use
+
+<DoDont
+  dos={['A page of settings: one row per setting, in a card', 'The head of a card that holds a table: its title, what it is for and its main button']}
+  donts={['A form to fill in: use Form Field and Input', 'Turning many things on and off at once: use Switch Label in a list']}
+/>
+
+## Examples
+
+### Short values
+
+<Canvas of={SettingsRowStories.ShortValues} />
+
+`layout="beside"`: the value starts on the half-way line of the card, in every row, with a button or without. The button is at the end.
+
+### With a note
+
+<Canvas of={SettingsRowStories.WithANote} />
+
+A setting that depends on another says what to do first, and its button waits (the Switch and Button rule).
+
+### Long values
+
+<Canvas of={SettingsRowStories.LongValues} />
+
+`layout="below"`: a larger title, the button by it, the value under the text, so a link or a name with an address has the whole width.
+
+### The head of a card
+
+<Canvas of={SettingsRowStories.CardHead} />
+
+A row without a value heads a card; whatever comes under it in the Settings List gets the same line.
+
+## Design decisions
+
+- **One line for values** (after the audit). Figma placed them at the half-way line on Profile and in a narrow column by the button on Payment settings; the product now uses the half-way line everywhere.
+- **A short verb on the button**, without an icon: *Edit*, *Change*, *Turn on*. When it needs more words for a screen reader, `aria-label` says it: *Edit contact*.
+- **Two sizes of text** from Figma: beside rows are Body-md with a Body-sm description; below rows and card heads are Body-lg with a Body-md description.
+- **Phones**: one column, the value under the text and the button last.
+- **No PrimeReact**: it has no such part. Each row is a `section` named by its title.
+
+## Accessibility
+
+- Each row is a region named by its title, so screen readers can list and jump to them.
+- The title is an `h2` (`headingLevel={3}` inside a titled group).
+
+## Props
+
+<ArgTypes of={SettingsRowStories} />

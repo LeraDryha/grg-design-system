@@ -13,6 +13,7 @@ import { Tooltip } from '../../components/Tooltip/Tooltip';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
 import { formatAmount, formatDateTime } from '../../locale/format';
 import type { IconName } from '../../components/Icon/Icon';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame, AssetsPage, money, startAssets, type Asset, type AppPage } from '../shared/AssetsApp';
 import { useConvert } from '../Convert/Convert';
 import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
@@ -394,11 +395,8 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
     content = (
       <main className="grg-ip-page">
         {/* The page's main action next to its title (in Figma it sat in the payments card) */}
-        <div className="grg-ip-page__head">
-          <h1 className="grg-ip-page__title">Dashboard</h1>
-          {/* The same drawer as on the Invoices page */}
-          <Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create invoice</Button>
-        </div>
+        {/* Create invoice opens the same drawer as on the Invoices page */}
+        <PageHeader title="Dashboard" actions={<Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create invoice</Button>} />
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">
             {shownNote && <NoteCard note={shownNote} onClose={() => setShownNote(undefined)} />}

@@ -1,0 +1,71 @@
+import { Meta, Canvas, Controls, ArgTypes } from '@storybook/addon-docs/blocks';
+import * as PageHeaderStories from './PageHeader.stories';
+import { ComponentHeader, DoDont } from '../../docs/blocks/DocBlocks';
+
+<Meta of={PageHeaderStories} />
+
+# Page Header
+
+<ComponentHeader
+  designedIn="code"
+  related={[
+    { label: 'Button', href: '?path=/docs/components-button--docs' },
+    { label: 'Action Button', href: '?path=/docs/components-action-button--docs' },
+    { label: 'Tab Menu', href: '?path=/docs/components-tab-menu--docs', relation: 'See also' },
+  ]}
+/>
+
+The top of every page: its title, an arrow back when the page was opened from a list, and the page's buttons at the end. It came out of the In product audit: each page built its own top, and moving between pages the title and the content jumped by a few pixels.
+
+<Canvas of={PageHeaderStories.Playground} />
+<Controls of={PageHeaderStories.Playground} include={['title']} />
+
+```tsx
+<PageHeader title="Invoices" actions={<>
+  <Button variant="outline" leftIcon="download">Download</Button>
+  <Button variant="primary" leftIcon="plus" onClick={create}>Create invoice</Button>
+</>} />
+```
+
+## When to use
+
+<DoDont
+  dos={['The top of a page in the app, once per page', 'A details page opened from a list, with `back`']}
+  donts={['A title inside a card or a modal: they have their own', 'More than two buttons: the rest go into the page or a menu']}
+/>
+
+## Examples
+
+### With buttons and without
+
+<Canvas of={PageHeaderStories.SameHeight} />
+
+The header is as tall as a medium button either way, 40px, so the content under it starts at the same place on every page.
+
+### Opened from a list
+
+<Canvas of={PageHeaderStories.OpenedFromAList} />
+
+`back` puts an Action Button with an arrow before the title. Its name says where it goes: *Back to transactions*.
+
+### With tabs
+
+<Canvas of={PageHeaderStories.WithTabs} />
+
+Tab Menu goes right under the header, 20px below it, and holds its own panels.
+
+## Design decisions
+
+- **Designed in code** from the In product pages (after the audit): Title-lg, buttons md, 12px between them.
+- **The main button last**, at the right edge; a second one, outline, before it.
+- **Phones**: the buttons go under the title, in a row that wraps.
+- **No PrimeReact**: its Toolbar would be announced as a toolbar and moved through with the arrow keys; this is a heading and buttons, reached with Tab.
+
+## Accessibility
+
+- The title is the page's only `h1`.
+- The back arrow is a button with a name; Tab reaches it first, then the buttons at the end.
+
+## Props
+
+<ArgTypes of={PageHeaderStories} />

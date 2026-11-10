@@ -9,6 +9,7 @@ import { Table, TableText, type TableColumn } from '../../components/Table/Table
 import { Tooltip } from '../../components/Tooltip/Tooltip';
 import { NotificationFeed } from '../../components/NotificationFeed/NotificationFeed';
 import { TopbarButton, TopbarNavigation } from '../../components/TopbarNavigation/TopbarNavigation';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { useNotificationsController } from './notifications';
 import { useAccount } from './account';
 import { useScreen } from './screen';
@@ -142,7 +143,7 @@ export function AssetsPage({ assets, inProgress, onAction }: {
   );
   return (
     <main className="grg-ip-page">
-      <h1 className="grg-ip-page__title">Assets</h1>
+      <PageHeader title="Assets" />
       {/* Figma: the page content on one white surface; the balances above a line; the filter and the table under it */}
       <div className="grg-ip-surface">
         <div className="grg-ip-surface__top">

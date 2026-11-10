@@ -1,0 +1,24 @@
+/* Page header. Designed in code from the In product pages: Title-lg, buttons md at the end, 40px tall either way. */
+
+.grg-page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-300);
+  /* As tall as a button md: a page without buttons starts its content at the same place */
+  min-height: var(--space-1000);
+}
+.grg-page-header__title-row { display: flex; align-items: center; gap: var(--space-200); min-width: 0; }
+.grg-page-header__title {
+  margin: 0;
+  font: var(--typo-title-lg-semibold);
+  color: var(--text-strong-1000);
+  overflow-wrap: anywhere;
+}
+.grg-page-header__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-300); }
+
+/* Phones: the buttons go under the title, in one row that wraps */
+@media (max-width: 480px) {
+  .grg-page-header { flex-direction: column; align-items: flex-start; }
+}

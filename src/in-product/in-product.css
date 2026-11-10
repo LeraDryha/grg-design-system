@@ -27,8 +27,6 @@
 .grg-ip-surface__top { padding: var(--space-800) var(--space-600); }
 .grg-ip-surface__section { display: flex; flex-direction: column; gap: var(--space-600); padding: var(--space-800) var(--space-600); }
 .grg-ip-surface__divider { margin: 0; border: 0; border-top: 1px solid var(--stroke-soft-200); }
-.grg-ip-page__title { margin: 0; padding: var(--space-050) 0; font: var(--typo-title-lg-semibold); }
-.grg-ip-page__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-300); }
 .grg-ip-centre { display: grid; flex: 1; place-items: center; padding: var(--space-600); overflow: auto; }
 
 /* A neutral logo: the company's own logos are not shown */
@@ -278,8 +276,6 @@
 }
 
 /* ---- Invoices (Figma Invoices tables, Creating invoice) ---- */
-.grg-ip-page__actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-300); }
-.grg-ip-page__back { display: flex; align-items: center; gap: var(--space-200); }
 /* The toolbar over the table: the search on the left, the three selects on the right; they wrap on narrow screens */
 .grg-ip-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-300); }
 .grg-ip-toolbar__search { flex: 0 1 calc(var(--space-5000) + var(--space-2000)); min-width: 0; }
@@ -385,12 +381,10 @@
 .grg-ip-setting__text { display: flex; flex-direction: column; gap: var(--space-100); min-width: 0; }
 .grg-ip-setting__title { margin: 0; font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
 .grg-ip-setting__line { margin: 0; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
-.grg-ip-setting__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); white-space: pre-line; overflow-wrap: anywhere; }
 /* Change the owner: the list scrolls under the search when the team is big */
 
 /* Settings - API key */
 .grg-ip-setting__head--center { align-items: center; }
-.grg-ip-keys__intro { display: flex; align-items: flex-start; gap: var(--space-400); min-width: 0; }
 .grg-ip-keys__group { margin: 0; font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
 /* The IP card in the modal: bg-weak-100 as in Figma (bg-muted-50 is the modal's own grey in the dark theme) */
 .grg-ip-keys__ips { display: flex; flex-direction: column; gap: var(--space-300); padding: var(--space-300) var(--space-300) var(--space-300) var(--space-400); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
@@ -403,27 +397,14 @@
 .grg-ip-qr img { width: calc(var(--space-2000) + var(--space-500)); height: auto; border-radius: var(--radius-sm-8); }
 
 /* Settings - Payment settings: rows of an icon with its text, the value, the button (Figma) */
-.grg-ip-pay__row { display: grid; grid-template-columns: minmax(0, 1fr) var(--space-5000) auto; align-items: center; gap: var(--space-600); padding: var(--space-600); }
-.grg-ip-pay__about { display: flex; align-items: flex-start; gap: var(--space-400); min-width: 0; max-width: calc(var(--space-5000) * 2 + var(--space-1000)); }
 .grg-ip-pay__title { margin: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
 .grg-ip-pay__text { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
-.grg-ip-pay__text strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
-.grg-ip-pay__note { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
-.grg-ip-pay__value { font: var(--typo-body-lg-medium); color: var(--text-strong-1000); }
-.grg-ip-pay__action { justify-self: end; }
-.grg-ip-pay__row--info { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-/* Profile (Figma Main info): the values start on one line down the card, the button sits at the end of the same cell */
-.grg-ip-pay__row--info .grg-ip-pay__value { grid-area: 1 / 2; font: var(--typo-body-md-regular); }
-.grg-ip-pay__row--info .grg-ip-pay__action { grid-area: 1 / 2; }
 .grg-ip-pay__coin { display: inline-flex; align-items: center; gap: var(--space-200); }
 
 /* A choice list in a modal (Figma Select with Selection items): each option 12px above and below, 12px apart */
 .grg-ip-choices .grg-radio-label { padding: var(--space-300) 0; }
 
 /* Settings - Exchange rate */
-.grg-ip-rate__about { max-width: calc(var(--space-5000) * 2); }
-.grg-ip-rate__about strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
-.grg-ip-rate__actions { display: flex; flex: none; gap: var(--space-300); }
 .grg-ip-rate { max-width: calc(var(--space-5000) - var(--space-1000)); }
 
 

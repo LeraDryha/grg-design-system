@@ -19,6 +19,7 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame, startAssets, type AppPage } from '../shared/AssetsApp';
 import { useTransactions, type Transaction } from '../Transactions/Transactions';
 import { formatAmount, formatDateTime } from '../../locale/format';
@@ -442,7 +443,7 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
   const pageInvoice = page ? find(page) : null;
   const content = account !== 'verified' ? (
     <main className="grg-ip-page">
-      <h1 className="grg-ip-page__title">Invoices</h1>
+      <PageHeader title="Invoices" />
       {/* Figma: a 3D picture above; here the system's Featured icon */}
       <div className="grg-ip-surface grg-ip-waiting">
         <FeaturedIcon size="lg" type={account === 'verifying' ? 'warning' : 'neutral'} icon={account === 'verifying' ? 'clock-circle-filled' : 'lock'} />
@@ -453,13 +454,8 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
     </main>
   ) : pageInvoice ? (
     <main className="grg-ip-page">
-      <div className="grg-ip-page__head">
-        <span className="grg-ip-page__back">
-          <ActionButton icon="arrow-left" aria-label="Back to invoices" onClick={() => setPage(null)} />
-          <h1 className="grg-ip-page__title">Invoice details</h1>
-        </span>
-        {active(pageInvoice.status) && <Button variant="outline" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>}
-      </div>
+      <PageHeader title="Invoice details" back={{ label: 'Back to invoices', onClick: () => setPage(null) }}
+        actions={active(pageInvoice.status) && <Button variant="outline" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>} />
       <div className="grg-ip-invoice-page">
         <section className="grg-ip-card grg-ip-card--details" aria-label="Invoice"><Details invoice={pageInvoice} lead /></section>
         <section className="grg-ip-card" aria-labelledby="operations-title">
@@ -470,14 +466,11 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
     </main>
   ) : (
     <main className="grg-ip-page">
-      <div className="grg-ip-page__head">
-        <h1 className="grg-ip-page__title">Invoices</h1>
-        <span className="grg-ip-page__actions">
-          {/* No export in this demo: the button stays, as in Figma, without an action */}
-          <Button variant="outline" leftIcon="download">Download</Button>
-          <Button variant="primary" leftIcon="plus" onClick={create}>Create invoice</Button>
-        </span>
-      </div>
+      <PageHeader title="Invoices" actions={<>
+        {/* No export in this demo: the button stays, as in Figma, without an action */}
+        <Button variant="outline" leftIcon="download">Download</Button>
+        <Button variant="primary" leftIcon="plus" onClick={create}>Create invoice</Button>
+      </>} />
       <div className="grg-ip-surface">
         <InvoicesTable invoices={invoices} onOpen={open} onDeactivate={setConfirm} />
       </div>

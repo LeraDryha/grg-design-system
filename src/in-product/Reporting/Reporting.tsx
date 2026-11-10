@@ -4,7 +4,6 @@ import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Badge } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
-import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { Modal } from '../../components/Modal/Modal';
 import { ProgressCircle } from '../../components/ProgressCircle/ProgressCircle';
 import { RadioGroup } from '../../components/Radio/Radio';
@@ -12,6 +11,8 @@ import { RadioLabel } from '../../components/RadioLabel/RadioLabel';
 import { Select } from '../../components/Select/Select';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
+import { SettingsList, SettingsRow } from '../../components/SettingsRow/SettingsRow';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame, startAssets } from '../shared/AssetsApp';
 import { pad, shift, startOf, type Range } from '../shared/period';
 import { YOU, personName, startMembers } from '../Members/Members';
@@ -145,7 +146,7 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
       overlays: null,
       content: (
         <main className="grg-ip-page">
-          <h1 className="grg-ip-page__title">Reporting</h1>
+          <PageHeader title="Reporting" />
           <div className="grg-ip-surface grg-ip-waiting">
             <img className="grg-ip-waiting__image" src={verifying ? verifyingImage : reportsImage} alt="" />
             <h2 className="grg-ip-waiting__title">{verifying ? 'Verification in progress' : 'You can’t download reports yet'}</h2>
@@ -171,20 +172,10 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
 
   const settlement = (
     <div className="grg-ip-tab-panel">
-      <div className="grg-ip-surface grg-ip-surface--fit">
-        <div className="grg-ip-setting">
-          <div className="grg-ip-setting__head">
-            <span className="grg-ip-keys__intro">
-              <FeaturedIcon type="neutral" size="md" icon="chart-line" />
-              <span className="grg-ip-setting__text">
-                <h2 className="grg-ip-setting__title">Settlement Report</h2>
-                <p className="grg-ip-setting__line grg-ip-rate__about">All the transactions with applied fees. You’ll be able to access your download records for one week.</p>
-              </span>
-            </span>
-            <Button variant="primary" size="sm" onClick={() => setDraft(startDraft())}>Generate report</Button>
-          </div>
-        </div>
-        <hr className="grg-ip-surface__divider" />
+      <SettingsList className="grg-ip-surface grg-ip-surface--fit">
+        <SettingsRow layout="below" icon="chart-line" title="Settlement Report"
+          description="All the transactions with applied fees. You’ll be able to access your download records for one week."
+          action={<Button variant="primary" size="sm" onClick={() => setDraft(startDraft())}>Generate report</Button>} />
         <div className="grg-ip-setting">
           <Table aria-label="Report history" rows={reports} rowKey={r => r.id} rowLabel={label} columns={columns}
             actions={r => (r.status === 'Processing'
@@ -197,13 +188,13 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
               ))}
             empty={{ title: 'Report history is empty', subtitle: 'Generate your first report' }} />
         </div>
-      </div>
+      </SettingsList>
     </div>
   );
 
   const content = (
     <main className="grg-ip-page">
-      <h1 className="grg-ip-page__title">Reporting</h1>
+      <PageHeader title="Reporting" />
       {/* Statement Report has no screens yet: shown, not available */}
       <TabMenu aria-label="Reports" items={[{ id: 'settlement', label: 'Settlement Report' }, { id: 'statement', label: 'Statement Report', disabled: true }]}>
         {item => (item.id === 'settlement' ? settlement : null)}

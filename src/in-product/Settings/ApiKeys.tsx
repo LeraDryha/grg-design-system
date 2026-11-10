@@ -11,6 +11,7 @@ import { Input } from '../../components/Input/Input';
 import { Modal, type ModalProps } from '../../components/Modal/Modal';
 import { MultiValueInput } from '../../components/MultiValueInput/MultiValueInput';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
+import { SettingsList, SettingsRow } from '../../components/SettingsRow/SettingsRow';
 import keyImage from '../../assets/in-product/api-key.png';
 
 /* GRX Pay redesign, file "Global Settings", section Settings - API key (372:45298): no keys yet, Create API key with
@@ -105,20 +106,9 @@ export function useApiKeys({ start = 'some' }: { start?: 'none' | 'some' } = {})
       <Button variant="primary" size="lg" onClick={create}>Create API key</Button>
     </div>
   ) : (
-    <div className="grg-ip-surface grg-ip-surface--fit">
-      <div className="grg-ip-setting">
-        <div className="grg-ip-setting__head">
-          <span className="grg-ip-keys__intro">
-            <FeaturedIcon type="neutral" size="md" icon="key" />
-            <span className="grg-ip-setting__text">
-              <h2 className="grg-ip-setting__title">API Key</h2>
-              <p className="grg-ip-setting__line">API keys allow you to perform automatic actions with your account using your own software</p>
-            </span>
-          </span>
-          <Button variant="primary" size="sm" onClick={create}>Create API key</Button>
-        </div>
-      </div>
-      <hr className="grg-ip-surface__divider" />
+    <SettingsList className="grg-ip-surface grg-ip-surface--fit">
+      <SettingsRow layout="below" icon="key" title="API Key" description="API keys allow you to perform automatic actions with your account using your own software"
+        action={<Button variant="primary" size="sm" onClick={create}>Create API key</Button>} />
       <div className="grg-ip-setting">
         <div className="grg-ip-setting__head grg-ip-setting__head--center">
           <h2 className="grg-ip-setting__title">My API Keys</h2>
@@ -141,7 +131,7 @@ export function useApiKeys({ start = 'some' }: { start?: 'none' | 'some' } = {})
             </dl>
           )} />
       </div>
-    </div>
+    </SettingsList>
   );
 
   /* ---- The modal: one at a time; the IP list is a step of the form, with Back ---- */

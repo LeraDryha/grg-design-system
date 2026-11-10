@@ -6,6 +6,7 @@ import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { NotificationItem, type Notification } from '../../components/NotificationFeed/NotificationFeed';
 import { TabMenu, type TabMenuItem } from '../../components/TabMenu/TabMenu';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame, money, startAssets } from '../shared/AssetsApp';
 import { formatAmount } from '../../locale/format';
 import { NotificationsContext, type NotificationsController } from '../shared/notifications';
@@ -207,15 +208,12 @@ export function NotificationsPage({ controller }: { controller: NotificationsCon
   };
   return (
     <main className="grg-ip-page">
-      <div className="grg-ip-page__head">
-        <h1 className="grg-ip-page__title">Notifications</h1>
-        <span className="grg-ip-page__actions">
-          <CheckboxLabel label="Hide read" checked={hideRead} onChange={setHideRead} />
-          <Button variant="outline" size="sm" leftIcon="check-circle" disabled={!unread} onClick={controller.markAllRead}>Mark all as read</Button>
-          {/* The settings live in the Profile; where the app has no Profile, the button stays without an action */}
-          <Button variant="outline" size="sm" leftIcon="setting" onClick={() => controller.settings?.()}>Manage notifications</Button>
-        </span>
-      </div>
+      <PageHeader title="Notifications" actions={<>
+        <CheckboxLabel label="Hide read" checked={hideRead} onChange={setHideRead} />
+        <Button variant="outline" size="sm" leftIcon="check-circle" disabled={!unread} onClick={controller.markAllRead}>Mark all as read</Button>
+        {/* The settings live in the Profile; where the app has no Profile, the button stays without an action */}
+        <Button variant="outline" size="sm" leftIcon="setting" onClick={() => controller.settings?.()}>Manage notifications</Button>
+      </>} />
       <div className="grg-ip-surface grg-ip-notes">
         <TabMenu orientation="vertical" aria-label="Notifications" value={category} onChange={setCategory}
           items={CATEGORIES.map(c => ({ ...c, badge: counts[c.id] || undefined }))}>

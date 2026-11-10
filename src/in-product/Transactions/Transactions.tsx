@@ -10,6 +10,7 @@ import { Search } from '../../components/Search/Search';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { TransactionIcon, transactionColor, type TransactionType } from '../../components/TransactionIcon/TransactionIcon';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame, startAssets } from '../shared/AssetsApp';
 import { formatAmount, formatDateTime } from '../../locale/format';
 import { Lead, LeadBox } from '../shared/lead';
@@ -286,7 +287,7 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
   if (account !== 'verified') {
     content = (
       <main className="grg-ip-page">
-        <h1 className="grg-ip-page__title">Transactions</h1>
+        <PageHeader title="Transactions" />
         <div className="grg-ip-surface grg-ip-waiting">
           <img className="grg-ip-waiting__image" src={cards} alt="" />
           <h2 className="grg-ip-waiting__title">You don’t have any transactions yet</h2>
@@ -299,12 +300,7 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
     const { tint, ...lead } = leadOf(shown);
     content = (
       <main className="grg-ip-page">
-        <div className="grg-ip-page__head">
-          <span className="grg-ip-page__back">
-            <ActionButton icon="arrow-left" aria-label="Back to transactions" onClick={() => setPage(null)} />
-            <h1 className="grg-ip-page__title">Transaction details</h1>
-          </span>
-        </div>
+        <PageHeader title="Transaction details" back={{ label: 'Back to transactions', onClick: () => setPage(null) }} />
         <div className="grg-ip-transaction-page">
           <section className="grg-ip-card" aria-label={`${lead.kind}, ${lead.amount}`}>
             <LeadBox tint={tint} {...lead} />
@@ -316,7 +312,7 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
   } else {
     content = (
       <main className="grg-ip-page">
-        <h1 className="grg-ip-page__title">Transactions</h1>
+        <PageHeader title="Transactions" />
         <div className="grg-ip-surface">
           <TransactionsTable transactions={transactions} onOpen={t => setOpen(t.id)} />
         </div>
