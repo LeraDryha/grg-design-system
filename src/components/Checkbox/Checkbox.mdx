@@ -77,6 +77,7 @@ Destructive: red in every state, for a choice that removes something. For a miss
 
 What the code adds to the Figma file, and why:
 
+- **An option with a description is 40px tall**: the label, 4px, then the description, the same as Radio label.
 - **Error and Destructive are split.** Figma has one Destructive switch for both meanings. The code uses `destructive` for the look of a removing choice, and `error` (with a label) or `invalid` for a mistake, which screen readers hear as invalid. The error message is the same Hint text as under Input and Select.
 - **Indeterminate on the native checkbox.** PrimeReact 10 has no indeterminate state, so the component sets it on the native checkbox; screen readers announce *mixed*.
 - **Focus you can see.** Figma draws a 4px `primary-soft-200` frame; the code uses the system blue ring.

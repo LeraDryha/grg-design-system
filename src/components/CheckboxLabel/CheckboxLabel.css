@@ -1,4 +1,4 @@
-/* Checkbox label. Figma: checkbox in a 20px tall frame, 8px gap; text block (2px gap) then the link, 10px apart. */
+/* Checkbox label. Figma: checkbox in a 20px tall frame, 8px gap; text block (4px gap) then the link, 10px apart. */
 
 .grg-checkbox-label {
   display: flex;
@@ -19,9 +19,8 @@
   gap: var(--space-250);
   min-width: 0;
 }
-.grg-checkbox-label__text { display: flex; flex-direction: column; gap: var(--space-050); min-width: 0; }
-/* Radio label (Figma 1746:300): 4px between the label and the description, so an option with a description is 40px */
-.grg-radio-label .grg-checkbox-label__text { gap: var(--space-100); }
+/* 4px between the label and the description, so an option with a description is 40px (Figma Radio label 1746:300; the same for checkboxes) */
+.grg-checkbox-label__text { display: flex; flex-direction: column; gap: var(--space-100); min-width: 0; }
 
 .grg-checkbox-label__title {
   display: flex;
