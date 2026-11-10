@@ -6,6 +6,7 @@
  * Nothing changes for Storybook itself, its docs pages or the tests.
  *
  * The page that embeds the frame talks to it with postMessage:
+ *   → { source: 'grg-portfolio', type: 'hello' }  the page is listening: the frame answers with 'ready' and the components
  *   → { source: 'grg-portfolio', type: 'inspect', on: boolean }  show the components layer
  *   → { source: 'grg-portfolio', type: 'highlight', name: string | null }  select one component's boxes
  *   → { source: 'grg-portfolio', type: 'theme', theme: 'light' | 'dark' }
@@ -166,6 +167,7 @@ export function startEmbed() {
   window.addEventListener('message', e => {
     const m = e.data;
     if (!m || m.source !== 'grg-portfolio') return;
+    if (m.type === 'hello') { lastList = ''; post({ type: 'ready' }); schedule(); }
     if (m.type === 'inspect') { inspect = !!m.on; if (!inspect) hovered = null; schedule(); }
     if (m.type === 'highlight') { highlighted = typeof m.name === 'string' ? m.name : null; schedule(); }
     if (m.type === 'theme' && (m.theme === 'light' || m.theme === 'dark')) addons.getChannel().emit(UPDATE_GLOBALS, { globals: { theme: m.theme } });
