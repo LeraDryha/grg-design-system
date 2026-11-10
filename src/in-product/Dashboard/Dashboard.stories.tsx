@@ -83,8 +83,8 @@ export const Walkthrough: Story = {
       await userEvent.click(within(dialog).getByRole('button', { name: /Close/ }));
       await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());
     });
-    await step('Create new invoice opens the Invoices drawer', async () => {
-      await userEvent.click(canvas.getByRole('button', { name: 'Create new invoice' }));
+    await step('Create invoice opens the Invoices drawer', async () => {
+      await userEvent.click(canvas.getByRole('button', { name: 'Create invoice' }));
       await expect(await canvas.findByRole('dialog', { name: 'Create invoice' })).toBeInTheDocument();
       await userEvent.keyboard('{Escape}');
       await waitFor(() => expect(canvas.queryByRole('dialog')).toBeNull());

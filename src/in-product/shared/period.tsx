@@ -30,7 +30,7 @@ export const thisMonth = () => PERIODS[2].range(new Date()) as Range;
 export const periodName = ([from, to]: Range) => PERIODS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], from) && sameDay(r[1], to); })?.label
   ?? formatPeriod(from, to);
 
-/** `allLabel` adds "all time" at the top of the list (value null), as the Invoices filter "All period" */
+/** `allLabel` adds "All time" at the top of the list (value null) */
 export function PeriodSelect({ value, onChange, allLabel, 'aria-label': label = 'Period' }: {
   value: Range | null; onChange: (value: Range | null) => void; allLabel?: string; 'aria-label'?: string;
 }) {
@@ -75,9 +75,9 @@ export function PeriodSelect({ value, onChange, allLabel, 'aria-label': label = 
   );
 }
 
-/** Figma Invoices: the Date Picker's own presets, "All time" named "All period" */
-const LIST_PRESETS: DatePreset[] = defaultPresets.slice(0, 6).map(p => (p.id === 'all' ? { ...p, label: 'All period' } : p));
-const listName = (value: Range | null) => !value ? 'All period'
+/** Figma Invoices: the Date Picker's own presets. Figma wrote "All period"; the product says All time everywhere */
+const LIST_PRESETS: DatePreset[] = defaultPresets.slice(0, 6);
+const listName = (value: Range | null) => !value ? 'All time'
   : LIST_PRESETS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], value[0]) && sameDay(r[1], value[1]); })?.label
     ?? formatPeriod(value[0], value[1]);
 

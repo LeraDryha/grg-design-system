@@ -341,7 +341,7 @@ function InvoicesTable({ invoices, onOpen, onDeactivate }: { invoices: Invoice[]
         <Search size="sm" aria-label="Search invoices by ID" placeholder="Invoice ID" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
         <div className="grg-ip-toolbar__filters">
           <CompactSelect size="sm" aria-label="Invoice asset" value={currency} onChange={setCurrency}
-            options={[{ value: 'all', label: 'All invoice assets' }, ...CURRENCIES.map(c => ({ ...c, label: c.value }))]} />
+            options={[{ value: 'all', label: 'All assets' }, ...CURRENCIES.map(c => ({ ...c, label: c.value }))]} />
           <CompactSelect size="sm" aria-label="Status" value={status} onChange={setStatus}
             options={[{ value: 'all', label: 'All statuses' }, ...STATUSES.map(s => ({ value: s, label: s }))]} />
           <PeriodPicker value={period} onChange={setPeriod} />
@@ -372,7 +372,7 @@ export type InvoicesProps = {
   onViewTransaction?: (transaction: Transaction) => void;
 };
 
-/** The Invoices page with its drawer and modal, for any app that holds it (this page, the Dashboard's Create new invoice) */
+/** The Invoices page with its drawer and modal, for any app that holds it (this page, the Dashboard's Create invoice) */
 export function useInvoices({ account = 'verified', startCreating = false, onViewTransaction }: InvoicesProps = {}) {
   const [invoices, setInvoices] = useState(startInvoices);
   const [view, setView] = useState<View | null>(startCreating ? { kind: 'create' } : null);

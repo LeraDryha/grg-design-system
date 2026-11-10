@@ -241,7 +241,7 @@ function TransactionsTable({ transactions, onOpen }: { transactions: Transaction
           <CompactSelect size="sm" aria-label="Status" value={status} onChange={setStatus}
             options={[{ value: 'all', label: 'All statuses' }, ...STATUSES.map(s => ({ value: s, label: s }))]} />
           <CompactSelect size="sm" aria-label="Currency" value={currency} onChange={setCurrency}
-            options={[{ value: 'all', label: 'All currencies' }, ...CURRENCIES]} />
+            options={[{ value: 'all', label: 'All assets' }, ...CURRENCIES]} />
           <PeriodPicker value={period} onChange={setPeriod} />
           {filtered && <Button variant="text" size="sm" leftIcon="reload" onClick={reset}>Reset</Button>}
         </div>

@@ -5,7 +5,7 @@ import * as SettingsStories from './Settings.stories';
 
 # Settings
 
-The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work: Account, API key, Payment settings and Exchange rate.
+The company's settings: its logo, who owns it and how buyers reach it. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work: Company, API key, Payment settings and Exchange rate.
 
 <a href="iframe.html?viewMode=story&id=in-product-settings--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
 
@@ -23,6 +23,7 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 
 ## Decided while building it
 
+- **The first tab is Company, not Account** (after the audit). The avatar menu has Profile for you and Company settings for the company; a tab named Account sent people looking for their password to the company's logo.
 - **The logo is the button.** Figma made the pencil badge open the menu; here the whole logo does, and the badge stays a picture (the Avatar rule). Without a logo it opens *Upload logo*, with one a menu: *Edit logo*, and *Remove* in red.
 - **Remove at once, with Undo.** No question first: a toast says *Logo removed* and offers *Undo*.
 - **The crop is Image Crop** from [File Upload](?path=/docs/components-file-upload--docs), darkened around the circle with the overlay of modals and drawers, not Figma's white veil.

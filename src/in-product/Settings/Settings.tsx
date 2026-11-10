@@ -133,7 +133,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
     toast({ status: 'success', title, duration: 5000 });
   };
 
-  /* ---- The Account tab ---- */
+  /* ---- The Company tab ---- */
   const avatar = <Avatar size={120} shape="company" src={logo?.src} status="edit" decorative />;
   const accountTab = (
     <div className="grg-ip-surface grg-ip-surface--fit">
@@ -181,7 +181,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
     <main className="grg-ip-page">
       <h1 className="grg-ip-page__title">Settings</h1>
       <TabMenu aria-label="Settings" value={tab} onChange={setTab} items={[
-        { id: 'account', label: 'Account' },
+        { id: 'account', label: 'Company' },
         { id: 'api', label: 'API key' },
         { id: 'payments', label: 'Payment settings' },
         { id: 'rates', label: 'Exchange rate' },
