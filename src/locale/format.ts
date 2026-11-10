@@ -5,11 +5,11 @@ import { resolveLocale } from './dates';
  * follows the locale; the month is always a word, so 10/11 is never read as 11 October.
  */
 
-/** A moment in a table or a card: 10 Nov 2026, 12:49 (en-GB) · Nov 10, 2026, 12:49 PM (en-US). Seconds for details */
+/** A moment in a table or a card: 10 Nov 2026, 12:49 (en-GB) · Nov 10, 2026, 12:49 PM (en-US). Seconds for details.
+ *  The day and the time are joined with a comma here: Safari would write "10 Nov 2026 at 12:49" and Chrome a comma */
 export function formatDateTime(date: Date, { seconds = false, locale }: { seconds?: boolean; locale?: string } = {}) {
-  return new Intl.DateTimeFormat(resolveLocale(locale), {
-    day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', second: seconds ? '2-digit' : undefined,
-  }).format(date);
+  const time = new Intl.DateTimeFormat(resolveLocale(locale), { hour: '2-digit', minute: '2-digit', second: seconds ? '2-digit' : undefined }).format(date);
+  return `${formatDay(date, locale)}, ${time}`;
 }
 
 /** A day: 10 Nov 2026 */
