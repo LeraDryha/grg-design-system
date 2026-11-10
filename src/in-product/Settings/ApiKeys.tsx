@@ -50,7 +50,7 @@ const startKeys = (): ApiKey[] => [
 ];
 
 /** The QR code of a secret: black on white whatever the theme, so a camera reads it */
-function Qr({ text, label }: { text: string; label: string }) {
+export function Qr({ text, label }: { text: string; label: string }) {
   const [src, setSrc] = useState('');
   useEffect(() => {
     void QRCode.toDataURL(text, { margin: 1, width: 240, color: { dark: '#0a0a0a', light: '#ffffff' } }).then(setSrc);

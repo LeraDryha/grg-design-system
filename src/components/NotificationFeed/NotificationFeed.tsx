@@ -124,6 +124,8 @@ export type NotificationFeedProps = {
   onMarkAllRead?: () => void;
   /** Figma Header · Action button: the notification settings */
   settingsHref?: string;
+  /** The settings were chosen: a single-page app calls `event.preventDefault()` and shows them itself */
+  onSettings?: (event: MouseEvent<HTMLAnchorElement>) => void;
   /** Figma Footer: View all notifications */
   viewAllHref?: string;
   /** Dates as how long ago (2 h ago); the full date on hover */
@@ -148,7 +150,7 @@ export type NotificationFeedProps = {
  * Escape) and Skeleton the loading rows. New notifications that arrive while it is open are announced.
  */
 export function NotificationFeed({
-  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, viewAllHref, onViewAll, relativeDates = false, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
+  notifications, loading = false, onOpen, onMarkAllRead, settingsHref, onSettings, viewAllHref, onViewAll, relativeDates = false, empty = { title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' },
   trigger, title = 'Notifications', layout = 'auto', locale, className = '',
 }: NotificationFeedProps) {
   const panel = useRef<OverlayPanel>(null);
@@ -235,7 +237,7 @@ export function NotificationFeed({
         <div className="grg-feed__header">
           <h2 className="grg-feed__title">{title}</h2>
           {settingsHref && (
-            <a className="grg-feed__settings" href={settingsHref} aria-label="Notification settings">
+            <a className="grg-feed__settings" href={settingsHref} aria-label="Notification settings" onClick={event => { onSettings?.(event); panel.current?.hide(); }}>
               <Icon name="setting" size={24} />
             </a>
           )}

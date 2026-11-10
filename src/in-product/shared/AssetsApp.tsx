@@ -10,6 +10,7 @@ import { Tooltip } from '../../components/Tooltip/Tooltip';
 import { NotificationFeed } from '../../components/NotificationFeed/NotificationFeed';
 import { TopbarButton, TopbarNavigation } from '../../components/TopbarNavigation/TopbarNavigation';
 import { useNotificationsController } from './notifications';
+import { useAccount } from './account';
 import { useScreen } from './screen';
 import '../in-product.css';
 
@@ -52,7 +53,7 @@ const logo = (
 );
 
 /** The pages in this demo; the others are in the menu but lead nowhere */
-export type AppPage = 'dashboard' | 'assets' | 'invoices' | 'transactions' | 'members' | 'settings' | 'reporting' | 'notifications';
+export type AppPage = 'dashboard' | 'assets' | 'invoices' | 'transactions' | 'members' | 'settings' | 'reporting' | 'notifications' | 'profile';
 const built: string[] = ['dashboard', 'assets', 'invoices', 'transactions', 'members', 'settings', 'reporting'];
 
 /** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow.
@@ -63,12 +64,14 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
   const [support, setSupport] = useState(true);
   const screenInfo = useScreen();
   const feed = useNotificationsController();
+  const account = useAccount();
   const unread = feed?.items.filter(n => n.unread).length ?? 0;
   // The bell: the notification feed when the app gives its notifications, a plain button otherwise
   const bell = feed ? (
     <NotificationFeed notifications={feed.items} relativeDates settingsHref="#notification-settings" viewAllHref="#notifications"
       onOpen={(n, event) => { event.preventDefault(); feed.open(n); }} onMarkAllRead={feed.markAllRead}
       onViewAll={event => { event.preventDefault(); feed.viewAll?.(); }}
+      onSettings={event => { event.preventDefault(); feed.settings?.(); }}
       empty={{ title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' }}
       trigger={props => <TopbarButton action={{ label: 'Notifications', icon: 'notification', badge: unread ? `${unread} unread` : undefined }} buttonProps={props} />} />
   ) : undefined;
@@ -86,7 +89,15 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
         language={{ value: 'en', options: [{ value: 'en', label: 'EN' }], onChange: () => undefined, label: 'Language' }}
         theme={screenInfo?.theme} onThemeChange={screenInfo?.setTheme}
         actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', inBar: true, onClick: () => undefined, badge: unread ? `${unread} unread` : undefined, element: bell }, { id: 'help', label: 'Help', icon: 'help', href: '#help' }]}
-        account={{ name: 'Guadalupe Schimmel', email: 'g.schimmel@company.test' }} />
+        // The avatar's menu: who you are, your Profile, the company's Settings, Log out (no sign-out in this demo)
+        account={{ name: account.name, email: account.email, menu: [
+          { kind: 'header', label: account.name, description: account.email, avatar: { initials: true, color: 'amber' } },
+          { kind: 'divider' },
+          { label: 'Profile', icon: 'user', onSelect: () => account.open?.('profile') },
+          { label: 'Company settings', icon: 'setting', onSelect: () => account.open?.('settings') },
+          { kind: 'divider' },
+          { label: 'Log out', icon: 'out', onSelect: () => undefined },
+        ] }} />
       {centred ? <main className="grg-ip-centre">{children}</main> : (
         <div className="grg-ip-body">
           <SidebarNavigation layout={docs ? 'collapsed' : 'auto'} sections={pages} current={current} onNavigate={navigate}

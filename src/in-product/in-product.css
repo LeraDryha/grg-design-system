@@ -432,3 +432,18 @@
 .grg-ip-notes__groups { display: flex; flex-direction: column; gap: var(--space-600); }
 .grg-ip-notes__group { display: flex; flex-direction: column; gap: var(--space-200); }
 .grg-ip-notes__day { margin: 0; padding: 0 var(--space-200); font: var(--typo-body-sm-medium); letter-spacing: var(--typo-body-sm-medium-tracking); color: var(--text-soft-500); }
+
+/* Profile */
+.grg-ip-role { display: inline-flex; align-items: center; gap: var(--space-100); }
+.grg-ip-on { display: inline-flex; align-items: center; gap: var(--space-200); font: var(--typo-body-md-medium); color: var(--success-base-600); }
+.grg-ip-on::before { content: ''; width: var(--space-200); height: var(--space-200); border-radius: var(--radius-fully-rounded); background: var(--success-base-600); }
+.grg-ip-prefs { display: flex; flex-direction: column; gap: var(--space-400); }
+.grg-ip-prefs__title { margin: 0; padding: var(--space-600) var(--space-600) 0; font: var(--typo-body-lg-semibold); color: var(--text-strong-1000); }
+.grg-ip-pref { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-400) var(--space-600); padding: var(--space-500) var(--space-600); }
+.grg-ip-pref + .grg-ip-pref { border-top: 1px solid var(--stroke-soft-200); }
+.grg-ip-pref__switches { display: flex; gap: var(--space-800); }
+.grg-ip-qr-box { display: grid; justify-items: center; gap: var(--space-200); padding: var(--space-500); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
+.grg-ip-qr-box__key { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-ip-qr-box__secret { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-ip-resend { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-100); font: var(--typo-body-md-regular); color: var(--text-soft-500); text-align: center; }
+.grg-ip-resend__wait { color: var(--text-strong-1000); font-variant-numeric: tabular-nums; }

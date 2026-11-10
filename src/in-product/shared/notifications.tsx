@@ -8,6 +8,8 @@ export type NotificationsController = {
   open: (notification: Notification) => void;
   markAllRead: () => void;
   viewAll?: () => void;
+  /** The bell's settings: the Profile's Notification tab */
+  settings?: () => void;
 };
 
 export const NotificationsContext = createContext<NotificationsController | null>(null);
