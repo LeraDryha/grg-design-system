@@ -7,6 +7,8 @@ import { Badge } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { Input } from '../../components/Input/Input';
 import { Modal } from '../../components/Modal/Modal';
+import { RadioGroup } from '../../components/Radio/Radio';
+import { RadioLabel } from '../../components/RadioLabel/RadioLabel';
 import { Search } from '../../components/Search/Search';
 import { Select } from '../../components/Select/Select';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
@@ -17,7 +19,7 @@ import { formatDateTime } from '../../locale/format';
    Delete member. A small business's team; invented test addresses only. */
 
 export type Role = 'Owner' | 'Admin' | 'Agent' | 'Accountant';
-/** The roles a member can be given; there is one owner, and ownership isn't changed here. Required: no clear button */
+/** The roles a member can be given; there is one owner, handed on with Transfer ownership, not as a role. Required: no clear button */
 const ROLES = [{ value: 'Admin', label: 'Admin' }, { value: 'Agent', label: 'Agent' }, { value: 'Accountant', label: 'Accountant' }];
 /** The Figma note under Role: Alert's long content, a short title and the text as its description (plain text: the role names aren't bold as in Figma) */
 const ROLES_NOTE = 'Admin has access to all functionalities, excluding the ability to modify ownership. '
@@ -35,7 +37,7 @@ export type Member = {
 const daysAgo = (days: number) => new Date(Date.now() - days * 86400000);
 /** Foundations → Formats: 10 Nov 2026, 12:49 */
 const short = (d: Date) => formatDateTime(d);
-/** You: the account in the bar (Guadalupe Schimmel), the owner until Settings hands ownership to someone else */
+/** You: the account in the bar (Guadalupe Schimmel), the owner until you transfer ownership to someone else */
 export const YOU = 'g.schimmel@company.test';
 
 export const startMembers: Member[] = [
@@ -53,7 +55,7 @@ const valid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 /* ---- The list ---- */
 
-function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit: (member: Member) => void; onDelete: (member: Member) => void }) {
+function MembersTable({ members, onEdit, onDelete, onTransfer }: { members: Member[]; onEdit: (member: Member) => void; onDelete: (member: Member) => void; onTransfer: () => void }) {
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
   const rows = members.filter(m => !q || m.email.includes(q));
@@ -74,8 +76,10 @@ function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit
         <Search size="sm" aria-label="Search members by email" placeholder="Email" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
       </div>
       <Table aria-label="Members" rows={rows} rowKey={row => row.email} rowLabel={row => `${row.email}, ${row.role}`} columns={columns}
-        // The owner and you can't be edited or deleted from here
-        actions={row => (row.role === 'Owner' || row.email === YOU ? null : (
+        // The owner and you can't be edited or deleted; the owner hands ownership on from their own row (text: a verb of
+        // this product, not a standard action with an icon)
+        actions={row => (row.role === 'Owner' && row.email === YOU ? <Button variant="text" size="sm" onClick={onTransfer}>Transfer ownership</Button>
+          : row.role === 'Owner' || row.email === YOU ? null : (
           <>
             <ActionButton icon="pencil" size="sm" aria-label={`Edit ${row.email}`} onClick={() => onEdit(row)} />
             <ActionButton icon="trash" size="sm" color="red" aria-label={`Delete ${row.email}`} onClick={() => onDelete(row)} />
@@ -88,7 +92,8 @@ function MembersTable({ members, onEdit, onDelete }: { members: Member[]; onEdit
 
 /* ---- The flow ---- */
 
-type View = { kind: 'add' } | { kind: 'edit'; email: string } | { kind: 'delete'; email: string };
+type View = { kind: 'add' } | { kind: 'edit'; email: string } | { kind: 'delete'; email: string }
+  | { kind: 'owner'; chosen: string | null; query: string } | { kind: 'confirm-owner'; chosen: string };
 
 export type MembersState = [Member[], Dispatch<SetStateAction<Member[]>>];
 
@@ -103,7 +108,7 @@ export function useMembers(shared?: MembersState) {
   const [role, setRole] = useState<string | null>(null);
   const { toast } = useMessages();
   const close = () => setView(null);
-  const current = view && view.kind !== 'add' ? members.find(m => m.email === view.email) ?? null : null;
+  const current = view && (view.kind === 'edit' || view.kind === 'delete') ? members.find(m => m.email === view.email) ?? null : null;
 
   const add = () => { setEmail(''); setEmailTouched(false); setRole(null); setView({ kind: 'add' }); };
   const edit = (member: Member) => { setRole(member.role); setView({ kind: 'edit', email: member.email }); };
@@ -132,6 +137,14 @@ export function useMembers(shared?: MembersState) {
     toast({ status: 'success', title: 'Member deleted', duration: 3000 });
   };
 
+  // Who can become the owner: confirmed members, not you and not someone still invited
+  const candidates = members.filter(m => m.email !== YOU && !m.waiting && m.role !== 'Owner');
+  const setOwner = (chosen: string) => {
+    setMembers(list => list.map(m => (m.email === chosen ? { ...m, role: 'Owner' } : m.role === 'Owner' ? { ...m, role: 'Admin' } : m)));
+    close();
+    toast({ status: 'success', title: 'New owner is set successfully', duration: 5000 });
+  };
+
   const content = (
     <main className="grg-ip-page">
       <div className="grg-ip-page__head">
@@ -139,7 +152,8 @@ export function useMembers(shared?: MembersState) {
         <Button variant="primary" leftIcon="plus" onClick={add}>Add member</Button>
       </div>
       <div className="grg-ip-surface">
-        <MembersTable members={members} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })} />
+        <MembersTable members={members} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })}
+          onTransfer={() => setView({ kind: 'owner', chosen: null, query: '' })} />
       </div>
     </main>
   );
@@ -168,6 +182,26 @@ export function useMembers(shared?: MembersState) {
     title: 'Delete a member?', description: `After this action ${current.email} won’t be able to log in to the company anymore`,
     status: 'error' as const, statusIcon: 'remove-circle-filled' as const, destructive: true,
     primaryAction: { label: 'Delete', onClick: remove }, secondaryAction: { label: 'Cancel', onClick: close },
+  } : view?.kind === 'owner' ? (() => {
+    const v = view;
+    const q = v.query.trim().toLowerCase();
+    const shown = candidates.filter(m => !q || m.email.includes(q));
+    return {
+      title: 'Transfer ownership', description: 'Choose a company user to set up as a company owner. The previous owner will be set up as an Admin.',
+      primaryAction: { label: 'Save changes', disabled: !v.chosen, onClick: () => setView({ kind: 'confirm-owner', chosen: v.chosen! }) },
+      children: <>
+        <Search size="md" aria-label="Search members by email" placeholder="Email" value={v.query} onChange={query => setView({ ...v, query })} />
+        {shown.length ? (
+          <RadioGroup label="Members" labelHidden className="grg-ip-owner-list grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
+            {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.email} />)}
+          </RadioGroup>
+        ) : <p className="grg-ip-setting__line">No members with this email</p>}
+      </>,
+    };
+  })() : view?.kind === 'confirm-owner' ? {
+    title: `Make ${view.chosen} the owner?`, description: 'You will become an Admin and won’t be able to change the owner again.',
+    status: 'warning' as const, statusIcon: 'warning-error-filled' as const, onBack: () => setView({ kind: 'owner', chosen: view.chosen, query: '' }),
+    primaryAction: { label: 'Make owner', onClick: () => setOwner(view.chosen) }, secondaryAction: { label: 'Cancel', onClick: close },
   } : null;
 
   return {

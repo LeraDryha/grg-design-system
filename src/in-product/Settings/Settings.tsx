@@ -8,9 +8,6 @@ import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
 import { FileUpload } from '../../components/FileUpload/FileUpload';
 import { ImageCrop, cropImage, defaultCrop, type Crop } from '../../components/FileUpload/ImageCrop';
 import { Modal, type ModalProps } from '../../components/Modal/Modal';
-import { RadioGroup } from '../../components/Radio/Radio';
-import { RadioLabel } from '../../components/RadioLabel/RadioLabel';
-import { Search } from '../../components/Search/Search';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame } from '../shared/AssetsApp';
@@ -18,7 +15,7 @@ import { formatDateTime } from '../../locale/format';
 import { useApiKeys } from './ApiKeys';
 import { usePaymentSettings } from './PaymentSettings';
 import { useExchangeRate } from './ExchangeRate';
-import { YOU, startMembers, type Member, type MembersState } from '../Members/Members';
+import { YOU, startMembers, type MembersState } from '../Members/Members';
 import settingsImage from '../../assets/in-product/settings.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
 
@@ -29,7 +26,7 @@ import verifyingImage from '../../assets/in-product/verification-in-progress.png
 export type SettingsProps = {
   /** Verified: the settings. Not verified: they open after verification. Verifying: the documents are being checked */
   account?: 'verified' | 'not-verified' | 'verifying';
-  /** Saving the owner or the contact fails, to show the error toast */
+  /** Saving the contact fails, to show the error toast */
   failing?: boolean;
   /** The API key tab starts with a key, or with none (its empty state) */
   apiKeys?: 'none' | 'some';
@@ -47,7 +44,6 @@ const long = (d: Date) => formatDateTime(d);
 type Logo = { src: string; original: string; crop: Crop };
 type View =
   | { kind: 'upload' } | { kind: 'crop'; src: string; crop: Crop } | { kind: 'edit-logo'; src: string; crop: Crop }
-  | { kind: 'owner'; chosen: string | null; query: string } | { kind: 'confirm-owner'; chosen: string }
   | { kind: 'contact'; text: string; error?: string };
 
 /** One part of the Account card: a title, a line under it, the value, and its button on the right (Figma) */
@@ -68,9 +64,11 @@ function Section({ title, text, action, children }: { title: string; text: strin
 
 /** The Settings page and its modal, for any app that holds it. An app that also shows Members passes one list to
  *  both, so a new owner shows there too */
-export function useSettings({ account = 'verified', failing = false, apiKeys = 'some', tab: startTab = 'account' }: SettingsProps = {}, shared?: MembersState) {
+export function useSettings({ account = 'verified', failing = false, apiKeys = 'some', tab: startTab = 'account' }: SettingsProps = {}, shared?: MembersState,
+  /** Opens Members, where the owner hands ownership on; an app without Members leaves it out */
+  onMembers?: () => void) {
   const own = useState(startMembers);
-  const [members, setMembers] = shared ?? own;
+  const [members] = shared ?? own;
   const [logo, setLogo] = useState<Logo | null>(null);
   const [contact, setContact] = useState('https://t.me/company_support');
   const [view, setView] = useState<View | null>(null);
@@ -81,7 +79,6 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   const { toast } = useMessages();
   const close = () => setView(null);
   const owner = members.find(m => m.role === 'Owner');
-  const youOwn = owner?.email === YOU;
   const registered = members.find(m => m.email === YOU)?.addedAt ?? new Date();
 
   if (account !== 'verified') {
@@ -114,14 +111,6 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
     const removed = logo;
     setLogo(null);
     toast({ status: 'success', title: 'Logo removed', actionLabel: 'Undo', onAction: () => setLogo(removed) });
-  };
-  // Who can become the owner: confirmed members, not you and not someone still invited
-  const candidates = members.filter((m: Member) => m.email !== YOU && !m.waiting && m.role !== 'Owner');
-  const setOwner = (email: string) => {
-    close();
-    if (failing) { toast({ status: 'warning', title: ERROR, duration: 5000 }); return; }
-    setMembers(list => list.map(m => (m.email === email ? { ...m, role: 'Owner' } : m.role === 'Owner' ? { ...m, role: 'Admin' } : m)));
-    toast({ status: 'success', title: 'New owner is set successfully', duration: 5000 });
   };
   const saveContact = (text: string) => {
     const value = text.trim();
@@ -164,9 +153,9 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
         </div>
       </div>
       <hr className="grg-ip-surface__divider" />
-      <Section title="Company owner" text="Owner has full access to the company profile"
-        // Only the owner hands ownership on: once it's someone else, the button is gone
-        action={youOwn ? <Button variant="secondary" size="sm" leftIcon="pencil" onClick={() => setView({ kind: 'owner', chosen: null, query: '' })}>Change owner</Button> : undefined}>
+      {/* Shown here, handed on in Members with the rest of the team's roles (after the audit) */}
+      <Section title="Company owner" text="Owner has full access to the company profile. Ownership is transferred in Members"
+        action={onMembers ? <Button variant="secondary" size="sm" onClick={onMembers}>Open Members</Button> : undefined}>
         {owner?.email}
       </Section>
       <hr className="grg-ip-surface__divider" />
@@ -207,25 +196,6 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       onBack: v.kind === 'crop' ? () => setView({ kind: 'upload' }) : undefined, footerType: 'basic',
       primaryAction: { label: 'Save', onClick: () => { void saveLogo(v.src, v.crop); } }, secondaryAction: { label: 'Cancel', onClick: close },
       children: <ImageCrop src={v.src} label="Logo position" value={v.crop} onChange={crop => setView({ ...v, crop })} /> };
-  } else if (view?.kind === 'owner') {
-    const v = view;
-    const q = v.query.trim().toLowerCase();
-    const shown = candidates.filter(m => !q || m.email.includes(q));
-    modal = { ...base, title: 'Change the owner', description: 'Choose a company user to set up as a company owner. The previous owner will be set up as an Admin.',
-      footerType: 'fill', primaryAction: { label: 'Save changes', disabled: !v.chosen, onClick: () => setView({ kind: 'confirm-owner', chosen: v.chosen! }) },
-      children: <>
-        <Search size="md" aria-label="Search members by email" placeholder="Email" value={v.query} onChange={query => setView({ ...v, query })} />
-        {shown.length ? (
-          <RadioGroup label="Members" labelHidden className="grg-ip-owner-list grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
-            {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.email} />)}
-          </RadioGroup>
-        ) : <p className="grg-ip-setting__line">No members with this email</p>}
-      </> };
-  } else if (view?.kind === 'confirm-owner') {
-    const v = view;
-    modal = { ...base, title: `Make ${v.chosen} the owner?`, description: 'You will become an Admin and won’t be able to change the owner again.',
-      status: 'warning', statusIcon: 'warning-error-filled', onBack: () => setView({ kind: 'owner', chosen: v.chosen, query: '' }), footerType: 'fill',
-      primaryAction: { label: 'Make owner', onClick: () => setOwner(v.chosen) }, secondaryAction: { label: 'Cancel', onClick: close } };
   } else if (view?.kind === 'contact') {
     const v = view;
     modal = { ...base, title: contact ? 'Edit contact' : 'Add contact', description: CONTACT_TEXT, footerType: 'fill',

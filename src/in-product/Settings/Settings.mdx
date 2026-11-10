@@ -11,12 +11,11 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 
 <Canvas of={SettingsStories.LiveFlow} />
 
-**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Change owner**: choose a member and confirm. **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**. On **Payment settings**: turn fixed sum invoice or auto-convert on with a currency, and off. On **Exchange rate**: **Edit coefficients**, change one, **Save changes** or **Cancel**.
+**Try it:** press the logo, upload any picture, crop it and **Save**; press it again to **Edit logo** or **Remove** (and **Undo**). **Edit contact**, or empty it and add a new one. On **API key**: create a key (a name, permissions, an IP white list), copy it or scan its QR code, open it in the list, edit or delete it, or **Delete all**. On **Payment settings**: turn fixed sum invoice or auto-convert on with a currency, and off. On **Exchange rate**: **Edit coefficients**, change one, **Save changes** or **Cancel**.
 
 ## What the page has to get right
 
 - **The logo buyers see.** It shows on the payment checkout, so it is cropped round right here, and can be cropped again from the original.
-- **Ownership changes on purpose.** Only the owner hands it on, to a confirmed member, and confirms first: the previous owner becomes an Admin and can't take it back.
 - **A way for buyers to get help.** A link or any contact, up to 200 characters, shown on the payment receipt.
 - **Payments that settle as the business wants.** Fixed sum invoice pays out the exact fiat amount; auto-convert turns crypto into one currency.
 - **Keys with only the access they need.** Each API key has its permissions and, if wanted, the IP addresses it works from; the secret is shown once, to copy or scan.
@@ -27,7 +26,7 @@ The company's settings: its logo, who owns it and how buyers reach it. I designe
 - **The logo is the button.** Figma made the pencil badge open the menu; here the whole logo does, and the badge stays a picture (the Avatar rule). Without a logo it opens *Upload logo*, with one a menu: *Edit logo*, and *Remove* in red.
 - **Remove at once, with Undo.** No question first: a toast says *Logo removed* and offers *Undo*.
 - **The crop is Image Crop** from [File Upload](?path=/docs/components-file-upload--docs), darkened around the circle with the overlay of modals and drawers, not Figma's white veil.
-- **Change the owner, then confirm.** Only confirmed members are listed (not you, not someone still invited), nothing is chosen at first, and *Save changes* waits for a choice. The list is a Radio group under the search; its title, *Members*, is for screen readers only (`labelHidden`), as Figma shows no title. A question follows in the same modal: *Make … the owner?*. Then you are an Admin, the button is gone, and Members shows the new owner.
+- **The owner is shown here, handed on in Members** (after the audit). Figma changed the owner from this card, while every other role changes in Members: someone looking to hand the company to a colleague went to Members and found nothing. The card now says where it is done, and in the app *Open Members* takes you there. The Figma frames 8 and 9 show the old place.
 - **One text for the contact**, in Add and Edit: *Add a support link or any contact info. Buyers see it on the payment receipt.* Figma had two, one with a slip. *Add contact* has a plus; an empty contact asks for something; emptying it in Edit removes it.
 - **Errors as an example.** *Something went wrong, please try again* is shown in *When saving fails*, not in the live flow.
 

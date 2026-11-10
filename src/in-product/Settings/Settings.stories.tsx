@@ -83,7 +83,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-/** The page to try: upload and crop a logo, change the owner, add or edit the contact for buyers; create, open and delete API keys. */
+/** The page to try: upload and crop a logo, add or edit the contact for buyers; create, open and delete API keys. */
 export const LiveFlow: Story = { name: 'Live flow' };
 
 /** The checks behind the live flow: they run as tests, and in the Interactions tab. */
@@ -123,19 +123,8 @@ export const Walkthrough: Story = {
       await expect(await canvas.findByText('Support contact added successfully')).toBeInTheDocument();
       await expect(canvas.getByRole('region', { name: 'Company contact' })).toHaveTextContent('support@company.test');
     });
-    await step('Change the owner: choose, confirm, and the button is gone', async () => {
-      await userEvent.click(canvas.getByRole('button', { name: 'Change owner' }));
-      const save = within(dialog()).getByRole('button', { name: 'Save changes' });
-      await expect(save).toBeDisabled();
-      // Only confirmed members, not you and not the invited one
-      await expect(within(dialog()).queryByRole('radio', { name: 'g.schimmel@company.test' })).toBeNull();
-      await expect(within(dialog()).queryByRole('radio', { name: 'leo.okafor@company.test' })).toBeNull();
-      await userEvent.click(within(dialog()).getByRole('radio', { name: 'priya.raman@company.test' }));
-      await userEvent.click(save);
-      const confirm = await canvas.findByRole('dialog', { name: 'Make priya.raman@company.test the owner?' });
-      await userEvent.click(within(confirm).getByRole('button', { name: 'Make owner' }));
-      await expect(await canvas.findByText('New owner is set successfully')).toBeInTheDocument();
-      await expect(canvas.getByRole('region', { name: 'Company owner' })).toHaveTextContent('priya.raman@company.test');
+    await step('The owner is shown here and handed on in Members', async () => {
+      await expect(canvas.getByRole('region', { name: 'Company owner' })).toHaveTextContent('g.schimmel@company.test');
       await expect(canvas.queryByRole('button', { name: 'Change owner' })).toBeNull();
     });
   },
@@ -248,7 +237,7 @@ export const ExchangeRateWalkthrough: Story = {
 /** No API keys yet: what they are for, and the button to create one. */
 export const NoApiKeys: Story = { name: 'No API keys yet', args: { tab: 'api', apiKeys: 'none' } };
 
-/** Saving the owner or the contact fails: the Figma warning toast. */
+/** Saving the contact fails: the Figma warning toast. */
 export const WhenSavingFails: Story = {
   name: 'When saving fails',
   args: { failing: true },
