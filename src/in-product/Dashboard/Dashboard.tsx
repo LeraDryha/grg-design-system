@@ -365,7 +365,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   // One team for Members and Settings: a new owner shows on both
   const team = useState(startMembers);
   const membersPage = useMembers(team);
-  const settingsPage = useSettings({ account: empty ? 'not-verified' : 'verified' }, team);
+  const settingsPage = useSettings({ account: empty ? 'not-verified' : 'verified' }, team, () => setPage('members'));
   const reportingPage = useReporting({ account: empty ? 'not-verified' : 'verified' });
   // You: the avatar's menu opens the Profile or the company's Settings; the Profile's In app switches drive the bell
   const [prefs, setPrefs] = useState(startPrefs);
