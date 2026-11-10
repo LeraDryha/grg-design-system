@@ -3,7 +3,7 @@ import {
   type MouseEvent, type ReactElement, type SyntheticEvent, type ReactNode,
 } from 'react';
 import { ApiIcon, type ApiMethod } from '../ApiIcon/ApiIcon';
-import { Avatar } from '../Avatar/Avatar';
+import { Avatar, type AvatarProps } from '../Avatar/Avatar';
 import { Badge } from '../Badge/Badge';
 import { DropdownMenu, type DropdownMenuEntry } from '../DropdownMenu/DropdownMenu';
 import { Icon, type IconName } from '../Icon/Icon';
@@ -240,13 +240,15 @@ export type SidebarProfileCardProps = CardProps & {
   email?: string;
   /** Their photo; a placeholder without it */
   photo?: string;
+  /** Without a photo: initials in a colour instead of the grey person (Figma Avatar Initials, Coloured) */
+  avatar?: Pick<AvatarProps, 'initials' | 'color'>;
 };
 
-export function SidebarProfileCard({ name, email, photo, menu, menuLabel = 'Account', menuPlacement }: SidebarProfileCardProps) {
+export function SidebarProfileCard({ name, email, photo, avatar, menu, menuLabel = 'Account', menuPlacement }: SidebarProfileCardProps) {
   const { collapsed } = useContext(SidebarContext);
   return (
     <Card kind="profile" name={name} menu={menu} menuLabel={menuLabel} menuPlacement={menuPlacement}>
-      <Avatar size={32} src={photo} name={name} decorative />
+      <Avatar size={32} src={photo} name={name} {...avatar} decorative />
       <span className={collapsed ? 'grg-sr-only' : 'grg-sidebar-card__text'}>
         <span className="grg-sidebar-card__name">{name}</span>
         {email && <span className="grg-sidebar-card__email">{email}</span>}

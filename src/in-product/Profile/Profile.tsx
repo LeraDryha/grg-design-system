@@ -62,7 +62,7 @@ const newSecret = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), b
 /** One row of a card: an icon, the title and its line, the value, the button (Figma) */
 function Row({ icon, title, text, value, action }: { icon?: IconName; title: string; text: string; value?: ReactNode; action?: ReactNode }) {
   return (
-    <section className="grg-ip-pay__row" aria-label={title}>
+    <section className="grg-ip-pay__row grg-ip-pay__row--info" aria-label={title}>
       <span className="grg-ip-pay__about">
         {icon && <FeaturedIcon type="neutral" size="md" icon={icon} />}
         <span className="grg-ip-setting__text">

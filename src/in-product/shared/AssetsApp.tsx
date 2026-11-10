@@ -14,6 +14,9 @@ import { useAccount } from './account';
 import { useScreen } from './screen';
 import '../in-product.css';
 
+/** You, without a photo: the same initials in the bar and in the menu header */
+const AVATAR = { initials: true, color: 'amber' } as const;
+
 /* The app around every In product flow of the GRX Pay redesign (XDynk3v9BU5pStqaulzutE): the bar, the sidebar and
    the Assets page (52:7662). Test data only; the company is "Company". */
 
@@ -90,8 +93,9 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
         theme={screenInfo?.theme} onThemeChange={screenInfo?.setTheme}
         actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', inBar: true, onClick: () => undefined, badge: unread ? `${unread} unread` : undefined, element: bell }, { id: 'help', label: 'Help', icon: 'help', href: '#help' }]}
         // The avatar's menu: who you are, your Profile, the company's Settings, Log out (no sign-out in this demo)
-        account={{ name: account.name, email: account.email, menu: [
-          { kind: 'header', label: account.name, description: account.email, avatar: { initials: true, color: 'amber' } },
+        // The bar's avatar and the menu header are the same picture
+        account={{ name: account.name, email: account.email, avatar: AVATAR, menu: [
+          { kind: 'header', label: account.name, description: account.email, avatar: AVATAR },
           { kind: 'divider' },
           { label: 'Profile', icon: 'user', onSelect: () => account.open?.('profile') },
           { label: 'Company settings', icon: 'setting', onSelect: () => account.open?.('settings') },
