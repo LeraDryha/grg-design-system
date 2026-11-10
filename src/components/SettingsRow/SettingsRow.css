@@ -1,0 +1,46 @@
+/* Settings row. Designed in code from the In product pages; every value is a token. */
+
+/* beside (Figma Profile, Payment settings): text on the left half, the value from the half-way line, the button at the end */
+.grg-settings-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-600);
+  padding: var(--space-600);
+}
+.grg-settings-row__about { display: flex; align-items: flex-start; gap: var(--space-400); min-width: 0; }
+.grg-settings-row__text { display: flex; flex-direction: column; gap: var(--space-100); min-width: 0; }
+.grg-settings-row__title { margin: 0; font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-settings-row__description { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
+.grg-settings-row__description strong { font-weight: var(--font-weight-medium); color: var(--text-strong-1000); }
+.grg-settings-row__note { margin: 0; font: var(--typo-body-sm-regular); color: var(--text-subtle-700); }
+.grg-settings-row__value { grid-area: 1 / 2; min-width: 0; font: var(--typo-body-md-regular); color: var(--text-strong-1000); overflow-wrap: anywhere; }
+.grg-settings-row__action { display: flex; flex-wrap: wrap; gap: var(--space-300); grid-area: 1 / 2; justify-self: end; }
+/* The value and the button share the right half: the value stops short of the button */
+.grg-settings-row:has(.grg-settings-row__action) .grg-settings-row__value { padding-right: calc(var(--space-5000) / 2); }
+
+/* below (Figma Settings, API key, Exchange rate, Reporting): a larger title, the button by it, the value under the text */
+.grg-settings-row[data-layout='below'] {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  row-gap: var(--space-600);
+  padding: var(--space-800) var(--space-600);
+}
+.grg-settings-row[data-layout='below'] .grg-settings-row__title { font: var(--typo-body-lg-semibold); }
+.grg-settings-row[data-layout='below'] .grg-settings-row__description { font: var(--typo-body-md-regular); max-width: calc(var(--space-5000) * 2 + var(--space-1000) * 4); }
+.grg-settings-row[data-layout='below'] .grg-settings-row__note { font: var(--typo-body-md-regular); }
+.grg-settings-row[data-layout='below'] .grg-settings-row__action { grid-area: 1 / 2; }
+.grg-settings-row[data-layout='below'] .grg-settings-row__value { grid-area: 2 / 1 / 3 / 3; padding-right: 0; font: var(--typo-body-md-medium); white-space: pre-line; }
+
+/* Phones: one column; the value under the text, the button last */
+@media (max-width: 480px) {
+  .grg-settings-row,
+  .grg-settings-row[data-layout='below'] { grid-template-columns: minmax(0, 1fr); padding: var(--space-500) var(--space-400); }
+  .grg-settings-row .grg-settings-row__value,
+  .grg-settings-row[data-layout='below'] .grg-settings-row__value { grid-area: auto; padding-right: 0; }
+  .grg-settings-row .grg-settings-row__action,
+  .grg-settings-row[data-layout='below'] .grg-settings-row__action { grid-area: auto; justify-self: start; }
+}
+
+.grg-settings-list { display: flex; flex-direction: column; }
+.grg-settings-list > * + * { border-top: 1px solid var(--stroke-soft-200); }

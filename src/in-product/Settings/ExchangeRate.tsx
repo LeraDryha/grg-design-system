@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useMessages } from '../../components/Alert/Messages';
 import { Button } from '../../components/Button/Button';
 import { CoinIcon } from '../../components/CoinIcon/CoinIcon';
-import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { Input } from '../../components/Input/Input';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
+import { SettingsList, SettingsRow } from '../../components/SettingsRow/SettingsRow';
 import { startAssets, type Asset } from '../shared/AssetsApp';
 
 /* GRX Pay redesign, file "Global Settings", section Settings - Exchange rate (372:47668): the correction coefficient
@@ -42,37 +42,25 @@ export function useExchangeRate({ fixedSumOn }: { fixedSumOn: boolean }) {
   ];
 
   const tab = (
-    <div className="grg-ip-surface grg-ip-surface--fit">
-      <div className="grg-ip-setting">
-        <div className="grg-ip-setting__head">
-          <span className="grg-ip-keys__intro">
-            <FeaturedIcon type="neutral" size="md" icon="exchange" />
-            <span className="grg-ip-setting__text">
-              <h2 className="grg-ip-setting__title">Exchange rate adjustment</h2>
-              <p className="grg-ip-setting__line grg-ip-rate__about">
-                Correction coefficient is a percentage applied to the exchange rate during customer purchase and affects the crypto currency price shown to the buyer. Limit corrective coefficient <strong>up to 10%</strong>
-              </p>
-              {/* Fixed sum pays the exact fiat amount: the coefficients only apply without it (Payment settings) */}
-              {fixedSumOn && <p className="grg-ip-pay__note">Turn off fixed sum invoice to adjust the exchange rate</p>}
-            </span>
-          </span>
-          <span className="grg-ip-rate__actions">
-            {editing
-              ? <Button variant="secondary" size="sm" onClick={() => setDraft(null)}>Cancel</Button>
-              // No help page in this demo: the button stays without an action
-              : <Button variant="secondary" size="sm">Learn more</Button>}
-            {editing
-              ? <Button variant="primary" size="sm" disabled={invalid} onClick={save}>Save changes</Button>
-              : <Button variant="primary" size="sm" disabled={fixedSumOn}
-                onClick={() => setDraft(Object.fromEntries(Object.entries(rates).map(([code, v]) => [code, String(v)])))}>Edit coefficients</Button>}
-          </span>
-        </div>
-      </div>
-      <hr className="grg-ip-surface__divider" />
+    <SettingsList className="grg-ip-surface grg-ip-surface--fit">
+      <SettingsRow layout="below" icon="exchange" title="Exchange rate adjustment"
+        description={<>Correction coefficient is a percentage applied to the exchange rate during customer purchase and affects the crypto currency price shown to the buyer. Limit corrective coefficient <strong>up to 10%</strong></>}
+        // Fixed sum pays the exact fiat amount: the coefficients only apply without it (Payment settings)
+        note={fixedSumOn ? 'Turn off fixed sum invoice to adjust the exchange rate' : undefined}
+        action={<>
+          {editing
+            ? <Button variant="secondary" size="sm" onClick={() => setDraft(null)}>Cancel</Button>
+            // No help page in this demo: the button stays without an action
+            : <Button variant="secondary" size="sm">Learn more</Button>}
+          {editing
+            ? <Button variant="primary" size="sm" disabled={invalid} onClick={save}>Save changes</Button>
+            : <Button variant="primary" size="sm" disabled={fixedSumOn}
+              onClick={() => setDraft(Object.fromEntries(Object.entries(rates).map(([code, v]) => [code, String(v)])))}>Edit coefficients</Button>}
+        </>} />
       <div className="grg-ip-setting">
         <Table aria-label="Correction coefficients" rows={crypto} rowKey={row => row.code} rowLabel={row => row.name} columns={columns} />
       </div>
-    </div>
+    </SettingsList>
   );
   return { tab };
 }

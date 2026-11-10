@@ -12,6 +12,7 @@ import { RadioLabel } from '../../components/RadioLabel/RadioLabel';
 import { Search } from '../../components/Search/Search';
 import { Select } from '../../components/Select/Select';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame } from '../shared/AssetsApp';
 import { useAccount } from '../shared/account';
 import { formatDateTime } from '../../locale/format';
@@ -158,10 +159,7 @@ export function useMembers(shared?: MembersState) {
 
   const content = (
     <main className="grg-ip-page">
-      <div className="grg-ip-page__head">
-        <h1 className="grg-ip-page__title">Members</h1>
-        <Button variant="primary" leftIcon="plus" onClick={add}>Add member</Button>
-      </div>
+      <PageHeader title="Members" actions={<Button variant="primary" leftIcon="plus" onClick={add}>Add member</Button>} />
       <div className="grg-ip-surface">
         <MembersTable members={team} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })}
           onTransfer={() => setView({ kind: 'owner', chosen: null, query: '' })} />

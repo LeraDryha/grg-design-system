@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Avatar } from '../../components/Avatar/Avatar';
@@ -8,8 +8,10 @@ import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
 import { FileUpload } from '../../components/FileUpload/FileUpload';
 import { ImageCrop, cropImage, defaultCrop, type Crop } from '../../components/FileUpload/ImageCrop';
 import { Modal, type ModalProps } from '../../components/Modal/Modal';
+import { SettingsList, SettingsRow } from '../../components/SettingsRow/SettingsRow';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { TextArea } from '../../components/TextArea/TextArea';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame } from '../shared/AssetsApp';
 import { formatDateTime } from '../../locale/format';
 import { useApiKeys } from './ApiKeys';
@@ -47,22 +49,6 @@ type View =
   | { kind: 'upload' } | { kind: 'crop'; src: string; crop: Crop } | { kind: 'edit-logo'; src: string; crop: Crop }
   | { kind: 'contact'; text: string; error?: string };
 
-/** One part of the Account card: a title, a line under it, the value, and its button on the right (Figma) */
-function Section({ title, text, action, children }: { title: string; text: string; action?: ReactNode; children?: ReactNode }) {
-  return (
-    <section className="grg-ip-setting" aria-label={title}>
-      <div className="grg-ip-setting__head">
-        <span className="grg-ip-setting__text">
-          <h2 className="grg-ip-setting__title">{title}</h2>
-          <p className="grg-ip-setting__line">{text}</p>
-        </span>
-        {action}
-      </div>
-      {children && <div className="grg-ip-setting__value">{children}</div>}
-    </section>
-  );
-}
-
 /** The Settings page and its modal, for any app that holds it. An app that also shows Members passes one list to
  *  both, so a new owner shows there too */
 export function useSettings({ account = 'verified', failing = false, apiKeys = 'some', tab: startTab = 'account' }: SettingsProps = {}, shared?: MembersState,
@@ -89,7 +75,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       overlays: null,
       content: (
         <main className="grg-ip-page">
-          <h1 className="grg-ip-page__title">Settings</h1>
+          <PageHeader title="Settings" />
           <div className="grg-ip-surface grg-ip-waiting">
             <img className="grg-ip-waiting__image" src={verifying ? verifyingImage : settingsImage} alt="" />
             <h2 className="grg-ip-waiting__title">{verifying ? 'Verification in progress' : 'Company settings'}</h2>
@@ -127,7 +113,7 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
   /* ---- The Company tab ---- */
   const avatar = <Avatar size={120} shape="company" src={logo?.src} status="edit" decorative />;
   const accountTab = (
-    <div className="grg-ip-surface grg-ip-surface--fit">
+    <SettingsList className="grg-ip-surface grg-ip-surface--fit">
       <div className="grg-ip-profile">
         {/* The avatar's container is the button; its edit badge stays a picture (Avatar rule) */}
         {logo ? (
@@ -154,25 +140,21 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
           </dl>
         </div>
       </div>
-      <hr className="grg-ip-surface__divider" />
       {/* Shown here, handed on in Members with the rest of the team's roles (after the audit) */}
-      <Section title="Company owner" text="Owner has full access to the company profile. Ownership is transferred in Members"
-        action={onMembers ? <Button variant="secondary" size="sm" onClick={onMembers}>Open Members</Button> : undefined}>
-        {/* The name, the address under it (after the audit: the same as in Members) */}
-        {owner && <><span>{owner.email === YOU ? you.name : personName(owner.email, members)}</span><p className="grg-ip-setting__line">{owner.email}</p></>}
-      </Section>
-      <hr className="grg-ip-surface__divider" />
-      <Section title="Company contact" text="Provide buyers with company contact details for payment-related matters at checkout"
+      <SettingsRow layout="below" title="Company owner" description="Owner has full access to the company profile. Ownership is transferred in Members"
+        action={onMembers ? <Button variant="secondary" size="sm" onClick={onMembers}>Open Members</Button> : undefined}
+        // The name, the address under it (after the audit: the same as in Members)
+        value={owner && <><span>{owner.email === YOU ? you.name : personName(owner.email, members)}</span><p className="grg-ip-setting__line">{owner.email}</p></>} />
+      <SettingsRow layout="below" title="Company contact" description="Provide buyers with company contact details for payment-related matters at checkout"
         // A row's button is a short verb without an icon, as on Profile and Payment settings (after the audit)
-        action={<Button variant="secondary" size="sm" aria-label={contact ? 'Edit contact' : 'Add contact'} onClick={() => setView({ kind: 'contact', text: contact })}>{contact ? 'Edit' : 'Add'}</Button>}>
-        {contact || undefined}
-      </Section>
-    </div>
+        action={<Button variant="secondary" size="sm" aria-label={contact ? 'Edit contact' : 'Add contact'} onClick={() => setView({ kind: 'contact', text: contact })}>{contact ? 'Edit' : 'Add'}</Button>}
+        value={contact || undefined} />
+    </SettingsList>
   );
 
   const content = (
     <main className="grg-ip-page">
-      <h1 className="grg-ip-page__title">Settings</h1>
+      <PageHeader title="Settings" />
       <TabMenu aria-label="Settings" value={tab} onChange={setTab} items={[
         { id: 'account', label: 'Company' },
         { id: 'api', label: 'API key' },

@@ -1,17 +1,17 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Button } from '../../components/Button/Button';
-import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
-import type { IconName } from '../../components/Icon/Icon';
 import { Input } from '../../components/Input/Input';
 import { InputOtp } from '../../components/InputOtp/InputOtp';
 import { InteractionCard } from '../../components/InteractionCard/InteractionCard';
 import { Link } from '../../components/Link/Link';
 import { Modal, type ModalProps } from '../../components/Modal/Modal';
+import { SettingsList, SettingsRow } from '../../components/SettingsRow/SettingsRow';
 import { SwitchLabel } from '../../components/SwitchLabel/SwitchLabel';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Tooltip } from '../../components/Tooltip/Tooltip';
+import { PageHeader } from '../../components/PageHeader/PageHeader';
 import { AppFrame } from '../shared/AssetsApp';
 import { AccountContext, DEFAULT_ACCOUNT, type AccountController } from '../shared/account';
 import { Qr } from '../Settings/ApiKeys';
@@ -58,23 +58,6 @@ const PHONE_CODES = [
 
 /** A secret in the shape of an authenticator's (base32), made in the browser */
 const newSecret = () => Array.from(crypto.getRandomValues(new Uint8Array(16)), b => 'abcdefghijklmnopqrstuvwxyz234567'[b % 32]).join('');
-
-/** One row of a card: an icon, the title and its line, the value, the button (Figma) */
-function Row({ icon, title, text, value, action }: { icon?: IconName; title: string; text: string; value?: ReactNode; action?: ReactNode }) {
-  return (
-    <section className="grg-ip-pay__row grg-ip-pay__row--info" aria-label={title}>
-      <span className="grg-ip-pay__about">
-        {icon && <FeaturedIcon type="neutral" size="md" icon={icon} />}
-        <span className="grg-ip-setting__text">
-          <h2 className="grg-ip-pay__title">{title}</h2>
-          <p className="grg-ip-pay__text">{text}</p>
-        </span>
-      </span>
-      <span className="grg-ip-pay__value">{value}</span>
-      <span className="grg-ip-pay__action">{action}</span>
-    </section>
-  );
-}
 
 /** A countdown before Click to resend shows, as in the Input Otp examples */
 function useCountdown(seconds: number) {
@@ -128,16 +111,13 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
 
   /* ---- The tabs ---- */
   const main = (
-    <div className="grg-ip-surface grg-ip-surface--fit">
-      <Row icon="id-card" title="Name" text="Your full name, so we know how to address you" value={account.name}
+    <SettingsList className="grg-ip-surface grg-ip-surface--fit">
+      <SettingsRow icon="id-card" title="Name" description="Your full name, so we know how to address you" value={account.name}
         action={<Button variant="secondary" size="sm" onClick={() => setView({ kind: 'name', first, last: rest.join(' ') })}>Edit</Button>} />
-      <hr className="grg-ip-surface__divider" />
-      <Row icon="mail" title="Email" text="This email address is used to sign in to your account" value={account.email} />
-      <hr className="grg-ip-surface__divider" />
-      <Row icon="lock" title="Password" text="This password is used to sign in to your account" value={<span aria-label="Password hidden">••••••••••</span>}
+      <SettingsRow icon="mail" title="Email" description="This email address is used to sign in to your account" value={account.email} />
+      <SettingsRow icon="lock" title="Password" description="This password is used to sign in to your account" value={<span aria-label="Password hidden">••••••••••</span>}
         action={<Button variant="secondary" size="sm" onClick={() => setView({ kind: 'password' })}>Change</Button>} />
-      <hr className="grg-ip-surface__divider" />
-      <Row icon="user" title="Role" text="Your role in the company" value={(
+      <SettingsRow icon="user" title="Role" description="Your role in the company" value={(
         <span className="grg-ip-role">
           {account.role}
           <Tooltip title={ROLE_TEXT[account.role] ?? ''} side="top" purpose="description">
@@ -145,17 +125,17 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
           </Tooltip>
         </span>
       )} />
-    </div>
+    </SettingsList>
   );
   const security = (
-    <div className="grg-ip-surface grg-ip-surface--fit">
-      <Row icon="shield-check" title="Two-factor authentication (2FA)"
-        text="Use Google Authenticator or SMS to protect your account. While 2FA is off, the codes for signing in, withdrawals and API keys come to your email."
+    <SettingsList className="grg-ip-surface grg-ip-surface--fit">
+      <SettingsRow icon="shield-check" title="Two-factor authentication (2FA)"
+        description="Use Google Authenticator or SMS to protect your account. While 2FA is off, the codes for signing in, withdrawals and API keys come to your email."
         value={twoFa && <span className="grg-ip-on">{twoFa.method === 'google' ? 'Google Authenticator' : `SMS · ${twoFa.phone}`}</span>}
         action={twoFa
           ? <Button variant="secondary" size="sm" onClick={() => setView({ kind: 'off', code: '' })}>Turn off</Button>
           : <Button variant="primary" size="sm" onClick={() => setView({ kind: 'choose' })}>Turn on</Button>} />
-    </div>
+    </SettingsList>
   );
   const switches = (list: typeof COMPANY) => list.map(([key, title, text]) => (
     <section key={key} className="grg-ip-pref" aria-label={title}>
@@ -184,7 +164,7 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
 
   const content = (
     <main className="grg-ip-page">
-      <h1 className="grg-ip-page__title">Profile</h1>
+      <PageHeader title="Profile" />
       <TabMenu aria-label="Profile" value={tab} onChange={setTab}
         items={[{ id: 'main', label: 'Main info' }, { id: 'security', label: 'Security' }, { id: 'notifications', label: 'Notifications' }]}>
         {item => <div className="grg-ip-tab-panel">{item.id === 'main' ? main : item.id === 'security' ? security : notifications}</div>}
