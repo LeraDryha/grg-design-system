@@ -449,5 +449,7 @@
 .grg-ip-qr-box { display: grid; justify-items: center; gap: var(--space-200); padding: var(--space-500); border-radius: var(--radius-lg-12); background: var(--bg-weak-100); }
 .grg-ip-qr-box__key { font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
 .grg-ip-qr-box__secret { font: var(--typo-body-md-medium); color: var(--text-strong-1000); }
+.grg-ip-otp-code { display: grid; gap: var(--space-600); padding-top: calc(var(--space-1000) - var(--space-300)); }
+.grg-ip-otp-code__caption { margin: 0; font: var(--typo-body-sm-medium); color: var(--text-soft-500); text-align: center; }
 .grg-ip-resend { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-100); font: var(--typo-body-md-regular); color: var(--text-soft-500); text-align: center; }
 .grg-ip-resend__wait { color: var(--text-strong-1000); font-variant-numeric: tabular-nums; }

@@ -241,8 +241,12 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
               onClick={() => { void navigator.clipboard?.writeText(v.secret.toUpperCase()).catch(() => undefined); toast({ status: 'success', title: 'Copied', duration: 3000 }); }} />
           </span>
         </div>
-        <InputOtp label="Enter your 2FA verification code" characters="digits" value={v.code} error={v.error}
-          onValueChange={code => setView({ ...v, code, error: undefined })} />
+        {/* Figma: a caption over the code, which takes the modal's width */}
+        <div className="grg-ip-otp-code">
+          <p className="grg-ip-otp-code__caption" aria-hidden="true">Enter your 2FA verification code</p>
+          <InputOtp label="Enter your 2FA verification code" characters="digits" fill autoFocus value={v.code} error={v.error}
+            onValueChange={code => setView({ ...v, code, error: undefined })} />
+        </div>
       </> };
   } else if (view?.kind === 'sms-phone') {
     const v = view;
@@ -265,7 +269,7 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
         if (error) setView({ ...v, error }); else turnedOn({ method: 'sms', phone: v.phone });
       } },
       children: <>
-        <InputOtp label="SMS code" characters="digits" value={v.code} error={v.error} onValueChange={code => setView({ ...v, code, error: undefined })} />
+        <InputOtp label="SMS code" characters="digits" fill autoFocus value={v.code} error={v.error} onValueChange={code => setView({ ...v, code, error: undefined })} />
         <Resend what="code" onResend={() => { setView({ ...v, code: '', error: undefined }); toast({ status: 'success', title: 'A new code is sent', duration: 3000 }); }} />
       </> };
   } else if (view?.kind === 'off') {
@@ -279,7 +283,7 @@ export function useProfile({ account, setName, prefs, setPrefs, tab: startTab = 
         toast({ status: 'success', title: 'Two-factor authentication is off', duration: 3000 });
       } },
       children: <>
-        <InputOtp label="2FA code" characters="digits" value={v.code} error={v.error} onValueChange={code => setView({ ...v, code, error: undefined })} />
+        <InputOtp label="2FA code" characters="digits" fill autoFocus value={v.code} error={v.error} onValueChange={code => setView({ ...v, code, error: undefined })} />
         <span className="grg-ip-resend">Don’t have access to the code? <Link href="#2fa-help" size="sm" color="black">See instructions</Link></span>
       </> };
   }

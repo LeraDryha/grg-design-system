@@ -13,6 +13,10 @@
   gap: var(--space-200);
 }
 
+/* Fill: the row takes the container's width and the cells share it (Figma OTP Input in a modal) */
+.grg-otp[data-fill] { display: flex; min-width: 0; }
+.grg-otp[data-fill] .grg-otp__cell { flex: 1 1 0; width: auto; min-width: 0; }
+
 /* OTP cells: 48 × 60, 16px above and below a Title-lg character, no fill */
 .grg-otp__cell {
   --otp-border: var(--stroke-base-300);

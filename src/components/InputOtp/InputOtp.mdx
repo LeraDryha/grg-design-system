@@ -21,7 +21,7 @@ A row of cells for a one-time code from an email, a message or an authenticator 
 People type it, paste it into any cell, or take it from the phone's keyboard suggestion.
 
 <Canvas of={InputOtpStories.Playground} />
-<Controls of={InputOtpStories.Playground} include={['label', 'length', 'characters', 'hint', 'error', 'disabled', 'loading']} />
+<Controls of={InputOtpStories.Playground} include={['label', 'length', 'characters', 'hint', 'error', 'disabled', 'loading', 'fill']} />
 
 ```tsx
 <InputOtp label="Verification code" characters="digits" onComplete={checkCode} error={wrong ? 'The code is incorrect.' : ''} />
@@ -97,6 +97,7 @@ What the code adds to the Figma file, and why:
 - **Any characters by default.** The Figma cells show digits as an example; codes may hold letters and symbols too.
 - **Paste and autofill.** PrimeReact keeps one character too many from a paste, refuses *123 456* and lets the phone offer no code. The component fixes all three.
 - **A name for the row and every cell.** Figma has no label over the cells: `label` names the row for screen readers only, since the heading above it names it on screen. Each cell is *Digit 2 of 6* or *Character 2 of 6*.
+- **Fill in a modal.** The cells are 48px wide; in a modal Figma stretches the row to the content width, and `fill` does the same: the six cells share it, 8px apart.
 - **Checked when filled.** `onComplete` hands over the whole code; `loading` locks the cells while it is checked (the spinner from the Figma example).
 - **Resend countdown.** Figma shows *Click to resend* straight away. The examples count down first (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).
 - **Focus ring for the keyboard only.** Tab shows the blue ring on the cell; a click or tap shows the dark Active border without it.
@@ -144,6 +145,7 @@ The Figma frames are in the **Design** tab of every story.
     { figma: 'Row (six cells)', prop: 'length', values: '4 to 8; 6 by default' },
     { figma: '(digits in the cells)', prop: 'characters', values: 'any (default), digits' },
     { figma: 'Hint text', prop: 'hint · hintIcon', values: 'text · boolean; an error replaces the hint' },
+    { figma: 'OTP Input · width Fill', prop: 'fill', values: 'boolean: the cells share the container width; 48px cells otherwise' },
     { figma: '(no label)', prop: 'label', values: 'name for screen readers, not shown' },
     { figma: '(spinner in the Examples)', prop: 'loading · loadingLabel', values: 'boolean · announced text' },
   ]}
