@@ -111,7 +111,7 @@ const openFeed = async (canvasElement: HTMLElement) => {
   return within(document.body).findByRole('dialog', { name: 'Notifications' });
 };
 
-/** The bell opens the feed. Opening a notification marks it read; Unread shows what is left. */
+/** The bell opens the feed. Opening a notification marks it read and closes the feed; Unread shows what is left. */
 export const ReadAndUnread: Story = {
   name: 'Read and unread',
   // Known Figma contrast: the date (text-disabled-400, Caption-xs) is about 2.6:1
@@ -120,9 +120,12 @@ export const ReadAndUnread: Story = {
   render: ({ notifications: _n, trigger: _t, ...args }) => <Demo {...args} />,
   play: async ({ canvasElement }) => {
     const bell = within(canvasElement).getByRole('button', { name: 'Notifications, 3 unread' });
-    const feed = within(await openFeed(canvasElement));
+    let feed = within(await openFeed(canvasElement));
     await waitFor(() => expect(bell).toHaveAttribute('aria-expanded', 'true'));
+    // Opening a notification takes people to it: it is read and the feed closes
     await userEvent.click(feed.getByRole('link', { name: /ETH deposit successful/ }));
+    await waitFor(() => expect(bell).toHaveAttribute('aria-expanded', 'false'));
+    feed = within(await openFeed(canvasElement));
     await userEvent.click(feed.getByRole('tab', { name: /Unread/ }));
     await expect(within(feed.getByRole('tabpanel')).getAllByRole('link')).toHaveLength(2);
     await userEvent.click(feed.getByRole('button', { name: 'Mark all as read' }));
@@ -216,10 +219,11 @@ export const Items: Story = {
         ['new', { ...sample[0] }],
         ['read', { ...sample[0], id: 'read', unread: false }],
         ['two lines at most', { ...sample[1], id: 'long' }],
+        ['a state that needs attention, the date as how long ago', { ...sample[0], id: 'badge', badge: { label: 'Action needed', color: 'warning' }, date: new Date(Date.now() - 2 * 3600000), relative: true }],
         ['sublabel and buttons', { id: 'b', title: 'Label', sublabel: '(Sublabel)', description: 'Insert the notif feed description here.', date: at(0), unread: true, icon: <TransactionIcon type="withdrawal" />, secondaryAction: { label: 'Button', onClick: () => {} }, primaryAction: { label: 'Button', onClick: () => {} } }],
       ].map(([caption, n]) => (
         <Variant key={caption as string} caption={caption as string}>
-          <div style={{ width: 'calc(var(--space-5000) * 2 - var(--space-400))' }}><NotificationItem notification={n as Notification} /></div>
+          <div style={{ width: 'calc(var(--space-5000) * 2 - var(--space-400))' }}><NotificationItem notification={n as Notification} relativeDates={!!(n as { relative?: boolean }).relative} /></div>
         </Variant>
       ))}
     </Showcase>

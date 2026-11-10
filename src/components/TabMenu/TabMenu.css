@@ -105,3 +105,6 @@
   color: var(--text-soft-500);
   text-transform: uppercase;
 }
+
+/* A tile of the product's own in the icon's place (picture) */
+.grg-tab__picture { display: inline-flex; flex: none; }

@@ -7,7 +7,9 @@ import { Icon } from '../../components/Icon/Icon';
 import { SidebarHeaderCard, SidebarNavigation, type SidebarItem, type SidebarSection } from '../../components/SidebarNavigation/SidebarNavigation';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { Tooltip } from '../../components/Tooltip/Tooltip';
-import { TopbarNavigation } from '../../components/TopbarNavigation/TopbarNavigation';
+import { NotificationFeed } from '../../components/NotificationFeed/NotificationFeed';
+import { TopbarButton, TopbarNavigation } from '../../components/TopbarNavigation/TopbarNavigation';
+import { useNotificationsController } from './notifications';
 import { useScreen } from './screen';
 import '../in-product.css';
 
@@ -51,7 +53,7 @@ const logo = (
 );
 
 /** The pages in this demo; the others are in the menu but lead nowhere */
-export type AppPage = 'dashboard' | 'assets' | 'invoices' | 'transactions' | 'members' | 'settings' | 'reporting';
+export type AppPage = 'dashboard' | 'assets' | 'invoices' | 'transactions' | 'members' | 'settings' | 'reporting' | 'notifications';
 const built: string[] = ['dashboard', 'assets', 'invoices', 'transactions', 'members', 'settings', 'reporting'];
 
 /** The bar on top; under it the sidebar and the page, or (`centred`) a single card in the middle, as at the end of a flow.
@@ -61,6 +63,16 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
 }) {
   const [support, setSupport] = useState(true);
   const screenInfo = useScreen();
+  const feed = useNotificationsController();
+  const unread = feed?.items.filter(n => n.unread).length ?? 0;
+  // The bell: the notification feed when the app gives its notifications, a plain button otherwise
+  const bell = feed ? (
+    <NotificationFeed notifications={feed.items} relativeDates settingsHref="#notification-settings" viewAllHref="#notifications"
+      onOpen={(n, event) => { event.preventDefault(); feed.open(n); }} onMarkAllRead={feed.markAllRead}
+      onViewAll={event => { event.preventDefault(); feed.viewAll?.(); }}
+      empty={{ title: 'No notifications yet', subtitle: 'We’ll let you know when something happens.' }}
+      trigger={props => <TopbarButton action={{ label: 'Notifications', icon: 'notification', badge: unread ? `${unread} unread` : undefined }} buttonProps={props} />} />
+  ) : undefined;
   // A docs page shows a narrow window into the app: the sidebar collapsed; full screen follows the screen's width
   const docs = !!screenInfo?.docs;
   const navigate = (item: SidebarItem, event?: MouseEvent<HTMLElement>) => {
@@ -74,7 +86,7 @@ export function AppFrame({ centred = false, current = 'assets', onNavigate, chil
         // Figma: the language and the theme in the bar. Only English in this demo; the theme switches Storybook's
         language={{ value: 'en', options: [{ value: 'en', label: 'EN' }], onChange: () => undefined, label: 'Language' }}
         theme={screenInfo?.theme} onThemeChange={screenInfo?.setTheme}
-        actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', inBar: true, onClick: () => undefined }, { id: 'help', label: 'Help', icon: 'help', href: '#help' }]}
+        actions={[{ id: 'notifications', label: 'Notifications', icon: 'notification', inBar: true, onClick: () => undefined, badge: unread ? `${unread} unread` : undefined, element: bell }, { id: 'help', label: 'Help', icon: 'help', href: '#help' }]}
         account={{ name: 'Guadalupe Schimmel', email: 'g.schimmel@company.test' }} />
       {centred ? <main className="grg-ip-centre">{children}</main> : (
         <div className="grg-ip-body">

@@ -1,0 +1,57 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as NotificationsStories from './Notifications.stories';
+
+<Meta of={NotificationsStories} />
+
+# Notifications
+
+What happened to the business's money while nobody was looking: deposits, withdrawals, invoice payments, conversions, a new sign-in. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work: the notifications come from the demo's own transactions, and a new deposit arrives a few seconds after the page opens.
+
+<a href="iframe.html?viewMode=story&id=in-product-notifications--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={NotificationsStories.LiveFlow} />
+
+**Try it:** wait for the new deposit (the bell gets its dot) and, at 20 seconds, a sign-in from a new device (also in the corner). Answer a sign-in with **It was me** or **Not me**. Open a notification from the bell or the page: its transaction opens on Transactions. Choose a category, **Hide read**, **Mark all as read**, and **View all notifications** from the bell. The bell works the same on the Dashboard.
+
+## What the page has to get right
+
+- **The money first.** Every deposit, withdrawal, payment and conversion tells the amount, as in the transaction itself, so nobody has to open it to know.
+- **Straight to the details.** A notification is a link: it opens its transaction and is read from then on.
+- **What's new at a glance.** The red dot and the count stay until something is read; *Hide read* leaves only the new ones.
+- **What needs people stands out.** A withdrawal on hold, blocked or cancelled and a new sign-in carry a badge; a new sign-in also shows in the corner.
+
+## Decided while building it
+
+- **Version 2.** Figma has each notification with *View details* (version 1) or the whole row as the link (version 2). Version 2 is built: the Notification Feed rule says a notification is a link to its details, one control at a time.
+- **Real notifications.** They are made from the demo's transactions (completed deposits, withdrawals, invoice payments and conversions, a cancelled withdrawal), with a new sign-in and the business verification; amounts and times match Transactions. A new ETH deposit arrives 8 seconds after the app opens.
+### Made better after the Figma
+
+- **In the days people think in.** The list is grouped: *Today*, *Yesterday*, *Earlier this week*, *Earlier*; each notification says how long ago (*3 h ago*, *Yesterday, 14:47*), the full date on hover (Notification Feed `relativeDates`).
+- **What needs attention stands out** (Notification Feed `badge`): *Action needed* (on hold), *Blocked* (arrested), *Cancelled*, *Security* (a new sign-in). A sign-in from a new device that arrives while the app is open also shows in the corner (a Notification with *Review*); a deposit only lights the bell.
+- **A question where one is due.** A new sign-in asks *It was me* or *Not me*: one ends that session and asks to change the password. It stays unread until answered. The other notifications only inform, so they stay links.
+- **Titles that say it all.** *Invoice paid · 0.0412 BTC* with the invoice's ID, *Auto-conversion · ETH → EUR* with what it became, the amount in EUR beside crypto. *If you do not recognize this activity, please contact us* is gone from every withdrawal: the warning belongs to the sign-in.
+- **Each category's own empty text**, such as *No sign-ins from new devices*.
+
+### From the Figma
+
+- **No Payouts and Referrals categories:** the product has no such pages. The categories: All (the unread count), Sign-in, Invoices, Deposits, Withdrawals, Auto-conversion, Verification, with the Transaction icons' colours.
+- **Settings later.** *Manage notifications* and the bell's settings have no action yet: the settings will live in the profile.
+- **Empty** as the Notification Feed shows it: a Featured Icon with the bell, not the 3D picture.
+- **Words:** *ETH deposit successful* (Figma: *successfully*), *Notifications* and *View all notifications*.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {NotificationsStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Notification Feed](?path=/docs/components-notification-feed--docs) · [Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Tab Menu](?path=/docs/components-tab-menu--docs) · [Transaction icons](?path=/docs/foundations-icons-transaction-icons--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Button](?path=/docs/components-button--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs)

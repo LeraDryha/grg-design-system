@@ -128,3 +128,6 @@ a.grg-notification:focus-visible { outline: none; box-shadow: inset var(--focus-
 @media (prefers-reduced-motion: reduce) {
   .grg-feed__skeleton { animation: none; }
 }
+
+/* A state that needs attention, after the title */
+.grg-notification__badge { flex: none; }

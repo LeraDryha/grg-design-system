@@ -18,6 +18,9 @@ export type TabMenuItem = {
   icon?: IconName;
   /** Figma Transaction icon (vertical): the kind of transaction instead of an icon */
   transaction?: TransactionType;
+  /** Any other 24px tile in the Transaction icon's place, such as a TransactionIcon with its own icon and colour
+   *  (Notifications: Sign-in, Verification) */
+  picture?: ReactNode;
   /** Figma Badge: a count after the label, such as unread items */
   badge?: number | string;
   disabled?: boolean;
@@ -84,7 +87,7 @@ export function TabMenu({
       element,
       { className: 'grg-tab' },
       <>
-        {item.transaction
+        {item.picture ? <span className="grg-tab__picture" aria-hidden="true">{item.picture}</span> : item.transaction
           ? <TransactionIcon type={item.transaction} size="sm" />
           : item.icon && <Icon name={item.icon} size={20} className="grg-tab__icon" />}
         <span className={iconOnly ? 'grg-sr-only' : 'grg-tab__label'}>{item.label}</span>
