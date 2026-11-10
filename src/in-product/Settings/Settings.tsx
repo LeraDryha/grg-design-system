@@ -160,7 +160,8 @@ export function useSettings({ account = 'verified', failing = false, apiKeys = '
       </Section>
       <hr className="grg-ip-surface__divider" />
       <Section title="Company contact" text="Provide buyers with company contact details for payment-related matters at checkout"
-        action={<Button variant="secondary" size="sm" leftIcon={contact ? 'pencil' : 'plus'} onClick={() => setView({ kind: 'contact', text: contact })}>{contact ? 'Edit contact' : 'Add contact'}</Button>}>
+        // A row's button is a short verb without an icon, as on Profile and Payment settings (after the audit)
+        action={<Button variant="secondary" size="sm" aria-label={contact ? 'Edit contact' : 'Add contact'} onClick={() => setView({ kind: 'contact', text: contact })}>{contact ? 'Edit' : 'Add'}</Button>}>
         {contact || undefined}
       </Section>
     </div>
