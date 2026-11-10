@@ -37,7 +37,8 @@ export type AvatarProps = {
 /** Badge size for each avatar size (Figma guidelines: 120–80 → 24, 64–56 → 20, 48 → 16, 40–32 → 12, 24 → 8) */
 const BADGE: Partial<Record<AvatarSize, 24 | 20 | 16 | 12 | 8>> = { 120: 24, 96: 24, 80: 24, 64: 20, 56: 20, 48: 16, 40: 12, 32: 12, 24: 8 };
 
-const initialsOf = (name: string, size: AvatarSize) => {
+/** The letters an avatar shows for a name: two, or one at 16 and 20px */
+export const initialsOf = (name: string, size: AvatarSize) => {
   const words = name.replace(/^(mr|mrs|ms|miss|dr)\.?\s+/i, '').trim().split(/\s+/).filter(Boolean);
   if (!words.length) return '';
   const letters = words.length > 1 ? words[0][0] + words[words.length - 1][0] : words[0].slice(0, 2);

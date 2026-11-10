@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useId, useRef, useState, useSyncExternalStore, type MouseEvent, type ReactNode } from 'react';
-import { Avatar } from '../Avatar/Avatar';
+import { Avatar, initialsOf, type AvatarProps } from '../Avatar/Avatar';
 import { Badge } from '../Badge/Badge';
 import { DropdownMenu, type DropdownMenuEntry } from '../DropdownMenu/DropdownMenu';
 import { Icon, type IconName } from '../Icon/Icon';
@@ -67,7 +67,9 @@ export type TopbarNavigationProps = {
   /** Figma Toolbar item buttons, after the theme button */
   actions?: TopbarAction[];
   /** Figma Avatar: who is signed in, with the account menu */
-  account?: { name: string; email?: string; photo?: string; menu?: DropdownMenuEntry[] };
+  account?: { name: string; email?: string; photo?: string; menu?: DropdownMenuEntry[];
+    /** Without a photo: initials in a colour, the same as in the menu header (Figma Avatar Initials, Coloured) */
+    avatar?: Pick<AvatarProps, 'initials' | 'color'> };
   /** Figma Size; auto follows the screen */
   layout?: TopbarLayout;
   /** The name of the pages for screen readers */
@@ -156,6 +158,8 @@ export function TopbarNavigation({
       options={language.options.map(option => ({ icon: 'globe', ...option }))}
     />
   );
+  // Initials are visible text, so the button's name carries them too (WCAG 2.5.3 Label in Name)
+  const avatarName = account && (account.avatar?.initials && !account.photo ? `${account.name}, ${initialsOf(account.name, 32)}` : account.name);
   const avatar = account && (
     <DropdownMenu
       items={account.menu ?? []}
@@ -163,8 +167,8 @@ export function TopbarNavigation({
       align="end"
       width={240}
       trigger={props => (
-        <button type="button" className="grg-topbar-avatar" aria-label={account.name} {...props}>
-          <Avatar size={32} src={account.photo} name={account.name} decorative />
+        <button type="button" className="grg-topbar-avatar" aria-label={avatarName} {...props}>
+          <Avatar size={32} src={account.photo} name={account.name} {...account.avatar} decorative />
         </button>
       )}
     />
@@ -276,7 +280,7 @@ export function TopbarNavigation({
             onNavigate={choose}
             header={company}
             contentEnd={extras}
-            footer={account && <SidebarProfileCard name={account.name} email={account.email} photo={account.photo} menu={account.menu} menuPlacement="above" />}
+            footer={account && <SidebarProfileCard name={account.name} email={account.email} photo={account.photo} avatar={account.avatar} menu={account.menu} menuPlacement="above" />}
             aria-label={label}
           />
         )}

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Button } from '../../components/Button/Button';
 import { CheckboxLabel } from '../../components/CheckboxLabel/CheckboxLabel';
@@ -99,20 +99,27 @@ const arriving = (): Transaction => ({
 /** The notifications of the app: read state, Mark all as read, the sign-in question, and what arrives while it is
  *  open: a deposit (the bell's dot) and a sign-in from a new device (also in the corner, as it matters).
  *  `onOpenTransaction` shows a transaction's details where the app can */
-export function useNotifications({ onOpenTransaction, onViewAll, arrive = true, none = false }: {
-  onOpenTransaction?: (transaction: Transaction) => void; onViewAll?: () => void; arrive?: boolean;
+export function useNotifications({ onOpenTransaction, onViewAll, onSettings, inApp, arrive = true, none = false }: {
+  onOpenTransaction?: (transaction: Transaction) => void; onViewAll?: () => void; onSettings?: () => void;
+  /** The Profile's In app switches: a category switched off doesn't notify in the app */
+  inApp?: Partial<Record<Category, boolean>>;
+  arrive?: boolean;
   /** A new account: nothing yet, and nothing arrives */
   none?: boolean;
 } = {}) {
   const [items, setItems] = useState<AppNotification[]>(() => (none ? [] : startNotifications()));
   const [answered, setAnswered] = useState<Set<string>>(new Set());
   const { notify, toast } = useMessages();
+  // Read when something arrives: the switches may have changed since the app opened
+  const inAppNow = useRef(inApp);
+  inAppNow.current = inApp;
   const add = (n: AppNotification | null) => n && setItems(list => (list.some(x => x.id === n.id) ? list : [{ ...n, unread: true }, ...list]));
   useEffect(() => {
     if (!arrive || none) return;
     const deposit = window.setTimeout(() => add(fromTransaction(arriving())), 8000);
     const security = window.setTimeout(() => {
       add(signIn('n-signin-new', 'Chrome on Windows, Warsaw, Poland', 0));
+      if (inAppNow.current?.signin === false) return;
       notify({ status: 'warning', title: 'New sign-in from Warsaw', description: 'Chrome on Windows, just now. Was it you?', actionLabel: 'Review', onAction: () => onViewAll?.() });
     }, 20000);
     return () => { window.clearTimeout(deposit); window.clearTimeout(security); };
@@ -128,7 +135,7 @@ export function useNotifications({ onOpenTransaction, onViewAll, arrive = true, 
       ? { status: 'success', title: 'Thanks, noted', duration: 3000 }
       : { status: 'success', title: 'That session is ended', description: 'Change your password to keep the account safe.', duration: 6000 });
   };
-  const shown = items.map(n => (n.category === 'signin' && n.unread && !answered.has(n.id)
+  const shown = items.filter(n => inApp?.[n.category] !== false).map(n => (n.category === 'signin' && n.unread && !answered.has(n.id)
     ? { ...n, secondaryAction: { label: 'It was me', onClick: () => answer(n.id, true) }, primaryAction: { label: 'Not me', onClick: () => answer(n.id, false) } }
     : n));
   const controller: NotificationsController = {
@@ -140,6 +147,7 @@ export function useNotifications({ onOpenTransaction, onViewAll, arrive = true, 
     },
     markAllRead: () => setItems(list => list.map(n => ({ ...n, unread: false }))),
     viewAll: onViewAll,
+    settings: onSettings,
   };
   return controller;
 }
@@ -203,8 +211,8 @@ export function NotificationsPage({ controller }: { controller: NotificationsCon
         <span className="grg-ip-page__actions">
           <CheckboxLabel label="Hide read" checked={hideRead} onChange={setHideRead} />
           <Button variant="outline" size="sm" leftIcon="check-circle" disabled={!unread} onClick={controller.markAllRead}>Mark all as read</Button>
-          {/* The settings will live in the profile, not built yet: the button stays without an action */}
-          <Button variant="outline" size="sm" leftIcon="setting">Manage notifications</Button>
+          {/* The settings live in the Profile; where the app has no Profile, the button stays without an action */}
+          <Button variant="outline" size="sm" leftIcon="setting" onClick={() => controller.settings?.()}>Manage notifications</Button>
         </span>
       </div>
       <div className="grg-ip-surface grg-ip-notes">

@@ -1,0 +1,56 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as ProfileStories from './Profile.stories';
+
+<Meta of={ProfileStories} />
+
+# Profile
+
+The person behind the account: their name and password, two-factor authentication, and which notifications reach them. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. In the app it opens from the avatar in the bar.
+
+<a href="iframe.html?viewMode=story&id=in-product-profile--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={ProfileStories.LiveFlow} />
+
+**Try it:** **Edit** your name (the avatar's menu follows), **Change** the password. On **Security**, turn on two-factor authentication with Google Authenticator (scan the QR code: it is real) or SMS. Any 6 digits work in this demo; *000000* is a wrong code and *111111* an expired one, to see those states. On **Notifications**, switch Email and In app. On the Dashboard, the avatar's menu opens this page, and switching off *In app* for a kind takes it out of the bell.
+
+## What the page has to get right
+
+- **Safe by default.** Two-factor authentication is one step away and explains what it protects; turning it off asks for a code.
+- **Changes that can't be done by accident.** The password changes only through a link sent to the email; the name saves only when it is different.
+- **Notifications people choose.** By kind and by channel, taking effect at once.
+
+## Decided while building it
+
+- **The avatar opens a menu:** who you are (name and email; the role sits on the Profile, because in the menu's width it either cut the name or broke the email line), *Profile*, *Company settings* and *Log out* (no sign-out in this demo). The Profile isn't in the sidebar. The bell's settings and *Manage notifications* open the Profile's Notifications.
+- **You are the owner** from Members: Guadalupe Schimmel, *Owner*, and the role's tooltip says what that means.
+- **Check your email is a step** of the same modal, with the Featured Icon of the *Check your email* example on Modal (not the 3D envelope); *Click to resend* appears after 30 seconds, as in the Input Otp examples.
+- **2FA activated is a toast**, not a modal: a result that needs no answer (the Modal rule). It keeps the Figma advice: keep 2FA on.
+- **Real QR code and secret.** The QR code is a real authenticator link (otpauth) with a secret made in the browser; an app can scan it, though this demo can't check its codes.
+- **Notifications, version 1.** The switches sit in the rows and take effect at once (the Switch rule); version 2 had them in a modal waiting for *Confirm*, which is a Checkbox's job.
+- **In app, not Push.** The second switch is what shows in the bell, so it is named so, and it works: a kind switched off doesn't notify in the app.
+- **No Payouts row**, and the texts say what happens (*When a deposit arrives*), not *an email notification will be sent* under every switch. *[Company name]* is *My Company*. The 2FA text drops *mass payouts*.
+
+## Security
+
+<Canvas of={ProfileStories.Security} />
+
+## Notifications
+
+<Canvas of={ProfileStories.Notifications} />
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo; a phone number and the product’s name are blurred.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {ProfileStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Tab Menu](?path=/docs/components-tab-menu--docs) · [Topbar Navigation](?path=/docs/components-topbar-navigation--docs) · [Dropdown Menu](?path=/docs/components-dropdown-menu--docs) · [Modal](?path=/docs/components-modal--docs) · [Input](?path=/docs/components-input--docs) · [Input Otp](?path=/docs/components-input-otp--docs) · [Interaction Card](?path=/docs/components-interaction-card--docs) · [Switch](?path=/docs/components-switch--docs) · [Featured Icon](?path=/docs/components-featured-icon--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Button](?path=/docs/components-button--docs) · [Alert, Notification & Toast](?path=/docs/components-alert--docs)

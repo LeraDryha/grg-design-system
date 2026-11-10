@@ -33,6 +33,8 @@ export type InputOtpProps = {
   /** Name of each cell for screen readers; {index} and {length} are replaced. "Digit …" or "Character …" by default */
   cellLabel?: string;
   autoFocus?: boolean;
+  /** Takes the container's width, the cells sharing it (Figma: the OTP Input set to Fill, as in a modal). 48px cells otherwise */
+  fill?: boolean;
   id?: string;
   className?: string;
 };
@@ -64,7 +66,7 @@ function clean(text: string, characters: InputOtpProps['characters'], length: nu
 export function InputOtp({
   label, length = 6, characters = 'any', value: controlled, defaultValue = '', onValueChange, onComplete,
   hint, error, hintIcon = true, disabled = false, loading = false, loadingLabel = 'Verifying code',
-  cellLabel, autoFocus, id: suppliedId, className = '',
+  cellLabel, autoFocus, fill: stretch = false, id: suppliedId, className = '',
 }: InputOtpProps) {
   const generatedId = useId();
   const id = suppliedId ?? generatedId;
@@ -177,6 +179,7 @@ export function InputOtp({
     <div
       ref={rootRef}
       className={`grg-otp ${className}`}
+      data-fill={stretch || undefined}
       data-invalid={error ? true : undefined}
       data-disabled={disabled || undefined}
       data-loading={loading || undefined}

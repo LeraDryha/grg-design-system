@@ -20,6 +20,8 @@ import { useInvoices } from '../Invoices/Invoices';
 import { startMembers, useMembers } from '../Members/Members';
 import { NotificationsPage, useNotifications } from '../Notifications/Notifications';
 import { NotificationsContext } from '../shared/notifications';
+import { AccountContext } from '../shared/account';
+import { inAppOf, startPrefs, useAccountState, useProfile } from '../Profile/Profile';
 import { useSettings } from '../Settings/Settings';
 import { useReporting } from '../Reporting/Reporting';
 import { useTransactions } from '../Transactions/Transactions';
@@ -380,8 +382,17 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   const membersPage = useMembers(team);
   const settingsPage = useSettings({ account: empty ? 'not-verified' : 'verified' }, team);
   const reportingPage = useReporting({ account: empty ? 'not-verified' : 'verified' });
-  // The bell: a notification opens its transaction; View all opens the Notifications page
-  const notifications = useNotifications({ none: empty, onOpenTransaction: t => { transactionsPage.show(t); setPage('transactions'); }, onViewAll: () => setPage('notifications') });
+  // You: the avatar's menu opens the Profile or the company's Settings; the Profile's In app switches drive the bell
+  const [prefs, setPrefs] = useState(startPrefs);
+  const { account, setName } = useAccountState(to => setPage(to));
+  const profilePage = useProfile({ account, setName, prefs, setPrefs });
+  // The bell: a notification opens its transaction; View all opens the Notifications page; its settings, the Profile's
+  const notifications = useNotifications({
+    none: empty, inApp: inAppOf(prefs),
+    onOpenTransaction: t => { transactionsPage.show(t); setPage('transactions'); },
+    onViewAll: () => setPage('notifications'),
+    onSettings: () => { profilePage.open('notifications'); setPage('profile'); },
+  });
 
   let content: ReactNode = withdraw.outside;
   if (!content && page === 'invoices') content = invoices.content;
@@ -390,6 +401,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   if (!content && page === 'settings') content = settingsPage.content;
   if (!content && page === 'reporting') content = reportingPage.content;
   if (!content && page === 'notifications') content = <NotificationsPage controller={notifications} />;
+  if (!content && page === 'profile') content = profilePage.content;
   if (!content && page === 'assets') {
     content = <AssetsPage assets={assets} inProgress={withdraw.inProgress} onAction={{ convert: convert.start, withdraw: row => withdraw.start(row.id) }} />;
   }
@@ -416,6 +428,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
   }
 
   return (
+    <AccountContext.Provider value={account}>
     <NotificationsContext.Provider value={notifications}>
       <AppFrame centred={!!withdraw.outside} current={page} onNavigate={setPage}>{content}</AppFrame>
       {convert.modal}
@@ -425,11 +438,13 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
       {membersPage.overlays}
       {settingsPage.overlays}
       {reportingPage.overlays}
+      {profilePage.overlays}
       {/* Figma: a picture above the title; the Modal has a Featured icon there, see "Decided while building it" */}
       <Modal appendTo="self" visible={welcome} onHide={() => setWelcome(false)} status="success" statusIcon="medal-star"
         title="Business verified successfully" description="Your documents have been successfully verified. All services are available for your company."
         closable={false} footerType="fill" primaryAction={{ label: 'Okay', onClick: () => setWelcome(false) }} />
     </NotificationsContext.Provider>
+    </AccountContext.Provider>
   );
 }
 
