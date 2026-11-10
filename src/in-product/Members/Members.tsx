@@ -11,7 +11,7 @@ import { Search } from '../../components/Search/Search';
 import { Select } from '../../components/Select/Select';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { AppFrame } from '../shared/AssetsApp';
-import { pad } from '../shared/period';
+import { formatDateTime } from '../../locale/format';
 
 /* GRX Pay redesign, file "Global Settings", section Members (367:24800): the team list, Add member, Edit member and
    Delete member. A small business's team; invented test addresses only. */
@@ -33,8 +33,8 @@ export type Member = {
 };
 
 const daysAgo = (days: number) => new Date(Date.now() - days * 86400000);
-/** dd/mm/yy, hh:mm:ss, as in the Figma table */
-const short = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+/** Foundations → Formats: 10 Nov 2026, 12:49 */
+const short = (d: Date) => formatDateTime(d);
 /** You: the account in the bar (Guadalupe Schimmel), the owner until Settings hands ownership to someone else */
 export const YOU = 'g.schimmel@company.test';
 

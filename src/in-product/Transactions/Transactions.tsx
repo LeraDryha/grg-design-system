@@ -10,9 +10,10 @@ import { Search } from '../../components/Search/Search';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { TransactionIcon, transactionColor, type TransactionType } from '../../components/TransactionIcon/TransactionIcon';
-import { AppFrame, format, money, startAssets } from '../shared/AssetsApp';
+import { AppFrame, startAssets } from '../shared/AssetsApp';
+import { formatAmount, formatDateTime } from '../../locale/format';
 import { Lead, LeadBox } from '../shared/lead';
-import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
+import { PeriodPicker, shift, startOf, type Range } from '../shared/period';
 import cards from '../../assets/in-product/cards.png';
 
 /* GRX Pay redesign, file "Tools", sections Transactions (1683:39530) and Transaction Details (1683:40743): the list
@@ -22,14 +23,14 @@ import cards from '../../assets/in-product/cards.png';
 export type Status = 'Completed' | 'Processing' | 'Partially processed' | 'Suspended' | 'Arrested' | 'Cancelled' | 'Refunded';
 /** The Figma status list; Refunded appears in the Figma table, so it is in the list too */
 const STATUSES: Status[] = ['Completed', 'Processing', 'Partially processed', 'Suspended', 'Arrested', 'Cancelled', 'Refunded'];
-const STATUS_COLOR: Record<Status, BadgeColor> = {
+export const STATUS_COLOR: Record<Status, BadgeColor> = {
   Completed: 'success', Processing: 'warning', 'Partially processed': 'warning', Suspended: 'warning', Arrested: 'error', Cancelled: 'error', Refunded: 'neutral',
 };
 /** It didn't go through: the Transaction Icon turns red with a cross */
-const failed = (status: Status) => status === 'Arrested' || status === 'Cancelled';
+export const failed = (status: Status) => status === 'Arrested' || status === 'Cancelled';
 
 const KINDS: TransactionType[] = ['payment', 'withdrawal', 'deposit', 'exchange', 'cashback'];
-const KIND_NAME: Record<TransactionType, string> = {
+export const KIND_NAME: Record<TransactionType, string> = {
   payment: 'Invoice payment', withdrawal: 'Withdrawal', deposit: 'Deposit', exchange: 'Exchange', cashback: 'Referral cashback',
 };
 
@@ -40,14 +41,11 @@ export type Transaction = {
 };
 
 const CURRENCIES = startAssets.map(a => ({ value: a.code, label: a.code, listLabel: a.code, coin: a.coin }));
-const digits = (code: string) => startAssets.find(a => a.code === code)?.digits ?? 8;
-const sum = (value: number, code: string) => `${digits(code) === 2 ? money(value) : format(value, digits(code))} ${code}`;
 /** The amount, and for an exchange the currency it goes to, as in the Figma table */
-const amountText = (t: Transaction) => (t.kind === 'exchange' ? `${sum(t.amount, t.code)} → ${t.to}` : sum(t.amount, t.code));
-/** dd/mm/yy, hh:mm:ss in the table; dd/mm/yyyy, hh:mm:ss in the details (Figma) */
-const time = (d: Date) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-const short = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${time(d)}`;
-const long = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}, ${time(d)}`;
+export const amountText = (t: Transaction) => (t.kind === 'exchange' ? `${formatAmount(t.amount, t.code)} → ${t.to}` : formatAmount(t.amount, t.code));
+/** Foundations → Formats: 10 Nov 2026, 12:49 in the table, with seconds in the details */
+const short = (d: Date) => formatDateTime(d);
+const long = (d: Date) => formatDateTime(d, { seconds: true });
 const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3600000);
 /** A repeatable test id in the shape of a UUID, and a blockchain hash */
 const uuid = (seed: number) => {
@@ -70,7 +68,7 @@ const seeds: Seed[] = [
   { kind: 'deposit', status: 'Completed', amount: 1200, code: 'USDT', hours: 26, network: 'Tron (TRC-20)', fee: '1.00 USDT', risk: '0%', tag: '3967575702' },
   { kind: 'cashback', status: 'Completed', amount: 12.4, code: 'EUR', hours: 40, fee: '0.00 EUR', referral: 'Northwind Studio' },
   { kind: 'withdrawal', status: 'Completed', amount: 0.25, code: 'BTC', hours: 52, network: 'Bitcoin', fee: '0.0001 BTC', comment: 'Monthly payout to the cold wallet.' },
-  { kind: 'payment', status: 'Completed', amount: 460, code: 'USDC', hours: 70, network: 'Ethereum', fee: '0 USDC' },
+  { kind: 'payment', status: 'Completed', amount: 460, code: 'USDC', hours: 70, network: 'Ethereum', fee: '0.00 USDC' },
   { kind: 'withdrawal', status: 'Arrested', amount: 3.2, code: 'ETH', hours: 90, network: 'Ethereum', fee: '0.0005 ETH' },
   { kind: 'withdrawal', status: 'Suspended', amount: 800, code: 'USDT', hours: 120, open: true, network: 'Tron (TRC-20)', fee: '1.00 USDT' },
   { kind: 'exchange', status: 'Completed', amount: 1.5, code: 'ETH', to: 'EUR', rate: 1947.48, hours: 150, fee: '14.61 EUR' },
@@ -157,10 +155,10 @@ function groups(t: Transaction): AccordionKeyValueRow[][] {
       const received = t.rate ? t.amount * t.rate : null;
       const charged = parseFloat(t.fee) || 0;
       return [[{ key: 'ID', value: <CopyValue value={t.id} label="exchange ID" /> }, { key: 'Invoice ID', value: <CopyValue value={t.invoiceId!} label="invoice ID" /> },
-        { key: 'Pair', value: `${t.code}/${t.to}` }, { key: 'Amount to exchange', value: sum(t.amount, t.code) },
-        { key: 'Exchange rate', value: t.rate ? `1 ${t.code} = ${money(t.rate)} ${t.to}` : '—' },
-        { key: 'Exchange amount', value: received ? `${money(received)} ${t.to}` : '—' }, fee,
-        { key: 'Total', value: received ? `${money(received - charged)} ${t.to}` : '—' }]];
+        { key: 'Pair', value: `${t.code}/${t.to}` }, { key: 'Amount to exchange', value: formatAmount(t.amount, t.code) },
+        { key: 'Exchange rate', value: t.rate ? `1 ${t.code} = ${formatAmount(t.rate, t.to!)}` : '—' },
+        { key: 'Exchange amount', value: received ? formatAmount(received, t.to!) : '—' }, fee,
+        { key: 'Total', value: received ? formatAmount(received - charged, t.to!) : '—' }]];
     }
     case 'cashback':
       return [[id, { key: 'Referral', value: t.referral! }, { key: 'Credited to', value: `${t.code} balance` }], [fee]];
@@ -195,7 +193,7 @@ const leadOf = (t: Transaction) => ({
   icon: <TransactionIcon type={t.kind} failed={failed(t.status)} size="lg" />,
   kind: KIND_NAME[t.kind],
   amount: amountText(t),
-  sub: t.code !== 'EUR' && t.kind !== 'exchange' ? `≈ ${money(t.amount * (startAssets.find(a => a.code === t.code)?.rate ?? 1))} EUR` : undefined,
+  sub: t.code !== 'EUR' && t.kind !== 'exchange' ? `≈ ${formatAmount(t.amount * (startAssets.find(a => a.code === t.code)?.rate ?? 1), 'EUR')}` : undefined,
   badge: <Badge label={t.status} variant="stroke" size="sm" color={STATUS_COLOR[t.status]} leftIcon={null} rightIcon={null} />,
 });
 
@@ -329,6 +327,8 @@ export function useTransactions({ account = 'verified' }: TransactionsProps = {}
   return {
     content,
     show,
+    /** Every transaction, newest first: the Dashboard's Last transactions are the same ones */
+    transactions,
     overlays: (
       <Drawer appendTo="self" visible={!!current} onHide={close} title="Transaction details" size="md"
         tint={lead?.tint} lead={lead ? <Lead icon={lead.icon} kind={lead.kind} amount={lead.amount} sub={lead.sub} badge={lead.badge} /> : undefined}

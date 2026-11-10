@@ -4,6 +4,7 @@ import { DatePickerPanel } from '../../components/DatePicker/DatePickerPanel';
 import { defaultPresets, sameDay, type DatePreset } from '../../components/DatePicker/presets';
 import { Icon } from '../../components/Icon/Icon';
 import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
+import { formatDay, formatPeriod } from '../../locale/format';
 
 /* The period select of the GRX Pay screens (Dashboard, Invoices): the Figma periods, then Custom period… which opens
    the system's calendar under the select. Not the admin's Filter. */
@@ -11,8 +12,8 @@ import { useKeyboardNavigation } from '../../hooks/useKeyboardNavigation';
 export const startOf = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
 export const shift = (d: Date, days: number) => new Date(d.getFullYear(), d.getMonth(), d.getDate() + days);
 export const pad = (n: number) => String(n).padStart(2, '0');
-/** dd/mm/yyyy */
-export const date = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+/** A day, as Foundations → Formats writes it: 10 Nov 2026 */
+export const date = (d: Date) => formatDay(d);
 
 /** The periods of the Figma Time period list */
 export const PERIODS: DatePreset[] = [
@@ -27,7 +28,7 @@ export const thisMonth = () => PERIODS[2].range(new Date()) as Range;
 
 /** A period's name: its preset, or its dates */
 export const periodName = ([from, to]: Range) => PERIODS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], from) && sameDay(r[1], to); })?.label
-  ?? `${date(from)} – ${date(to)}`;
+  ?? formatPeriod(from, to);
 
 /** `allLabel` adds "all time" at the top of the list (value null), as the Invoices filter "All period" */
 export function PeriodSelect({ value, onChange, allLabel, 'aria-label': label = 'Period' }: {
@@ -78,7 +79,7 @@ export function PeriodSelect({ value, onChange, allLabel, 'aria-label': label = 
 const LIST_PRESETS: DatePreset[] = defaultPresets.slice(0, 6).map(p => (p.id === 'all' ? { ...p, label: 'All period' } : p));
 const listName = (value: Range | null) => !value ? 'All period'
   : LIST_PRESETS.find(p => { const r = p.range(new Date()); return r && sameDay(r[0], value[0]) && sameDay(r[1], value[1]); })?.label
-    ?? `${date(value[0])} – ${date(value[1])}`;
+    ?? formatPeriod(value[0], value[1]);
 
 /**
  * Figma Invoices: a select that opens the whole Date Picker, its presets on the left and the calendar with Reset / Apply.

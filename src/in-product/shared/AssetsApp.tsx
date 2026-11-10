@@ -12,6 +12,7 @@ import { TopbarButton, TopbarNavigation } from '../../components/TopbarNavigatio
 import { useNotificationsController } from './notifications';
 import { useAccount } from './account';
 import { useScreen } from './screen';
+import { formatNumber } from '../../locale/format';
 import '../in-product.css';
 
 /** You, without a photo: the same initials in the bar and in the menu header */
@@ -127,7 +128,7 @@ export function AssetsPage({ assets, inProgress, onAction }: {
   const columns: TableColumn<Asset>[] = [
     // Fixed shares: the columns keep their width when rows are hidden or sorted
     { id: 'asset', header: 'Asset', width: '32%', sortValue: row => row.name, cell: row => <TableText priority="leading" orientation="horizontal" title={row.name} description={row.code} leading={<CoinIcon name={row.coin} size={24} />} /> },
-    { id: 'amount', header: 'Amount', width: '24%', sortValue: row => row.amount, cell: row => <TableText title={format(row.amount, row.digits)} /> },
+    { id: 'amount', header: 'Amount', width: '24%', sortValue: row => row.amount, cell: row => <TableText title={formatNumber(row.amount, row.code)} /> },
     { id: 'eur', header: 'Equivalent amount', width: '24%', sortValue: row => row.amount * row.rate, cell: row => <TableText title={`${money(row.amount * row.rate)} EUR`} /> },
   ];
   const action = (kind: AssetAction, label: string, row: Asset) => (

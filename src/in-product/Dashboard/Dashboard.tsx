@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { ActionButton } from '../../components/ActionButton/ActionButton';
-import { Badge, type BadgeColor } from '../../components/Badge/Badge';
+import { Badge } from '../../components/Badge/Badge';
 import { Button } from '../../components/Button/Button';
 import { CoinIcon } from '../../components/CoinIcon/CoinIcon';
 import { DropdownMenu } from '../../components/DropdownMenu/DropdownMenu';
@@ -10,9 +10,10 @@ import { MessagesProvider, useMessages } from '../../components/Alert/Messages';
 import { Modal } from '../../components/Modal/Modal';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { Tooltip } from '../../components/Tooltip/Tooltip';
-import { TransactionIcon, type TransactionType } from '../../components/TransactionIcon/TransactionIcon';
+import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
+import { formatAmount, formatDateTime } from '../../locale/format';
 import type { IconName } from '../../components/Icon/Icon';
-import { AppFrame, AssetsPage, format, money, startAssets, type Asset, type AppPage } from '../shared/AssetsApp';
+import { AppFrame, AssetsPage, money, startAssets, type Asset, type AppPage } from '../shared/AssetsApp';
 import { useConvert } from '../Convert/Convert';
 import { PeriodSelect, date, pad, periodName, shift, startOf, thisMonth, type Range } from '../shared/period';
 import { useWithdrawEth } from '../WithdrawEth/WithdrawEth';
@@ -24,7 +25,7 @@ import { AccountContext } from '../shared/account';
 import { inAppOf, startPrefs, useAccountState, useProfile } from '../Profile/Profile';
 import { useSettings } from '../Settings/Settings';
 import { useReporting } from '../Reporting/Reporting';
-import { useTransactions } from '../Transactions/Transactions';
+import { KIND_NAME, STATUS_COLOR, amountText, failed, useTransactions, type Transaction } from '../Transactions/Transactions';
 import keyImage from '../../assets/in-product/key.png';
 import documentsImage from '../../assets/in-product/documents-warning.png';
 
@@ -219,7 +220,7 @@ function BalanceCard({ assets, onAction, onViewAll }: {
   const parts = [
     ...sorted.slice(0, SHARE_COLORS.length).map((asset, index) => ({
       id: asset.id, name: asset.name, coin: asset.coin, value: value(asset), color: SHARE_COLORS[index],
-      rows: [{ key: 'Amount:', value: `${money(value(asset))} EUR` }, { key: 'Balance:', value: `${format(asset.amount, asset.digits)} ${asset.code}` }],
+      rows: [{ key: 'Amount:', value: `${money(value(asset))} EUR` }, { key: 'Balance:', value: formatAmount(asset.amount, asset.code) }],
     })),
     ...(restValue > 0 ? [{
       id: 'rest', name: 'Other assets', coin: undefined, value: restValue, color: 'var(--bg-soft-200)',
@@ -258,7 +259,7 @@ function BalanceCard({ assets, onAction, onViewAll }: {
               </span>
               <span className="grg-ip-holdings__amount">
                 <span>{money(value(asset))} EUR</span>
-                {asset.code !== 'EUR' && <span className="grg-ip-holdings__share">= {format(asset.amount, asset.digits)} {asset.code}</span>}
+                {asset.code !== 'EUR' && <span className="grg-ip-holdings__share">= {formatAmount(asset.amount, asset.code)}</span>}
               </span>
               <DropdownMenu aria-label={`${asset.name} actions`} align="end" width={160}
                 items={[
@@ -302,45 +303,29 @@ function NoteCard({ note, onClose }: { note: Note; onClose: () => void }) {
 
 /* ---- Last transactions ---- */
 
-type Status = 'Completed' | 'Refunded' | 'Cancelled' | 'Processing';
-type Transaction = { id: string; type: TransactionType; name: string; at: string; amount: string; status: Status };
-const STATUS_COLOR: Record<Status, BadgeColor> = { Completed: 'success', Refunded: 'neutral', Cancelled: 'error', Processing: 'warning' };
-
-/** dd/mm/yy, hh:mm:ss, some days and hours ago */
-const ago = (days: number, time: string) => { const d = shift(new Date(), -days); return `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${time}`; };
-
-export const transactions: Transaction[] = [
-  { id: '4f4eef79-0976-4226-a141-e0ef893b5521', type: 'payment', name: 'Invoice Payment', at: ago(0, '09:52:07'), amount: '0.065769 ETH', status: 'Completed' },
-  { id: '9b2c41d0-5e7a-4c3f-8d16-2a7e90c1b4f8', type: 'deposit', name: 'Deposit', at: ago(0, '08:08:44'), amount: '2.2219778 ETH', status: 'Refunded' },
-  { id: 'c71a0e5b-34d2-4f89-b0a6-91e3d27f5c02', type: 'withdrawal', name: 'Withdrawal', at: ago(1, '18:30:12'), amount: '0.5 BTC', status: 'Cancelled' },
-  { id: '2d8f6a13-b7c4-4e05-9a2d-6f1c08e3b7a9', type: 'withdrawal', name: 'Withdrawal', at: ago(1, '16:02:55'), amount: '1,250.00 EUR', status: 'Processing' },
-  { id: 'e5a9c2f7-1b38-4d6e-a40c-7d2b95f8e163', type: 'exchange', name: 'Exchange', at: ago(2, '09:47:31'), amount: 'ETH → EUR', status: 'Processing' },
-  { id: '0f3b7d82-6c19-4a5e-b2f4-83a6e1d90c57', type: 'payment', name: 'Invoice Payment', at: ago(3, '22:28:07'), amount: '0.0412 BTC', status: 'Completed' },
-];
-
-/** dd/mm/yy, hh:mm:ss → a number that sorts in time order */
-const when = (at: string) => { const [d, m, y, rest] = at.split(/[/, ]+/); return Number(`${y}${m}${d}${rest.replace(/:/g, '')}`); };
-
-function TransactionsCard({ rows, onViewAll }: { rows: Transaction[]; onViewAll: () => void }) {
+/** The newest transactions from the Transactions page itself, so a row here is the same record there */
+function TransactionsCard({ rows, onOpen, onViewAll }: { rows: Transaction[]; onOpen: (row: Transaction) => void; onViewAll: () => void }) {
   const { toast } = useMessages();
   const copy = (id: string) => {
     void navigator.clipboard?.writeText(id).catch(() => undefined);
     toast({ status: 'success', title: 'Copied', duration: 3000 });
   };
+  const at = (row: Transaction) => (row.completedAt ? formatDateTime(row.completedAt) : '—');
   const columns: TableColumn<Transaction>[] = [
     { id: 'type', header: 'Type', width: '24%', cell: row => (
-      <TableText priority="leading" orientation="horizontal" title={row.name}
+      <TableText priority="leading" orientation="horizontal" title={KIND_NAME[row.kind]}
         // Figma: a cancelled one shows a red cross
-        leading={<TransactionIcon type={row.type} failed={row.status === 'Cancelled'} size="md" />} />
+        leading={<TransactionIcon type={row.kind} failed={failed(row.status)} size="md" />} />
     ) },
-    { id: 'at', header: 'Completed at', width: '20%', sortValue: row => when(row.at), cell: row => <TableText title={row.at} /> },
+    { id: 'at', header: 'Completed at', width: '20%', sortValue: row => row.completedAt?.getTime() ?? 0, cell: row => <TableText title={at(row)} /> },
     { id: 'id', header: 'ID', width: '24%', cell: row => (
       <span className="grg-ip-copy">
         <TableText title={row.id} />
-        <ActionButton icon="copy" size="sm" aria-label={`Copy ID of ${row.name}, ${row.at}`} onClick={() => copy(row.id)} />
+        <ActionButton icon="copy" size="sm" aria-label={`Copy ID of ${KIND_NAME[row.kind]} ${row.id.slice(0, 8)}`}
+          onClick={event => { event.stopPropagation(); copy(row.id); }} />
       </span>
     ) },
-    { id: 'amount', header: 'Amount', width: '18%', cell: row => <TableText title={row.amount} /> },
+    { id: 'amount', header: 'Amount', width: '18%', cell: row => <TableText title={amountText(row)} /> },
     { id: 'status', header: 'Status', cell: row => <Badge label={row.status} variant="light" size="sm" color={STATUS_COLOR[row.status]} leftIcon={null} rightIcon={null} /> },
   ];
   return (
@@ -349,8 +334,8 @@ function TransactionsCard({ rows, onViewAll }: { rows: Transaction[]; onViewAll:
         <h2 id="transactions-title" className="grg-ip-card__title">Last transactions</h2>
         <Link size="sm" color="black" href="#transactions" onClick={event => { event.preventDefault(); onViewAll(); }}>View all</Link>
       </div>
-      <Table aria-label="Last transactions" rows={rows} rowKey={row => row.id} rowLabel={row => `${row.name}, ${row.at}`} columns={columns}
-        empty={{ title: 'You don’t have transactions yet' }} />
+      <Table aria-label="Last transactions" rows={rows} rowKey={row => row.id} rowLabel={row => `${KIND_NAME[row.kind]}, ${amountText(row)}, ${row.status}`}
+        columns={columns} onRowOpen={onOpen} empty={{ title: 'You don’t have transactions yet' }} />
     </section>
   );
 }
@@ -421,7 +406,8 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
               onAction={{ convert: convert.start, withdraw: asset => withdraw.start(asset.id) }} />
           </div>
           <PaymentsCard empty={empty} />
-          <TransactionsCard rows={empty ? [] : transactions} onViewAll={() => setPage('transactions')} />
+          <TransactionsCard rows={empty ? [] : transactionsPage.transactions.slice(0, 6)} onViewAll={() => setPage('transactions')}
+            onOpen={t => { transactionsPage.show(t); setPage('transactions'); }} />
         </div>
       </main>
     );

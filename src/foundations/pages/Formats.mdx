@@ -1,0 +1,37 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+import { FormatExamples } from '../Foundations';
+
+<Meta title="Foundations/Formats" />
+
+# Formats
+
+How the product writes a moment, a period and an amount. In a payments product a date and a sum are evidence: the same transaction has to read the same on the Dashboard, in a table, in its details and in a notification. Every page and component writes them through the same functions in `src/locale/format.ts`, so they never drift apart.
+
+<FormatExamples />
+
+## Dates and time
+
+- **The month is a word.** *10 Nov 2026*, never *10/11/26*: in the US that is 11 October. The order of day, month and year follows the page's language, like the date fields do.
+- **Tables and cards: day and minutes.** *10 Nov 2026, 12:49*. Seconds only where they tell two events apart: transaction, invoice and notification details.
+- **Periods write the shared part once.** *1 – 7 Nov 2026*, *28 Oct – 3 Nov 2026*. A named period keeps its name: *This month*, *Last 30 days*, *All time*.
+- **How long ago** only in lists people scan for news (the notification feed): *Just now*, *5 min ago*, *Yesterday, 14:47*, then the date. The full date shows on hover.
+- **Files keep ISO dates.** Inside a CSV or a report and in file names: *2026-11-10*, so spreadsheets sort them.
+
+## Amounts
+
+- **Fiat and stablecoins: always two decimals.** *1,250.00 EUR*, *460.00 USDC*, *1,200.00 USDT*. People count them in cents.
+- **Crypto: up to eight decimals, no trailing zeros.** *0.065769 ETH*, *3.2 ETH*, *0 BTC*.
+- **The code after the number**, with a space: *0.5 BTC*, not *BTC 0.5* or *₿0.5*. The coin icon, where there is one, comes before.
+- **What people type stays as they type it.** An amount field shows the person's own digits while it has focus and groups them when it loses it.
+
+## In code
+
+| Function | Writes |
+|---|---|
+| `formatDateTime(date, { seconds?, locale? })` | A moment |
+| `formatDay(date, locale?)` | A day |
+| `formatPeriod(from, to, locale?)` | A period |
+| `formatAmount(value, currency, locale?)` | An amount with its code |
+| `formatNumber(value, currency, locale?)` | The number alone, in the currency's decimals (a table column under a currency header) |
+
+The locale is the product's choice, else the page language, else the browser's, the same as the date fields.

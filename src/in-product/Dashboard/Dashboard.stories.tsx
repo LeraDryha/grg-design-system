@@ -95,6 +95,12 @@ export const Walkthrough: Story = {
       await userEvent.click(canvas.getByRole('link', { name: 'Dashboard' }));
       await expect(await canvas.findByRole('heading', { name: 'Dashboard', level: 1 })).toBeInTheDocument();
     });
+    await step('A last transaction is the same record on Transactions: it opens there', async () => {
+      const table = canvas.getByRole('table', { name: 'Last transactions' });
+      await userEvent.click(within(table).getAllByRole('button', { name: /^Open Invoice payment, 0\.065769 ETH/ })[0]);
+      await expect(await canvas.findByRole('heading', { name: 'Transactions', level: 1 })).toBeInTheDocument();
+      await expect(await canvas.findByRole('dialog', { name: 'Transaction details' })).toBeInTheDocument();
+    });
   },
 };
 

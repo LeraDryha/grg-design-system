@@ -19,10 +19,11 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
-import { AppFrame, format, money, startAssets, type AppPage } from '../shared/AssetsApp';
+import { AppFrame, startAssets, type AppPage } from '../shared/AssetsApp';
 import { useTransactions, type Transaction } from '../Transactions/Transactions';
+import { formatAmount, formatDateTime } from '../../locale/format';
 import { Lead, LeadBox } from '../shared/lead';
-import { PeriodPicker, pad, shift, startOf, type Range } from '../shared/period';
+import { PeriodPicker, shift, startOf, type Range } from '../shared/period';
 
 /* GRX Pay redesign, sections Invoices tables (1676:55326) and Creating invoice (1676:58206): the list with its
    filters; creating an invoice in a drawer (it was a page in Figma), its result and its details in the same drawer,
@@ -49,9 +50,9 @@ export type Invoice = {
 
 const CURRENCIES = startAssets.map(a => ({ value: a.code, label: `${a.name} (${a.code})`, listLabel: `${a.name} (${a.code})`, coin: a.coin }));
 /** An invoice's amount: two decimals, the way prices are set; coins with more appear only in what was received */
-const amountText = (value: number, code: string) => `${money(value)} ${code}`;
-/** yyyy/mm/dd hh:mm:ss, as in Figma */
-const stamp = (d: Date) => `${d.getFullYear()}/${pad(d.getMonth() + 1)}/${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const amountText = (value: number, code: string) => formatAmount(value, code);
+/** Foundations → Formats: 10 Nov 2026, 12:49 in the table, with seconds in the details */
+const stamp = (d: Date) => formatDateTime(d);
 const hoursAgo = (hours: number) => new Date(Date.now() - hours * 3600000);
 /** A repeatable test id in the shape of a UUID */
 const uuid = (seed: number) => {
@@ -248,7 +249,7 @@ function Details({ invoice, lead = false }: { invoice: Invoice; lead?: boolean }
       <div className="grg-ip-box grg-ip-box--muted">
       <AccordionKeyValue rows={[
         { key: 'Invoice ID', value: invoice.id },
-        { key: 'Created at', value: stamp(invoice.createdAt) },
+        { key: 'Created at', value: formatDateTime(invoice.createdAt, { seconds: true }) },
         { key: 'Created by', value: invoice.createdBy },
         { key: 'External order ID', value: invoice.orderId || '—' },
         { key: 'Invoice currency', value: invoice.currency },
@@ -268,9 +269,9 @@ const asTransaction = (op: Operation, invoice: Invoice): Transaction => ({
   blockchainId: op.network && op.code !== 'EUR' ? `0x${op.id.replace(/-/g, '')}${invoice.id.replace(/-/g, '').slice(0, 32)}` : undefined,
   address: op.kind === 'payment' ? `0x${op.id.replace(/-/g, '').slice(0, 26)}` : undefined,
 });
-const opAmount = (value: number, code: string) => { const digits = startAssets.find(a => a.code === code)?.digits ?? 8; return `${digits === 2 ? money(value) : format(value, digits)} ${code}`; };
-/** dd/mm/yy, hh:mm:ss, as in the Transactions table */
-const opTime = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${String(d.getFullYear()).slice(2)}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const opAmount = (value: number, code: string) => formatAmount(value, code);
+/** With seconds: an operation in the invoice details (Foundations → Formats) */
+const opTime = (d: Date) => formatDateTime(d, { seconds: true });
 
 /** Figma Operations (1693:23731): each operation on a grey card (its kind, status, amount and time), View in transactions
  *  under it, a line between them */

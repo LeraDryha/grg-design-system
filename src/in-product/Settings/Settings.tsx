@@ -14,7 +14,7 @@ import { Search } from '../../components/Search/Search';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { TextArea } from '../../components/TextArea/TextArea';
 import { AppFrame } from '../shared/AssetsApp';
-import { pad } from '../shared/period';
+import { formatDateTime } from '../../locale/format';
 import { useApiKeys } from './ApiKeys';
 import { usePaymentSettings } from './PaymentSettings';
 import { useExchangeRate } from './ExchangeRate';
@@ -42,7 +42,7 @@ const LOGO_TEXT = 'Your uploaded logo will be shown on the payment checkout';
 const CONTACT_TEXT = 'Add a support link or any contact info. Buyers see it on the payment receipt';
 const ERROR = 'Something went wrong, please try again';
 const COMPANY_ID = '03d72e62-2530-4ff7-87e9-aa9839090e34';
-const long = (d: Date) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+const long = (d: Date) => formatDateTime(d);
 
 type Logo = { src: string; original: string; crop: Crop };
 type View =

@@ -92,7 +92,7 @@ Under 768px the feed opens under the top bar, the full width.
 - **A panel, not a page.** PrimeReact OverlayPanel: it is placed under the bell, closes on a click outside and on Escape. It is a dialog named *Notifications*.
 - **400px wide, up to 640px tall**, as the guidelines say; the list scrolls under the header and the tabs.
 - **A notification is a link** to its details; with buttons only the buttons act, so there is one control at a time. Opening one, or *View all notifications*, closes the feed; a single-page app routes with `onOpen`, `onViewAll` and `onSettings`.
-- **The date follows the page's language**: *09/04/2026, 10:54:14* in British English, as in Figma.
+- **The date follows the page's language** and [Formats](?path=/docs/foundations-formats--docs): *9 Apr 2026, 10:54:14* in British English. Figma wrote *09/04/2026*, which reads as 4 September in the US; the month as a word can't be misread.
 - **New notifications are announced** while the feed is open (*1 new notification*), quietly, without moving focus. This is the ARIA live region, the standard way for content that changes on its own; PrimeReact has nothing for it.
 - **Empty** uses a Featured Icon with the bell instead of the 3D bell picture.
 - **Words.** The title is *Notifications* and the footer *View all notifications*; Figma has them singular (see [Contributing/Tokens](?path=/docs/contributing-tokens--docs)).

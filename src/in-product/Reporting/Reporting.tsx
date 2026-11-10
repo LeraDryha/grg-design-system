@@ -13,8 +13,9 @@ import { Select } from '../../components/Select/Select';
 import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { AppFrame, startAssets } from '../shared/AssetsApp';
-import { date, pad, shift, startOf, type Range } from '../shared/period';
+import { pad, shift, startOf, type Range } from '../shared/period';
 import { YOU, startMembers } from '../Members/Members';
+import { formatDateTime, formatPeriod } from '../../locale/format';
 import { startTransactions } from '../Transactions/Transactions';
 import reportsImage from '../../assets/in-product/reports.png';
 import verifyingImage from '../../assets/in-product/verification-in-progress.png';
@@ -54,6 +55,7 @@ const PERIODS: { value: string; label: string; range: (today: Date) => [Date, Da
 ];
 
 /** 2026-10-01, and 2026-11-02, 09:14:05, as in the Figma table */
+/** ISO dates inside the files and their names, for spreadsheets and sorting; the screen uses Foundations → Formats */
 const day = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
 const stamp = (d: Date) => `${day(d)}, ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 const daysAgo = (days: number, hour = 10) => { const d = shift(new Date(), -days); d.setHours(hour, 14, 5); return d; };
@@ -157,15 +159,15 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
   }
 
   const columns: TableColumn<Report>[] = [
-    { id: 'period', header: 'Time period', width: '22%', cell: r => <TableText title={`${day(r.from)} – ${day(r.to)}`} /> },
+    { id: 'period', header: 'Time period', width: '22%', cell: r => <TableText title={formatPeriod(r.from, r.to)} /> },
     { id: 'format', header: 'Format', width: '9%', cell: r => <TableText title={r.format.toUpperCase()} /> },
     { id: 'by', header: 'Created by', width: '26%', cell: r => <TableText title={r.by} /> },
-    { id: 'created', header: 'Created at', width: '20%', sortValue: r => r.createdAt.getTime(), cell: r => <TableText title={stamp(r.createdAt)} /> },
+    { id: 'created', header: 'Created at', width: '20%', sortValue: r => r.createdAt.getTime(), cell: r => <TableText title={formatDateTime(r.createdAt)} /> },
     { id: 'status', header: 'Status', cell: r => (
       <Badge label={r.status} variant="light" size="sm" color={r.status === 'Generated' ? 'success' : 'warning'} leftIcon={null} rightIcon={null} />
     ) },
   ];
-  const label = (r: Report) => `report ${day(r.from)} – ${day(r.to)}, ${r.format.toUpperCase()}`;
+  const label = (r: Report) => `report ${formatPeriod(r.from, r.to)}, ${r.format.toUpperCase()}`;
 
   const settlement = (
     <div className="grg-ip-tab-panel">
@@ -234,7 +236,7 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
           {/* The usual periods, the chosen dates once applied (checked), then Custom period… */}
           <Select label="Date period" floatingLabel={false} icon={false} required
             options={[...PERIODS.map(({ value, label: name }) => ({ value, label: name })),
-              ...(d.custom ? [{ value: 'custom', label: `${date(d.custom[0])} – ${date(d.custom[1])}` }] : []),
+              ...(d.custom ? [{ value: 'custom', label: formatPeriod(d.custom[0], d.custom[1]) }] : []),
               { value: 'pick', label: 'Custom period…', icon: 'calendar' as const }]}
             value={d.period}
             onChange={period => (period === 'pick'

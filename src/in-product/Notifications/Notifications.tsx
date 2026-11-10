@@ -6,7 +6,8 @@ import { FeaturedIcon } from '../../components/FeaturedIcon/FeaturedIcon';
 import { NotificationItem, type Notification } from '../../components/NotificationFeed/NotificationFeed';
 import { TabMenu, type TabMenuItem } from '../../components/TabMenu/TabMenu';
 import { TransactionIcon } from '../../components/TransactionIcon/TransactionIcon';
-import { AppFrame, format, money, startAssets } from '../shared/AssetsApp';
+import { AppFrame, money, startAssets } from '../shared/AssetsApp';
+import { formatAmount } from '../../locale/format';
 import { NotificationsContext, type NotificationsController } from '../shared/notifications';
 import { startTransactions, useTransactions, type Transaction } from '../Transactions/Transactions';
 
@@ -27,7 +28,7 @@ const CATEGORIES: (TabMenuItem & { id: 'all' | Category })[] = [
   { id: 'verification', label: 'Verification', picture: <TransactionIcon icon="shield-check" color="red" size="sm" /> },
 ];
 
-const amount = (t: Transaction) => `${format(t.amount, 8)} ${t.code}`;
+const amount = (t: Transaction) => formatAmount(t.amount, t.code);
 /** The amount in EUR beside a crypto one, as the Dashboard shows it: the size at a glance */
 const inEur = (t: Transaction) => {
   const rate = startAssets.find(a => a.code === t.code)?.rate;
