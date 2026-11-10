@@ -1,4 +1,4 @@
-/* Page header. Designed in code from the In product pages: Title-lg, buttons md at the end, 40px tall either way. */
+/* Page header. Designed in code from the In product pages: Title-lg, buttons sm at the end, 32px tall either way (Figma). */
 
 .grg-page-header {
   display: flex;
@@ -6,8 +6,8 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-300);
-  /* As tall as a button md: a page without buttons starts its content at the same place */
-  min-height: var(--space-1000);
+  /* As tall as a button sm, as the Figma title row: a page without buttons starts its content at the same place */
+  min-height: var(--space-800);
 }
 .grg-page-header__title-row { display: flex; align-items: center; gap: var(--space-200); min-width: 0; }
 .grg-page-header__title {

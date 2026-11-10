@@ -455,7 +455,7 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
   ) : pageInvoice ? (
     <main className="grg-ip-page">
       <PageHeader title="Invoice details" back={{ label: 'Back to invoices', onClick: () => setPage(null) }}
-        actions={active(pageInvoice.status) && <Button variant="outline" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>} />
+        actions={active(pageInvoice.status) && <Button variant="outline" size="sm" tone="destructive" onClick={() => setConfirm(pageInvoice)}>Deactivate link</Button>} />
       <div className="grg-ip-invoice-page">
         <section className="grg-ip-card grg-ip-card--details" aria-label="Invoice"><Details invoice={pageInvoice} lead /></section>
         <section className="grg-ip-card" aria-labelledby="operations-title">
@@ -468,8 +468,8 @@ export function useInvoices({ account = 'verified', startCreating = false, onVie
     <main className="grg-ip-page">
       <PageHeader title="Invoices" actions={<>
         {/* No export in this demo: the button stays, as in Figma, without an action */}
-        <Button variant="outline" leftIcon="download">Download</Button>
-        <Button variant="primary" leftIcon="plus" onClick={create}>Create invoice</Button>
+        <Button variant="outline" size="sm" leftIcon="download">Download</Button>
+        <Button variant="primary" size="sm" leftIcon="plus" onClick={create}>Create invoice</Button>
       </>} />
       <div className="grg-ip-surface">
         <InvoicesTable invoices={invoices} onOpen={open} onDeactivate={setConfirm} />

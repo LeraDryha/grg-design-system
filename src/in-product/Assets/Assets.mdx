@@ -1,0 +1,47 @@
+import { Meta, Canvas } from '@storybook/addon-docs/blocks';
+import * as AssetsStories from './Assets.stories';
+
+<Meta of={AssetsStories} />
+
+# Assets
+
+What the business holds, in each currency and in total, and where its money goes next: convert, deposit, withdraw. I designed these screens in Figma for a crypto payments platform; here they are rebuilt from the design system's components, and they work. [Convert](?path=/docs/in-product-convert--docs) and [Withdraw ETH](?path=/docs/in-product-withdraw-eth--docs) start here.
+
+<a href="iframe.html?viewMode=story&id=in-product-assets--live-flow" target="_blank" rel="noopener" style={{ display: 'inline-flex', alignItems: 'center', gap: 'var(--space-200)', marginBottom: 'var(--space-300)', padding: 'var(--space-200) var(--space-400)', borderRadius: 'var(--radius-md-10)', background: 'var(--primary-base-1000)', color: 'var(--text-inverce)', font: 'var(--typo-body-md-semibold)', textDecoration: 'none' }}>Open full screen ↗</a>
+
+<Canvas of={AssetsStories.LiveFlow} />
+
+**Try it:** choose another currency by the estimated balance; hover the info button by *Withdrawal in progress*; **Hide small balances**; **Convert** or **Withdraw** from a row (an empty balance has them off).
+
+## What the page has to get right
+
+- **The total at a glance, in the currency people think in.** The estimated balance and the withdrawal in progress, in EUR or any of five currencies.
+- **What isn't free to spend.** The withdrawal in progress is reserved; the info button says so.
+- **Every asset and what can be done with it.** Amount, its value in EUR, and the three actions; an empty balance can still be topped up.
+- **Less noise when needed.** Small balances (under 1 EUR) hide with one checkbox.
+
+## Decided while building it
+
+- **The currency of the balance is an Inline Select** by the number, as in Figma: BTC, ETH, USDT, USD, EUR. Both the estimated balance and the withdrawal in progress follow it; the table stays in EUR.
+- **The info button is the blue Action Button with a tooltip**, with the Figma text: *Temporarily reserved amount of assets for withdrawal*.
+- **Empty amounts follow [Formats](?path=/docs/foundations-formats--docs)**: *0*, not Figma's *0.00000000*.
+- **Deposit has no screens yet**: the button stays without an action, as *Download* on Invoices.
+- **Three equal columns** before the actions, as in Figma.
+- **The page starts 24px from the sidebar** (after the check against Figma), on every In product page, as all the Figma frames do; the title row is 32px, with small buttons.
+
+## From Figma
+
+The frames this page was built from (also in the **Design** tab), without the bar and its logo.
+
+<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(calc(var(--space-5000) + var(--space-1000)), 1fr))', gap: 'var(--space-600)', alignItems: 'start' }}>
+  {AssetsStories.frames.map(([src, caption]) => (
+    <figure key={caption} style={{ margin: 0 }}>
+      <img src={src} alt={`Figma: ${caption}`} style={{ width: '100%', borderRadius: 'var(--radius-lg-12)', border: '1px solid var(--stroke-soft-200)' }} />
+      <figcaption style={{ marginTop: 'var(--space-200)', font: 'var(--typo-body-sm-regular)', color: 'var(--text-soft-500)' }}>{caption}</figcaption>
+    </figure>
+  ))}
+</div>
+
+## Built from
+
+[Page Header](?path=/docs/components-page-header--docs) · [Inline Select](?path=/docs/components-inline-select--docs) · [Tooltip](?path=/docs/components-tooltip--docs) · [Action Button](?path=/docs/components-action-button--docs) · [Checkbox](?path=/docs/components-checkbox--docs) · [Table](?path=/docs/components-table--docs) · [Coin Icon](?path=/docs/components-coin-icon--docs) · [Button](?path=/docs/components-button--docs)

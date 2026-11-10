@@ -20,8 +20,6 @@
   padding: var(--space-500) var(--space-600) var(--space-600);
   overflow: auto;
 }
-/* Beside the sidebar the page starts right at its edge (the sidebar keeps its own 20px inside); without it, 24px */
-.grg-ip-body > :not(.grg-ip-page) ~ .grg-ip-page { padding-left: 0; }
 /* Figma: one white surface for the page content, radius 16, Elevation xs; its parts 32px above and below, 24px at the sides */
 .grg-ip-surface { display: flex; flex: 1 0 auto; flex-direction: column; border-radius: var(--radius-xl-16); background: var(--surface-base); box-shadow: var(--shadow-xs); }
 .grg-ip-surface__top { padding: var(--space-800) var(--space-600); }
@@ -41,17 +39,17 @@
   color: var(--text-inverce);
 }
 
-/* ---- Assets: the balances over the table ---- */
-.grg-ip-balances { display: flex; flex-wrap: wrap; gap: var(--space-600); }
-/* A line between the two balances, as in Figma */
-.grg-ip-balances > * + * { padding-left: var(--space-600); border-left: 1px solid var(--stroke-soft-200); }
+/* ---- Assets: the balances over the table (Figma 1750:20148) ---- */
+.grg-ip-balances { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--space-800); padding: var(--space-200) 0; }
+/* A 48px line between the two balances, 32px from each */
+.grg-ip-balances > * + * { padding-left: var(--space-800); border-left: 1px solid var(--stroke-soft-200); min-height: var(--space-1200); }
+.grg-ip-balances > div { display: flex; flex-direction: column; gap: var(--space-100); }
 .grg-ip-balances p { margin: 0; }
 .grg-ip-balances__key { display: flex; align-items: center; gap: var(--space-100); font: var(--typo-body-sm-regular); color: var(--text-soft-500); }
-.grg-ip-balances__value { font: var(--typo-body-md-regular); color: var(--text-soft-500); }
-.grg-ip-balances__value span { font: var(--typo-title-lg-semibold); color: var(--text-strong-1000); }
-.grg-ip-balances__small { font: var(--typo-body-md-medium); }
-.grg-ip-info { display: inline-flex; border-radius: var(--radius-fully-rounded); color: var(--icon-base-500); }
-.grg-ip-info:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.grg-ip-balances__key--strong { font: var(--typo-body-sm-medium); }
+.grg-ip-balances__value { display: flex; align-items: flex-end; gap: var(--space-100); }
+.grg-ip-balances__number { font: var(--typo-title-lg-bold); color: var(--text-strong-1000); font-variant-numeric: tabular-nums; }
+.grg-ip-balances__small { font: var(--typo-body-md-semibold); color: var(--text-soft-500); }
 
 /* ---- Modal pieces ---- */
 /* Figma "Confirmation Exchange": 40px above and below, the amount 32px, the note under it */

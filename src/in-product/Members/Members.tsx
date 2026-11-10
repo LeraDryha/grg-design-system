@@ -159,7 +159,7 @@ export function useMembers(shared?: MembersState) {
 
   const content = (
     <main className="grg-ip-page">
-      <PageHeader title="Members" actions={<Button variant="primary" leftIcon="plus" onClick={add}>Add member</Button>} />
+      <PageHeader title="Members" actions={<Button variant="primary" size="sm" leftIcon="plus" onClick={add}>Add member</Button>} />
       <div className="grg-ip-surface">
         <MembersTable members={team} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })}
           onTransfer={() => setView({ kind: 'owner', chosen: null, query: '' })} />
