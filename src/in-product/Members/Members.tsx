@@ -203,7 +203,7 @@ export function useMembers(shared?: MembersState) {
       children: <>
         <Search size="md" aria-label="Search members by name or email" placeholder="Name or email" value={v.query} onChange={query => setView({ ...v, query })} />
         {shown.length ? (
-          <RadioGroup label="Members" labelHidden className="grg-ip-owner-list grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
+          <RadioGroup label="Members" labelHidden value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
             {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.name ?? m.email} description={m.name ? m.email : undefined} />)}
           </RadioGroup>
         ) : <p className="grg-ip-setting__line">No members found</p>}

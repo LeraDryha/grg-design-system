@@ -387,7 +387,6 @@
 .grg-ip-setting__line { margin: 0; font: var(--typo-body-md-regular); color: var(--text-soft-500); }
 .grg-ip-setting__value { font: var(--typo-body-md-medium); color: var(--text-strong-1000); white-space: pre-line; overflow-wrap: anywhere; }
 /* Change the owner: the list scrolls under the search when the team is big */
-.grg-ip-owner-list { max-height: calc(var(--space-5000) + var(--space-1000)); overflow-y: auto; }
 
 /* Settings - API key */
 .grg-ip-setting__head--center { align-items: center; }
