@@ -397,7 +397,7 @@ function DashboardApp({ empty = false, note, verified = false }: DashboardFlowPr
         <div className="grg-ip-page__head">
           <h1 className="grg-ip-page__title">Dashboard</h1>
           {/* The same drawer as on the Invoices page */}
-          <Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create new invoice</Button>
+          <Button variant="primary" size="md" leftIcon="plus" onClick={invoices.create}>Create invoice</Button>
         </div>
         <div className="grg-ip-dashboard">
           <div className="grg-ip-dashboard__side">

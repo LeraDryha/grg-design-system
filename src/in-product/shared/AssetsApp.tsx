@@ -43,9 +43,14 @@ const pages: SidebarSection[] = [{
     { id: 'assets', label: 'Assets', href: '#assets', icon: 'coin' },
     { id: 'invoices', label: 'Invoices', href: '#invoices', icon: 'bill' },
     { id: 'transactions', label: 'Transactions', href: '#transactions', icon: 'reload' },
+    { id: 'reporting', label: 'Reporting', href: '#reporting', icon: 'file-fill-in' },
+  ],
+}, {
+  // The company, after a line: who works in it and how it is set up (the money pages come first)
+  divided: true,
+  items: [
     { id: 'members', label: 'Members', href: '#members', icon: 'users' },
     { id: 'settings', label: 'Settings', href: '#settings', icon: 'setting' },
-    { id: 'reporting', label: 'Reporting', href: '#reporting', icon: 'file-fill-in' },
   ],
 }];
 

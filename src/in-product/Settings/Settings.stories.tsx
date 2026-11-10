@@ -93,7 +93,7 @@ export const Walkthrough: Story = {
     const canvas = within(canvasElement);
     const dialog = () => canvas.getByRole('dialog');
     await step('Account is open first', async () => {
-      await expect(canvas.getByRole('tab', { name: 'Account' })).toHaveAttribute('aria-selected', 'true');
+      await expect(canvas.getByRole('tab', { name: 'Company' })).toHaveAttribute('aria-selected', 'true');
     });
     await step('Upload a logo, crop it, then remove it and undo', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Upload logo' }));
