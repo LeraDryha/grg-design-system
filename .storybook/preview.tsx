@@ -7,9 +7,13 @@ import '../src/styles/tokens.css';
 import '../src/styles/system.css';
 import '../src/styles/base.css';
 import { trackInputModality } from '../src/styles/input-modality';
+import { startEmbed } from './embed';
 
 // Focus rings for the keyboard only, in every story and docs page
 trackInputModality();
+
+// A story embedded in the portfolio (…&embed=portfolio): the components layer and the theme from the page around it
+startEmbed();
 
 type Theme = 'light' | 'dark';
 
