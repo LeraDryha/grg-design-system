@@ -14,7 +14,7 @@ import { TabMenu } from '../../components/TabMenu/TabMenu';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { AppFrame, startAssets } from '../shared/AssetsApp';
 import { pad, shift, startOf, type Range } from '../shared/period';
-import { YOU, startMembers } from '../Members/Members';
+import { YOU, personName, startMembers } from '../Members/Members';
 import { formatDateTime, formatPeriod } from '../../locale/format';
 import { startTransactions } from '../Transactions/Transactions';
 import reportsImage from '../../assets/in-product/reports.png';
@@ -161,7 +161,7 @@ export function useReporting({ account = 'verified', history = 'some' }: Reporti
   const columns: TableColumn<Report>[] = [
     { id: 'period', header: 'Time period', width: '22%', cell: r => <TableText title={formatPeriod(r.from, r.to)} /> },
     { id: 'format', header: 'Format', width: '9%', cell: r => <TableText title={r.format.toUpperCase()} /> },
-    { id: 'by', header: 'Created by', width: '26%', cell: r => <TableText title={r.by} /> },
+    { id: 'by', header: 'Created by', width: '26%', cell: r => <TableText title={personName(r.by)} /> },
     { id: 'created', header: 'Created at', width: '20%', sortValue: r => r.createdAt.getTime(), cell: r => <TableText title={formatDateTime(r.createdAt)} /> },
     { id: 'status', header: 'Status', cell: r => (
       <Badge label={r.status} variant="light" size="sm" color={r.status === 'Generated' ? 'success' : 'warning'} leftIcon={null} rightIcon={null} />

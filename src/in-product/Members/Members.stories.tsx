@@ -48,9 +48,18 @@ export const Walkthrough: Story = {
     };
     await step('The owner can only transfer ownership; everyone else can be edited and deleted', async () => {
       await expect(rows()).toHaveLength(6);
-      await expect(canvas.queryByRole('button', { name: 'Edit g.schimmel@company.test' })).toBeNull();
+      await expect(canvas.queryByRole('button', { name: 'Edit Guadalupe Schimmel' })).toBeNull();
       await expect(canvas.getByRole('button', { name: 'Transfer ownership' })).toBeInTheDocument();
-      await expect(canvas.getByRole('button', { name: 'Delete hana.sato@company.test' })).toBeInTheDocument();
+      await expect(canvas.getByRole('button', { name: 'Delete Hana Sato' })).toBeInTheDocument();
+    });
+    await step('A name and its address: search finds either', async () => {
+      const search = canvas.getByRole('searchbox', { name: 'Search members by name or email' });
+      await userEvent.type(search, 'raman');
+      await expect(rows()).toHaveLength(1);
+      await expect(within(rows()[0] as HTMLElement).getByText('Priya Raman')).toBeInTheDocument();
+      await expect(within(rows()[0] as HTMLElement).getByText('priya.raman@company.test')).toBeInTheDocument();
+      await userEvent.clear(search);
+      await expect(rows()).toHaveLength(6);
     });
     await step('Send invite waits for a free address and a role', async () => {
       await userEvent.click(canvas.getByRole('button', { name: 'Add member' }));
@@ -78,7 +87,7 @@ export const Walkthrough: Story = {
       await expect(within(rows()[1] as HTMLElement).getByText('Waiting for confirmation')).toBeInTheDocument();
     });
     await step('Save changes waits for a new role', async () => {
-      await userEvent.click(canvas.getByRole('button', { name: 'Edit tomas.novak@company.test' }));
+      await userEvent.click(canvas.getByRole('button', { name: 'Edit Tomas Novak' }));
       const modal = await canvas.findByRole('dialog', { name: 'Edit member' });
       const save = within(modal).getByRole('button', { name: 'Save changes' });
       await expect(save).toBeDisabled();
@@ -91,7 +100,7 @@ export const Walkthrough: Story = {
       await expect(within(row).getByText('Admin')).toBeInTheDocument();
     });
     await step('Delete asks first, Cancel is the safe way out', async () => {
-      await userEvent.click(canvas.getByRole('button', { name: 'Delete marco.lindqvist@company.test' }));
+      await userEvent.click(canvas.getByRole('button', { name: 'Delete Marco Lindqvist' }));
       const modal = await canvas.findByRole('dialog', { name: 'Delete a member?' });
       await waitFor(() => expect(within(modal).getByRole('button', { name: 'Cancel' })).toHaveFocus());
       await userEvent.click(within(modal).getByRole('button', { name: 'Delete' }));
@@ -104,11 +113,11 @@ export const Walkthrough: Story = {
       const save = within(modal).getByRole('button', { name: 'Save changes' });
       await expect(save).toBeDisabled();
       // Only confirmed members, not you and not someone still invited
-      await expect(within(modal).queryByRole('radio', { name: 'g.schimmel@company.test' })).toBeNull();
+      await expect(within(modal).queryByRole('radio', { name: 'Guadalupe Schimmel' })).toBeNull();
       await expect(within(modal).queryByRole('radio', { name: 'leo.okafor@company.test' })).toBeNull();
-      await userEvent.click(within(modal).getByRole('radio', { name: 'priya.raman@company.test' }));
+      await userEvent.click(within(modal).getByRole('radio', { name: 'Priya Raman' }));
       await userEvent.click(save);
-      const confirm = await canvas.findByRole('dialog', { name: 'Make priya.raman@company.test the owner?' });
+      const confirm = await canvas.findByRole('dialog', { name: 'Make Priya Raman the owner?' });
       await userEvent.click(within(confirm).getByRole('button', { name: 'Make owner' }));
       await expect(await canvas.findByText('New owner is set successfully')).toBeInTheDocument();
       await expect(canvas.queryByRole('button', { name: 'Transfer ownership' })).toBeNull();

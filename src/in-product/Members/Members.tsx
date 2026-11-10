@@ -13,6 +13,7 @@ import { Search } from '../../components/Search/Search';
 import { Select } from '../../components/Select/Select';
 import { Table, TableText, type TableColumn } from '../../components/Table/Table';
 import { AppFrame } from '../shared/AssetsApp';
+import { useAccount } from '../shared/account';
 import { formatDateTime } from '../../locale/format';
 
 /* GRX Pay redesign, file "Global Settings", section Members (367:24800): the team list, Add member, Edit member and
@@ -28,6 +29,8 @@ const ROLES_NOTE = 'Admin has access to all functionalities, excluding the abili
 
 export type Member = {
   email: string; role: Role; addedAt: Date;
+  /** Known once the invitation is accepted; until then the address stands for the person */
+  name?: string;
   /** Until the invitation is accepted: grey avatar, Waiting for confirmation */
   waiting?: boolean;
   /** One colour group per person (Avatar); a waiting member stays grey */
@@ -41,16 +44,19 @@ const short = (d: Date) => formatDateTime(d);
 export const YOU = 'g.schimmel@company.test';
 
 export const startMembers: Member[] = [
-  { email: YOU, role: 'Owner', addedAt: daysAgo(412), color: 'amber' },
+  { email: YOU, name: 'Guadalupe Schimmel', role: 'Owner', addedAt: daysAgo(412), color: 'amber' },
   { email: 'leo.okafor@company.test', role: 'Agent', addedAt: daysAgo(2), waiting: true },
-  { email: 'hana.sato@company.test', role: 'Agent', addedAt: daysAgo(38), color: 'pink' },
-  { email: 'priya.raman@company.test', role: 'Accountant', addedAt: daysAgo(96), color: 'purple' },
-  { email: 'tomas.novak@company.test', role: 'Agent', addedAt: daysAgo(187), color: 'green' },
-  { email: 'marco.lindqvist@company.test', role: 'Admin', addedAt: daysAgo(353), color: 'sky' },
+  { email: 'hana.sato@company.test', name: 'Hana Sato', role: 'Agent', addedAt: daysAgo(38), color: 'pink' },
+  { email: 'priya.raman@company.test', name: 'Priya Raman', role: 'Accountant', addedAt: daysAgo(96), color: 'purple' },
+  { email: 'tomas.novak@company.test', name: 'Tomas Novak', role: 'Agent', addedAt: daysAgo(187), color: 'green' },
+  { email: 'marco.lindqvist@company.test', name: 'Marco Lindqvist', role: 'Admin', addedAt: daysAgo(353), color: 'sky' },
 ];
 
-/** Initials from the address: "leo.okafor@…" → LO */
-const nameOf = (email: string) => email.split('@')[0].split(/[._-]+/).filter(Boolean).join(' ');
+/** How a person is named everywhere (Invoices, Transactions, Reporting, Settings): their name, or the address while invited */
+export const personName = (email: string, members: Member[] = startMembers) => members.find(m => m.email === email)?.name ?? email;
+
+/** Initials from the name, or from the address while invited: "leo.okafor@…" → LO */
+const nameOf = (m: Member) => m.name ?? m.email.split('@')[0].split(/[._-]+/).filter(Boolean).join(' ');
 const valid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
 /* ---- The list ---- */
@@ -58,11 +64,12 @@ const valid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 function MembersTable({ members, onEdit, onDelete, onTransfer }: { members: Member[]; onEdit: (member: Member) => void; onDelete: (member: Member) => void; onTransfer: () => void }) {
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
-  const rows = members.filter(m => !q || m.email.includes(q));
+  const rows = members.filter(m => !q || m.email.includes(q) || !!m.name?.toLowerCase().includes(q));
   const columns: TableColumn<Member>[] = [
-    { id: 'email', header: 'Email', width: '36%', cell: row => (
-      <TableText orientation="horizontal" title={row.email} badge={row.email === YOU ? { label: 'You' } : undefined}
-        leading={<Avatar size={32} initials name={nameOf(row.email)} color={row.waiting ? undefined : row.color} decorative />} />
+    // The name first and the address under it; an invited person has only the address (after the audit: Figma showed emails only)
+    { id: 'member', header: 'Member', width: '36%', cell: row => (
+      <TableText title={row.name ?? row.email} description={row.name ? row.email : undefined} badge={row.email === YOU ? { label: 'You' } : undefined}
+        leading={<Avatar size={32} initials name={nameOf(row)} color={row.waiting ? undefined : row.color} decorative />} />
     ) },
     { id: 'role', header: 'Role', width: '16%', cell: row => <TableText title={row.role} /> },
     { id: 'added', header: 'Added', width: '20%', sortValue: row => row.addedAt.getTime(), cell: row => <TableText title={short(row.addedAt)} /> },
@@ -73,19 +80,19 @@ function MembersTable({ members, onEdit, onDelete, onTransfer }: { members: Memb
   return (
     <div className="grg-ip-surface__section">
       <div className="grg-ip-toolbar">
-        <Search size="sm" aria-label="Search members by email" placeholder="Email" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
+        <Search size="sm" aria-label="Search members by name or email" placeholder="Name or email" value={query} onChange={setQuery} className="grg-ip-toolbar__search" />
       </div>
-      <Table aria-label="Members" rows={rows} rowKey={row => row.email} rowLabel={row => `${row.email}, ${row.role}`} columns={columns}
+      <Table aria-label="Members" rows={rows} rowKey={row => row.email} rowLabel={row => `${row.name ?? row.email}, ${row.role}`} columns={columns}
         // The owner and you can't be edited or deleted; the owner hands ownership on from their own row (text: a verb of
         // this product, not a standard action with an icon)
         actions={row => (row.role === 'Owner' && row.email === YOU ? <Button variant="text" size="sm" onClick={onTransfer}>Transfer ownership</Button>
           : row.role === 'Owner' || row.email === YOU ? null : (
           <>
-            <ActionButton icon="pencil" size="sm" aria-label={`Edit ${row.email}`} onClick={() => onEdit(row)} />
-            <ActionButton icon="trash" size="sm" color="red" aria-label={`Delete ${row.email}`} onClick={() => onDelete(row)} />
+            <ActionButton icon="pencil" size="sm" aria-label={`Edit ${row.name ?? row.email}`} onClick={() => onEdit(row)} />
+            <ActionButton icon="trash" size="sm" color="red" aria-label={`Delete ${row.name ?? row.email}`} onClick={() => onDelete(row)} />
           </>
         ))}
-        empty={{ title: 'No members with this email', subtitle: 'Check the spelling, or search by another part of the address' }} />
+        empty={{ title: 'No members found', subtitle: 'Check the spelling, or search by another part of the name or address' }} />
     </div>
   );
 }
@@ -145,6 +152,10 @@ export function useMembers(shared?: MembersState) {
     toast({ status: 'success', title: 'New owner is set successfully', duration: 5000 });
   };
 
+  // Your name as you set it on Profile
+  const account = useAccount();
+  const team = members.map(m => (m.email === YOU ? { ...m, name: account.name } : m));
+
   const content = (
     <main className="grg-ip-page">
       <div className="grg-ip-page__head">
@@ -152,7 +163,7 @@ export function useMembers(shared?: MembersState) {
         <Button variant="primary" leftIcon="plus" onClick={add}>Add member</Button>
       </div>
       <div className="grg-ip-surface">
-        <MembersTable members={members} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })}
+        <MembersTable members={team} onEdit={edit} onDelete={member => setView({ kind: 'delete', email: member.email })}
           onTransfer={() => setView({ kind: 'owner', chosen: null, query: '' })} />
       </div>
     </main>
@@ -179,27 +190,27 @@ export function useMembers(shared?: MembersState) {
       {note}
     </>,
   } : view?.kind === 'delete' && current ? {
-    title: 'Delete a member?', description: `After this action ${current.email} won’t be able to log in to the company anymore`,
+    title: 'Delete a member?', description: `After this action ${current.name ?? current.email} won’t be able to log in to the company anymore`,
     status: 'error' as const, statusIcon: 'remove-circle-filled' as const, destructive: true,
     primaryAction: { label: 'Delete', onClick: remove }, secondaryAction: { label: 'Cancel', onClick: close },
   } : view?.kind === 'owner' ? (() => {
     const v = view;
     const q = v.query.trim().toLowerCase();
-    const shown = candidates.filter(m => !q || m.email.includes(q));
+    const shown = candidates.filter(m => !q || m.email.includes(q) || !!m.name?.toLowerCase().includes(q));
     return {
       title: 'Transfer ownership', description: 'Choose a company user to set up as a company owner. The previous owner will be set up as an Admin.',
       primaryAction: { label: 'Save changes', disabled: !v.chosen, onClick: () => setView({ kind: 'confirm-owner', chosen: v.chosen! }) },
       children: <>
-        <Search size="md" aria-label="Search members by email" placeholder="Email" value={v.query} onChange={query => setView({ ...v, query })} />
+        <Search size="md" aria-label="Search members by name or email" placeholder="Name or email" value={v.query} onChange={query => setView({ ...v, query })} />
         {shown.length ? (
-          <RadioGroup label="Members" labelHidden className="grg-ip-owner-list grg-ip-choices" value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
-            {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.email} />)}
+          <RadioGroup label="Members" labelHidden value={v.chosen} onChange={chosen => setView({ ...v, chosen })}>
+            {shown.map(m => <RadioLabel key={m.email} flip value={m.email} label={m.name ?? m.email} description={m.name ? m.email : undefined} />)}
           </RadioGroup>
-        ) : <p className="grg-ip-setting__line">No members with this email</p>}
+        ) : <p className="grg-ip-setting__line">No members found</p>}
       </>,
     };
   })() : view?.kind === 'confirm-owner' ? {
-    title: `Make ${view.chosen} the owner?`, description: 'You will become an Admin and won’t be able to change the owner again.',
+    title: `Make ${personName(view.chosen, members)} the owner?`, description: 'You will become an Admin and won’t be able to change the owner again.',
     status: 'warning' as const, statusIcon: 'warning-error-filled' as const, onBack: () => setView({ kind: 'owner', chosen: view.chosen, query: '' }),
     primaryAction: { label: 'Make owner', onClick: () => setOwner(view.chosen) }, secondaryAction: { label: 'Cancel', onClick: close },
   } : null;

@@ -55,7 +55,8 @@ const uuid = (seed: number) => {
 };
 const hash = (seed: number) => `0x${uuid(seed).replace(/-/g, '')}${uuid(seed + 50).replace(/-/g, '').slice(0, 32)}`;
 
-const people = ['Evelyn DuBuque', 'Rudy Kozey'];
+/** Who withdraws: the Admin from Members and you (Agents can't) */
+const people = ['Marco Lindqvist', 'Guadalupe Schimmel'];
 type Seed = Partial<Transaction> & Pick<Transaction, 'kind' | 'status' | 'amount' | 'code' | 'fee'> & { hours: number; open?: boolean };
 const seeds: Seed[] = [
   { kind: 'payment', status: 'Completed', amount: 0.065769, code: 'ETH', hours: 1, network: 'Ethereum', fee: '0 ETH' },
